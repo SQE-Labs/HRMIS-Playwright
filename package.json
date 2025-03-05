@@ -1,0 +1,19 @@
+{
+  "name": "hrmis-playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "xlsx": "^0.18.5"
+  }
+}
