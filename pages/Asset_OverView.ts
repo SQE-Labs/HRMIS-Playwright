@@ -93,6 +93,7 @@ export class OverView extends AssetManagementTab {
     }
 
     async verifyHeader() {
+        await this.page.waitForLoadState()
         const headerText = await this.OverviewHeader.textContent();  // ✅ Get actual text content
         if (headerText?.trim() === "Asset Overview") {
             console.log("Redirected towards :-", headerText);
@@ -255,8 +256,7 @@ export class OverView extends AssetManagementTab {
 
         // Check if "No Record Available!" message is present
         const noRecordText = "No Record Available!";
-        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)"); // Ensure correct selector
-
+        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
         let emptyRecordText = "";
         if (noRecordElement) {
             emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
@@ -269,6 +269,7 @@ export class OverView extends AssetManagementTab {
 
             // Click Export button
             await this.Export.click();
+            await this.page.waitForTimeout(1500);
             await expect(this.Alert.getAlertElement()).toBeVisible();
 
             const alertMessage = await this.Alert.getAlertText();
@@ -342,7 +343,9 @@ export class OverView extends AssetManagementTab {
         await this.page.waitForTimeout(2000);
         await this.AssetType_Dropdown.selectOption({ value: "2" });
         await this.Filter.click()
+        await this.page.waitForTimeout(2000);
         await this.Card.click()
+        await this.page.waitForTimeout(2000);
         await expect(this.Loader.getSpinLoader()).not.toBeAttached();
         let header = await this.CardHeader.textContent()
         if (header?.trim() === 'Keyboard') {
@@ -370,11 +373,12 @@ export class OverView extends AssetManagementTab {
         if (totalAssetCountInsideCard === 0) {
             console.warn("No assets found after filtering. This is expected behavior if no matching assets exist.");
         } else if (totalAssetCountInsideCard === this.countInnerAsset) {
-            console.log("Count of (all cards and total assets) Match successfully");
+            console.log("");
             isAssetCountMatchinsidecard = true; // Set to true when counts match
         } else {
             console.error(`Mismatch: 'number of cards' is not equal to 'totalAssets': Expected ${this.countInnerAsset}, but got ${totalAssetCountInsideCard}`);
         }
+
     }
     // TC_AM_011
     async SuperOwnDropdown() {
@@ -506,9 +510,10 @@ export class OverView extends AssetManagementTab {
         let SuperOwnoptions = await this.SuperOwn_Dropdown.locator("option").allTextContents();
         let superOwncount = SuperOwnoptions.length
         console.log(superOwncount)
+        await this.page.pause()
         for (let x = 0; x < superOwncount; x++) {
             console.log(await this.SuperOwn_Dropdown.selectOption({ index: x }))
-            await this.page.waitForTimeout(1000);
+            await this.page.waitForTimeout(500);
             let Ownerdropdown_Options = await this.Owner_Dropdown.allTextContents()
             console.log("Option in OwnerDropdown", Ownerdropdown_Options)
             let OwnerOption = await this.Owner_Dropdown.count()
@@ -520,7 +525,7 @@ export class OverView extends AssetManagementTab {
             console.log(VisibleOwnerOption)
 
             expect(Ownerdropdown_Options).toEqual(VisibleOwnerOption);
-            
+
         }
     }
     // TC_AM_017
@@ -542,8 +547,65 @@ export class OverView extends AssetManagementTab {
         await expect(this.Loader.getThreeDotClass()).not.toBeAttached();
         await this.page.waitForTimeout(1500);
 
-        
-        
+        const totalAssetsAfterFilter = await this.verifyTotalAsset();
+        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
+        const noRecordText = "No Record Available!";
+        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
+        let emptyRecordText = "";
+        if (noRecordElement) {
+            emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
+        }
+        if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
+            console.log("Case 1: No records available after filtering.");
+
+            // Click Export button
+            await this.Export.click();
+            await expect(this.Loader.getThreeDotClass()).not.toBeAttached()
+            await expect(this.Alert.getAlertElement()).toBeVisible();
+
+            const alertMessage = await this.Alert.getAlertText();
+            console.log("Alert message appeared as expected:", alertMessage);
+
+            // Ensure the correct alert message appears
+            expect(alertMessage).toContain(noRecordText);
+
+            // No file should be downloaded
+            console.log(" Export should not trigger a file download.");
+        }else {
+            console.log(" Case 2: One or more assets found. Proceeding with export...");
+
+            try {
+                // Wait for the file download event before clicking Export
+                const [download] = await Promise.all([
+                    this.page.waitForEvent("download", { timeout: 10000 }), // Reduced timeout for efficiency
+                    this.Export.click()
+                ]);
+
+                const downloadedFile = download.suggestedFilename();
+                console.log("Downloaded file:", downloadedFile);
+
+                // Ensure the file has a .xlsx extension
+                if (!downloadedFile.endsWith(".xlsx")) {
+                    throw new Error(`Invalid file extension: ${downloadedFile}`);
+                }
+
+                // Define file save path
+                const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
+                await download.saveAs(downloadPath);
+
+                // Verify the file exists
+                if (fs.existsSync(downloadPath)) {
+                    console.log(`File successfully downloaded: ${downloadPath}`);
+                } else {
+                    throw new Error("Error: Downloaded file not found in expected location!");
+                }
+
+                // Assertion to confirm successful XLSX file download
+                expect(fs.existsSync(downloadPath)).toBeTruthy();
+            } catch (error) {
+                console.error("Error during file download:", error);
+            }
+        }
     }
 }
 
