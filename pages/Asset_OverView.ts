@@ -45,9 +45,9 @@ export class OverView extends AssetManagementTab {
     // TC_AM_013
     private Availability_Dropdown: Locator
     // Tc_AM_017
-    public SuperOwnrandomOption : any
-    public OwnerrandomOption  : any
-    public AvailabilityrandomOption : any
+    public SuperOwnrandomOption: any
+    public OwnerrandomOption: any
+    public AvailabilityrandomOption: any
 
     constructor(page: Page) {
         super(page)
@@ -401,12 +401,12 @@ export class OverView extends AssetManagementTab {
         // Randomly select an option
         const SuperOwnrandomOption = SuperOwnvalidOptions[Math.floor(Math.random() * SuperOwnvalidOptions.length)].trim();
         console.log(`Randomly selected option: ${SuperOwnrandomOption}`);
-        
+
         // Select the option with error handling
         try {
             await this.SuperOwn_Dropdown.selectOption({ label: SuperOwnrandomOption });
             console.log(`Successfully selected: ${SuperOwnrandomOption}`);
-            
+
         } catch (error) {
             console.error(`Failed to select option: ${SuperOwnrandomOption}`, error);
             return null;
@@ -437,11 +437,11 @@ export class OverView extends AssetManagementTab {
             console.error("No valid options found in the dropdown.");
             return null;
         }
-        
+
         // Randomly select an option
         const OwnerrandomOption = OwnervalidOptions[Math.floor(Math.random() * OwnervalidOptions.length)].trim();
         console.log(`Randomly selected option: ${OwnerrandomOption}`);
-       
+
         // Select the option with error handling
         try {
             await this.Owner_Dropdown.selectOption({ label: OwnerrandomOption });
@@ -454,8 +454,8 @@ export class OverView extends AssetManagementTab {
         // Verify the selected option
         const OwwnerselectedValue = (await this.Owner_Dropdown.inputValue()).trim();
         console.log(`Selected value: ${OwwnerselectedValue}`);
-        
-        return this.OwnerrandomOption
+
+        return OwwnerselectedValue
 
     }
     // TC_AM_013
@@ -483,7 +483,7 @@ export class OverView extends AssetManagementTab {
         // Randomly select an option
         const AvailabilityrandomOption = AvailabilityvalidOptions[Math.floor(Math.random() * AvailabilityvalidOptions.length)].trim();
         console.log(`Randomly selected option: ${AvailabilityrandomOption}`);
-       
+
         // Select the option with error handling
         try {
             await this.Availability_Dropdown.selectOption({ label: AvailabilityrandomOption });
@@ -496,18 +496,19 @@ export class OverView extends AssetManagementTab {
         // Verify the selected option
         const AvailabilityselectedValue = (await this.Availability_Dropdown.inputValue()).trim();
         console.log(`Selected value: ${AvailabilityselectedValue}`);
+        return AvailabilityselectedValue
 
-        return this.AvailabilityrandomOption
+
     }
     // I merge 3 test script in one TC_AM_014 || TC_AM_015 || TC_AM_016
     async CheckOptionVisible() {
         console.log("Check All option is selected and In Owner dropdown All options are visible")
-        let SuperOwnoptions= await this.SuperOwn_Dropdown.locator("option").allTextContents();
+        let SuperOwnoptions = await this.SuperOwn_Dropdown.locator("option").allTextContents();
         let superOwncount = SuperOwnoptions.length
         console.log(superOwncount)
         for (let x = 0; x < superOwncount; x++) {
             console.log(await this.SuperOwn_Dropdown.selectOption({ index: x }))
-            await this.page.waitForTimeout(500);
+            await this.page.waitForTimeout(1000);
             let Ownerdropdown_Options = await this.Owner_Dropdown.allTextContents()
             console.log("Option in OwnerDropdown", Ownerdropdown_Options)
             let OwnerOption = await this.Owner_Dropdown.count()
@@ -519,11 +520,29 @@ export class OverView extends AssetManagementTab {
             console.log(VisibleOwnerOption)
 
             expect(Ownerdropdown_Options).toEqual(VisibleOwnerOption);
+            
         }
     }
     // TC_AM_017
     async CardFilter() {
         console.log("Collecting selected dropdown values...");
+        let superOwnValue = await this.SuperOwnDropdown();
+        let ownerValue = await this.Ownerdropdown();
+        let availabilityValue = await this.Availabilitydropdown();
+
+        // Store the selected values in an array or object
+        let cardsData = {
+            superOwnValue,
+            ownerValue,
+            availabilityValue
+        };
+        console.log("Selected Dropdown Values:", cardsData);
+        await this.Filter.click()
+        await this.Export.click()
+        await expect(this.Loader.getThreeDotClass()).not.toBeAttached();
+        await this.page.waitForTimeout(1500);
+
+        
         
     }
 }
