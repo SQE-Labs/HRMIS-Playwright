@@ -93,9 +93,20 @@ test.describe("Asset OverView page", () => {
         })
 
         await test.step("Verify that option are visible " , async() =>{
-            // TC_AM_017
+            // TC_AM_017 & TC_AM_018
             expect(await Asset_OverView.CardFilter())
              console.log("CardData filtered !!")
+         })
+         await test.step("Verify that option are visible " , async() =>{
+            // TC_AM_19
+            expect(await Asset_OverView.Sorting())
+             console.log("Redirected Towards Dashboard !!")
+         })
+
+         await test.step("Verify that option are visible " , async() =>{
+            // TC_AM_020
+            expect(await Asset_OverView.Redirected())
+             console.log("Redirected Towards Dashboard !!")
          })
     })
 })

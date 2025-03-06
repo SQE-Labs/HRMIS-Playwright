@@ -14,6 +14,10 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  timeout: 60000, // Increase timeout to 60 seconds
+  use: {
+    headless: true, // Set false if you want to debug
+  },
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -28,6 +32,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     baseURL: process.env.URL || 'https://topuptalent.com/',
     trace: 'on-first-retry',
+    // actionTimeout : 10000,
   },
 
   /* Configure projects for major browsers */

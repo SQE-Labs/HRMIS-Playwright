@@ -13,7 +13,9 @@
     "@types/node": "^22.13.4"
   },
   "dependencies": {
+    "@applitools/eyes-playwright": "^1.36.3",
     "dotenv": "^16.4.7",
+    "extent": "^0.4.0",
     "xlsx": "^0.18.5"
   }
 }
