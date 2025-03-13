@@ -620,37 +620,39 @@ export class OverView extends AssetManagementTab {
         }
     }
     // TC_AM_019
+
     async Sorting() {
-        await this.page.reload()
-        await this.page.waitForTimeout(1000)
-        const totalcount = await this.verifyTotalAsset()
-        let AfterSorting = (await this.page.locator("tr>td:nth-child(2)").allTextContents())
-        await this.page.locator("tr>th:nth-child(2)").click()
-        await this.page.waitForTimeout(1000)
-        var BeforeSorting = (await this.page.locator("tr>td:nth-child(2)").allTextContents())
-        let isSorted = true;
-        // ASCENDING ORDER
-        for (let i = 1; i < totalcount; ++i) {
-            if (AfterSorting[i] < BeforeSorting[i + 1]) {
-                isSorted = false;
+        await this.page.reload();
+        await this.page.waitForTimeout(1000);
+        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
+
+        // Click to sort in ascending order
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+
+        let isSortedAsc = true;
+        for (let i = 0; i < beforeSorting.length - 1; i++) {
+            if (afterSortingAsc[i] > afterSortingAsc[i + 1]) {
+                isSortedAsc = false;
                 break;
             }
         }
-        // Assert the list is sorted
-        (expect(isSorted).toBe(true))
+        expect(isSortedAsc).toBe(true);
 
-        // Descending Order
-            await this.page.locator("tr>th:nth-child(2)").click()
-            var BeforeSorting = (await this.page.locator("tr>td:nth-child(2)").allTextContents())
+        // Click again to sort in descending order
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
 
-            for (let i = 1; i < totalcount; ++i) {
-                if (AfterSorting[i] > BeforeSorting[i + 1]) {
-                    isSorted = false;
-                    break; 
-                }
+        let isSortedDesc = true;
+        for (let i = 0; i < beforeSorting.length - 1; i++) {
+            if (afterSortingDesc[i] < afterSortingDesc[i + 1]) {
+                isSortedDesc = false;
+                break;
             }
-            // Assert the list is sorted
-            (expect(isSorted).toBe(true))
+        }
+        expect(isSortedDesc).toBe(true);
     }
 
     // TC_AM_020
@@ -658,7 +660,7 @@ export class OverView extends AssetManagementTab {
         await this.AssetOverviewRedirect.click()
         await this.page.waitForTimeout(1000)
         await this.verifyHeader()
-        await this.page.pause()
     }
 }
+
 

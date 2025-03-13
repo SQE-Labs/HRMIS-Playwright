@@ -25,7 +25,7 @@ export class Loader extends BasePage{
     getSpinoverlay(){
         return this.Spinoverlay
     }
-
+    
     getThreeDotLoader(){
         return this.threeDotLoader
     }
