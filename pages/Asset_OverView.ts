@@ -49,6 +49,7 @@ export class OverView extends AssetManagementTab {
     public AvailabilityrandomOption: any
     // TC_AM_020
     private AssetOverviewRedirect: Locator
+    static this: any;
 
     constructor(page: Page) {
         super(page)
@@ -339,14 +340,14 @@ export class OverView extends AssetManagementTab {
     // TC_AM_009
     async Card_openup() {
         await this.AssetType_Dropdown.waitFor({ state: 'visible', timeout: 5000 });
-        await this.AssetType_Dropdown.selectOption({ value: "2" });
+        await this.AssetType_Dropdown.selectOption({ value: "6" });
         await this.Filter.click()
         await this.page.waitForTimeout(2000);
         await this.Card.click()
         await this.page.waitForTimeout(2000);
         await expect(this.Loader.getSpinLoader()).not.toBeAttached();
         let header = await this.CardHeader.textContent()
-        if (header?.trim() === 'Keyboard') {
+        if (header?.trim() === 'Headset') {
             console.log("Redirected towards :-", header)
         } else {
             console.log("Unexpected header text found")
@@ -623,17 +624,16 @@ export class OverView extends AssetManagementTab {
 
     async Sorting() {
         await this.page.reload();
-        await this.page.waitForTimeout(1000);
+        await this.page.waitForTimeout(3000);
         let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
 
         // Click to sort in ascending order
         await this.page.locator(`tr>th:nth-child(2)`).click();
         await this.page.waitForTimeout(1000);
         let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-
         let isSortedAsc = true;
-        for (let i = 0; i < beforeSorting.length - 1; i++) {
-            if (afterSortingAsc[i] > afterSortingAsc[i + 1]) {
+        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
+            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
                 isSortedAsc = false;
                 break;
             }
@@ -646,8 +646,8 @@ export class OverView extends AssetManagementTab {
         let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
 
         let isSortedDesc = true;
-        for (let i = 0; i < beforeSorting.length - 1; i++) {
-            if (afterSortingDesc[i] < afterSortingDesc[i + 1]) {
+        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
+            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
                 isSortedDesc = false;
                 break;
             }

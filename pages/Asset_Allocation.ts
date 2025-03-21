@@ -316,10 +316,10 @@ export class Asset_Allocation extends OverView {
         expect(await this.AssetTypePopUp.isVisible())
         expect(await this.PopupSearchBar.isVisible())
         expect(await this.PopUptable.isVisible())
-        expect(await this.page.locator("tbody>tr:nth-child(1)>td:nth-child(6)").isVisible())
-
+        expect(await this.page.locator(">tr:nth-child(1)>td:nth-child(6)").isVisible())
+tbody
         // TC_AM_034 & TC_AM_035-- Enter Existing Serial number
-        await this.PopupSearchBar.pressSequentially("002")
+        await this.PopupSearchBar.pressSequentially("040")
         const Serialnumber = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents()
         const EnterSerialNumber = "002"
         expect(Serialnumber.includes(EnterSerialNumber))
@@ -338,14 +338,14 @@ export class Asset_Allocation extends OverView {
         // TC_AM_038
         await this.page.locator("(//*[name()='svg'][@class='css-8mmkcg'])[1]").click()
         await this.page.waitForTimeout(1000)
-        const OptionTobeSelected =   await this.page.locator("#react-select-2-option-9").textContent()
+        const OptionTobeSelected = await this.page.locator("#react-select-2-option-9").textContent()
         // console.log(OptionTobeSelected)
         await this.page.locator("#react-select-2-option-9").click()
         expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
 
-      
-        await this.PopupSearchBar.pressSequentially("002")
+
+        await this.PopupSearchBar.pressSequentially("040")
         await this.page.locator("div>input[type='radio']").click()
         await this.page.waitForTimeout(2000)
         const selectedAssetData = await this.page.locator("div[class='input-group '] textarea").allTextContents();
@@ -359,31 +359,34 @@ export class Asset_Allocation extends OverView {
             console.log(`Serial number "${EnterSerialNumber}" not found in extracted text.`);
         }
 
-        
 
 
-         // TC_AM_039
-        //  await this.page.reload()
-        //  await this.page.locator("(//*[name()='svg'][@class='css-8mmkcg'])[1]").click()
-        //  await this.page.waitForTimeout(1000)
-        //  await this.page.locator("#react-select-2-option-9").click()
-        //  expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        //  await this.page.waitForTimeout(1000)
-        //  await this.PopupSearchBar.pressSequentially("DELL09274")
-        //  await this.page.locator("div>input[type='radio']").click()
-        //  await this.submitButton.click()
-        //  await this.page.waitForTimeout(500);
-        //  // Locate the hidden required input field
-        //   var assetTypeField = this.page.locator('input[name="selectedAsset"]');
-        //  // Get the validation message
-        //  var tooltipMessage = await assetTypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        //  console.log('Tooltip message:', tooltipMessage);
-        //  // Validate the expected message
-        //  expect(tooltipMessage).toBe('Please fill out this field.');
+
+        //  TC_AM_039
+        await this.page.reload()
+        await this.page.locator("(//*[name()='svg'][@class='css-8mmkcg'])[1]").click()
+        await this.page.waitForTimeout(1000)
+        await this.page.locator("#react-select-2-option-9").click()
+        expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(1000)
+        await this.PopupSearchBar.pressSequentially("DELL040")
+        await this.page.locator("div>input[type='radio']").click()
+        await this.submitButton.click()
+        await this.page.waitForTimeout(500);
+        // Locate the hidden required input field
+        var assetTypeField = this.page.locator("input[class = 'css-1a0ro4n-requiredInput']");
+        // Get the validation message
+        var tooltipMessage = await assetTypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log('Tooltip message:', tooltipMessage);
+        // Validate the expected message
+        expect(tooltipMessage).toBe('Please fill out this field.');
+
+        await this.AllocaationSelectanassettype.click(); // Click the dropdown to open options
+        await this.page.locator('#react-select-3-option-6').click()
 
 
         // TC_AM_040
-        const selectedOption = await (this.page.locator("div[id='asset_list'] div[class=' css-1dimb5e-singleValue']").textContent())   
+        const selectedOption = await (this.page.locator("div[id='asset_list'] div[class=' css-1dimb5e-singleValue']").textContent())
         // console.log(selectedOption)
         expect(OptionTobeSelected).toEqual(selectedOption)
 
@@ -399,9 +402,9 @@ export class Asset_Allocation extends OverView {
         expect(tooltipMessage).toBe('Please fill out this field.');
         await this.page.waitForTimeout(2000)
         await this.AllocationComment.fill("Thank you !!")
-        
 
-        
+
+
         // TC_AM_042
         await expect(this.page.locator("div[id='asset_list'] div[class=' css-1dimb5e-singleValue']")).not.toBeEmpty()
         await expect(this.page.locator("div[class='dropdown-container'] div[class=' css-1dimb5e-singleValue']")).not.toBeEmpty()

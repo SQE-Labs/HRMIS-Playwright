@@ -3,10 +3,10 @@ import { Page, Locator } from '@playwright/test'
 import { BasePage } from '../pages/BasePage'
 
 export class Loader extends BasePage{
-    private SpinLoader : Locator
-    private threeDotLoader : Locator
-    private Spinoverlay : Locator
-    private threeDotclass: Locator
+    public SpinLoader : Locator
+    public threeDotLoader : Locator
+    public Spinoverlay : Locator
+    public threeDotclass: Locator
     // private page : Page
 
 // Locators
