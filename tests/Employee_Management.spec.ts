@@ -43,7 +43,7 @@ test.describe("'Employee Management module'", () => {
         await Employee_Directory.Assign_Leave_Manager()
     })
 
-    test.only("Promotion Management tab " , async ({page}) =>{
+    test("Promotion Management tab " , async ({page}) =>{
         await Employee_Directory.Promotion_Management()
     })
 })
