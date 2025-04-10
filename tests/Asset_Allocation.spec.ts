@@ -12,12 +12,12 @@ test.describe("Asset Allocation page", () => {
 
         await basepage.open('url')
         await Login.login(page, "SuperUser")
+        
     });
 
 
     test("Asset Allocation page", async ({ page }) => {
         const Allocation = new Asset_Allocation(page)
-
         await test.step("Rediected Towards Asset Allocation page", async () => {
             expect(await Allocation.AlloctionPage())
             // console.log("Redirected SucessFully ")

@@ -30,6 +30,12 @@ export class Asset_Enrollment extends BasePage {
     private WarrantyYear: Locator
     private Calender: Locator
     private comment: Locator
+    private BulkAsset: Locator
+    private ChooseButton: Locator
+    private BulkAssetSubmitbutton: Locator
+    private SccuessPopup: Locator
+    private CancelButton: Locator
+    private Popupmessage: Locator
     private Loader: Loader
 
 
@@ -67,6 +73,12 @@ export class Asset_Enrollment extends BasePage {
         this.WarrantyYear = page.locator("#warrantyUnit")
         this.Calender = page.locator("//input[@type = 'date']")
         this.comment = page.locator("//textarea[@id = 'comment']")
+        this.BulkAsset = page.locator("//button[@id = 'tab1-tab']")
+        this.ChooseButton = page.locator("//input[@type = 'file']")
+        this.BulkAssetSubmitbutton = page.locator("//button[@type = 'submit']")
+        this.SccuessPopup = page.locator(".modal-body")
+        this.CancelButton = page.locator(".theme-button.bg-grey.mx-3.w-35")
+        this.Popupmessage = page.locator('div>ol')
         this.Loader = new Loader(page)
     }
 
@@ -375,15 +387,25 @@ export class Asset_Enrollment extends BasePage {
 
 
         // TC_AM_86
-        await this.Calender.fill('2025-03-22'); // Try to enter future dates
+        var futureDate = new Date();
+
+        // Add 1 day to today's date (to get tomorrow's date)
+        futureDate.setDate(futureDate.getDate() + 1);
+
+        // Format the future date as 'YYYY-MM-DD'
+        const futureDates = futureDate.toISOString().split('T')[0];
+        await this.Calender.pressSequentially(futureDates); // Try to enter future dates
         console.log(await this.page.locator(".Toastify__toast-body").textContent())
         await this.page.locator(".Toastify__toast-body").isVisible()
-        await this.Calender.fill('2025-03-21'); // Enter current date 
+        await this.page.waitForTimeout(7000)
+
 
         // TC_AM_87
         // Enter more than 256 characters 
-        await this.page.waitForTimeout(7000)
-        await this.Calender.fill('2025-03-21');
+        const today = new Date()
+        today.setDate(today.getDate())
+        const presentDate = today.toISOString().split('T')[0];
+        await this.Calender.pressSequentially(presentDate);
         await this.comment.fill("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.")
         await this.SubmitButton.click()
         // console.log(await this.page.locator(".Toastify__toast-body").textContent())
@@ -393,7 +415,7 @@ export class Asset_Enrollment extends BasePage {
         // TC_AM_88
         await this.page.waitForTimeout(7000)
         await this.SubmitButton.click()
-        await this.page.waitForTimeout(2000)
+        await this.page.waitForTimeout(500)
         console.log(await this.page.locator(".Toastify__toast-body").textContent())
         await this.page.locator(".Toastify__toast-body").isVisible()
 
@@ -410,9 +432,159 @@ export class Asset_Enrollment extends BasePage {
         // TC_AM_90
         await this.Asset_Enrollment_subtab.click()
         await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.page.locator("//button[@id = 'tab1-tab']").click()
+        await this.BulkAsset.click()
         await this.page.locator(".has-asterisk").isVisible()
-        await this.page.locator("//input[@type = 'file']").isVisible()
-        await this.SubmitButton.isVisible()
-    }   
+        await this.ChooseButton.isVisible()
+        await this.BulkAssetSubmitbutton.isVisible()
+
+
+        // TC_AM_091
+
+        var fileInputSelector = "//input[@type = 'file']"
+
+        // var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ValidDocument.xlsx'; // Specify the path to the file you want to upload
+        // await this.page.setInputFiles(fileInputSelector, filePath);
+        // await this.BulkAssetSubmitbutton.click()
+        // console.log(await this.SccuessPopup.innerText())
+        // await this.SccuessPopup.isVisible()
+
+
+        // TC_AM_092
+        await this.page.waitForTimeout(7000)
+        // await this.page.locator(".btn-close").click()``
+        fileInputSelector = "//input[@type = 'file']"
+        var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\abc.docx'; // Specify the path to the file you want to upload
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        await this.page.locator(".Toastify__toast-body").isVisible()
+        await this.page.waitForTimeout(1000)
+
+        // TC_AM_093
+        var BulkAssetField = this.page.locator("//input[@type = 'file']");
+        await this.BulkAssetSubmitbutton.click()
+        // Get the validation message
+        var tooltipMessage = await BulkAssetField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log('Asset type Tooltip message:', tooltipMessage);
+        // Validate the expected message
+        expect(tooltipMessage).toBe('Please select a file.')
+
+        // TC_AM_094
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\AssetType_Column.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
+
+        // TC_AM_095
+        await this.page.locator(".btn-close").click();
+        await this.page.waitForTimeout(1000);
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Model_Column.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+
+        await this.BulkAssetSubmitbutton.click();
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
+        await this.page.locator(".btn-close").click();
+
+        // TC_AM_096
+        await this.page.waitForTimeout(2000);
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Owner_Column.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();  // Submit the last file
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.page.locator(".btn-close").click();
+
+
+        // TC_AM_097
+        await this.page.waitForTimeout(2000);
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Manufracture.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.page.locator(".btn-close").click();
+
+        // TC_AM_098
+        // await this.page.waitForTimeout(2000);
+        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\SerialNumber.xlsx';
+        // await this.page.setInputFiles(fileInputSelector, filePath);
+        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        // await this.BulkAssetSubmitbutton.click();
+        // await this.Popupmessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.page.locator(".btn-close").click();
+
+        // TC_AM_099
+        // await this.page.waitForTimeout(2000);
+        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Warranty.xlsx';
+        // await this.page.setInputFiles(fileInputSelector, filePath);
+        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        // await this.BulkAssetSubmitbutton.click()
+        // await this.Popupmessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.page.locator(".btn-close").click();
+
+        // TC_AM_100
+        // await this.page.waitForTimeout(2000);
+        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Purchase.xlsx';
+        // await this.page.setInputFiles(fileInputSelector, filePath);
+        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        // await this.BulkAssetSubmitbutton.click();
+        // await this.Popupmessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.page.locator(".btn-close").click();
+
+        // TC_AM_101
+        // await this.page.waitForTimeout(2000);
+        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Processor.xlsx';
+        // await this.page.setInputFiles(fileInputSelector, filePath);
+        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        // await this.BulkAssetSubmitbutton.click();  // Submit the last file
+        // await this.Popupmessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.page.locator(".btn-close").click();
+
+        // TC_AM_102
+        await this.page.waitForTimeout(2000);
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\superOwner.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();  // Submit the last file
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.page.locator(".btn-close").click()
+
+        // TC_AM_106
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ExistingSerialNumber.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();  // Submit the last file
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.page.locator(".btn-close").click()
+
+        // TC_AM_115
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NonExistingAssetType.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();  // Submit the last file
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.page.locator(".btn-close").click()
+
+        // TC_AM_121
+        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NoUnit.xlsx';
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
+        await this.BulkAssetSubmitbutton.click();  // Submit the last file
+        await this.Popupmessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.page.locator(".btn-close").click()
+        
+    }
 }

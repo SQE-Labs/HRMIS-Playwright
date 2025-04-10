@@ -317,7 +317,7 @@ export class Asset_Allocation extends OverView {
         expect(await this.PopupSearchBar.isVisible())
         expect(await this.PopUptable.isVisible())
         expect(await this.page.locator(">tr:nth-child(1)>td:nth-child(6)").isVisible())
-tbody
+
         // TC_AM_034 & TC_AM_035-- Enter Existing Serial number
         await this.PopupSearchBar.pressSequentially("040")
         const Serialnumber = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents()

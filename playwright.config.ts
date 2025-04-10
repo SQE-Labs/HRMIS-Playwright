@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { Asset_Allocation } from './pages/Asset_Allocation';
+import { Asset_DeAllocation } from './pages/Asser_DeAllocation';
 dotenv.config();
 
 /**
@@ -14,16 +16,25 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  timeout: 60000, // Increase timeout to 60 seconds
-  use: {
-    headless: true, // Set false if you want to debug
-  },
-  testDir: './tests',
+  timeout: 240000, 
+  testDir : './tests',
+  // testMatch:
+  // [
+  //   "Employee_Management.spec.ts"
+  // // "tests/Asset_Enrollment.spec.ts","tests/Asset_Allocation.spec.ts","tests/Asset_DeAllocation.spec.ts",
+  //   // "tests/Asset_OverView.spec.ts","tests/AssetManagement.spec.ts","LoginPage.spec.ts"
+  // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: [["html"] , ['line'] , ["allure-playwright"]],
+  // reporter: [
+  //   ["dot"],
+  //   ['allure-playwright'],
+  //   ["json", {
+  //     outputFile: "jsonReports/jsonReport.json"
+  //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -32,6 +43,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     baseURL: process.env.URL || 'https://topuptalent.com/',
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
     // actionTimeout : 10000,
   },
 

@@ -92,6 +92,8 @@ export class OverView extends AssetManagementTab {
     }
 
     async verifyHeader() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         await this.page.waitForTimeout(2000)
         const headerText = await this.OverviewHeader.textContent();  //Get actual text content
         if (headerText?.trim() === "Asset Overview") {
@@ -107,12 +109,13 @@ export class OverView extends AssetManagementTab {
     }
 
     async verifyViewCards() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         await expect(this.Loader.getThreeDotClass()).not.toBeAttached() // waiting for three dots appear while clicking on Assest Overview
         const cards = await this.OverViewCards.allTextContents()
         console.log(cards)
         this.Cardscount = await this.OverViewCards.count()
         console.log("Total Cards :- ", this.Cardscount)
-        return this.Cardscount   // return total number of count 
 
         let isMatched = true
         if (cards.length !== this.Cardscount) {
@@ -124,10 +127,13 @@ export class OverView extends AssetManagementTab {
         } else {
             console.log("Some cards title does not matched")
         }
+        return this.Cardscount
     }
 
     // TC_AM_004
     async verifyTotalAsset() {
+        await expect(this.Loader.getThreeDotClass()).not.toBeAttached() // waiting for three dots appear while clicking on Assest Overview
+
         const totalAssetTexts = await this.TotalAsset.allTextContents() // Get by text 
 
         // we only want number so i use parseInt to get number only
@@ -150,6 +156,8 @@ export class OverView extends AssetManagementTab {
     // Random Selection from Dropdown
     // TC_AM_005
     async Random_Asse_type_Selection() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         console.log("Click on Asset Type Dropdown");
 
         // Wait for the dropdown to be visible and enabled
@@ -193,10 +201,7 @@ export class OverView extends AssetManagementTab {
     // TC_AM_006
     async VerifyFilter() {
         console.log("Verifying Filter button functionality...");
-
-        // Reload the page to reset the state
-        await this.page.reload();
-
+        await this.page.reload()
         // Ensure the default selection is "All"
         await expect(this.OverViewDropdown).toHaveText("All");
 
@@ -319,6 +324,8 @@ export class OverView extends AssetManagementTab {
     }
     // TC_AM_008
     async Details_appear_on_card() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         let Details_display = ['Assigned', 'Available', 'Total']
         await this.page.waitForTimeout(500);
         await this.page.reload();
@@ -339,15 +346,17 @@ export class OverView extends AssetManagementTab {
     }
     // TC_AM_009
     async Card_openup() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         await this.AssetType_Dropdown.waitFor({ state: 'visible', timeout: 5000 });
-        await this.AssetType_Dropdown.selectOption({ value: "6" });
+        await this.AssetType_Dropdown.selectOption({ value: "4" });
         await this.Filter.click()
         await this.page.waitForTimeout(2000);
         await this.Card.click()
         await this.page.waitForTimeout(2000);
         await expect(this.Loader.getSpinLoader()).not.toBeAttached();
         let header = await this.CardHeader.textContent()
-        if (header?.trim() === 'Headset') {
+        if (header?.trim() === 'Desktop PC') {
             console.log("Redirected towards :-", header)
         } else {
             console.log("Unexpected header text found")
