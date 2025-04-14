@@ -39,7 +39,7 @@ export class Asset_DeAllocation extends BasePage {
         this.DeAllocationHeader = page.locator(".d-flex")
         this.DeAllocationDropDown = page.locator(".col-md-6")
         this.RecordsSelectedOption = page.locator('//*[@id="react-select-2-option-0"]')
-        this.EmptySelectedOption = page.locator('//*[@id="react-select-2-option-3"]')
+        this.EmptySelectedOption = page.locator('//*[@id="react-select-2-option-0"]')
         this.DeAllocationDropDownList = page.locator(" .css-1nmdiq5-menu")
         this.DeAllocationOption = page.locator(" .css-10wo9uf-option")
         this.DeAllocationOptionDetails = page.locator(".table-responsive")
@@ -73,8 +73,10 @@ export class Asset_DeAllocation extends BasePage {
 
     // TC_AM_046
     async RecordSelectedOption() {
-
-        // await this.page.pause()
+        const assetManagementTab = new AssetManagementTab(this.page);
+        await assetManagementTab.expandAssetManagementTab();
+        await this.DeAllocationSubtab.click();
+        await this.DeAllocationDropDown.click();
         console.log(await this.RecordsSelectedOption.textContent());
         await this.RecordsSelectedOption.click()
         await this.page.waitForTimeout(1000);
@@ -137,7 +139,9 @@ export class Asset_DeAllocation extends BasePage {
         }
     }
     async Emptyselectetoption() {
-
+        const assetManagementTab = new AssetManagementTab(this.page);
+        await assetManagementTab.expandAssetManagementTab();
+        await this.DeAllocationSubtab.click();
         await this.DeAllocationDropDown.click();
 
         await this.EmptySelectedOption.textContent()

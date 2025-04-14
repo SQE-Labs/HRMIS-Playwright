@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect} from '@playwright/test'
 import { BasePage } from '../pages/BasePage';
 import { LoginPage } from '../pages/LoginPage';
 import { Login } from '../Support/Command';
@@ -20,30 +20,52 @@ test.describe("'Employee Management module'", () => {
     test("Employee Management tab", async ({ page }) => {
         await Employee_Directory.Employee()
     })
-    
-    test("EmployeedirectoryCard" , async ({page}) =>{
+
+    test("EmployeedirectoryCard", async ({ page }) => {
         await Employee_Directory.EmployeedirectoryCard()
     })
-    
-    test("EmployeeAccessBlock " , async ({page}) =>{
+
+    test("EmployeeAccessBlock ", async ({ page }) => {
         await Employee_Directory.Employee_Access_Block()
     })
-    
-    test.skip("EmployeeAccessLeftout " , async ({page}) =>{
+
+    test.skip("EmployeeAccessLeftout ", async ({ page }) => {
         await Employee_Directory.Employee_Access_LeftOut()
     })
 
-    test("EmployeeAccess Update Status " , async ({page}) =>{
+    test("EmployeeAccess Update Status ", async ({ page }) => {
         await Employee_Directory.Update_status()
     })
-    test("Assign Manager tab " , async ({page}) =>{
+    test("Assign Manager tab ", async ({ page }) => {
         await Employee_Directory.AssignManager()
     })
-    test("Assign Leave manager tab " , async ({page}) =>{
+    test("Assign Leave manager tab ", async ({ page }) => {
         await Employee_Directory.Assign_Leave_Manager()
     })
 
-    test("Promotion Management tab " , async ({page}) =>{
+    test("Promotion Management tab ", async ({ page }) => {
         await Employee_Directory.Promotion_Management()
     })
+
+    test("Document Upload Tab", async ({ page }) => {
+        await Employee_Directory.Document_Upload()
+    })
+    test("Document Upload Dropdown", async ({ page }) => {
+        await Employee_Directory.Document_Upload_DropDown()
+    })
+    test("Document Upload upload button ", async ({ page }) => {
+        await Employee_Directory.Document_Upload_Upload_button()
+    })
+    test("Document Upload upload button cancel button functionality ", async ({ page }) => {
+        await Employee_Directory.Document_Upload_Upload_button_Cancel_button()
+    })
+    test("Document Upload upload button cross icon functionality ", async ({ page }) => {
+        await Employee_Directory.Document_Upload_Upload_button_cross_Icon()
+    })
+    test("Document Upload PopUp Functionality ", async ({ page }) => {
+        await Employee_Directory.Document_upload_PopUp_Functionality()
+    })
+    // test.only("Document Upload Eye Icon", async ({ page, browser}) => {
+    //     await Employee_Directory.Document_upload_Eye_Icon()
+    // })
 })

@@ -6,7 +6,7 @@ import { OverView } from "./Asset_OverView";
 import { text } from "stream/consumers";
 import { count } from "console";
 
-export class Asset_Allocation extends OverView {
+export class Asset_Allocation extends BasePage {
     // TC_AM_021
     private AllocationAsset: Locator
     private Allocationpage: Locator
@@ -85,7 +85,8 @@ export class Asset_Allocation extends OverView {
 
     // TC_AM_021 - TC_AM_022  I merge two test case in one  
     async AlloctionPage() {
-        await this.expandAssetManagementTab()
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
         await this.AllocationAsset.click()
 
         expect(await this.Allocationpage.isVisible())
@@ -126,7 +127,9 @@ export class Asset_Allocation extends OverView {
     // TC_AM_023 - TC_AM_027  I merge all these test cases in one. 
     async SearchField() {
         // By ASSET TYPE NAME
-        await this.page.reload()
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
+        await this.AllocationAsset.click()
         await expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
         var searchbyAssetname = await this.SearchBar.pressSequentially("Keyboard")
@@ -145,18 +148,23 @@ export class Asset_Allocation extends OverView {
         } else {
             console.log(" relevant record shouldn't appears listed ")
         }
-
+    }
+    async SearchBy_SerialNumber() {
         //  Search by Serial number
-        await this.SearchBar.fill('')
-        var searchbyAssetname = await this.SearchBar.pressSequentially("hp37")
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
+        await this.AllocationAsset.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
+        var searchbyAssetname = await this.SearchBar.pressSequentially("DELL004")
+        await this.page.waitForTimeout(2000)
         const Serialnumber = await this.AssetserialNumber.allTextContents()
         console.log(Serialnumber)
 
         let FoundSerialnumber = true
 
         for (let i = 0; i < Serialnumber.length; ++i) {
-            if (Serialnumber[i] !== 'hp37') {
+            if (Serialnumber[i] !== 'DELL004') {
                 console.log(` Mismatched relevant record at index ${Serialnumber[i]} appears listed $`)
                 FoundSerialnumber = false
             }
@@ -166,18 +174,24 @@ export class Asset_Allocation extends OverView {
         } else {
             console.log(" relevant record shouldn't appears listed when search by serial number")
         }
-
+    }
+    async SearchBy_OwnerName() {
         // Search by Owner name 
-        await this.SearchBar.fill('')
-        var searchbyAssetname = await this.SearchBar.pressSequentially("Consultant")
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
+        await this.AllocationAsset.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
+        // await this.SearchBar.fill('')
+        var searchbyAssetname = await this.SearchBar.pressSequentially("Caelius")
+        await this.page.waitForTimeout(3000)
         const Ownername = await this.AssetOwnername.allTextContents()
         console.log(Ownername)
 
         let FoundOwner = true
 
         for (let i = 0; i < Ownername.length; ++i) {
-            if (Ownername[i] !== 'Consultant') {
+            if (Ownername[i] !== 'Caelius') {
                 console.log(` Mismatched relevant record at index ${Ownername[i]} appears listed $`)
                 FoundOwner = false
             }
@@ -187,12 +201,17 @@ export class Asset_Allocation extends OverView {
         } else {
             console.log(" relevant record shouldn't appears listed when search by Owner name")
         }
-
-
+    }
+    async SearchBy_EmployeeName() {
         // Search by Employee name
-        await this.SearchBar.fill('')
-        var searchbyAssetname = await this.SearchBar.pressSequentially("Asset L1")
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
+        await this.AllocationAsset.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
+        // await this.SearchBar.fill('')
+        var searchbyAssetname = await this.SearchBar.pressSequentially("Asset L1")
+        await this.page.waitForTimeout(3000)
         const Employeename = await this.AssetEmployeename.allTextContents()
         console.log(Employeename)
 
@@ -221,6 +240,11 @@ export class Asset_Allocation extends OverView {
 
     // TC_AM_029
     async pagination() {
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
+        await this.AllocationAsset.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(1000)
         const totalAllocationAsset = await this.TotalAssetAssigned.allTextContents()
         // we only want number so i use parseInt to get number only
         const totalAssetCount = totalAllocationAsset.length > 0 ? parseInt(totalAllocationAsset[0].replace(/\D/g, ''), 10) : 0;
@@ -278,6 +302,11 @@ export class Asset_Allocation extends OverView {
     }
     //  TC_AM_030
     async AssignAsset() {
+        const assetManagementTab = new AssetManagementTab(this.page)
+        await assetManagementTab.expandAssetManagementTab()
+        await this.AllocationAsset.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(1000)
         await this.AllocationAssignAsset.click()
         expect(this.Loader.getSpinLoader()).not.toBeAttached()
         var header = await this.AllocationAssignAssetHeader.textContent()
@@ -319,7 +348,7 @@ export class Asset_Allocation extends OverView {
         expect(await this.page.locator(">tr:nth-child(1)>td:nth-child(6)").isVisible())
 
         // TC_AM_034 & TC_AM_035-- Enter Existing Serial number
-        await this.PopupSearchBar.pressSequentially("040")
+        await this.PopupSearchBar.pressSequentially("")
         const Serialnumber = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents()
         const EnterSerialNumber = "002"
         expect(Serialnumber.includes(EnterSerialNumber))
@@ -344,8 +373,11 @@ export class Asset_Allocation extends OverView {
         expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
 
+        const serialNumbers = await this.page.locator("table tr td:nth-child(4)").allTextContents();
+        // console.log("Extracted serial numbers:", serialNumbers);
+        const selectedSerialNumber = serialNumbers[0];
 
-        await this.PopupSearchBar.pressSequentially("040")
+        await this.PopupSearchBar.pressSequentially(selectedSerialNumber)
         await this.page.locator("div>input[type='radio']").click()
         await this.page.waitForTimeout(2000)
         const selectedAssetData = await this.page.locator("div[class='input-group '] textarea").allTextContents();
@@ -369,7 +401,7 @@ export class Asset_Allocation extends OverView {
         await this.page.locator("#react-select-2-option-9").click()
         expect(this.Loader.getSpinLoader()).not.toBeAttached()
         await this.page.waitForTimeout(1000)
-        await this.PopupSearchBar.pressSequentially("DELL040")
+        await this.PopupSearchBar.pressSequentially(selectedSerialNumber)
         await this.page.locator("div>input[type='radio']").click()
         await this.submitButton.click()
         await this.page.waitForTimeout(500);

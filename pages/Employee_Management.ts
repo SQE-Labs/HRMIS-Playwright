@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test'
+import { Page, Locator, expect, BrowserContext } from '@playwright/test'
 import { BasePage } from './BasePage'
 import { Loader } from '../Components/Loaders'
 import { ADDRGETNETWORKPARAMS, TIMEOUT } from 'dns'
@@ -96,8 +96,30 @@ export class Employee_Management extends BasePage {
     private PromotionHeader: Locator
     private PromotionColoumn: Locator
     private PromotionColoumntext: string[]
-    private PromotionDropdown : Locator
-    private PromotionDropdownOption : Locator
+    private PromotionDropdown: Locator
+    private PromotionDropdownOption: Locator
+    private PromoteButton: Locator
+    private PromotionPopUpHeader: Locator
+    private PromotionPopUpLabel: Locator
+    private PromotionCancelButton: Locator
+    private DepartmentDropdown: Locator
+    private DesignationDropdown: Locator
+    private DesignationDropDownOptions: Locator
+    private PromoteEmployeePopUpSubmitButton: Locator
+    private Document_upload_Tab: Locator
+    private Document_upload_Header: Locator
+    private Document_upload_DropDown: Locator
+    private Document_Upload_Column: Locator
+    private Document_Upload_Column_text: string[]
+    private Upload_Icon: Locator
+    private PopUp_Header: Locator
+    private Popup_Cross_button: Locator
+    private Popup_Cancel_button: Locator
+    private Choose_file: Locator
+    private PopUP_Submit_button: Locator
+    private PopUp_comment: Locator
+    private EyeIcon: Locator
+
 
     constructor(page: Page) {
         super(page)
@@ -220,6 +242,14 @@ export class Employee_Management extends BasePage {
         this.PromotionColoumn = page.locator("thead>tr>th")
         this.PromotionDropdown = page.locator("#react-select-2-input")
         this.PromotionDropdownOption = page.locator("#react-select-2-option-0")
+        this.PromoteButton = page.locator(".btn.btn-secondary")
+        this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
+        this.PromotionPopUpLabel = page.locator("div>label")
+        this.PromotionCancelButton = page.locator("(//button[@type = 'button'])[2]")
+        this.DepartmentDropdown = page.locator("#department")
+        this.DesignationDropdown = page.locator("#designation")
+        this.DesignationDropDownOptions = page.locator("//select[@id = 'designation']//option")
+        this.PromoteEmployeePopUpSubmitButton = page.locator("//button[@type = 'submit']")
         this.PromotionColoumntext = [
             'Employee Id',
             'Name',
@@ -228,11 +258,27 @@ export class Employee_Management extends BasePage {
             'Action'
 
         ]
+        this.Document_upload_Tab = page.locator("//a[text()='Document Upload']")
+        this.Document_upload_Header = page.locator("div>h1")
+        this.Document_upload_DropDown = page.locator("#react-select-2-input")
+        this.Document_Upload_Column = page.locator("thead>tr>th")
+        this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[1]")
+        this.PopUp_Header = page.locator(".modal-header")
+        this.Popup_Cross_button = page.locator(".btn-close.close-class")
+        this.Popup_Cancel_button = page.locator(".cancel-promote")
+        this.Choose_file = page.locator("#file-input")
+        this.PopUP_Submit_button = page.locator("//button[@type = 'submit']")
+        this.PopUp_comment = page.locator("//textarea[@name = 'comment']")
+        this.EyeIcon = page.locator("(//a[@class = 'fs-5'])[1]")
+        this.Document_Upload_Column_text = [
 
+            'S.No.',
+            'Document Name',
+            'Mandatory',
+            'Status',
+            'Action'
+        ]
     }
-
-    //h2[@id='heading1']/following-sibling::div/div/div[2]/div[4]/div/p
-
     async Employee() {
         // TC_EM_001
         try {
@@ -333,14 +379,14 @@ export class Employee_Management extends BasePage {
 
     }
     async EmployeedirectoryCard() {
-        // TC_AM_008
+        // TC_EM_008
         await this.Employee_Management.click()
         await this.page.waitForTimeout(2000)
         await this.Employee_Directory_tab.click()
         await this.Card.click()
         await this.EmployeeProfile.isVisible()
 
-        // TC_AM_009
+        // TC_EM_009
         await this.BasicInfo.click()
         const AccordionBodycount = await this.AccordionBodyKey.count();
 
@@ -350,12 +396,12 @@ export class Employee_Management extends BasePage {
             expect(AccordionBodyText).toEqual(this.BasicInfoAccordionBody[i])
         }
 
-        // TC_AM_010
+        // TC_EM_010
         await this.BasicInfo.click();
         await this.page.waitForTimeout(1000);
         expect(await this.page.locator("heading1").isHidden()).toBe(true)
 
-        // TC_AM_011
+        // TC_EM_011
         await this.page.waitForTimeout(2000)
         await this.BasicInfo.click();
         await this.BasicInfoEditButton.click()
@@ -369,7 +415,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
 
 
-        // TC_AM_013
+        // TC_EM_013
         await this.BasicInfo.click();
         await this.page.waitForTimeout(2000)
         await this.BasicInfoEditButton.click()
@@ -383,7 +429,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
 
 
-        // TC_AM_014
+        // TC_EM_014
         await this.CloseButton.click()
         var originalFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
         var originalLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
@@ -402,7 +448,7 @@ export class Employee_Management extends BasePage {
         expect(originalMiddleName).toEqual(CurrentMiddleName)
 
 
-        // TC_AM_015
+        // TC_EM_015
         function generateRandomString(length) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
@@ -440,7 +486,7 @@ export class Employee_Management extends BasePage {
         expect(await this.page.locator(".Toastify__toast-body").isVisible())
 
 
-        // TC_AM_016
+        // TC_EM_016
         try {
             await this.WorkAccordion.click()
             console.log(' WorkAccordion expanded Succesfully')
@@ -458,12 +504,12 @@ export class Employee_Management extends BasePage {
         }
 
 
-        // TC_AM_017
+        // TC_EM_017
         await this.WorkAccordion.click()
         await this.page.waitForTimeout(1000)
         expect(await this.page.locator("heading2").isHidden()).toBe(true)
 
-        // TC_AM_018
+        // TC_EM_018
         await this.WorkAccordion.click()
         await this.WorkEditButton.click()
         await this.WorkDate.clear()
@@ -476,7 +522,7 @@ export class Employee_Management extends BasePage {
 
         expect(tooltipMessage).toBe('Please fill out this field.')
 
-        // TC_AM_019
+        // TC_EM_019
         await this.WorkDate.fill("2090-12-12")
         await this.EmployeeType.selectOption({ label: 'Select Employee Sub Type' })
         await this.UpdateButton.click()
@@ -487,7 +533,7 @@ export class Employee_Management extends BasePage {
 
         expect(tooltipMessage).toBe('Please select an item in the list.')
 
-        // TC_AM_020
+        // TC_EM_020
         await this.CloseButton.click()
         var ExistingDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
         await this.WorkEditButton.click()
@@ -496,7 +542,7 @@ export class Employee_Management extends BasePage {
         var CurrentDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
         expect(ExistingDate).toEqual(CurrentDate)
 
-        // TC_AM_021
+        // TC_EM_021
         var ExistingDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
         await this.WorkEditButton.click()
         var futureDate = new Date();
@@ -510,7 +556,7 @@ export class Employee_Management extends BasePage {
         var CurrentDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
         expect(ExistingDate).not.toEqual(CurrentDate)
 
-        // TC_AM_022
+        // TC_EM_022
         try {
             await this.PersonalDetails.click()
             console.log(' PersonalDetails expanded Succesfully')
@@ -529,12 +575,12 @@ export class Employee_Management extends BasePage {
         }
 
 
-        // TC_AM_023
+        // TC_EM_023
         await this.PersonalDetails.click()
         await this.page.waitForTimeout(1000)
         expect(await this.page.locator("heading3").isHidden()).toBe(true)
 
-        // TC_AM_024
+        // TC_EM_024
 
         await this.PersonalDetails.click()
         await this.PersonalDetailsEditButton.click()
@@ -546,7 +592,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
         await this.PersonalDetailsDate.fill('1993-08-08')
 
-        // TC_AM_025
+        // TC_EM_025
         await this.AadhaarCardNumber.clear()
         await this.UpdateButton.click()
         var AadhaarCardNumberField = await this.AadhaarCardNumber
@@ -556,7 +602,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please enter a 12-digit Aadhar card number')
         await this.AadhaarCardNumber.fill('765432131242')
 
-        // TC_AM_026
+        // TC_EM_026
         await this.PanCardNumber.clear()
         await this.UpdateButton.click()
         var PanCardNumberField = await this.PanCardNumber
@@ -567,7 +613,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please enter a 10-digit PAN card number')
         await this.PanCardNumber.fill('2324354231')
 
-        // TC_AM_027
+        // TC_EM_027
         await this.PresentAddress.clear()
         await this.UpdateButton.click()
         var PresentAddressField = await this.PresentAddress
@@ -578,7 +624,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
         await this.PresentAddress.fill('Hello World !!')
 
-        // TC_AM_028
+        // TC_EM_028
         await this.BloodGroup.selectOption({ label: 'Select Blood Group' })
         await this.UpdateButton.click()
         var BloodGroupField = await this.BloodGroup
@@ -588,7 +634,7 @@ export class Employee_Management extends BasePage {
         await this.BloodGroup.selectOption({ label: 'O+ve' })
 
 
-        // TC_AM_029
+        // TC_EM_029
         await this.MaritalStatus.selectOption({ label: 'Select Marital Status' })
         await this.UpdateButton.click()
         var MaritalStatusField = await this.MaritalStatus
@@ -597,7 +643,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please select an item in the list.')
         await this.MaritalStatus.selectOption({ label: 'Single' })
 
-        // TC_AM_030
+        // TC_EM_030
         await this.AlternateNumber.clear()
         await this.UpdateButton.click()
         var AlternateNumberField = await this.AlternateNumber
@@ -608,7 +654,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
         await this.AlternateNumber.fill('9987651232')
 
-        // TC_AM_031
+        // TC_EM_031
         await this.PermanentAddress.clear()
         await this.UpdateButton.click()
         var PermanentAddressField = await this.PermanentAddress
@@ -618,7 +664,7 @@ export class Employee_Management extends BasePage {
         await this.PermanentAddress.fill("dsadasdasdsa")
 
 
-        // TC_AM_032
+        // TC_EM_032
         await this.PassportNumber.clear()
         await this.UpdateButton.click()
         var PassportNumberField = await this.PassportNumber
@@ -627,7 +673,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please enter a 12-digit Passport number')
         await this.PermanentAddress.fill('123213213123')
 
-        // TC_AM_033
+        // TC_EM_033
         await this.CloseButton.click()
         var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
         var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
@@ -649,7 +695,7 @@ export class Employee_Management extends BasePage {
         expect(OriginalPanCardNumber).toEqual(currentPanCardNumber)
         expect(OriginalpermanentAddress).toEqual(CurrentpermanentAddress)
 
-        // TC_AM_034
+        // TC_EM_034
         var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
         var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
         var OriginalpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
@@ -673,7 +719,7 @@ export class Employee_Management extends BasePage {
         await this.page.waitForTimeout(1000)
 
 
-        // TC_AM_035 && TC_AM_037
+        // TC_EM_035 && TC_EM_037
         try {
             await this.WorkExperience.click()
             console.log('WorkExperince tab expanded Succesfully')
@@ -685,7 +731,7 @@ export class Employee_Management extends BasePage {
         expect(Norecord).toEqual("No records available")
 
 
-        // TC_AM_036
+        // TC_EM_036
         try {
             await this.WorkExperience.click()
             console.log('WorkExperince tab collapse Succesfully')
@@ -694,7 +740,7 @@ export class Employee_Management extends BasePage {
         }
 
 
-        // TC_AM_038 
+        // TC_EM_038 
         try {
             await this.Education.click()
             console.log('Education tab expanded Succesfully')
@@ -704,7 +750,7 @@ export class Employee_Management extends BasePage {
         var Norecord = await this.page.locator('//*[@id="collapse5"]/div/div/div/div/div').textContent()
         expect(Norecord).toEqual("No records available")
 
-        // TC_AM_039
+        // TC_EM_039
         try {
             await this.Education.click()
             console.log('Education tab Collapse Succesfully')
@@ -713,7 +759,7 @@ export class Employee_Management extends BasePage {
         }
 
 
-        // TC_AM_40  && TC_AM_041
+        // TC_EM_40  && TC_EM_041
         try {
             await this.Dependents.click()
             console.log('Dependents tab expanded Succesfully')
@@ -723,7 +769,7 @@ export class Employee_Management extends BasePage {
         var Norecord = await this.page.locator('//*[@id="collapse6"]/div/div/div/div/div').textContent()
         expect(Norecord).toEqual("No records available")
 
-        // TC_AM_42
+        // TC_EM_42
         try {
             await this.Dependents.click()
             console.log('Dependents tab Collapse Succesfully')
@@ -733,11 +779,11 @@ export class Employee_Management extends BasePage {
     }
 
     // async
-    //     // TC_AM_043
+    //     // TC_EM_043
     //     await this.AssignedAssets.click()
     //     await expect(this.AssignedRecords).toBeVisible()
 
-    //     // TC_AM_044
+    //     // TC_EM_044
     //     // await this.NextButton.click()
     //     // await this.page.waitForTimeout(1000)
     //     // expect(await this.PreviousButton.isEnabled()).toBeTruthy();
@@ -748,7 +794,7 @@ export class Employee_Management extends BasePage {
     //     // expect(await this.PreviousButton.isEnabled()).toBeTruthy();
 
     async Employee_Access_Block() {
-        // TC_AM_050
+        // TC_EM_050
 
         await this.Employee_Management.click()
         await this.page.waitForTimeout(2000)
@@ -759,7 +805,7 @@ export class Employee_Management extends BasePage {
         expect(await this.Status.isVisible())
 
 
-        // TC_AM_051
+        // TC_EM_051
         await this.EmployeeAccessStatus.textContent()
         await this.EmployeeAccessSubmitButton.click()
         var EmployeeAccessStatus = await this.EmployeeAccessStatus
@@ -768,7 +814,7 @@ export class Employee_Management extends BasePage {
         console.log(tooltipMessage);
         expect(tooltipMessage).toBe('Please select an item in the list.')
 
-        // TC_AM_052'
+        // TC_EM_052'
         // await this.page.pause()
         await this.EmployeeAccessStatus.selectOption({ label: 'BLOCKED (Temporally Disable)' })
         var CardName = await this.CardName.textContent()
@@ -808,7 +854,7 @@ export class Employee_Management extends BasePage {
         // expect(CardsTitle).toContain(CardName);
 
 
-        // TC_AM_053
+        // TC_EM_053
 
         await this.Employee_Management.click()
         await this.page.waitForTimeout(2000)
@@ -821,7 +867,7 @@ export class Employee_Management extends BasePage {
         await expect(this.page.locator('div:nth-child(3) > div.col-md-4 > div > div > input')).toBeVisible()
         await expect(this.page.locator("//textarea[@name = 'comment']")).toBeVisible()
 
-        // TC_AM_054
+        // TC_EM_054
         // await this.LeftOutSubmitbutton.click()
         // var LeftOutDateField = await this.LeftOutDate
 
@@ -830,7 +876,7 @@ export class Employee_Management extends BasePage {
         // expect(tooltipMessage).toBe('Please fill out this field.')
 
 
-        // TC_AM_055
+        // TC_EM_055
         await (this.page.locator('div:nth-child(3) > div.col-md-4 > div > div > input')).click()
         await this.page.locator("//div[@aria-current='date']").click()
         await this.LeftOutSubmitbutton.click()
@@ -840,7 +886,7 @@ export class Employee_Management extends BasePage {
         console.log(tooltipMessage);
         expect(tooltipMessage).toBe('Please fill out this field.')
 
-        // TC_AM_056
+        // TC_EM_056
         var Leftreason = await this.page.locator("//textarea[@name = 'comment']").fill("Hello World !")
         await this.LeftOutSubmitbutton.click()
         console.log(await this.page.locator(".Toastify__toast-body").textContent())
@@ -868,7 +914,7 @@ export class Employee_Management extends BasePage {
 
 
     async AssignManager() {
-        // TC_AM_061
+        // TC_EM_061
 
         // await this.page.pause()
         await this.Employee_Management.click()
@@ -878,7 +924,7 @@ export class Employee_Management extends BasePage {
         expect(this.AssignManagerSubTabManager).toHaveText('Manager')
         expect(this.AssignManagerSubTabLeaveManager).toHaveText('Leave Manager')
 
-        // TC_AM_062        
+        // TC_EM_062        
         await this.page.locator('#react-select-2-input').click()
         await this.page.waitForTimeout(2000)
         await this.page.locator("#react-select-2-option-0").click()
@@ -891,17 +937,17 @@ export class Employee_Management extends BasePage {
             expect(AssignColoumnText).toEqual(this.ColoumnBody[i])
         }
 
-        // TC_AM_063
+        // TC_EM_063
         await this.ManagerActionButton.click()
         var PopupHeader = await this.PopupHeader.textContent()
         expect(PopupHeader).toEqual("Assign Manager")
 
 
-        // TC_AM_064
+        // TC_EM_064
         await this.CrossButton.click()
         await expect(this.PopupHeader).toBeHidden()
 
-        // TC_AM_065
+        // TC_EM_065
         await this.ManagerActionButton.click()
         await this.PopupDropDown.click()
         await this.page.locator("#react-select-3-option-0").click()
@@ -909,7 +955,7 @@ export class Employee_Management extends BasePage {
         await expect(this.PopupHeader).toBeHidden()
 
 
-        // TC_AM_066
+        // TC_EM_066
         await this.ManagerActionButton.click()
         await this.PopupDropDown.click()
         await this.page.locator("#react-select-3-option-0").click()
@@ -919,7 +965,7 @@ export class Employee_Management extends BasePage {
 
 
 
-        // TC_AM_067
+        // TC_EM_067
         await this.page.waitForTimeout(7000)
         await this.PopupDropDown.click()
         await this.page.locator("#react-select-3-option-2").click()
@@ -929,7 +975,7 @@ export class Employee_Management extends BasePage {
     }
 
     async Assign_Leave_Manager() {
-        // TC_AM_071
+        // TC_EM_071
         await this.Employee_Management.click()
         await this.AssignManagertab.click()
         await this.AssignManagerSubTabLeaveManager.click()
@@ -937,7 +983,7 @@ export class Employee_Management extends BasePage {
         expect(LeaveManagerHeader).toEqual("Leave Manager")
 
 
-        // TC_AM_072
+        // TC_EM_072
         await this.LeaveManagerPopupDropDown.click()
         await this.page.locator("#react-select-4-option-0").click()
         await this.page.waitForTimeout(3000)
@@ -948,16 +994,16 @@ export class Employee_Management extends BasePage {
             var LeaveManagerText = await LeaveManagerData.textContent();
             expect(LeaveManagerText).toEqual(this.ColoumnBody[i])
         }
-        // TC_AM_073
+        // TC_EM_073
         await this.LeaveManagerActionButton.click()
         var LeavePopupheader = await this.LeeaveManagerPopupHeader.textContent()
         expect(LeavePopupheader).toEqual("Are you sure you want to delete ?")
 
-        // TC_AM_074
+        // TC_EM_074
         await this.NoButton.click()
         await expect(this.LeeaveManagerPopupHeader).toBeHidden()
 
-        // TC_AM_075
+        // TC_EM_075
         await this.LeaveManagerActionButton.click()
         await this.YesButton.click()
         console.log(await this.page.locator(".Toastify__toast-body").textContent())
@@ -966,18 +1012,18 @@ export class Employee_Management extends BasePage {
         await expect(this.page.locator("div>h4")).toBeVisible()
         await this.page.waitForTimeout(6000)
 
-        // TC_AM_076
+        // TC_EM_076
 
         await this.AssignButton.click()
         console.log(await this.AssignManagerPopupHeader.textContent())
         await expect(this.AssignManagerPopupHeader).toBeVisible()
 
-        // TC_AM_077
+        // TC_EM_077
         await this.AssignManagerPopupCrossicon.click()
         await expect(this.AssignManagerPopupHeader).toBeHidden()
 
 
-        // TC_AM_078
+        // TC_EM_078
         await this.AssignButton.click()
         await this.AssignManagerPopupCancleButton.click()
         await expect(this.AssignManagerPopupHeader).toBeHidden()
@@ -992,7 +1038,7 @@ export class Employee_Management extends BasePage {
         // -----------------------------------------------------------
 
 
-        // TC_AM_079
+        // TC_EM_079
         // Select himself as manager
         await this.AssignManagerPopUpDropdown.click()
         await this.page.locator("#react-select-5-option-0").click()
@@ -1001,7 +1047,7 @@ export class Employee_Management extends BasePage {
         expect(await this.page.locator(".Toastify__toast-body").isVisible())
         await this.page.waitForTimeout(6000)
 
-        // TC_AM_080
+        // TC_EM_080
         await this.AssignManagerPopUpDropdown.click()
         await this.AssignManagerPopupDropdownOption.click()
         await this.AssignManagerPopupSubmitbutton.click()
@@ -1029,6 +1075,161 @@ export class Employee_Management extends BasePage {
             expect(coloumnText).toEqual(this.PromotionColoumntext[i])
         }
 
+        // TC_EM_083
+        await this.PromoteButton.click()
+        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
+        console.log(await this.PromotionPopUpHeader.textContent())
+        expect(this.PromotionPopUpHeader).toBeVisible()
+        let labelcount = await this.PromotionPopUpLabel.count()
+        for (let i = 0; i < labelcount; i++) {
+            let labelText = await this.PromotionPopUpLabel.nth(i).textContent()
+            console.log(labelText)
+        }
+
+        // TC_EM_084
+        await this.CrossButton.click()
+        await expect(this.PromotionPopUpHeader).toBeHidden()
+
+        // TC_EM_085
+        await this.PromoteButton.click()
+        await this.page.waitForTimeout(1000)
+        await this.PromotionCancelButton.click()
+        await expect(this.PromotionPopUpHeader).toBeHidden()
+
+        // TC_EM_086
+        await this.PromoteButton.click()
+        await this.DepartmentDropdown.selectOption({ value: '5' })
+        await this.page.waitForTimeout(7000)
+        let DesignationoptionCount = await this.DesignationDropDownOptions.count()
+        console.log(DesignationoptionCount)
+        for (let i = 0; i < DesignationoptionCount; i++) {
+            let DesignationOptionText = await this.DesignationDropDownOptions.nth(i).textContent()
+            console.log(DesignationOptionText)
+        }
+
+        // TC_EM_087
+        await this.DesignationDropdown.selectOption({ label: 'Sr. Solution Architect' })
+        await this.PromoteEmployeePopUpSubmitButton.click()
+        await this.page.waitForTimeout(500)
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
     }
 
+    async Document_Upload() {
+        // TC_EM_088
+        await this.Employee_Management.click()
+        await this.Document_upload_Tab.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.Document_upload_Header.isVisible()
+        var header = await this.Document_upload_Header.textContent()
+        expect(header).toEqual("Document Upload")
+
+    }
+    async Document_Upload_DropDown() {
+        // TC_EM_089
+        await this.Employee_Management.click()
+        await this.Document_upload_Tab.click()
+        await this.Document_upload_DropDown.click()
+        await this.page.locator("#react-select-2-option-0").click()
+        await this.page.waitForTimeout(1000)
+        var ColoumnCount = await this.Document_Upload_Column.count()
+        console.log(ColoumnCount)
+        for (let i = 0; i < ColoumnCount; i++) {
+            var coloumnText = await this.Document_Upload_Column.nth(i).textContent()
+            console.log(coloumnText)
+            expect(coloumnText).toEqual(this.Document_Upload_Column_text[i])
+        }
+    }
+
+    async Document_Upload_Upload_button() {
+        // TC_EM_090
+        await this.Employee_Management.click()
+        await this.Document_upload_Tab.click()
+        await this.Document_upload_DropDown.click()
+        await this.page.locator("#react-select-2-option-0").click()
+        await this.page.waitForTimeout(1000)
+        await this.Upload_Icon.click()
+
+        var PopUp_Header = await this.PopUp_Header.textContent()
+        await this.PopUp_Header.isVisible()
+        expect(PopUp_Header).toEqual("Upload Document Action")
+
+    }
+    async Document_Upload_Upload_button_Cancel_button() {
+        // TC_EM_091
+        await this.Document_Upload_Upload_button()
+        await this.page.waitForTimeout(2000)
+        await this.Popup_Cancel_button.click()
+        await this.PopUp_Header.isHidden()
+
+    }
+    async Document_Upload_Upload_button_cross_Icon() {
+        // TC_EM_092
+        await this.Document_Upload_Upload_button()
+        await this.page.waitForTimeout(2000)
+        await this.Popup_Cross_button.click()
+        await this.PopUp_Header.isHidden()
+    }
+
+    async Document_upload_PopUp_Functionality() {
+        // TC_EM_093
+        await this.Document_Upload_Upload_button()
+        await this.page.waitForTimeout(200)
+        await this.PopUP_Submit_button.click()
+        var ChooseFileField = await this.Choose_file
+
+        var tooltipMessage = await ChooseFileField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+
+        expect(tooltipMessage).toBe('Please select a file.')
+
+
+        // TC_EM_094
+
+        await this.page.waitForTimeout(7000)
+        // await this.page.locator(".btn-close").click()``
+        var fileInputSelector = "#file-input"
+        var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\screenshot.png'; // Specify the path to the file you want to upload
+        await this.page.setInputFiles(fileInputSelector, filePath);
+        await this.page.waitForTimeout(1000)
+        await this.PopUP_Submit_button.click()
+        await this.page.waitForTimeout(1000)
+        var commentField = await this.PopUp_comment
+
+        var tooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage)
+
+        expect(tooltipMessage).toBe('Please fill out this field.')
+
+
+        // TC_EM_95
+        await this.PopUp_comment.pressSequentially("Thank you !!")
+        await this.PopUP_Submit_button.click()
+
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+
+    }
+
+    // async Document_upload_Eye_Icon(context: BrowserContext) {
+    //     // TC_EM_096
+    
+    //     await this.Employee_Management.click();
+    //     await this.Document_upload_Tab.click();
+    //     await this.page.waitForTimeout(500);
+    //     await this.Document_upload_DropDown.click();
+    //     await this.page.locator("#react-select-2-option-0").click();
+    //     await this.page.waitForTimeout(1000);
+    
+    //     // Click the EyeIcon and wait for a new page to open
+    //     const [newPage] = await Promise.all([
+    //         context.waitForEvent('page'),
+    //         this.EyeIcon.click(),  // Single click here inside Promise.all
+    //     ]);
+    
+    //     // Wait for the new page to load completely
+    //     await newPage.waitForLoadState();
+    
+    //     // Validate the URL contains or matches the expected
+    // }    
 }

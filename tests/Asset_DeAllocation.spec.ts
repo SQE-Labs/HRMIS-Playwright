@@ -5,7 +5,7 @@ import { BasePage } from '../pages/BasePage';
 import { Login } from '../Support/Command';
 import { Asset_DeAllocation } from '../pages/Asser_DeAllocation';
 
-
+let DeAllocation
 test.describe("Asset DeAllocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
@@ -13,19 +13,17 @@ test.describe("Asset DeAllocation page", () => {
 
         await basepage.open('url')
         await Login.login(page, "SuperUser")
-
+        DeAllocation = new Asset_DeAllocation(page)
     })
 
-    test("Asset Overview page ", async ({ page }) => {
-        const DeAllocation = new Asset_DeAllocation(page)
+    test("Asset Deallocation page ", async ({ page }) => {
         await DeAllocation.DeAllocation()
         console.log("DeAllocation Page open SucessFully")
-
-        await test.step(" selected employee appear listed after choosing the employee", async () => {
-            await DeAllocation.RecordSelectedOption()
-        })
-        await test.step(" Empty Records appear listed after choosing the employee", async () => {
-            await DeAllocation.Emptyselectetoption()
-        })
+    })
+    test(" selected employee appear listed after choosing the employee", async ({page}) => {
+        await DeAllocation.RecordSelectedOption()
+    })
+    test(" Empty Records appear listed after choosing the employee", async ({page}) => {
+        await DeAllocation.Emptyselectetoption()
     })
 })
