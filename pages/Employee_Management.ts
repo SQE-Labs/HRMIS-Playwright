@@ -96,7 +96,7 @@ export class Employee_Management extends BasePage {
     private PromotionHeader: Locator
     private PromotionColoumn: Locator
     private PromotionColoumntext: string[]
-    private PromotionDropdown: Locator
+    private Dropdown: Locator
     private PromotionDropdownOption: Locator
     private PromoteButton: Locator
     private PromotionPopUpHeader: Locator
@@ -108,7 +108,6 @@ export class Employee_Management extends BasePage {
     private PromoteEmployeePopUpSubmitButton: Locator
     private Document_upload_Tab: Locator
     private Document_upload_Header: Locator
-    private Document_upload_DropDown: Locator
     private Document_Upload_Column: Locator
     private Document_Upload_Column_text: string[]
     private Upload_Icon: Locator
@@ -119,6 +118,20 @@ export class Employee_Management extends BasePage {
     private PopUP_Submit_button: Locator
     private PopUp_comment: Locator
     private EyeIcon: Locator
+    private Performance_Evaluation: Locator
+    private Performance_Header: Locator
+    private Performance_Export_button: Locator
+    private Role_Managment: Locator
+    private Role_Header: Locator
+    private Approve_Document: Locator
+    private Approve_Header: Locator
+    private Approve_Label: Locator
+    private Approve_Label_Document_type_dropdown: Locator
+    private Approve_Label_Employee_dropdown: Locator
+    private Approve_Label_Exiting_Document_type: Locator
+    private Approve_Label_Exiting_Employee : Locator
+
+
 
 
     constructor(page: Page) {
@@ -240,7 +253,7 @@ export class Employee_Management extends BasePage {
         this.PromotionManagement = page.locator("//a[text()='Promotion Management']")
         this.PromotionHeader = page.locator(".page-heading")
         this.PromotionColoumn = page.locator("thead>tr>th")
-        this.PromotionDropdown = page.locator("#react-select-2-input")
+        this.Dropdown = page.locator("#react-select-2-input")
         this.PromotionDropdownOption = page.locator("#react-select-2-option-0")
         this.PromoteButton = page.locator(".btn.btn-secondary")
         this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
@@ -260,7 +273,6 @@ export class Employee_Management extends BasePage {
         ]
         this.Document_upload_Tab = page.locator("//a[text()='Document Upload']")
         this.Document_upload_Header = page.locator("div>h1")
-        this.Document_upload_DropDown = page.locator("#react-select-2-input")
         this.Document_Upload_Column = page.locator("thead>tr>th")
         this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[1]")
         this.PopUp_Header = page.locator(".modal-header")
@@ -278,6 +290,23 @@ export class Employee_Management extends BasePage {
             'Status',
             'Action'
         ]
+
+        this.Performance_Evaluation = page.locator("//a[text()='Performance Evaluation']")
+        this.Performance_Header = page.locator(".h-100")
+        this.Performance_Export_button = page.locator(".actions.d-flex.gap-2")
+        this.Role_Managment = page.locator("(//a[text()='Role Management'])[1]")
+
+        this.Role_Header = page.locator("div>h1")
+        this.Approve_Document = page.locator("//a[text()='Approve Document']")
+        this.Approve_Header = page.locator("div>h1")
+        this.Approve_Label = page.locator("//label[@class = 'label']")
+
+        this.Approve_Label_Document_type_dropdown = page.locator("#react-select-2-input")
+        this.Approve_Label_Employee_dropdown = page.locator("#react-select-3-input")
+        this.Approve_Label_Exiting_Document_type = page.locator("tr>td:nth-child(3)")
+        this.Approve_Label_Exiting_Employee = page.locator("tr>td:nth-child(2)")
+
+
     }
     async Employee() {
         // TC_EM_001
@@ -1067,7 +1096,7 @@ export class Employee_Management extends BasePage {
         await expect(this.PromotionHeader).toBeVisible()
 
         // TC_EM_082
-        await this.PromotionDropdown.click()
+        await this.Dropdown.click()
         await this.PromotionDropdownOption.click()
         var PromotionColoumnCount = await this.PromotionColoumn.count()
         for (let i = 0; i < PromotionColoumnCount; i++) {
@@ -1129,7 +1158,8 @@ export class Employee_Management extends BasePage {
         // TC_EM_089
         await this.Employee_Management.click()
         await this.Document_upload_Tab.click()
-        await this.Document_upload_DropDown.click()
+        expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.Dropdown.click()
         await this.page.locator("#react-select-2-option-0").click()
         await this.page.waitForTimeout(1000)
         var ColoumnCount = await this.Document_Upload_Column.count()
@@ -1145,7 +1175,8 @@ export class Employee_Management extends BasePage {
         // TC_EM_090
         await this.Employee_Management.click()
         await this.Document_upload_Tab.click()
-        await this.Document_upload_DropDown.click()
+        expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.Dropdown.click()
         await this.page.locator("#react-select-2-option-0").click()
         await this.page.waitForTimeout(1000)
         await this.Upload_Icon.click()
@@ -1213,23 +1244,166 @@ export class Employee_Management extends BasePage {
 
     // async Document_upload_Eye_Icon(context: BrowserContext) {
     //     // TC_EM_096
-    
+
     //     await this.Employee_Management.click();
     //     await this.Document_upload_Tab.click();
     //     await this.page.waitForTimeout(500);
     //     await this.Document_upload_DropDown.click();
     //     await this.page.locator("#react-select-2-option-0").click();
     //     await this.page.waitForTimeout(1000);
-    
+
     //     // Click the EyeIcon and wait for a new page to open
     //     const [newPage] = await Promise.all([
     //         context.waitForEvent('page'),
     //         this.EyeIcon.click(),  // Single click here inside Promise.all
     //     ]);
-    
+
     //     // Wait for the new page to load completely
     //     await newPage.waitForLoadState();
-    
+
     //     // Validate the URL contains or matches the expected
     // }    
+
+
+    async performance_Evaluation() {
+        // TC_EM_097
+
+        await this.Employee_Management.click();
+        await this.Performance_Evaluation.click()
+        expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(500);
+
+        var header = await this.Performance_Header.textContent()
+        expect(header).toEqual("Performance Evaluation")
+
+        let Performance_Export_button = await this.Performance_Export_button.isVisible()
+        expect(Performance_Export_button)
+    }
+    // async performance_Evaluation_Dropdown(){
+    //     await this.performance_Evaluation()
+    //     await this.Dropdown.click()
+    //     await this.page.locator("#react-select-2-option-1").click()
+    // }
+
+    async Role_Management() {
+        // TC_EM_101
+        await this.Employee_Management.click();
+        await this.Role_Managment.click()
+        expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(500);
+
+        var header = await this.Role_Header.textContent()
+        expect(header).toEqual("Role Management")
+
+    }
+
+    async Role_Management_DropDown() {
+        // TC_EM_102
+        await this.Role_Management()
+        await this.Dropdown.click()
+        var optioncount = await this.page.locator(".css-10wo9uf-option").count()
+        for (let i = 0; i < optioncount; i++) {
+            let option = await this.page.locator(".css-10wo9uf-option").nth(i)
+            await expect(option).toBeVisible();
+            let text = await this.page.locator(".css-10wo9uf-option").nth(i).textContent()
+            console.log(text)
+        }
+
+        // TC_EM_103
+        await this.page.locator("#react-select-2-option-0").click()
+        await this.page.locator(".theme-button.ms-2 ").click()
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+
+        let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
+        console.log(message)
+        expect(message).toEqual(" The role has been successfully assigned to TEST Account SQE .")
+    }
+
+    async approve_document() {
+        // TC_EM_104
+        await this.Employee_Management.click();
+        await this.Approve_Document.click()
+        expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        var header = await this.Approve_Header.textContent()
+        expect(header).toEqual("Approve Document")
+        let labelcount = await this.Approve_Label.count()
+        for (let i = 0; i < labelcount; i++) {
+            let label = await this.Approve_Label.nth(i)
+            expect(label).toBeVisible()
+            let text = await this.Approve_Label.nth(i).textContent()
+            console.log(text)
+        }
+    }
+
+    async Approve_Document_Document_type() {
+        // TC_EM_105
+        await this.approve_document();
+        await this.page.waitForTimeout(2000);
+        const labelCount = await this.Approve_Label_Exiting_Document_type.count();
+        const uniqueTypes = new Set;
+
+        for (let i = 0; i < labelCount - 1; i++) {
+            const existingType = await this.Approve_Label_Exiting_Document_type.nth(i).textContent();
+            if (existingType) {
+                uniqueTypes.add(existingType.trim());
+            }
+        }
+
+        console.log("Unique Approved Document Types:", [...uniqueTypes]);
+
+
+        await this.Approve_Label_Document_type_dropdown.click()
+
+        await this.page.waitForTimeout(2000)
+        const options = this.page.locator('[id^="react-select-2-option"]');
+        const dropdownCount = await options.count();
+        const DropdownTypes = new Set
+        for (let i = 1; i < dropdownCount; i++) {
+            const dropdownItem = await options.nth(i).textContent();
+            if (dropdownItem) {
+                DropdownTypes.add(dropdownItem.trim());
+            }
+        }
+        console.log("Unique Approved Document Types:",[...DropdownTypes])
+
+        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
+    }
+
+    async Approve_Document_Employee() {
+        // TC_EM_106
+
+        await this.approve_document();
+        await this.page.waitForTimeout(2000);
+        
+        const labelCount = await this.Approve_Label_Exiting_Employee.count();
+        const uniqueTypes = new Set;
+
+        for (let i = 0; i < labelCount - 1; i++) {
+            const existingType = await this.Approve_Label_Exiting_Employee.nth(i).textContent();
+            if (existingType) {
+                uniqueTypes.add(existingType.trim());
+            }
+        }
+
+        console.log("Unique Approved Employee Types:", [...uniqueTypes]);
+
+
+        await this.Approve_Label_Employee_dropdown.click()
+        await this.page.waitForTimeout(2000)
+        const options = this.page.locator('[id^="react-select-3-option"]');
+        const dropdownCount = await options.count();
+        const DropdownTypes = new Set
+        for (let i = 1; i < dropdownCount; i++) {
+            const dropdownItem = await options.nth(i).textContent();
+            if (dropdownItem) {
+                DropdownTypes.add(dropdownItem.trim());
+            }
+        }
+        console.log("Droopdown Employee Types:",[...DropdownTypes])
+
+        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
+        
+    }
+
 }

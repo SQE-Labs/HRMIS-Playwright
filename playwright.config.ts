@@ -21,7 +21,7 @@ export default defineConfig({
   // testMatch:
   // [
   //   // "Employee_Management.spec.ts"
-  // // "tests/Asset_Enrollment.spec.ts",
+  // "tests/Asset_Enrollment.spec.ts",
   // "tests/Asset_Allocation.spec.ts",
   // // "tests/Asset_DeAllocation.spec.ts",
   //  // "tests/Asset_OverView.spec.ts",

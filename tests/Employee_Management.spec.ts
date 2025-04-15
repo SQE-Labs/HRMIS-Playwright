@@ -68,4 +68,26 @@ test.describe("'Employee Management module'", () => {
     // test.only("Document Upload Eye Icon", async ({ page, browser}) => {
     //     await Employee_Directory.Document_upload_Eye_Icon()
     // })
+
+    test("Performance Evaluation subtab ", async ({ page }) => {
+        await Employee_Directory.performance_Evaluation()
+    })
+
+    test("Role Management subtab ", async ({ page }) => {
+        await Employee_Directory.Role_Management()
+    })
+    test("Role Management Dropdown ", async ({ page }) => {
+        await Employee_Directory.Role_Management_DropDown()
+    })
+    test("Approve Document tab ", async ({ page }) => {
+        await Employee_Directory.approve_document()
+    })
+    test("Approve Document Document type ", async ({ page }) => {
+        await Employee_Directory.Approve_Document_Document_type()
+    })
+    test("Approve Document Employee ", async ({ page }) => {
+        await Employee_Directory.Approve_Document_Employee()
+    })
+
+    
 })
