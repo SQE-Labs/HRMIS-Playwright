@@ -88,6 +88,63 @@ test.describe("'Employee Management module'", () => {
     test("Approve Document Employee ", async ({ page }) => {
         await Employee_Directory.Approve_Document_Employee()
     })
-
+    test("Approve Document Dropdown ", async ({ page }) => {
+        await Employee_Directory.Approve_Document_Dropdown()
+    })
+    test("Approve Employee Dropdown ", async ({ page }) => {
+        await Employee_Directory.Approve_Employee_Dropdown()
+    })
+    test("Approve Action Button ", async ({ page }) => {
+        await Employee_Directory.Approve_Document_Action_button()
+    })
+    test("Approve Cancel button ", async ({ page }) => {
+        await Employee_Directory.Action_button_popup_cancel()
+    })
+    test("Approve Cross Icon ", async ({ page }) => {
+        await Employee_Directory.Action_button_popup_Cross_icon()
+    })
+    test("Approve Popup Approve functionaliy ", async ({ page }) => {
+        await Employee_Directory.Action_Button_Popup_Approved()
+    })
+    test("Approve Popup Rejected functionality ", async ({ page }) => {
+        await Employee_Directory.Action_Button_Popup_Rejected()
+    })
+    test("Departments  ", async ({ page }) => {
+        await Employee_Directory.Department()
+    })
+    test("Departments no. of records...  ", async ({ page }) => {
+        await Employee_Directory.Department_No_of_records()
+    })
+    test("Departments search bar valid ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Search_Bar_Valid()
+    })
+    test("Departments search bar Invalid ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Search_Bar_Invalid()
+    })
+    test("Departments Update Icon ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Update_Icon()
+    })
     
+    test("Departments Cancel Button ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_cancel_button()
+    })
+    test("Departments Cross Icon ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Cross_Icon()
+    })
+    test("Departments pop up functionality ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Pop_up_functionality()
+    })
+    test("Department + Add Department  ", async ({ page }) => {
+        await Employee_Directory.Departments_Add_Department()
+    })
+    test("Departments Add Department Cancel Button ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Add_Department_cancel_button()
+    })
+    test("Departments Add Department Cross Icon ...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Add_Department_Cross_Icon()
+    })
+    test("Department + Add Department Functionality...  ", async ({ page }) => {
+        await Employee_Directory.Departments_Add_Department_functionality()
+    })
+
 })

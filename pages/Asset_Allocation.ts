@@ -101,6 +101,7 @@ export class Asset_Allocation extends BasePage {
         // we only want number so i use parseInt to get number only
         const totalAssetCount = totalAllocationAsset.length > 0 ? parseInt(totalAllocationAsset[0].replace(/\D/g, ''), 10) : 0;
         await this.page.waitForTimeout(1000)
+        
         console.log("TotalAsset :  ", totalAssetCount)
 
 

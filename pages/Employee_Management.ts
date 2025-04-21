@@ -3,8 +3,12 @@ import { BasePage } from './BasePage'
 import { Loader } from '../Components/Loaders'
 import { ADDRGETNETWORKPARAMS, TIMEOUT } from 'dns'
 import { totalmem } from 'os'
-import { count, error } from 'console'
+import { count, error, timeStamp } from 'console'
 import exp from 'constants'
+import { text } from 'stream/consumers'
+import fs from "fs";
+
+
 
 
 export class Employee_Management extends BasePage {
@@ -82,7 +86,7 @@ export class Employee_Management extends BasePage {
     private CancelButton: Locator
     private LeaveManagerPopupDropDown: Locator
     private LeaveManagerActionButton: Locator
-    private LeeaveManagerPopupHeader: Locator
+    private Pop_Up_Header: Locator
     private NoButton: Locator
     private YesButton: Locator
     private AssignButton: Locator
@@ -129,10 +133,21 @@ export class Employee_Management extends BasePage {
     private Approve_Label_Document_type_dropdown: Locator
     private Approve_Label_Employee_dropdown: Locator
     private Approve_Label_Exiting_Document_type: Locator
-    private Approve_Label_Exiting_Employee : Locator
-
-
-
+    private Approve_Label_Exiting_Employee: Locator
+    private Action_button: Locator
+    private Action_Button_popup: Locator
+    private View_button: Locator
+    private Select_action_dropdown: Locator
+    private Reason_Section: Locator
+    private Departments: Locator
+    private Departments_Header: Locator
+    private AddDepartmentButton: Locator
+    private Departments_SearchBar: Locator
+    private No_Of_records: Locator
+    private Department_name: Locator
+    private No_Record_avialable: Locator
+    private updateIcon: Locator
+    private Name_TextArea: Locator
 
     constructor(page: Page) {
         super(page)
@@ -233,7 +248,7 @@ export class Employee_Management extends BasePage {
         this.CancelButton = page.locator("(//button[@type = 'button'])[4]")
         this.LeaveManagerPopupDropDown = page.locator("#react-select-4-input")
         this.LeaveManagerActionButton = page.locator(".btn.btn-danger")
-        this.LeeaveManagerPopupHeader = page.locator("div>div>div>div>h5")
+        this.Pop_Up_Header = page.locator("div>div>div>div>h5")
         this.NoButton = page.locator(".theme-button.bg-grey.mx-3.w-35.cancel-modal-Manager-delete")
         this.YesButton = page.locator("//button[@class = 'theme-button ']")
         this.AssignButton = page.locator(".btn.btn-secondary.m-3")
@@ -305,7 +320,20 @@ export class Employee_Management extends BasePage {
         this.Approve_Label_Employee_dropdown = page.locator("#react-select-3-input")
         this.Approve_Label_Exiting_Document_type = page.locator("tr>td:nth-child(3)")
         this.Approve_Label_Exiting_Employee = page.locator("tr>td:nth-child(2)")
-
+        this.Action_button = page.locator("(//button[@class = 'btn btn-secondary'])[1]")
+        this.Action_Button_popup = page.locator("#staticBackdropLabel")
+        this.View_button = page.locator("//a[text()='View']")
+        this.Select_action_dropdown = page.locator("#documentAction")
+        this.Reason_Section = page.locator("//textarea[@class = 'border']")
+        this.Departments = page.locator("//a[text()='Departments']")
+        this.Departments_Header = page.locator("div>h1")
+        this.AddDepartmentButton = page.locator("//a[text()= '+ Add Department']")
+        this.Departments_SearchBar = page.getByPlaceholder("Search By Name.")
+        this.Department_name = page.locator("tbody>tr>td:nth-child(2)")
+        this.No_Of_records = page.locator(".total")
+        this.No_Record_avialable = page.locator(".fs-4.text-secondary.text-center")
+        this.updateIcon = page.locator("(//i[@class = 'fa fa-edit'])[1]")
+        this.Name_TextArea = page.getByPlaceholder("Enter Department Name")
 
     }
     async Employee() {
@@ -478,16 +506,6 @@ export class Employee_Management extends BasePage {
 
 
         // TC_EM_015
-        function generateRandomString(length) {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            const charactersLength = characters.length;
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * charactersLength));
-            }
-            return result;
-        }
-
         // Generate random first and last names
         var randomFirstName = generateRandomString(8);
         var randomLastName = generateRandomString(10);
@@ -1025,12 +1043,12 @@ export class Employee_Management extends BasePage {
         }
         // TC_EM_073
         await this.LeaveManagerActionButton.click()
-        var LeavePopupheader = await this.LeeaveManagerPopupHeader.textContent()
+        var LeavePopupheader = await this.Pop_Up_Header.textContent()
         expect(LeavePopupheader).toEqual("Are you sure you want to delete ?")
 
         // TC_EM_074
         await this.NoButton.click()
-        await expect(this.LeeaveManagerPopupHeader).toBeHidden()
+        await expect(this.Pop_Up_Header).toBeHidden()
 
         // TC_EM_075
         await this.LeaveManagerActionButton.click()
@@ -1310,7 +1328,7 @@ export class Employee_Management extends BasePage {
         }
 
         // TC_EM_103
-        await this.page.locator("#react-select-2-option-0").click()
+        await this.page.locator("#react-select-2-option-1").click()
         await this.page.locator(".theme-button.ms-2 ").click()
         console.log(await this.page.locator(".Toastify__toast-body").textContent())
         expect(await this.page.locator(".Toastify__toast-body").isVisible())
@@ -1365,17 +1383,16 @@ export class Employee_Management extends BasePage {
                 DropdownTypes.add(dropdownItem.trim());
             }
         }
-        console.log("Unique Approved Document Types:",[...DropdownTypes])
+        console.log("Unique Approved Document Types:", [...DropdownTypes])
 
         expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
     }
 
     async Approve_Document_Employee() {
         // TC_EM_106
-
         await this.approve_document();
         await this.page.waitForTimeout(2000);
-        
+
         const labelCount = await this.Approve_Label_Exiting_Employee.count();
         const uniqueTypes = new Set;
 
@@ -1387,8 +1404,6 @@ export class Employee_Management extends BasePage {
         }
 
         console.log("Unique Approved Employee Types:", [...uniqueTypes]);
-
-
         await this.Approve_Label_Employee_dropdown.click()
         await this.page.waitForTimeout(2000)
         const options = this.page.locator('[id^="react-select-3-option"]');
@@ -1400,10 +1415,317 @@ export class Employee_Management extends BasePage {
                 DropdownTypes.add(dropdownItem.trim());
             }
         }
-        console.log("Droopdown Employee Types:",[...DropdownTypes])
+        console.log("Droopdown Employee Types:", [...DropdownTypes])
 
         expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
-        
     }
 
+    async Approve_Document_Dropdown() {
+        // TC_EM_107
+
+        await this.approve_document();
+        await this.Approve_Label_Document_type_dropdown.click()
+        await this.page.locator("#react-select-2-option-1").click()
+        await this.page.waitForTimeout(500)
+        let SelectedOption = await this.page.locator("(//div[@class = ' css-1dimb5e-singleValue'])[1]").textContent()
+        console.log(SelectedOption)
+
+        await this.page.waitForTimeout(1500)
+        const options = this.Approve_Label_Exiting_Document_type
+        await this.page.waitForTimeout(1500)
+        const dropdownCount = await options.count();
+        const DropdownTypes = new Set
+        for (let i = 0; i < dropdownCount - 1; i++) {
+            const dropdownItem = await options.nth(i).textContent();
+            if (dropdownItem) {
+                DropdownTypes.add(dropdownItem.trim());
+            }
+        }
+        console.log("Droopdown Document type :- ", [...DropdownTypes])
+        expect([...DropdownTypes].sort()).toEqual([SelectedOption])
+    }
+
+
+    async Approve_Employee_Dropdown() {
+        // TC_EM_108
+        await this.approve_document();
+        await this.Approve_Label_Employee_dropdown.click()
+        await this.page.locator("#react-select-3-option-2").click()
+        await this.page.waitForTimeout(500)
+        let SelectedOption = await this.page.locator("(//div[@class = ' css-1dimb5e-singleValue'])[2]").textContent()
+        console.log(SelectedOption)
+
+        await this.page.waitForTimeout(1500)
+        const options = this.Approve_Label_Exiting_Employee
+        await this.page.waitForTimeout(1500)
+        const dropdownCount = await options.count();
+        const DropdownTypes = new Set
+        for (let i = 0; i < dropdownCount - 1; i++) {
+            const dropdownItem = await options.nth(i).textContent();
+            if (dropdownItem) {
+                DropdownTypes.add(dropdownItem.trim());
+            }
+        }
+        console.log("Droopdown Document type :- ", [...DropdownTypes])
+        expect([...DropdownTypes].sort()).toEqual([SelectedOption])
+    }
+
+    async Approve_Document_Action_button() {
+        // TC_EM_109
+        await this.approve_document();
+        await this.Action_button.click()
+        await this.page.waitForTimeout(1000)
+        await this.Action_Button_popup.isVisible()
+        let header = await this.Action_Button_popup.textContent()
+        console.log(header)
+        expect(header).toEqual('Verify Document')
+    }
+
+    async Action_button_popup_cancel() {
+        // TC_EM_110
+        await this.Approve_Document_Action_button()
+        await this.page.locator(".cancel-approve").click()
+        await this.page.waitForTimeout(1000)
+        expect(await this.Action_Button_popup.isHidden()).toBe(true)
+    }
+    async Action_button_popup_Cross_icon() {
+        // TC_EM_111
+        await this.Approve_Document_Action_button()
+        await this.page.locator(".btn-close").click()
+        await this.page.waitForTimeout(1000)
+        expect(await this.Action_Button_popup.isHidden()).toBe(true)
+    }
+
+    async Action_Button_Popup_Approved() {
+        // TC_EM_112
+        await this.Approve_Document_Action_button()
+        try {
+            const [download] = await Promise.all([
+                this.page.waitForEvent("download", { timeout: 5000 }), // Reduced timeout for efficiency
+                this.View_button.click()
+            ]);
+
+            const downloadedFile = download.suggestedFilename();
+            console.log("Downloaded file:", downloadedFile);
+
+            // Ensure the file has a .xlsx extension
+            if (!downloadedFile) {
+                throw new Error(`Invalid file extension: ${downloadedFile}`);
+            }
+
+            // Define file save path
+            const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
+            await download.saveAs(downloadPath);
+
+            // Verify the file exists
+            if (fs.existsSync(downloadPath)) {
+                console.log(`File successfully downloaded: ${downloadPath}`);
+            } else {
+                throw new Error("Error: Downloaded file not found in expected location!");
+            }
+
+            // Assertion to confirm successful XLSX file download
+            expect(fs.existsSync(downloadPath)).toBeTruthy();
+        } catch (error) {
+            console.error("Error during file download:", error);
+        }
+
+        // TC_EM_113
+        await this.page.waitForTimeout(2000)
+        await this.page.locator("//button[@class = 'theme-button ']").click()
+        let Select_action_Dropdown_field = await this.Select_action_dropdown
+
+        var tooltipMessage = await Select_action_Dropdown_field.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+        expect(tooltipMessage).toBe('Please select an item in the list.')
+        await this.page.waitForTimeout(500)
+        // TC_EM_114 -- TC_EM_115
+        await this.Select_action_dropdown.selectOption({ value: 'approved' })
+        await this.page.locator("//button[@class = 'theme-button ']").click()
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+    }
+
+    async Action_Button_Popup_Rejected() {
+        // TC_EM_116
+        await this.Approve_Document_Action_button()
+        await this.Select_action_dropdown.selectOption({ value: 'rejected' })
+        await this.page.waitForTimeout(1000)
+        await this.Reason_Section.isVisible()
+
+        // TC_EM_117
+        await this.page.locator("//button[@class = 'theme-button ']").click()
+        let Reason_Section_Dropdown_field = await this.Reason_Section
+        var tooltipMessage = await Reason_Section_Dropdown_field.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+        expect(tooltipMessage).toBe('Please fill out this field.')
+        await this.page.waitForTimeout(1000)
+
+        // TC_EM_118
+        await this.Reason_Section.fill("Thank you !!")
+        await this.page.locator("//button[@class = 'theme-button ']").click()
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+    }
+    async Department() {
+        // TC_EM_119
+        await this.Employee_Management.click();
+        this.Departments.click()
+        await this.page.waitForTimeout(4000)
+        expect(await this.Departments_Header.isVisible())
+        let header = await this.Departments_Header.textContent()
+        expect(header).toEqual('Departments')
+    }
+    async Department_No_of_records() {
+        // TC_EM_120
+        await this.Department()
+        await this.page.waitForTimeout(2000)
+        let Name_count = await this.Department_name.count()
+        await this.page.waitForTimeout(2000)
+        console.log(Name_count)
+        let total_name = await this.No_Of_records.allTextContents()
+        let totalNameCount = total_name.length > 0 ? parseInt(total_name[0].replace(/\D/g, ''), 10) : 0;
+        await this.page.waitForTimeout(2000)
+        console.log("TotalAsset :  ", totalNameCount)
+    }
+    async Departments_Search_Bar_Valid() {
+        // TC_EM_121
+        await this.Department()
+        await this.page.waitForTimeout(2000)
+        let existingname = await this.Department_name.allTextContents();
+        let Entered_Name = [existingname[0]]
+        console.log("Extracted Existing names :", Entered_Name);
+        await this.Departments_SearchBar.pressSequentially(existingname[0])
+        await this.page.waitForTimeout(2000)
+        let filtered_Name = await this.Department_name
+        let AfterSearchCount = await filtered_Name.count();
+        let AfterSearchTypes = new Set
+        for (let i = 0; i < AfterSearchCount; i++) {
+            const AfterSearchName = await filtered_Name.nth(i).textContent();
+            if (AfterSearchName) {
+                AfterSearchTypes.add(AfterSearchName.trim());
+            }
+        }
+        console.log("After Search Type :- ", [...AfterSearchTypes])
+        expect([...AfterSearchTypes].sort()).toEqual(Entered_Name)
+    }
+    async Departments_Search_Bar_Invalid() {
+        // TC_EM_0122
+        await this.Department()
+        await this.page.waitForTimeout(2000)
+        await this.Departments_SearchBar.pressSequentially('utrewqerwq')
+        await this.page.waitForTimeout(1000)
+        await this.No_Record_avialable.isVisible()
+        let No_record = await this.No_Record_avialable.textContent()
+        console.log(No_record)
+        expect(No_record).toEqual("No Record Available")
+    }
+    async Departments_Update_Icon() {
+        // TC_EM_0123
+        await this.Department()
+        await this.page.waitForTimeout(2000)
+        await this.updateIcon.click()
+        await this.page.waitForTimeout(2000)
+        expect(await this.Pop_Up_Header.isVisible())
+        let header = await this.Pop_Up_Header.textContent()
+        // console.log(header)
+        expect(header).toEqual("Update  Department")
+
+    }
+    async Departments_cancel_button() {
+        // TC_EM_0124
+        await this.Departments_Update_Icon()
+        await this.page.waitForTimeout(2000)
+        await this.page.locator(".cancel-modal").click()
+        await expect(this.Pop_Up_Header).toBeHidden()
+    }
+    async Departments_Cross_Icon() {
+        // TC_EM_0125
+        await this.Departments_Update_Icon()
+        await this.page.waitForTimeout(2000)
+        await this.page.locator(".btn-close").click()
+        await expect(this.Pop_Up_Header).toBeHidden()
+    }
+    async Departments_Pop_up_functionality() {
+        // TC_EM_0126
+        await this.Departments_Update_Icon()
+        await this.page.waitForTimeout(2000)
+        await this.PopUP_Submit_button.click()
+        let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
+        console.log(toast_message)
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+        expect(toast_message).toEqual('Department not updated. Please try again after some time')
+
+
+        // TC_EM_0127
+        await this.page.waitForTimeout(7000)
+        await this.Name_TextArea.clear()
+        await this.PopUP_Submit_button.click()
+        let NameField = await this.Name_TextArea
+        var tooltipMessage = await NameField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+        expect(tooltipMessage).toBe('Please fill out this field.')
+
+        // TC_EM_0128
+        let Department_name = generateRandomString(6);
+        await this.Name_TextArea.pressSequentially(Department_name)
+        await this.PopUP_Submit_button.click()
+        toast_message = await this.page.locator(".Toastify__toast-body").textContent()
+        console.log(toast_message)
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+        expect(toast_message).toEqual('Department successfully updated!')
+    }
+    async Departments_Add_Department() {
+        // TC_EM_129
+        await this.Department()
+        await this.page.waitForTimeout(2000)
+        await this.AddDepartmentButton.click()
+        await expect(this.Pop_Up_Header).toBeVisible()
+    }
+    async Departments_Add_Department_cancel_button() {
+        // TC_EM_0130
+        await this.Departments_Add_Department()
+        await this.page.waitForTimeout(2000)
+        await this.page.locator(".cancel-modal").click()
+        await expect(this.Pop_Up_Header).toBeHidden()
+    }
+    async Departments_Add_Department_Cross_Icon() {
+        // TC_EM_0131
+        await this.Departments_Add_Department()
+        await this.page.waitForTimeout(2000)
+        await this.page.locator(".btn-close").click()
+        await expect(this.Pop_Up_Header).toBeHidden()
+    }
+
+    async Departments_Add_Department_functionality() {
+        // TC_EM_0132
+        await this.Departments_Add_Department()
+        await this.page.waitForTimeout(2000)
+        await this.PopUP_Submit_button.click()
+        var NameField = await this.Name_TextArea
+
+        var tooltipMessage = await NameField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+
+        expect(tooltipMessage).toBe('Please fill out this field.')
+        await this.page.waitForTimeout(6000)
+
+        // TC_EM_0133
+        let Department_name = generateRandomString(6);
+        await this.Name_TextArea.pressSequentially(Department_name)
+        await this.PopUP_Submit_button.click()
+        let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
+        console.log(toast_message)
+        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+        expect(toast_message).toEqual("Department created successfully!")
+    }
+}
+function generateRandomString(length: any) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
