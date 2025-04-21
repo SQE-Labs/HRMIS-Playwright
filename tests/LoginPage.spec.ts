@@ -11,6 +11,7 @@ test('User should be able to login successfully', async ({ page }) => {
     
     await basepage.open('url')
     await Login.login(page , "SuperUser")
+    await basepage.open('url'+"/assetAllocation")
 
     await expect(page.locator("//img[@alt='Caelius Consulting Logo']")).toBeVisible()
     console.log("Login successful: The 'Caelius Consulting Logo' appears at the top-left corner of the dashboard")

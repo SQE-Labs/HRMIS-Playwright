@@ -65,7 +65,9 @@ export class AssetManagementTab extends BasePage{
     }
 
     async collapsesAssetManagementTab(){
-         try{
+        await this.AssetManagement.click()
+        await this.page.waitForTimeout(2000)
+        try{
             await this.AssetManagement.click()
             console.log('Asset management tab collapse Succesfully')
         }catch(error){

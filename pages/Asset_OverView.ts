@@ -7,7 +7,6 @@ import fs from "fs";
 import { assert } from "console";
 import { Alert } from '../Components/Alert'
 
-
 export class OverView extends AssetManagementTab {
     // TC_AM_003
     private OverViewAsset: Locator
@@ -45,9 +44,12 @@ export class OverView extends AssetManagementTab {
     // TC_AM_013
     private Availability_Dropdown: Locator
     // Tc_AM_017
-    public SuperOwnrandomOption : any
-    public OwnerrandomOption  : any
-    public AvailabilityrandomOption : any
+    public SuperOwnrandomOption: any
+    public OwnerrandomOption: any
+    public AvailabilityrandomOption: any
+    // TC_AM_020
+    private AssetOverviewRedirect: Locator
+    static this: any;
 
     constructor(page: Page) {
         super(page)
@@ -55,10 +57,6 @@ export class OverView extends AssetManagementTab {
         this.countInnerAsset = 0
         this.totalAssetsAfterFilter = 0
         this.randomOption = ''
-        // this.SuperOwnrandomOption = ''
-        // this.OwnerrandomOption = ''
-        // this.AvailabilityrandomOption = ''
-
         this.OverViewAsset = page.locator("//a[text()='Asset Overview']")
         this.OverviewHeader = page.locator("//h1[text()='Asset Overview']")
         this.OverViewDropdown = page.locator("#filterAssetType option:nth-child(1)")
@@ -77,6 +75,7 @@ export class OverView extends AssetManagementTab {
         this.SuperOwn_Dropdown = page.locator("[id='superOwnerFilter']")
         this.Owner_Dropdown = page.locator("#ownerFilter")
         this.Availability_Dropdown = page.locator("#availabilityFilter")
+        this.AssetOverviewRedirect = page.locator("div>span>a")
         this.Loader = new Loader(page)
         this.Alert = new Alert(page)
     }
@@ -93,7 +92,10 @@ export class OverView extends AssetManagementTab {
     }
 
     async verifyHeader() {
-        const headerText = await this.OverviewHeader.textContent();  // ✅ Get actual text content
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
+        await this.page.waitForTimeout(2000)
+        const headerText = await this.OverviewHeader.textContent();  //Get actual text content
         if (headerText?.trim() === "Asset Overview") {
             console.log("Redirected towards :-", headerText);
         } else {
@@ -107,12 +109,13 @@ export class OverView extends AssetManagementTab {
     }
 
     async verifyViewCards() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         await expect(this.Loader.getThreeDotClass()).not.toBeAttached() // waiting for three dots appear while clicking on Assest Overview
         const cards = await this.OverViewCards.allTextContents()
         console.log(cards)
         this.Cardscount = await this.OverViewCards.count()
         console.log("Total Cards :- ", this.Cardscount)
-        return this.Cardscount   // return total number of count 
 
         let isMatched = true
         if (cards.length !== this.Cardscount) {
@@ -124,15 +127,18 @@ export class OverView extends AssetManagementTab {
         } else {
             console.log("Some cards title does not matched")
         }
+        return this.Cardscount
     }
 
     // TC_AM_004
     async verifyTotalAsset() {
+        await expect(this.Loader.getThreeDotClass()).not.toBeAttached() // waiting for three dots appear while clicking on Assest Overview
+
         const totalAssetTexts = await this.TotalAsset.allTextContents() // Get by text 
 
         // we only want number so i use parseInt to get number only
         const totalAssetCount = totalAssetTexts.length > 0 ? parseInt(totalAssetTexts[0].replace(/\D/g, ''), 10) : 0;
-
+        await this.page.waitForTimeout(1000)
         console.log("TotalAsset :  ", totalAssetCount)
         let isAssetCountMatch = true
         if (totalAssetCount === 0) {
@@ -150,10 +156,12 @@ export class OverView extends AssetManagementTab {
     // Random Selection from Dropdown
     // TC_AM_005
     async Random_Asse_type_Selection() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         console.log("Click on Asset Type Dropdown");
 
         // Wait for the dropdown to be visible and enabled
-        await this.AssetType_Dropdown.waitFor({ state: "visible", timeout: 5000 });
+        await this.AssetType_Dropdown.waitFor({ state: "visible", timeout: 2000 });
 
         // Get all available dropdown options
         const options = await this.AssetType_Dropdown.locator("option").allInnerTexts();
@@ -193,10 +201,7 @@ export class OverView extends AssetManagementTab {
     // TC_AM_006
     async VerifyFilter() {
         console.log("Verifying Filter button functionality...");
-
-        // Reload the page to reset the state
-        await this.page.reload();
-
+        await this.page.reload()
         // Ensure the default selection is "All"
         await expect(this.OverViewDropdown).toHaveText("All");
 
@@ -223,7 +228,7 @@ export class OverView extends AssetManagementTab {
         await this.Filter.click();
         await expect(this.Loader.getThreeDotClass()).not.toBeAttached();
 
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(1000);
         this.Cardscount = await this.OverViewCards.count();
         totalAssetsAfterFilter = await this.verifyTotalAsset();
         console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
@@ -247,7 +252,7 @@ export class OverView extends AssetManagementTab {
         // Click the Filter button
         await this.Filter.click();
         await expect(this.Loader.getThreeDotClass()).not.toBeAttached();
-        await this.page.waitForTimeout(1500); // Reduced wait time for efficiency
+        await this.page.waitForTimeout(1000); // Reduced wait time for efficiency
 
         this.Cardscount = await this.OverViewCards.count();
         const totalAssetsAfterFilter = await this.verifyTotalAsset();
@@ -255,8 +260,7 @@ export class OverView extends AssetManagementTab {
 
         // Check if "No Record Available!" message is present
         const noRecordText = "No Record Available!";
-        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)"); // Ensure correct selector
-
+        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
         let emptyRecordText = "";
         if (noRecordElement) {
             emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
@@ -269,6 +273,7 @@ export class OverView extends AssetManagementTab {
 
             // Click Export button
             await this.Export.click();
+            await this.page.waitForTimeout(1500);
             await expect(this.Alert.getAlertElement()).toBeVisible();
 
             const alertMessage = await this.Alert.getAlertText();
@@ -287,7 +292,7 @@ export class OverView extends AssetManagementTab {
             try {
                 // Wait for the file download event before clicking Export
                 const [download] = await Promise.all([
-                    this.page.waitForEvent("download", { timeout: 10000 }), // Reduced timeout for efficiency
+                    this.page.waitForEvent("download", { timeout: 5000 }), // Reduced timeout for efficiency
                     this.Export.click()
                 ]);
 
@@ -319,10 +324,13 @@ export class OverView extends AssetManagementTab {
     }
     // TC_AM_008
     async Details_appear_on_card() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         let Details_display = ['Assigned', 'Available', 'Total']
+        await this.page.waitForTimeout(500);
         await this.page.reload();
-        await this.AssetType_Dropdown.waitFor({ state: 'visible', timeout: 5000 });
-        await this.page.waitForTimeout(2000);
+        await this.AssetType_Dropdown.waitFor({ state: 'visible', timeout: 1000 });
+        await this.page.waitForTimeout(1000);
         await this.AssetType_Dropdown.selectOption({ value: "1" });
         const selectedValue = await this.AssetType_Dropdown.inputValue();
         console.log(`Selected asset type: ${selectedValue}`);
@@ -338,14 +346,17 @@ export class OverView extends AssetManagementTab {
     }
     // TC_AM_009
     async Card_openup() {
+        await this.expandAssetManagementTab()
+        await this.OverViewAsset.click()
         await this.AssetType_Dropdown.waitFor({ state: 'visible', timeout: 5000 });
-        await this.page.waitForTimeout(2000);
-        await this.AssetType_Dropdown.selectOption({ value: "2" });
+        await this.AssetType_Dropdown.selectOption({ value: "4" });
         await this.Filter.click()
+        await this.page.waitForTimeout(2000);
         await this.Card.click()
+        await this.page.waitForTimeout(2000);
         await expect(this.Loader.getSpinLoader()).not.toBeAttached();
         let header = await this.CardHeader.textContent()
-        if (header?.trim() === 'Keyboard') {
+        if (header?.trim() === 'Desktop PC') {
             console.log("Redirected towards :-", header)
         } else {
             console.log("Unexpected header text found")
@@ -370,18 +381,19 @@ export class OverView extends AssetManagementTab {
         if (totalAssetCountInsideCard === 0) {
             console.warn("No assets found after filtering. This is expected behavior if no matching assets exist.");
         } else if (totalAssetCountInsideCard === this.countInnerAsset) {
-            console.log("Count of (all cards and total assets) Match successfully");
+            console.log("");
             isAssetCountMatchinsidecard = true; // Set to true when counts match
         } else {
             console.error(`Mismatch: 'number of cards' is not equal to 'totalAssets': Expected ${this.countInnerAsset}, but got ${totalAssetCountInsideCard}`);
         }
+
     }
     // TC_AM_011
     async SuperOwnDropdown() {
         console.log("Click on Super Own Dropdown");
 
         // Wait for the dropdown to be visible and enabled
-        await this.SuperOwn_Dropdown.waitFor({ state: "visible", timeout: 5000 });
+        await this.SuperOwn_Dropdown.waitFor({ state: "visible", timeout: 2000 });
 
         // Get all available dropdown options
         let SuperOwnoptions = await this.SuperOwn_Dropdown.locator("option").allInnerTexts();
@@ -401,12 +413,12 @@ export class OverView extends AssetManagementTab {
         // Randomly select an option
         const SuperOwnrandomOption = SuperOwnvalidOptions[Math.floor(Math.random() * SuperOwnvalidOptions.length)].trim();
         console.log(`Randomly selected option: ${SuperOwnrandomOption}`);
-        
+
         // Select the option with error handling
         try {
             await this.SuperOwn_Dropdown.selectOption({ label: SuperOwnrandomOption });
             console.log(`Successfully selected: ${SuperOwnrandomOption}`);
-            
+
         } catch (error) {
             console.error(`Failed to select option: ${SuperOwnrandomOption}`, error);
             return null;
@@ -421,7 +433,7 @@ export class OverView extends AssetManagementTab {
         console.log("Click on Owner Dropdown");
 
         // Wait for the dropdown to be visible and enabled
-        await this.Owner_Dropdown.waitFor({ state: "visible", timeout: 5000 });
+        await this.Owner_Dropdown.waitFor({ state: "visible", timeout: 2000 });
 
         // Get all available dropdown options
         const Owneroptions = await this.Owner_Dropdown.locator("option").allInnerTexts();
@@ -437,11 +449,11 @@ export class OverView extends AssetManagementTab {
             console.error("No valid options found in the dropdown.");
             return null;
         }
-        
+
         // Randomly select an option
         const OwnerrandomOption = OwnervalidOptions[Math.floor(Math.random() * OwnervalidOptions.length)].trim();
         console.log(`Randomly selected option: ${OwnerrandomOption}`);
-       
+
         // Select the option with error handling
         try {
             await this.Owner_Dropdown.selectOption({ label: OwnerrandomOption });
@@ -454,8 +466,8 @@ export class OverView extends AssetManagementTab {
         // Verify the selected option
         const OwwnerselectedValue = (await this.Owner_Dropdown.inputValue()).trim();
         console.log(`Selected value: ${OwwnerselectedValue}`);
-        
-        return this.OwnerrandomOption
+
+        return OwwnerselectedValue
 
     }
     // TC_AM_013
@@ -463,7 +475,7 @@ export class OverView extends AssetManagementTab {
         console.log("Click on Availability Dropdown");
 
         // Wait for the dropdown to be visible and enabled
-        await this.Availability_Dropdown.waitFor({ state: "visible", timeout: 5000 });
+        await this.Availability_Dropdown.waitFor({ state: "visible", timeout: 2000 });
 
         // Get all available dropdown options
         const Availabilityoptions = await this.Availability_Dropdown.locator("option").allInnerTexts();
@@ -483,7 +495,7 @@ export class OverView extends AssetManagementTab {
         // Randomly select an option
         const AvailabilityrandomOption = AvailabilityvalidOptions[Math.floor(Math.random() * AvailabilityvalidOptions.length)].trim();
         console.log(`Randomly selected option: ${AvailabilityrandomOption}`);
-       
+
         // Select the option with error handling
         try {
             await this.Availability_Dropdown.selectOption({ label: AvailabilityrandomOption });
@@ -496,13 +508,14 @@ export class OverView extends AssetManagementTab {
         // Verify the selected option
         const AvailabilityselectedValue = (await this.Availability_Dropdown.inputValue()).trim();
         console.log(`Selected value: ${AvailabilityselectedValue}`);
+        return AvailabilityselectedValue
 
-        return this.AvailabilityrandomOption
+
     }
     // I merge 3 test script in one TC_AM_014 || TC_AM_015 || TC_AM_016
     async CheckOptionVisible() {
         console.log("Check All option is selected and In Owner dropdown All options are visible")
-        let SuperOwnoptions= await this.SuperOwn_Dropdown.locator("option").allTextContents();
+        let SuperOwnoptions = await this.SuperOwn_Dropdown.locator("option").allTextContents();
         let superOwncount = SuperOwnoptions.length
         console.log(superOwncount)
         for (let x = 0; x < superOwncount; x++) {
@@ -519,12 +532,144 @@ export class OverView extends AssetManagementTab {
             console.log(VisibleOwnerOption)
 
             expect(Ownerdropdown_Options).toEqual(VisibleOwnerOption);
+
         }
     }
-    // TC_AM_017
+    // I merge 2 test case in one TC_AM_017 & TC_AM_018
     async CardFilter() {
         console.log("Collecting selected dropdown values...");
-        
+        let superOwnValue = await this.SuperOwnDropdown();
+        let ownerValue = await this.Ownerdropdown();
+        let availabilityValue = await this.Availabilitydropdown();
+
+        // Store the selected values in an array or object
+        let cardsData = {
+            superOwnValue,
+            ownerValue,
+            availabilityValue
+        };
+        console.log("Selected Dropdown Values:", cardsData);
+        await this.Filter.click()
+        await this.page.waitForTimeout(500);
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached();
+
+        await this.page.waitForTimeout(500);
+        const totalAssetsAfterFilter = await this.verifyTotalAsset();
+        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
+        const noRecordText = "No Record Available!";
+        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
+        let emptyRecordText = "";
+        if (noRecordElement) {
+            emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
+        }
+        if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
+            console.log("Case 1: No records available after filtering.");
+
+            // Click Export button
+            const downloadPromise = this.page.waitForEvent('download').catch(() => null); // Capture any download event
+            await this.Export.click();
+            await this.page.waitForTimeout(1500);
+
+            try {
+                // Check if alert appears
+                await expect(this.Alert.getAlertElement()).toBeVisible();
+                const alertMessage = await this.Alert.getAlertText();
+                console.log("Alert message appeared as expected:", alertMessage);
+
+                // Ensure the correct alert message appears
+                expect(alertMessage).toContain(noRecordText);
+
+                console.log(" Export did NOT trigger a file download. Everything is correct.");
+            } catch (error) {
+                console.warn("Alert did not appear, checking for file download...");
+
+                const download = await downloadPromise;
+                if (download) {
+                    console.log(" File was downloaded when no records were available!");
+                } else {
+                    console.log("Neither an alert appeared nor was a file downloaded.");
+                }
+            }
+
+            console.log("Running alternative test case after failed export.");
+        }
+        else {
+            console.log(" Case 2: One or more assets found. Proceeding with export...");
+
+            try {
+                // Wait for the file download event before clicking Export
+                const [download] = await Promise.all([
+                    this.page.waitForEvent("download", { timeout: 2000 }), // Reduced timeout for efficiency
+                    this.Export.click()
+                ]);
+
+                const downloadedFile = download.suggestedFilename();
+                console.log("Downloaded file:", downloadedFile);
+
+                // Ensure the file has a .xlsx extension
+                if (!downloadedFile.endsWith(".xlsx")) {
+                    throw new Error(`Invalid file extension: ${downloadedFile}`);
+                }
+
+                // Define file save path
+                const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
+                await download.saveAs(downloadPath);
+
+                // Verify the file exists
+                if (fs.existsSync(downloadPath)) {
+                    console.log(`File successfully downloaded: ${downloadPath}`);
+                } else {
+                    throw new Error("Error: Downloaded file not found in expected location!");
+                }
+
+                // Assertion to confirm successful XLSX file download
+                expect(fs.existsSync(downloadPath)).toBeTruthy();
+            } catch (error) {
+                console.error("Error during file download:", error);
+            }
+        }
+    }
+    // TC_AM_019
+
+    async Sorting() {
+        await this.page.reload();
+        await this.page.waitForTimeout(3000);
+        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
+
+        // Click to sort in ascending order
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        let isSortedAsc = true;
+        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
+            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
+                isSortedAsc = false;
+                break;
+            }
+        }
+        expect(isSortedAsc).toBe(true);
+
+        // Click again to sort in descending order
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+
+        let isSortedDesc = true;
+        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
+            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
+                isSortedDesc = false;
+                break;
+            }
+        }
+        expect(isSortedDesc).toBe(true);
+    }
+
+    // TC_AM_020
+    async Redirected() {
+        await this.AssetOverviewRedirect.click()
+        await this.page.waitForTimeout(1000)
+        await this.verifyHeader()
     }
 }
+
 
