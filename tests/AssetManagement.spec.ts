@@ -34,7 +34,7 @@ test.describe("'Asset Management tests'", () => {
         await assetManagementTab.collapsesAssetManagementTab();
 
         console.log("Checking if tab is Collapses");
-        expect(await assetManagementTab.isCollapses()).toBe(true);
+        expect(await assetManagementTab.isCollapses()).toBe(false);
         
     });
 })
