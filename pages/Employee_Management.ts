@@ -1720,7 +1720,7 @@ export class Employee_Management extends BasePage {
         expect(toast_message).toEqual("Department created successfully!")
     }
 }
-function generateRandomString(length: any) {
+export function generateRandomString(length: any) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let result = '';
     const charactersLength = characters.length;

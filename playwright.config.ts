@@ -25,7 +25,7 @@ export default defineConfig({
   // "tests/Asset_Allocation.spec.ts",
   // // "tests/Asset_DeAllocation.spec.ts",
   //  // "tests/Asset_OverView.spec.ts",
-  // //  "tests/AssetManagement.spec.ts",
+  //  "tests/AssetManagement.spec.ts",
   // //  "LoginPage.spec.ts"
   // ],
   fullyParallel: true,
