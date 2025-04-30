@@ -52,4 +52,19 @@ test.describe("Asset Enrollment page", () => {
     test("Create_Asset_Type_Created :- ", async ({ page }) => {
         await Enrollment.Create_Asset_Type_Created()
     })
+    test("Create_Asset_Type_Sorting :- ", async ({ page }) => {
+        await Enrollment.Create_Asset_type_Sorting()
+    })
+    test("Asset_Type_request_Status_Approve_Status :- ", async ({ page }) => {
+        await Enrollment.Asset_Type_request_Status_Approve_Status()
+    })
+    test("Asset_Type_request_Status_Reject_Status :- ", async ({ page }) => {
+        await Enrollment.Asset_Type_request_Status_Reject_Status()
+    })
+    test("Asset_Type_request_Approve_Date :- ", async ({ page }) => {
+        await Enrollment.Asset_Type_request_Approve_Date()
+    })
+    test.only("Asset_Type_request_Reject_Date :- ", async ({ page }) => {
+        await Enrollment.Asset_Type_request_Reject_Date()
+    })
 })

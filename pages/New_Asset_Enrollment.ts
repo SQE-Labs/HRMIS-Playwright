@@ -47,7 +47,10 @@ export class Asset_Enrollment extends BasePage {
     private Pop_up_cancel_button: Locator
     private Pop_up_cross_icon: Locator
     private Popupmessage: Locator
-    private Asset_Type_Name : Locator
+    private Asset_Type_Name: Locator
+    private Approve_Asset_Type_Request: Locator
+    private View_Button: Locator
+    private Action_DropDown: Locator
     private Loader: Loader
 
 
@@ -103,6 +106,9 @@ export class Asset_Enrollment extends BasePage {
         this.Pop_up_cancel_button = page.locator("(//button[@type= 'button'])[6]")
         this.Pop_up_cross_icon = page.locator(".btn-close")
         this.Asset_Type_Name = page.locator("tr>td:nth-child(2)")
+        this.Approve_Asset_Type_Request = page.locator("#tab3-tab")
+        this.View_Button = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a')
+        this.Action_DropDown = page.locator("#status")
         this.Loader = new Loader(page)
     }
 
@@ -657,7 +663,7 @@ export class Asset_Enrollment extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
 
         // Empty Comment Field
-        await Asset_name.fill('Addy')
+        await Asset_name.fill(generateRandomString(5))
         await this.page.waitForTimeout(500)
         await this.Pop_up_submit_button.click()
         let Comment_field = this.comment;
@@ -672,6 +678,8 @@ export class Asset_Enrollment extends BasePage {
         await this.page.waitForTimeout(2000)
         // When user try to enter more then 40 characters in Asset name field.
         try {
+            let Asset_name = this.Pop_up_asset_name_field;
+            await Asset_name.fill(generateRandomString(5))
             let text = generateRandomString(41)
             await this.comment.fill(text);
             await this.Pop_up_submit_button.click();
@@ -733,6 +741,7 @@ export class Asset_Enrollment extends BasePage {
     }
 
     async Create_Asset_Type_Created() {
+        // TC_AM_132
         await this.Asset_Type_Request_Create_asset_type_request()
         let name = generateRandomString(8)
         await this.Pop_up_asset_name_field.fill(name)
@@ -740,8 +749,251 @@ export class Asset_Enrollment extends BasePage {
         await this.Pop_up_submit_button.click()
         await this.page.waitForTimeout(6000)
 
-        
+        let Names = new Set
 
+        let count = await this.Asset_Type_Name.count()
+        for (let i = 0; i < count; i++) {
+            let text = await this.Asset_Type_Name.nth(i).textContent()
+            if (text) {
+                Names.add(text.trim())
+            }
+        }
+        expect(Names).toContain(name)
     }
 
+    async Create_Asset_type_Sorting() {
+        // TC_AM_133
+        await this.Asset_Type_Request()
+        await this.page.waitForTimeout(3000);
+        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
+
+        // Click to sort in ascending order
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        let isSortedAsc = true;
+        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
+            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
+                isSortedAsc = false;
+                break;
+            }
+        }
+        expect(isSortedAsc).toBe(true);
+
+        // Click again to sort in descending order
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+
+        let isSortedDesc = true;
+        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
+            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
+                isSortedDesc = false;
+                break;
+            }
+        }
+        expect(isSortedDesc).toBe(true);
+    }
+
+    async Asset_Type_request_Status_Approve_Status() {
+        // TC_AM_134   Step-7
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await this.page.waitForTimeout(4000)
+        if (await this.page.locator(".fs-4").isVisible()) {
+            let noRecordText = await this.page.locator(".fs-4").textContent()
+            expect(noRecordText).toEqual("No records available")
+            return
+        }
+        await this.View_Button.click()
+        await this.page.waitForTimeout(1000)
+        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
+        let Name = name?.trim()
+        console.log("Approved name:", Name)
+
+        await this.page.waitForTimeout(1000)
+        await this.Action_DropDown.click()
+        await this.Action_DropDown.selectOption({ value: 'APPROVED' })
+        await this.page.waitForTimeout(2000)
+        await this.comment.fill("Thank you!!")
+        await this.page.locator("//button[@type = 'submit']").click()
+        await this.page.waitForTimeout(1000)
+        await this.Asset_type_Request.click()
+        await this.page.waitForTimeout(5000)
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+
+        let count = await this.Asset_Type_Name.count()
+        let found = false
+        let Status
+        for (let i = 0; i < count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                // Assuming the status is in the next sibling <td>
+                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent()
+                console.log('Status : - ', Status)
+                found = true
+                break
+            }
+        }
+        expect(Status).toEqual("APPROVED")
+        if (!found) {
+            console.log("Name not found in the list.")
+        }
+    }
+    async Asset_Type_request_Status_Reject_Status() {
+        // TC_AM_134 Step-14
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await this.page.waitForTimeout(4000)
+        if (await this.page.locator(".fs-4").isVisible()) {
+            let noRecordText = await this.page.locator(".fs-4").textContent()
+            expect(noRecordText).toEqual("No records available")
+            return
+        }
+        await this.View_Button.click()
+        await this.page.waitForTimeout(1000)
+        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
+        let Name = name?.trim()
+        console.log("Rejected name:", Name)
+
+        await this.page.waitForTimeout(1000)
+        await this.Action_DropDown.click()
+        await this.Action_DropDown.selectOption({ value: 'REJECTED' })
+        await this.page.waitForTimeout(2000)
+        await this.comment.fill("Thank you!!")
+        await this.page.locator("//button[@type = 'submit']").click()
+        await this.page.waitForTimeout(1000)
+        await this.Asset_type_Request.click()
+        await this.page.waitForTimeout(5000)
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+
+        let count = await this.Asset_Type_Name.count()
+        let found = false
+        let Status
+        for (let i = 0; i < count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                // Assuming the status is in the next sibling <td>
+                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent()
+                console.log('Status : - ', Status)
+                found = true
+                break
+            }
+        }
+        expect(Status).toEqual("REJECTED")
+        if (!found) {
+            console.log("Name not found in the list.")
+        }
+    }
+
+    async Asset_Type_request_Approve_Date() {
+        // TC_AM_135 Step-7
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await this.page.waitForTimeout(4000)
+        if (await this.page.locator(".fs-4").isVisible()) {
+            let noRecordText = await this.page.locator(".fs-4").textContent()
+            expect(noRecordText).toEqual("No records available")
+            return
+        }
+        await this.View_Button.click()
+        await this.page.waitForTimeout(1000)
+        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
+        let Name = name?.trim()
+        console.log("Approved name:", Name)
+
+        await this.page.waitForTimeout(1000)
+        await this.Action_DropDown.click()
+        await this.Action_DropDown.selectOption({ value: 'APPROVED' })
+        await this.page.waitForTimeout(2000)
+        await this.comment.fill("Thank you!!")
+        await this.page.locator("//button[@type = 'submit']").click()
+        await this.page.waitForTimeout(1000)
+        await this.Asset_type_Request.click()
+        await this.page.waitForTimeout(5000)
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+
+        let count = await this.Asset_Type_Name.count()
+        let found = false
+        let ApproveDate
+        for (let i = 0; i < count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                // Assuming the status is in the next sibling <td>
+                ApproveDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent()
+                console.log('Approved Date : - ', ApproveDate)
+                found = true
+                break
+            }
+        }
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(now);
+
+        console.log(formattedDate);
+        expect(ApproveDate).toEqual(formattedDate)
+        if (!found) {
+            console.log("Name not found in the list.")
+        }
+    }
+    async Asset_Type_request_Reject_Date() {
+        // TC_AM_135 Step-14
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await this.page.waitForTimeout(4000)
+        if (await this.page.locator(".fs-4").isVisible()) {
+            let noRecordText = await this.page.locator(".fs-4").textContent()
+            expect(noRecordText).toEqual("No records available")
+            return
+        }
+        await this.View_Button.click()
+        await this.page.waitForTimeout(1000)
+        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
+        let Name = name?.trim()
+        console.log("Reject name:", Name)
+
+        await this.page.waitForTimeout(1000)
+        await this.Action_DropDown.click()
+        await this.Action_DropDown.selectOption({ value: 'REJECTED' })
+        await this.page.waitForTimeout(2000)
+        await this.comment.fill("Thank you!!")
+        await this.page.locator("//button[@type = 'submit']").click()
+        await this.page.waitForTimeout(1000)
+        await this.Asset_type_Request.click()
+        await this.page.waitForTimeout(5000)
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+
+        let count = await this.Asset_Type_Name.count()
+        let found = false
+        let RejectedDate
+        for (let i = 0; i < count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                // Assuming the status is in the next sibling <td>
+                RejectedDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent()
+                console.log('Reject Date : - ', RejectedDate)
+                found = true
+                break
+            }
+        }
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(now);
+
+        console.log(formattedDate);
+        expect(RejectedDate).toEqual(formattedDate)
+        if (!found) {
+            console.log("Name not found in the list.")
+        }
+    }
 }
