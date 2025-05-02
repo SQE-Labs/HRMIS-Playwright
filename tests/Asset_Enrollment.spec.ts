@@ -37,7 +37,7 @@ test.describe("Asset Enrollment page", () => {
     test("New Asset Enrollment Asset type request create  asset type empty field", async ({ page }) => {
         await Enrollment.Asset_type_request_empty_field()
     })
-    test("Asset_type_request_Asset_Name_field_More_Than_40_Characters ", async ({ page }) => {
+    test.only("Asset_type_request_Asset_Name_field_More_Than_40_Characters ", async ({ page }) => {
         await Enrollment.Asset_type_request_Asset_Name_field_Morethen40Characters()
     })
     test("Asset_type_request_Asset_Name_field_Only_Special_or_Number ", async ({ page }) => {
@@ -64,7 +64,25 @@ test.describe("Asset Enrollment page", () => {
     test("Asset_Type_request_Approve_Date :- ", async ({ page }) => {
         await Enrollment.Asset_Type_request_Approve_Date()
     })
-    test.only("Asset_Type_request_Reject_Date :- ", async ({ page }) => {
+    test("Asset_Type_request_Reject_Date :- ", async ({ page }) => {
         await Enrollment.Asset_Type_request_Reject_Date()
+    })
+    test("Approve_Asset_type_request_No_record :- ", async ({ page }) => {
+        await Enrollment.Approve_Asset_type_request_No_record()
+    })
+    test("Approve_Asset_type_request_Verification :- ", async ({ page }) => {
+        await Enrollment.Approve_Asset_type_request_verfication()
+    })
+    test("Approve_Asset_type_request_Approved :- ", async ({ page }) => {
+        await Enrollment.Approve_Asset_type_request_Approved()
+    })
+    test("Approve_Asset_type_request_Rejected :- ", async ({ page }) => {
+        await Enrollment.Approve_Asset_type_request_Rejected()
+    })
+    test.only("Approve_Asset_type_request_Cross :- ", async ({ page }) => {
+        await Enrollment.Approve_Asset_type_request_Cross()
+    })
+    test.only("Approve_Asset_type_request_Cancel :- ", async ({ page }) => {
+        await Enrollment.Approve_Asset_type_request_Cancel()
     })
 })

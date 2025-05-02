@@ -996,4 +996,140 @@ export class Asset_Enrollment extends BasePage {
             console.log("Name not found in the list.")
         }
     }
-}
+
+    async Approve_Asset_type_request_No_record(){
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        if (await this.page.locator(".fs-4").isVisible()) {
+            let noRecordText = await this.page.locator(".fs-4").textContent()
+            console.log("No records available")
+            expect(noRecordText).toEqual("No records available")
+            return
+        }else{
+            console.log("Assets are Present")
+        }
+    }
+
+    async Approve_Asset_type_request_verfication() {
+        await this.New_enrollment_page();
+        await this.page.waitForTimeout(2000);
+    
+        await this.Asset_type_Request.click();
+        await this.Create_Asset_type_button.click();
+        await this.page.waitForTimeout(500);
+    
+        const name = generateRandomString(8);
+        await this.Pop_up_asset_name_field.fill(name);
+        await this.comment.fill(name);
+        await this.Pop_up_submit_button.click();
+        await this.page.waitForTimeout(6000);
+    
+        const createdNames = new Set<string>();
+        const createdCount = await this.Asset_Type_Name.count();
+        for (let i = 0; i < createdCount; i++) {
+            const text = await this.Asset_Type_Name.nth(i).textContent();
+            if (text) {
+                createdNames.add(text.trim());
+            }
+        }
+    
+        expect(createdNames).toContain(name);
+    
+        await this.Approve_Asset_Type_Request.click();
+        await this.page.waitForTimeout(3000)
+        const approvedNames = new Set<string>();
+        const approveCount = await this.Asset_Type_Name.count();
+        for (let i = 0; i < approveCount; i++) {
+            const text = await this.Asset_Type_Name.nth(i).textContent();
+            if (text) {
+                approvedNames.add(text.trim());
+            }
+        }
+        expect(approvedNames).toContain(name);
+    }
+
+    async Approve_Asset_type_request_Approved(){
+        // TC_AM_141
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.View_Button.click()
+        await this.Pop_up_submit_button.click()
+
+        let Action_DropDown = await this.Action_DropDown
+
+        var tooltipMessage = await Action_DropDown.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+
+        expect(tooltipMessage).toBe('Please select an item in the list.')
+
+        await this.page.waitForTimeout(1000)
+
+        await this.Action_DropDown.selectOption({value : 'APPROVED'})
+
+        await this.Pop_up_submit_button.click()
+
+        let Comment_field = await this.comment
+
+        var tooltipMessage = await Comment_field.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(tooltipMessage);
+
+        expect(tooltipMessage).toBe('Please fill out this field.')
+
+
+        await this.page.waitForTimeout(1000)
+
+        await this.comment.fill("Thank you !!")
+
+        await this.Pop_up_submit_button.click()
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        await this.page.locator(".Toastify__toast-body").isVisible()
+    }
+
+    async Approve_Asset_type_request_Rejected(){
+        // TC_AM_142
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.View_Button.click()
+
+        await this.Action_DropDown.selectOption({value : 'REJECTED'})
+        await this.comment.fill("Sorry !!")
+        await this.Pop_up_submit_button.click()
+
+        console.log(await this.page.locator(".Toastify__toast-body").textContent())
+        await this.page.locator(".Toastify__toast-body").isVisible()
+    }
+
+    async Approve_Asset_type_request_Cross(){
+        // TC_AM_143
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.View_Button.click()
+        await this.Pop_up_cross_icon.click()
+        await this.page.waitForTimeout(2000)
+        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden()
+
+
+
+    }
+
+    async Approve_Asset_type_request_Cancel(){
+        // TC_AM_144
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.View_Button.click()
+        await this.Pop_up_cancel_button.click()
+        await this.page.waitForTimeout(2000)
+        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden()
+    }
+
+    
+}    
