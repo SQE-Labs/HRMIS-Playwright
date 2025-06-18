@@ -3,12 +3,8 @@ import { AssetManagementTab } from "./AssetManagementTab";
 import { Loader } from "../Components/Loaders";
 import { BasePage } from "./BasePage";
 import { OverView } from "./Asset_OverView";
-import { text } from "stream/consumers";
-import { count } from "console";
 import { Asset_Allocation } from "./Asset_Allocation";
 import { Asset_DeAllocation } from '../pages/Asser_DeAllocation';
-import { Verify } from "crypto";
-import exp from "constants";
 import { generateRandomString } from "./Employee_Management"
 
 export class Asset_Enrollment extends BasePage {
@@ -683,7 +679,6 @@ export class Asset_Enrollment extends BasePage {
             let text = generateRandomString(41)
             await this.comment.fill(text);
             await this.Pop_up_submit_button.click();
-            // Assuming the validation error is shown as a text element
             let Message = await this.ValidationMessage.textContent()
             console.log(Message)
             // Wait for it to appear and assert its visibility
@@ -1125,11 +1120,172 @@ export class Asset_Enrollment extends BasePage {
         await this.page.waitForTimeout(2000)
         await this.Approve_Asset_Type_Request.click()
         await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForSelector('//div[@id="tab3"]//tbody/tr[1]/td[6]/a')
         await this.View_Button.click()
+        await this.page.waitForTimeout(500)
         await this.Pop_up_cancel_button.click()
-        await this.page.waitForTimeout(2000)
+        await this.page.waitForTimeout(3000)
         await expect(this.page.locator("#staticBackdropLabel")).toBeHidden()
     }
 
-    
+    async Approve_Asset_type_request_comment_Approve(){
+        // TC_AM_145
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.View_Button.click()
+        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
+        let Name = name?.trim()
+        console.log("Approve name:", Name)
+        await this.Action_DropDown.selectOption({value : 'APPROVED'})
+        let comment = "Thank you for conformation !!"
+        await this.comment.fill(comment)
+        await this.Pop_up_submit_button.click()
+
+        await this.page.waitForTimeout(5000)
+
+        await this.Asset_type_Request.click()
+        await this.page.waitForTimeout(5000)
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+
+        let count = await this.Asset_Type_Name.count()
+        let found = false
+        let Status
+        for (let i = 0; i <= count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                // Assuming the status is in the next sibling <td>
+                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent()
+                console.log('Status : - ', Status)
+                found = true
+                break
+            }
+        }
+        expect(Status).toEqual(comment)
+        if (!found) {
+            console.log("Comment Doesn't matched.")
+        }
+        
+    }
+
+    async Approve_Asset_type_request_comment_rejected(){
+        // TC_AM_145
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.View_Button.click()
+        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
+        let Name = name?.trim()
+        console.log("Reject name:", Name)
+        await this.Action_DropDown.selectOption({value : 'REJECTED'})
+        let comment = "Thank you for conformation !!"
+        await this.comment.fill(comment)
+        await this.Pop_up_submit_button.click()
+
+        await this.page.waitForTimeout(5000)
+
+        await this.Asset_type_Request.click()
+        await this.page.waitForTimeout(5000)
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+
+        await this.page.waitForTimeout(2000)
+        let count = await this.Asset_Type_Name.count()
+        console.log(count)
+        let found = false
+        let Status
+        for (let i = 0; i <= count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                // Assuming the status is in the next sibling <td>
+                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent()
+                console.log('Status : - ', Status)
+                found = true
+                break
+            }
+        }
+        expect(Status).toEqual(comment)
+        if (!found) {
+            console.log("Comment Doesn't matched.")
+        }
+    }
+
+    async correct_request_date_appear(){
+        // TC_AM_146
+        const currentDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit'
+        });
+        
+        console.log(currentDate);
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Asset_type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(3000)
+        await this.Create_Asset_type_button.click()
+        const name = generateRandomString(8);
+        await this.Pop_up_asset_name_field.fill(name);
+        await this.comment.fill(name);
+        await this.Pop_up_submit_button.click();
+        await this.page.waitForTimeout(6000);
+        await this.Approve_Asset_Type_Request.click()
+        
+        await this.page.waitForTimeout(5000)
+        let count = await this.Asset_Type_Name.count()
+        let found = false
+        let AssetCreatedate
+        for (let i = 0; i <= count; i++) {
+            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            if (assetText?.trim() === name) {
+                AssetCreatedate = await this.page.locator(`((//table[contains(@class, 'resume')])[2]//tr[${i + 1}])/td[4]`).textContent()
+                console.log('AssetCreateDate : - ', AssetCreatedate)
+                found = true
+                break
+            }
+        }
+        (expect(AssetCreatedate).toEqual(currentDate))
+        if (!found) {
+            console.log("Date Doesn't matched.")
+        }
+    }
+
+    async Approve_Asset_type_Sorting(){
+        // TC_AM_147
+        await this.New_enrollment_page()
+        await this.page.waitForTimeout(2000)
+        await this.Approve_Asset_Type_Request.click()
+        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.page.waitForTimeout(3000);
+        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
+
+        // Click to sort in ascending order
+        await this.page.locator(`((//table[contains(@class, 'resume')])[2])//tr/th[2]`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        let isSortedAsc = true;
+        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
+            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
+                isSortedAsc = false;
+                break;
+            }
+        }
+        expect(isSortedAsc).toBe(true);
+
+        // Click again to sort in descending order
+        await this.page.locator(`((//table[contains(@class, 'resume')])[2])//tr/th[2]`).click();
+        await this.page.waitForTimeout(1000);
+        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+
+        let isSortedDesc = true;
+        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
+            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
+                isSortedDesc = false;
+                break;
+            }
+        }
+        expect(isSortedDesc).toBe(true);
+    }
 }    

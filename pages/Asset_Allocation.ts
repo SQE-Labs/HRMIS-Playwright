@@ -81,6 +81,8 @@ export class Asset_Allocation extends BasePage {
         this.SelectedAsset = page.getByLabel("Selected Asset")
         this.Loader = new Loader(page)
 
+        
+
     }
 
     // TC_AM_021 - TC_AM_022  I merge two test case in one  
