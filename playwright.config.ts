@@ -17,17 +17,17 @@ dotenv.config();
  */
 export default defineConfig({
   timeout: 240000, 
-  testDir : './tests',
-    // testMatch:
-  // [
-  //   // "Employee_Management.spec.ts"
-  // "tests/Asset_Enrollment.spec.ts",
+  // testDir : './tests',
+    testMatch:
+  [
+    // "Employee_Management.spec.ts"
+  "tests/Asset_Enrollment.spec.ts",
   // "tests/Asset_Allocation.spec.ts",
-  // // "tests/Asset_DeAllocation.spec.ts",
-  //  // "tests/Asset_OverView.spec.ts",
+  // "tests/Asset_DeAllocation.spec.ts",
+   // "tests/Asset_OverView.spec.ts",
   //  "tests/AssetManagement.spec.ts",
-  // //  "LoginPage.spec.ts"
-  // ],
+  //  "LoginPage.spec.ts"
+  ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
