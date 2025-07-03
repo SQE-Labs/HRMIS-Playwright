@@ -1,32 +1,29 @@
 import { Page, Locator, expect } from '@playwright/test';
-import  {Loader} from '../components/loaders'
+import { Loader } from '../components/loaders';
 import { BasePage } from './Basepage';
 
-export class LoginPage extends BasePage{
-    private Email : Locator
-    private Password : Locator
-    private SubmitButton : Locator
-    private Loader : Loader
+export class LoginPage extends BasePage {
+    private email: Locator;
+    private password: Locator;
+    private submitButton: Locator;
+    private loader: Loader;
 
-// Locators
+    // Locators
 
-    constructor(page : Page){
-        super(page)
-        this.page = page
-        this.Email = page.locator("[type='email']")
-        this.Password = page.locator("[type='password']")
-        this.SubmitButton = page.locator("#submitButton")
-        this.Loader = new Loader(page)
-        
+    constructor(page: Page) {
+        super(page);
+        this.page = page;
+        this.email = page.locator("[type='email']");
+        this.password = page.locator("[type='password']");
+        this.submitButton = page.locator("#submitButton");
+        this.loader = new Loader(page);
     }
 
-    async validLogin(UserEmail : string , UserPassword : string){
-        // console.log("Filling Email with -->" , UserEmail)
-        await this.Email.fill(UserEmail)
-        // console.log("Filling Password with -->" , UserPassword)
-        await this.Password.fill(UserPassword)
-        await this.SubmitButton.click();
-        await expect(this.Loader.getSpinoverlay()).not.toBeAttached()
-        await this.page.waitForLoadState('networkidle')
+    async validLogin(userEmail: string, userPassword: string) {
+        await this.email.fill(userEmail);
+        await this.password.fill(userPassword);
+        await this.submitButton.click();
+        await expect(this.loader.getSpinoverlay()).not.toBeAttached();
+        await this.page.waitForLoadState('networkidle');
     }
 }

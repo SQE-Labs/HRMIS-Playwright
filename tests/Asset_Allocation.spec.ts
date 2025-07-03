@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
-import { Asset_Allocation } from '../pages/Asset_Allocation'
+import { AssetAllocation } from '../pages/Asset_Allocation'
 import { OverView } from '../pages/Asset_OverView'
 import { LoginPage } from '../pages/Loginpage';
 import { BasePage } from '../pages/Basepage';
 import { Login } from '../support/command';
-let Allocation : Asset_Allocation
+let allocation : AssetAllocation
 test.describe("Asset Allocation page", () => {
     test.beforeEach(async ({ page }) => {
     
@@ -14,29 +14,29 @@ test.describe("Asset Allocation page", () => {
 
         await basepage.open('url')
         await Login.login(page, "SuperUser")
-        Allocation = new Asset_Allocation(page)
+        allocation = new AssetAllocation(page)
 
     });
 
 
 
     test("Rediected Towards Asset Allocation page", async ({ page }) => {
-        expect(await Allocation.AlloctionPage())
+        expect(await allocation.allocationPage())
         // console.log("Redirected SucessFully ")
     })
 
     test("Functionality of search Bar ", async ({ page }) => {
-        expect(await Allocation.SearchField())
+        expect(await allocation.searchField())
     })
     test("Functionality of search Bar serial Number ", async ({ page }) => {
-        expect(await Allocation.SearchBy_SerialNumber())
+        expect(await allocation.searchBySerialNumber())
     })
 
     test("Functionality of search Bar Owner name ", async ({ page }) => {
-        expect(await Allocation.SearchBy_OwnerName())
+        expect(await allocation.searchByOwnerName())
     })
     test("Functionality of search Bar Employee name ", async ({ page }) => {
-        expect(await Allocation.SearchBy_EmployeeName())
+        expect(await allocation.searchByEmployeeName())
     })
     // TC_AM_028
 
@@ -49,12 +49,12 @@ test.describe("Asset Allocation page", () => {
     // TC_AM_029
 
     test("Pagination" , async ()=>{
-        expect(await Allocation.pagination())
+        expect(await allocation.pagination())
         console.log("Pagination verified !!")
     })
 
 
     test("Assign asset" , async ()=>{
-        expect(await Allocation.AssignAsset())
+        expect(await allocation.assignAsset())
     })
 })

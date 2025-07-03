@@ -2,158 +2,139 @@ import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
-import { OverView } from "./Asset_OverView";
-import { text } from "stream/consumers";
-import { count } from "console";
-import { Asset_Allocation } from "./Asset_Allocation";
-import { promises } from "dns";
-import { pathToFileURL } from "url";
-import { publicDecrypt } from "crypto";
+import { AssetAllocation } from "./Asset_Allocation";
 
-
-export class Asset_DeAllocation extends BasePage {
-
-    private DeAllocationSubtab: Locator
-    private DeAllocationHeader: Locator
-    private DeAllocationDropDown: Locator
-    private RecordsSelectedOption: Locator
-    private EmptySelectedOption: Locator
-    private DeAllocationDropDownList: Locator
-    private DeAllocationOption: Locator
-    private DeAllocationOptionDetails: Locator
-    private DeAllocationNoRecord: Locator
-    private DeAllocationRecords: Locator
-    private Detelebutton: Locator
-    private PopUp: Locator
-    private DeAllocationAssetConditiion: Locator
-    private DeAllocationAssetConditionOptions: Locator
-    private Submitbutton: Locator
-    public Loader: Loader
-
-
-
+export class AssetDeallocation extends BasePage {
+    private deallocationSubtab: Locator;
+    private deallocationHeader: Locator;
+    private deallocationDropdown: Locator;
+    private recordsSelectedOption: Locator;
+    private emptySelectedOption: Locator;
+    private deallocationDropdownList: Locator;
+    private deallocationOption: Locator;
+    private deallocationOptionDetails: Locator;
+    private deallocationNoRecord: Locator;
+    private deallocationRecords: Locator;
+    private deleteButton: Locator;
+    private popup: Locator;
+    private deallocationAssetCondition: Locator;
+    private deallocationAssetConditionOptions: Locator;
+    private submitButton: Locator;
+    public loader: Loader;
 
     constructor(page: Page) {
         super(page);
-        this.DeAllocationSubtab = page.locator("//a[text()='Asset De-allocation']")
-        this.DeAllocationHeader = page.locator(".d-flex")
-        this.DeAllocationDropDown = page.locator(".col-md-6")
-        this.RecordsSelectedOption = page.locator('//*[@id="react-select-2-option-0"]')
-        this.EmptySelectedOption = page.locator('//*[@id="react-select-2-option-0"]')
-        this.DeAllocationDropDownList = page.locator(" .css-1nmdiq5-menu")
-        this.DeAllocationOption = page.locator(" .css-10wo9uf-option")
-        this.DeAllocationOptionDetails = page.locator(".table-responsive")
-        this.DeAllocationNoRecord = page.locator(".fs-4.text-secondary.text-center")
-        this.DeAllocationRecords = page.locator("tbody>tr")
-        this.Detelebutton = page.locator("(//table[@class='resume custom']//td/a)[1]")
-        this.DeAllocationAssetConditiion = page.locator("#assetCondition")
-        this.PopUp = page.locator(".modal-title")
-        this.DeAllocationAssetConditionOptions = page.locator("(//select[@id='assetCondition']/option)[8]")
-        this.Submitbutton = page.locator("button[type = 'submit']")
-        this.Loader = new Loader(page)
+        this.deallocationSubtab = page.locator("//a[text()='Asset De-allocation']");
+        this.deallocationHeader = page.locator(".d-flex");
+        this.deallocationDropdown = page.locator(".col-md-6");
+        this.recordsSelectedOption = page.locator('//*[@id="react-select-2-option-0"]');
+        this.emptySelectedOption = page.locator('//*[@id="react-select-2-option-0"]');
+        this.deallocationDropdownList = page.locator(" .css-1nmdiq5-menu");
+        this.deallocationOption = page.locator(" .css-10wo9uf-option");
+        this.deallocationOptionDetails = page.locator(".table-responsive");
+        this.deallocationNoRecord = page.locator(".fs-4.text-secondary.text-center");
+        this.deallocationRecords = page.locator("tbody>tr");
+        this.deleteButton = page.locator("(//table[@class='resume custom']//td/a)[1]");
+        this.deallocationAssetCondition = page.locator("#assetCondition");
+        this.popup = page.locator(".modal-title");
+        this.deallocationAssetConditionOptions = page.locator("(//select[@id='assetCondition']/option)[8]");
+        this.submitButton = page.locator("button[type = 'submit']");
+        this.loader = new Loader(page);
     }
 
-
-
-
-    async DeAllocation() {
+    async deallocation() {
         // TC_AM_044
         const assetManagementTab = new AssetManagementTab(this.page);
         await assetManagementTab.expandAssetManagementTab();
-        await this.DeAllocationSubtab.click();
+        await this.deallocationSubtab.click();
 
         // Assert visibility
-        expect(await this.DeAllocationHeader.isVisible()).toBeTruthy()
-        expect(await this.DeAllocationDropDown.isVisible()).toBeTruthy()
+        expect(await this.deallocationHeader.isVisible()).toBeTruthy();
+        expect(await this.deallocationDropdown.isVisible()).toBeTruthy();
 
         // TC_AM_045 - Click and validate dropdown
-        await this.DeAllocationDropDown.click();
-        await expect(this.DeAllocationDropDownList).toBeVisible();
+        await this.deallocationDropdown.click();
+        await expect(this.deallocationDropdownList).toBeVisible();
     }
 
     // TC_AM_046
-    async RecordSelectedOption() {
+    async recordSelectedOption() {
         const assetManagementTab = new AssetManagementTab(this.page);
         await assetManagementTab.expandAssetManagementTab();
-        await this.DeAllocationSubtab.click();
-        await this.DeAllocationDropDown.click();
-        console.log(await this.RecordsSelectedOption.textContent());
-        await this.RecordsSelectedOption.click()
+        await this.deallocationSubtab.click();
+        await this.deallocationDropdown.click();
+        console.log(await this.recordsSelectedOption.textContent());
+        await this.recordsSelectedOption.click();
         await this.page.waitForTimeout(1000);
-        await this.RecordsSelectedOption.isVisible()
+        await this.recordsSelectedOption.isVisible();
 
-        const ValidDetails = await this.DeAllocationRecords.allTextContents();
+        const validDetails = await this.deallocationRecords.allTextContents();
 
-
-        if (ValidDetails.length !== 0) {
-            console.log("Selected Employee List appears")
-            console.log(await this.page.locator("tbody>tr").allTextContents())
+        if (validDetails.length !== 0) {
+            console.log("Selected Employee List appears");
+            console.log(await this.page.locator("tbody>tr").allTextContents());
 
             //    TC_AM_047
-            await this.Detelebutton.click()
-            await this.page.waitForTimeout(1000)
+            await this.deleteButton.click();
+            await this.page.waitForTimeout(1000);
 
-
-            expect(await this.PopUp.isVisible()).toBeTruthy()
-            expect(await this.page.locator(".modal-body").isVisible()).toBeTruthy()
+            expect(await this.popup.isVisible()).toBeTruthy();
+            expect(await this.page.locator(".modal-body").isVisible()).toBeTruthy();
 
             // TC_AM_048
-            await this.Submitbutton.click()
-            var assetConditionField = this.page.locator("select[id='assetCondition']");
+            await this.submitButton.click();
+            const assetConditionField = this.page.locator("select[id='assetCondition']");
             // Get the validation message
-            var tooltipMessage = await assetConditionField.evaluate(el => (el as HTMLInputElement).validationMessage);
+            const tooltipMessage = await assetConditionField.evaluate(el => (el as HTMLInputElement).validationMessage);
             console.log('Tooltip message:', tooltipMessage);
             // Validate the expected message
-            expect(tooltipMessage).toBe('Please select an item in the list.')
+            expect(tooltipMessage).toBe('Please select an item in the list.');
 
             // TC_AM_049
-            await this.DeAllocationAssetConditiion.click()
-            await this.DeAllocationAssetConditiion.isVisible()
+            await this.deallocationAssetCondition.click();
+            await this.deallocationAssetCondition.isVisible();
             // TC_AM_050
             await this.page.selectOption('#assetCondition', { label: 'Good condition' });
 
             // TC_AM_051
-            await this.Submitbutton.click()
+            await this.submitButton.click();
 
-            var RepairCostField = this.page.locator("//input[@type = 'tel']");
-            var tooltipMessage = await RepairCostField.evaluate(el => (el as HTMLInputElement).validationMessage);
-            console.log('Tooltip message:', tooltipMessage);
-            expect(tooltipMessage).toBe('Please fill out this field.')
+            const repairCostField = this.page.locator("//input[@type = 'tel']");
+            const tooltipMessage2 = await repairCostField.evaluate(el => (el as HTMLInputElement).validationMessage);
+            console.log('Tooltip message:', tooltipMessage2);
+            expect(tooltipMessage2).toBe('Please fill out this field.');
 
             // TC_AM_053
-            await this.page.locator("//input[@type = 'tel']").fill('150')
-
+            await this.page.locator("//input[@type = 'tel']").fill('150');
 
             // TC_AM_054
-            await this.Submitbutton.click()
-            var CommentField = this.page.locator("#comment");
-            var tooltipMessage = await CommentField.evaluate(el => (el as HTMLInputElement).validationMessage);
-            console.log('Tooltip message:', tooltipMessage);
-            expect(tooltipMessage).toBe('Please fill out this field.')
+            await this.submitButton.click();
+            const commentField = this.page.locator("#comment");
+            const tooltipMessage3 = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
+            console.log('Tooltip message:', tooltipMessage3);
+            expect(tooltipMessage3).toBe('Please fill out this field.');
 
             // TC_AM_055
-            await this.page.locator("#comment").fill("received")
-            await this.Submitbutton.click()
-            await this.page.getByText("Successfully deallocated!").isVisible()
-
+            await this.page.locator("#comment").fill("received");
+            await this.submitButton.click();
+            await this.page.getByText("Successfully deallocated!").isVisible();
         }
     }
-    async Emptyselectetoption() {
+
+    async emptySelectedOptions() {
         const assetManagementTab = new AssetManagementTab(this.page);
         await assetManagementTab.expandAssetManagementTab();
-        await this.DeAllocationSubtab.click();
-        await this.DeAllocationDropDown.click();
+        await this.deallocationSubtab.click();
+        await this.deallocationDropdown.click();
+        await this.emptySelectedOption.textContent();
+        await this.emptySelectedOption.click();
+        await expect(this.emptySelectedOption).toBeVisible();
 
-        await this.EmptySelectedOption.textContent()
-        await this.EmptySelectedOption.click()
-        await expect(this.EmptySelectedOption).toBeVisible()
+        const emptyDetails = await this.deallocationRecords.allTextContents();
 
-        const EmptyDetails = await this.DeAllocationRecords.allTextContents()
-
-        if (EmptyDetails.length === 0) {
-            console.log(await this.DeAllocationNoRecord.textContent())
-            return null
+        if (emptyDetails.length === 0) {
+            console.log(await this.deallocationNoRecord.textContent());
+            return null;
         }
-
     }
 }
