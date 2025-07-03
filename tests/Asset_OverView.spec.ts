@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/BasePage';
-import { Login } from '../Support/Command';
+import { LoginPage } from '../pages/Loginpage';
+import { BasePage } from '../pages/Basepage';
+import { Login } from '../support/command';
 
-let Asset_OverView
+let Asset_OverView : OverView
 test.describe("Asset OverView page", () => {
         test.beforeEach(async ({ page }) => {
                 const loginPage = new LoginPage(page)

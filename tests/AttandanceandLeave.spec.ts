@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
-import { BasePage } from '../pages/BasePage';
-import { LoginPage } from '../pages/LoginPage';
-import { Login } from '../Support/Command';
-import { AttandanceTab } from '../pages/AttandanceandLeave';
+import { BasePage } from '../pages/Basepage';
+import { LoginPage } from '../pages/Loginpage';
+import { Login } from '../support/command';
+import { AttandanceTab } from '../pages/Attandance_And_Leave';
 
 
 test.describe("'Attandance & Leave tests'", () => {

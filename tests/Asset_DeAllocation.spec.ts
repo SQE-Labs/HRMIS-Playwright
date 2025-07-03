@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/BasePage';
-import { Login } from '../Support/Command';
-import { Asset_DeAllocation } from '../pages/Asser_DeAllocation';
+import { LoginPage } from '../pages/Loginpage';
+import { BasePage } from '../pages/Basepage';
+import { Login } from '../support/command';
+import { Asset_DeAllocation } from '../pages/Asset_Deallocation';
 
-let DeAllocation
+let DeAllocation : Asset_DeAllocation
 test.describe("Asset DeAllocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)

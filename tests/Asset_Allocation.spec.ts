@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test'
 import { Asset_Allocation } from '../pages/Asset_Allocation'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/BasePage';
-import { Login } from '../Support/Command';
-
-let Allocation
+import { LoginPage } from '../pages/Loginpage';
+import { BasePage } from '../pages/Basepage';
+import { Login } from '../support/command';
+let Allocation : Asset_Allocation
 test.describe("Asset Allocation page", () => {
     test.beforeEach(async ({ page }) => {
+    
+
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 

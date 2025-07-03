@@ -1,14 +1,14 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./AssetManagementTab";
-import { Loader } from "../Components/Loaders";
-import { BasePage } from "./BasePage";
+import { AssetManagementTab } from "./Asset_Management_Tab";
+import { Loader } from "../components/loaders";
+import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
 import { text } from "stream/consumers";
 import { count } from "console";
 import fs from "fs";
 
 
-export class Reimbursement extends BasePage {
+export class Reimbursement{
     private Reimbursement_Tab: Locator
     private Reimburement_subtab: Locator
     private subtabs: string[]
@@ -37,9 +37,10 @@ export class Reimbursement extends BasePage {
     private From: Locator
     private To: Locator
     private Reset_Button: Locator
+    private page : Page
 
     constructor(page: Page) {
-        super(page);
+        this.page = page
         this.Reimbursement_Tab = page.locator('//a[text() = "My Reimbursements"]')
         this.Reimburement_subtab = page.locator('//a[text() = "My Reimbursements"]/..//ul//li')
         this.subtabs = [
@@ -109,6 +110,7 @@ export class Reimbursement extends BasePage {
             console.log("All subtab titles matched successfully!");
         } else {
             console.log("Some subtab titles did not match.");
+            return false
         }
     }
 
@@ -130,7 +132,7 @@ export class Reimbursement extends BasePage {
             return await this.Reimbursement_Tab.getAttribute('aria-expanded') === 'false';
         } catch (error) {
             console.error('Error Checking if collapsesReimbursement_Tab tab is collapse ', error)
-            return false
+            return false        
         }
     }
 

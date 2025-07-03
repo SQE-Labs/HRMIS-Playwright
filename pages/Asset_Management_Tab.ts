@@ -1,5 +1,5 @@
 import { Page, Locator} from '@playwright/test'
-import { BasePage } from '../pages/BasePage'
+import { BasePage } from './Basepage'
 
 
 export class AssetManagementTab extends BasePage{

@@ -1,6 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { Loader } from '../Components/Loaders'
-import { BasePage } from '../pages/BasePage';
+import { Loader } from '../components/loaders'
+import { BasePage } from './Basepage';
 
 export class RandomNumber extends BasePage {
     private AssetType_Dropdown: Locator

@@ -1,17 +1,18 @@
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/BasePage';
-import { Login } from '../Support/Command';
-import { Asset_DeAllocation } from '../pages/Asser_DeAllocation';
+import { LoginPage } from '../pages/Loginpage';
+import { BasePage } from '../pages/Basepage';
+import { Login } from '../support/command';
+import { Asset_DeAllocation } from '../pages/Asset_Deallocation';
 import { Asset_Enrollment } from '../pages/New_Asset_Enrollment';
-let Enrollment
+let Enrollment : Asset_Enrollment
 test.describe("Asset Enrollment page", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
         await basepage.open('url')
+        //passwords should never be used directly in test due to security reasons. //To-Do
         await Login.login(page, "SuperUser")
         Enrollment = new Asset_Enrollment(page)
 

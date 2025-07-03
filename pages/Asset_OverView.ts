@@ -1,11 +1,11 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./AssetManagementTab";
-import { Loader } from "../Components/Loaders";
-import { BasePage } from "./BasePage";
+import { AssetManagementTab } from "./Asset_Management_Tab";
+import { Loader } from "../components/loaders";
+import { BasePage } from "./Basepage";
 import * as xlsx from 'xlsx'
 import fs from "fs";
 import { assert } from "console";
-import { Alert } from '../Components/Alert'
+import { Alert } from '../components/alert'
 
 export class OverView extends AssetManagementTab {
     // TC_AM_003

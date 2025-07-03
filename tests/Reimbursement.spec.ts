@@ -1,19 +1,19 @@
 import { test, expect } from '@playwright/test'
 import { Asset_Allocation } from '../pages/Asset_Allocation'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/BasePage';
-import { Login } from '../Support/Command';
+import { LoginPage } from '../pages/Loginpage';
+import { BasePage } from '../pages/Basepage';
+import { Login } from '../support/command';
 import { Reimbursement } from '../pages/Reimbursement';
 
 
-let Reimburse
+let Reimburse : Reimbursement
 test.describe("My Reimbursement page", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
-        const basepage = new BasePage(page)
+        // const basepage = new BasePage(page)
 
-        await basepage.open('url')
+        await loginPage.open('url')
         await Login.login(page, "SuperUser")
         Reimburse = new Reimbursement(page)
     });

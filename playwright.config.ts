@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
 import { Asset_Allocation } from './pages/Asset_Allocation';
-import { Asset_DeAllocation } from './pages/Asser_DeAllocation';
+import { Asset_DeAllocation } from './pages/Asset_Deallocation';
 dotenv.config();
 
 /**
@@ -17,17 +17,17 @@ dotenv.config();
  */
 export default defineConfig({
   timeout: 240000, 
-  // testDir : './tests',
-    testMatch:
-  [
-    // "Employee_Management.spec.ts"
-  "tests/Asset_Enrollment.spec.ts",
-  // "tests/Asset_Allocation.spec.ts",
-  // "tests/Asset_DeAllocation.spec.ts",
-   // "tests/Asset_OverView.spec.ts",
-  //  "tests/AssetManagement.spec.ts",
-  //  "LoginPage.spec.ts"
-  ],
+  testDir : './tests',
+  //   testMatch:
+  // [
+  //   // "Employee_Management.spec.ts"
+  // "tests/Asset_Enrollment.spec.ts",
+  // // "tests/Asset_Allocation.spec.ts",
+  // // "tests/Asset_DeAllocation.spec.ts",
+  //  // "tests/Asset_OverView.spec.ts",
+  // //  "tests/AssetManagement.spec.ts",
+  // //  "LoginPage.spec.ts"
+  // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -46,6 +46,7 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    //use baseurl from 
     baseURL: process.env.URL || 'https://topuptalent.com/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

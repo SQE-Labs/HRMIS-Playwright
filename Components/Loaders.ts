@@ -1,6 +1,6 @@
 
 import { Page, Locator } from '@playwright/test'
-import { BasePage } from '../pages/BasePage'
+import { BasePage } from '../pages/Basepage'
 
 export class Loader extends BasePage{
     public SpinLoader : Locator

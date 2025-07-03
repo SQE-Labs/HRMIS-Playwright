@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { Login } from '../Support/Command'
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/BasePage';
+import { Login } from '../support/command'
+import { LoginPage } from '../pages/Loginpage';
+import { BasePage } from '../pages/Basepage';
 // import dotenv from 'dotenv';
 // dotenv.config();
 

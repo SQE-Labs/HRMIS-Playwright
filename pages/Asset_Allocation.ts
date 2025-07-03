@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./AssetManagementTab";
-import { Loader } from "../Components/Loaders";
-import { BasePage } from "./BasePage";
+import { AssetManagementTab } from "./Asset_Management_Tab";
+import { Loader } from "../components/loaders";
+import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
 import { text } from "stream/consumers";
 import { count } from "console";
@@ -86,16 +86,14 @@ export class Asset_Allocation extends BasePage {
     }
 
     // TC_AM_021 - TC_AM_022  I merge two test case in one  
-    async AlloctionPage() {
+    async allocationPage() {
         const assetManagementTab = new AssetManagementTab(this.page)
         await assetManagementTab.expandAssetManagementTab()
         await this.AllocationAsset.click()
 
         expect(await this.Allocationpage.isVisible())
 
-
         expect(await this.AllocationAssignAsset.isVisible())
-
 
         await this.page.waitForTimeout(1000)
 

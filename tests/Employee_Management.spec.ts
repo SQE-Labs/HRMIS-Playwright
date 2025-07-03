@@ -1,10 +1,10 @@
 import { test, expect} from '@playwright/test'
-import { BasePage } from '../pages/BasePage';
-import { LoginPage } from '../pages/LoginPage';
-import { Login } from '../Support/Command';
+import { BasePage } from '../pages/Basepage';
+import { LoginPage } from '../pages/Loginpage';
+import { Login } from '../support/command';
 import { Employee_Management } from '../pages/Employee_Management';
 
-let Employee_Directory
+let Employee_Directory : Employee_Management
 test.describe("'Employee Management module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)

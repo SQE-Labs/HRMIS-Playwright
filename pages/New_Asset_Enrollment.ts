@@ -1,10 +1,10 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./AssetManagementTab";
-import { Loader } from "../Components/Loaders";
-import { BasePage } from "./BasePage";
+import { AssetManagementTab } from "./Asset_Management_Tab";
+import { Loader } from "../components/loaders";
+import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
 import { Asset_Allocation } from "./Asset_Allocation";
-import { Asset_DeAllocation } from '../pages/Asser_DeAllocation';
+import { Asset_DeAllocation } from '../pages/Asset_Deallocation';
 import { generateRandomString } from "./Employee_Management"
 
 export class Asset_Enrollment extends BasePage {

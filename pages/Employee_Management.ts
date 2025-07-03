@@ -1,6 +1,6 @@
 import { Page, Locator, expect, BrowserContext } from '@playwright/test'
-import { BasePage } from './BasePage'
-import { Loader } from '../Components/Loaders'
+import { BasePage } from './Basepage'
+import { Loader } from '../components/loaders'
 import { ADDRGETNETWORKPARAMS, TIMEOUT } from 'dns'
 import { totalmem } from 'os'
 import { count, error, timeStamp } from 'console'
@@ -359,10 +359,10 @@ export class Employee_Management extends BasePage {
         expect(TotalCards).toEqual(TotalEmployeecount)
 
         // TC_EM_002
-        await this.Employee_Directory_Searchbar.pressSequentially("TEST Account SQE")
+        await this.Employee_Directory_Searchbar.pressSequentially("Autom Mation User")
         var TotalCards = await this.Employee_Directory_Cards.count()
         var TotalCardsText = await this.Employee_Directory_cards_title.textContent() || ""
-        expect(TotalCardsText.trim().replace(/\s+/g, ' ')).toContain("TEST Account SQE")
+        expect(TotalCardsText.trim().replace(/\s+/g, ' ')).toContain("Autom Mation User")
         var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
         var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
         expect(TotalCards).toEqual(TotalEmployeecount)
@@ -1337,7 +1337,7 @@ export class Employee_Management extends BasePage {
 
         let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
         console.log(message)
-        expect(message).toEqual(" The role has been successfully assigned to TEST Account SQE .")
+        expect(message).toEqual(" The role has been successfully assigned to Autom Mation User .")
     }
 
     async approve_document() {
