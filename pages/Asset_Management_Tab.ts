@@ -1,5 +1,5 @@
 import { Page, Locator} from '@playwright/test'
-import { BasePage } from '../pages/BasePage'
+import { BasePage } from './Basepage'
 
 
 export class AssetManagementTab extends BasePage{
@@ -32,7 +32,6 @@ export class AssetManagementTab extends BasePage{
     async expandAssetManagementTab(){
         try{
             await this.AssetManagement.click()
-            console.log('Asset management tab expanded Succesfully')
         }catch(error){
             console.error('Asset management tab Does not expanded' , error)
         }

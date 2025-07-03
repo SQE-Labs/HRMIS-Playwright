@@ -1,11 +1,11 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./AssetManagementTab";
-import { Loader } from "../Components/Loaders";
-import { BasePage } from "./BasePage";
+import { AssetManagementTab } from "./Asset_Management_Tab";
+import { Loader } from "../components/loaders";
+import { BasePage } from "./Basepage";
 import * as xlsx from 'xlsx'
 import fs from "fs";
 import { assert } from "console";
-import { Alert } from '../Components/Alert'
+import { Alert } from '../components/alert'
 
 export class OverView extends AssetManagementTab {
     // TC_AM_003
@@ -353,7 +353,7 @@ export class OverView extends AssetManagementTab {
         await this.Filter.click()
         await this.page.waitForTimeout(2000);
         await this.Card.click()
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(5000);
         await expect(this.Loader.getSpinLoader()).not.toBeAttached();
         let header = await this.CardHeader.textContent()
         if (header?.trim() === 'Desktop PC') {
@@ -632,7 +632,7 @@ export class OverView extends AssetManagementTab {
     // TC_AM_019
 
     async Sorting() {
-        await this.page.reload();
+        await this.page.reload()
         await this.page.waitForTimeout(3000);
         let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
 

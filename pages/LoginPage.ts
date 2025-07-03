@@ -1,6 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
-import  {Loader} from '../Components/Loaders'
-import { BasePage } from '../pages/BasePage';
+import  {Loader} from '../components/loaders'
+import { BasePage } from './Basepage';
 
 export class LoginPage extends BasePage{
     private Email : Locator
@@ -21,9 +21,9 @@ export class LoginPage extends BasePage{
     }
 
     async validLogin(UserEmail : string , UserPassword : string){
-        console.log("Filling Email with -->" , UserEmail)
+        // console.log("Filling Email with -->" , UserEmail)
         await this.Email.fill(UserEmail)
-        console.log("Filling Password with -->" , UserPassword)
+        // console.log("Filling Password with -->" , UserPassword)
         await this.Password.fill(UserPassword)
         await this.SubmitButton.click();
         await expect(this.Loader.getSpinoverlay()).not.toBeAttached()

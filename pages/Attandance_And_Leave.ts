@@ -1,6 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test'
-import { BasePage } from '../pages/BasePage'
-import { Loader } from '../Components/Loaders'
+import { BasePage } from './Basepage'
+import { Loader } from '../components/loaders'
 import { ClassicRunner } from '@applitools/eyes-playwright'
 
 

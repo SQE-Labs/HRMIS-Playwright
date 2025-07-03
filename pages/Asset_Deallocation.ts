@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./AssetManagementTab";
-import { Loader } from "../Components/Loaders";
-import { BasePage } from "./BasePage";
+import { AssetManagementTab } from "./Asset_Management_Tab";
+import { Loader } from "../components/loaders";
+import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
 import { text } from "stream/consumers";
 import { count } from "console";
@@ -146,7 +146,7 @@ export class Asset_DeAllocation extends BasePage {
 
         await this.EmptySelectedOption.textContent()
         await this.EmptySelectedOption.click()
-        await this.EmptySelectedOption.isVisible()
+        await expect(this.EmptySelectedOption).toBeVisible()
 
         const EmptyDetails = await this.DeAllocationRecords.allTextContents()
 

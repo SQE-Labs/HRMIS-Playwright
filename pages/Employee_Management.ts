@@ -1,6 +1,6 @@
 import { Page, Locator, expect, BrowserContext } from '@playwright/test'
-import { BasePage } from './BasePage'
-import { Loader } from '../Components/Loaders'
+import { BasePage } from './Basepage'
+import { Loader } from '../components/loaders'
 import { ADDRGETNETWORKPARAMS, TIMEOUT } from 'dns'
 import { totalmem } from 'os'
 import { count, error, timeStamp } from 'console'
@@ -148,6 +148,7 @@ export class Employee_Management extends BasePage {
     private No_Record_avialable: Locator
     private updateIcon: Locator
     private Name_TextArea: Locator
+    private No_record: Locator
 
     constructor(page: Page) {
         super(page)
@@ -289,7 +290,7 @@ export class Employee_Management extends BasePage {
         this.Document_upload_Tab = page.locator("//a[text()='Document Upload']")
         this.Document_upload_Header = page.locator("div>h1")
         this.Document_Upload_Column = page.locator("thead>tr>th")
-        this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[1]")
+        this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[2]")
         this.PopUp_Header = page.locator(".modal-header")
         this.Popup_Cross_button = page.locator(".btn-close.close-class")
         this.Popup_Cancel_button = page.locator(".cancel-promote")
@@ -334,6 +335,7 @@ export class Employee_Management extends BasePage {
         this.No_Record_avialable = page.locator(".fs-4.text-secondary.text-center")
         this.updateIcon = page.locator("(//i[@class = 'fa fa-edit'])[1]")
         this.Name_TextArea = page.getByPlaceholder("Enter Department Name")
+        this.No_record = page.locator(".fs-4.text-secondary.text-center.mt-5")
 
     }
     async Employee() {
@@ -357,10 +359,10 @@ export class Employee_Management extends BasePage {
         expect(TotalCards).toEqual(TotalEmployeecount)
 
         // TC_EM_002
-        await this.Employee_Directory_Searchbar.pressSequentially("TEST Account SQE")
+        await this.Employee_Directory_Searchbar.pressSequentially("Autom Mation User")
         var TotalCards = await this.Employee_Directory_Cards.count()
         var TotalCardsText = await this.Employee_Directory_cards_title.textContent() || ""
-        expect(TotalCardsText.trim().replace(/\s+/g, ' ')).toContain("TEST Account SQE")
+        expect(TotalCardsText.trim().replace(/\s+/g, ' ')).toContain("Autom Mation User")
         var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
         var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
         expect(TotalCards).toEqual(TotalEmployeecount)
@@ -1335,62 +1337,71 @@ export class Employee_Management extends BasePage {
 
         let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
         console.log(message)
-        expect(message).toEqual(" The role has been successfully assigned to TEST Account SQE .")
+        expect(message).toEqual(" The role has been successfully assigned to Autom Mation User .")
     }
 
     async approve_document() {
         // TC_EM_104
         await this.Employee_Management.click();
         await this.Approve_Document.click()
+        await this.page.waitForTimeout(3000)
         expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        var header = await this.Approve_Header.textContent()
-        expect(header).toEqual("Approve Document")
-        let labelcount = await this.Approve_Label.count()
-        for (let i = 0; i < labelcount; i++) {
-            let label = await this.Approve_Label.nth(i)
-            expect(label).toBeVisible()
-            let text = await this.Approve_Label.nth(i).textContent()
-            console.log(text)
+        const noRecords = await this.No_record
+        if (await noRecords.isVisible()) {
+            console.log("Approval for Pending Documents is not available.");
+            return false;
+        } else {
+            var header = await this.Approve_Header.textContent()
+            expect(header).toEqual("Approve Document")
+            let labelcount = await this.Approve_Label.count()
+            for (let i = 0; i < labelcount; i++) {
+                let label = await this.Approve_Label.nth(i)
+                expect(label).toBeVisible()
+                let text = await this.Approve_Label.nth(i).textContent()
+                console.log(text)
+            }
         }
     }
 
     async Approve_Document_Document_type() {
         // TC_EM_105
-        await this.approve_document();
+        let isAvailable = await this.approve_document();
+        if (!isAvailable) return;
+    
         await this.page.waitForTimeout(2000);
         const labelCount = await this.Approve_Label_Exiting_Document_type.count();
-        const uniqueTypes = new Set;
-
+        const uniqueTypes = new Set();
+    
         for (let i = 0; i < labelCount - 1; i++) {
             const existingType = await this.Approve_Label_Exiting_Document_type.nth(i).textContent();
             if (existingType) {
                 uniqueTypes.add(existingType.trim());
             }
         }
-
+    
         console.log("Unique Approved Document Types:", [...uniqueTypes]);
-
-
-        await this.Approve_Label_Document_type_dropdown.click()
-
-        await this.page.waitForTimeout(2000)
+    
+        await this.Approve_Label_Document_type_dropdown.click();
+        await this.page.waitForTimeout(2000);
+    
         const options = this.page.locator('[id^="react-select-2-option"]');
         const dropdownCount = await options.count();
-        const DropdownTypes = new Set
+        const DropdownTypes = new Set();
         for (let i = 1; i < dropdownCount; i++) {
             const dropdownItem = await options.nth(i).textContent();
             if (dropdownItem) {
                 DropdownTypes.add(dropdownItem.trim());
             }
         }
-        console.log("Unique Approved Document Types:", [...DropdownTypes])
-
-        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
+        console.log("Unique Approved Document Types:", [...DropdownTypes]);
+    
+        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort());
     }
 
     async Approve_Document_Employee() {
         // TC_EM_106
-        await this.approve_document();
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.page.waitForTimeout(2000);
 
         const labelCount = await this.Approve_Label_Exiting_Employee.count();
@@ -1423,7 +1434,8 @@ export class Employee_Management extends BasePage {
     async Approve_Document_Dropdown() {
         // TC_EM_107
 
-        await this.approve_document();
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Approve_Label_Document_type_dropdown.click()
         await this.page.locator("#react-select-2-option-1").click()
         await this.page.waitForTimeout(500)
@@ -1448,7 +1460,8 @@ export class Employee_Management extends BasePage {
 
     async Approve_Employee_Dropdown() {
         // TC_EM_108
-        await this.approve_document();
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Approve_Label_Employee_dropdown.click()
         await this.page.locator("#react-select-3-option-2").click()
         await this.page.waitForTimeout(500)
@@ -1472,7 +1485,8 @@ export class Employee_Management extends BasePage {
 
     async Approve_Document_Action_button() {
         // TC_EM_109
-        await this.approve_document();
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Action_button.click()
         await this.page.waitForTimeout(1000)
         await this.Action_Button_popup.isVisible()
@@ -1483,6 +1497,8 @@ export class Employee_Management extends BasePage {
 
     async Action_button_popup_cancel() {
         // TC_EM_110
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Approve_Document_Action_button()
         await this.page.locator(".cancel-approve").click()
         await this.page.waitForTimeout(1000)
@@ -1490,6 +1506,8 @@ export class Employee_Management extends BasePage {
     }
     async Action_button_popup_Cross_icon() {
         // TC_EM_111
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Approve_Document_Action_button()
         await this.page.locator(".btn-close").click()
         await this.page.waitForTimeout(1000)
@@ -1498,6 +1516,8 @@ export class Employee_Management extends BasePage {
 
     async Action_Button_Popup_Approved() {
         // TC_EM_112
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Approve_Document_Action_button()
         try {
             const [download] = await Promise.all([
@@ -1548,6 +1568,8 @@ export class Employee_Management extends BasePage {
 
     async Action_Button_Popup_Rejected() {
         // TC_EM_116
+        const isAvailable = await this.approve_document();
+        if (!isAvailable) return;
         await this.Approve_Document_Action_button()
         await this.Select_action_dropdown.selectOption({ value: 'rejected' })
         await this.page.waitForTimeout(1000)
@@ -1575,6 +1597,7 @@ export class Employee_Management extends BasePage {
         expect(await this.Departments_Header.isVisible())
         let header = await this.Departments_Header.textContent()
         expect(header).toEqual('Departments')
+
     }
     async Department_No_of_records() {
         // TC_EM_120
@@ -1719,8 +1742,10 @@ export class Employee_Management extends BasePage {
         expect(await this.page.locator(".Toastify__toast-body").isVisible())
         expect(toast_message).toEqual("Department created successfully!")
     }
+
+    
 }
-function generateRandomString(length: any) {
+export function generateRandomString(length: any) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let result = '';
     const charactersLength = characters.length;

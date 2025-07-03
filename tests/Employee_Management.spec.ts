@@ -1,10 +1,10 @@
 import { test, expect} from '@playwright/test'
-import { BasePage } from '../pages/BasePage';
-import { LoginPage } from '../pages/LoginPage';
-import { Login } from '../Support/Command';
+import { BasePage } from '../pages/Basepage';
+import { LoginPage } from '../pages/Loginpage';
+import { Login } from '../support/command';
 import { Employee_Management } from '../pages/Employee_Management';
 
-let Employee_Directory
+let Employee_Directory : Employee_Management
 test.describe("'Employee Management module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
@@ -47,22 +47,22 @@ test.describe("'Employee Management module'", () => {
         await Employee_Directory.Promotion_Management()
     })
 
-    test("Document Upload Tab", async ({ page }) => {
+    test("Documents Upload Tab", async ({ page }) => {
         await Employee_Directory.Document_Upload()
     })
-    test("Document Upload Dropdown", async ({ page }) => {
+    test("Documents Upload Dropdown", async ({ page }) => {
         await Employee_Directory.Document_Upload_DropDown()
     })
-    test("Document Upload upload button ", async ({ page }) => {
+    test("Documents Upload upload button ", async ({ page }) => {
         await Employee_Directory.Document_Upload_Upload_button()
     })
-    test("Document Upload upload button cancel button functionality ", async ({ page }) => {
+    test("Documents Upload upload button cancel button functionality ", async ({ page }) => {
         await Employee_Directory.Document_Upload_Upload_button_Cancel_button()
     })
-    test("Document Upload upload button cross icon functionality ", async ({ page }) => {
+    test("Documents Upload upload button cross icon functionality ", async ({ page }) => {
         await Employee_Directory.Document_Upload_Upload_button_cross_Icon()
     })
-    test("Document Upload PopUp Functionality ", async ({ page }) => {
+    test("Documents Upload PopUp Functionality ", async ({ page }) => {
         await Employee_Directory.Document_upload_PopUp_Functionality()
     })
     // test.only("Document Upload Eye Icon", async ({ page, browser}) => {
@@ -134,7 +134,7 @@ test.describe("'Employee Management module'", () => {
     test("Departments pop up functionality ...  ", async ({ page }) => {
         await Employee_Directory.Departments_Pop_up_functionality()
     })
-    test("Department + Add Department  ", async ({ page }) => {
+    test("Departments + Add Department  ", async ({ page }) => {
         await Employee_Directory.Departments_Add_Department()
     })
     test("Departments Add Department Cancel Button ...  ", async ({ page }) => {
@@ -143,7 +143,7 @@ test.describe("'Employee Management module'", () => {
     test("Departments Add Department Cross Icon ...  ", async ({ page }) => {
         await Employee_Directory.Departments_Add_Department_Cross_Icon()
     })
-    test("Department + Add Department Functionality...  ", async ({ page }) => {
+    test("Departments + Add Department Functionality...  ", async ({ page }) => {
         await Employee_Directory.Departments_Add_Department_functionality()
     })
 
