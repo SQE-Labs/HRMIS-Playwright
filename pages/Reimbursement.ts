@@ -8,7 +8,7 @@ import { count } from "console";
 import fs from "fs";
 
 
-export class Reimbursement{
+export class Reimbursement {
     private Reimbursement_Tab: Locator
     private Reimburement_subtab: Locator
     private subtabs: string[]
@@ -37,7 +37,8 @@ export class Reimbursement{
     private From: Locator
     private To: Locator
     private Reset_Button: Locator
-    private page : Page
+    private page: Page
+    private nextButton: Locator;
 
     constructor(page: Page) {
         this.page = page
@@ -55,7 +56,7 @@ export class Reimbursement{
         this.Table = page.locator("div.table-responsive")
         this.SearchBar = page.getByPlaceholder("Search By Reimbursement Type")
         this.No_Record = page.locator("div>h4")
-        this.Withdraw = page.locator("(//a[text() = 'Withdraw'])")
+        this.Withdraw = page.locator("(//a[text() = 'Withdraw'])").first()
         this.cross_icon = page.locator('//button[@class = "btn-close"]')
         this.Withdraw_popUp_body = page.locator(".modal-body")
         this.Cancel_button = page.locator("(//button[@type = 'button'])[2]")
@@ -74,6 +75,7 @@ export class Reimbursement{
         this.From = page.locator("(//input[@name= 'fromPlace'])")
         this.To = page.locator("(//input[@name= 'toPlace'])")
         this.Reset_Button = page.locator("//button[text() = 'Reset']")
+        this.nextButton = page.locator("//a[text() = 'Next']");
 
     }
 
@@ -132,7 +134,7 @@ export class Reimbursement{
             return await this.Reimbursement_Tab.getAttribute('aria-expanded') === 'false';
         } catch (error) {
             console.error('Error Checking if collapsesReimbursement_Tab tab is collapse ', error)
-            return false        
+            return false
         }
     }
 
@@ -207,13 +209,33 @@ export class Reimbursement{
         expect(isSortedDesc).toBe(true);
     }
 
-    async withdrawal() {
-        // TC_MR_007
-        this.Reimbursement_Request_page()
-        await this.page.waitForSelector("(//a[text() = 'Withdraw'])")
-        await this.Withdraw.click()
-        await expect(this.Withdraw_popUp_body).toBeVisible()
+async withdrawal() {
+    // Step 1: Go to the Reimbursement Request page
+    this.Reimbursement_Request_page();
+
+    // Step 2: Loop through pages to find and click Withdraw
+    while (true) {
+        const isWithdrawVisible = await this.Withdraw.isVisible();
+
+        if (isWithdrawVisible) {
+            // Found the Withdraw button on the current page
+            await this.Withdraw.click();
+            await expect(this.Withdraw_popUp_body).toBeVisible();
+            return;
+        }
+
+        const isNextEnabled = await this.nextButton.isEnabled();
+        if (!isNextEnabled) {
+            // Reached the last page and Withdraw not found
+            throw new Error("Withdraw button not found on any page.");
+        }
+
+        // Click next and wait for the page to update
+        await this.nextButton.click();
+        await this.page.waitForTimeout(1000); 
     }
+}
+
 
     async withdrawal_cross_button() {
         // TC_MR_008
