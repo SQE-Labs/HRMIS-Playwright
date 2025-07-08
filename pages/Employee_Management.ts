@@ -443,7 +443,7 @@ export class Employee_Management extends BasePage {
         await this.page.waitForTimeout(2000)
         await this.Employee_Directory_tab.click()
         await this.Card.click()
-        await this.EmployeeProfile.isVisible()
+        await expect(this.EmployeeProfile).toBeVisible()
 
         // TC_EM_009
         await this.BasicInfo.click()
@@ -458,10 +458,10 @@ export class Employee_Management extends BasePage {
         // TC_EM_010
         await this.BasicInfo.click();
         await this.page.waitForTimeout(1000);
-        expect(await this.page.locator("heading1").isHidden()).toBe(true)
+        await expect(this.page.locator("heading1")).toBeHidden();
 
         // TC_EM_011
-        await this.page.waitForTimeout(2000)
+        await this.page.waitForTimeout(5000)
         await this.BasicInfo.click();
         await this.BasicInfoEditButton.click()
         await this.BasicInfoFirstname.clear()
@@ -472,7 +472,6 @@ export class Employee_Management extends BasePage {
         console.log(tooltipMessage);
 
         expect(tooltipMessage).toBe('Please fill out this field.')
-
 
         // TC_EM_013
         await this.BasicInfo.click();
@@ -486,7 +485,6 @@ export class Employee_Management extends BasePage {
         console.log(tooltipMessage);
 
         expect(tooltipMessage).toBe('Please fill out this field.')
-
 
         // TC_EM_014
         await this.CloseButton.click()
@@ -505,7 +503,6 @@ export class Employee_Management extends BasePage {
         expect(originalFirstName).toEqual(CurrentFirstName)
         expect(originalLastName).toEqual(CurrentLastName)
         expect(originalMiddleName).toEqual(CurrentMiddleName)
-
 
         // TC_EM_015
         // Generate random first and last names
@@ -531,9 +528,11 @@ export class Employee_Management extends BasePage {
         expect(originalFirstName).not.toEqual(CurrentFirstName)
         expect(originalLastName).not.toEqual(CurrentLastName)
         await this.page.waitForTimeout(500)
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
+        const toastVisible = await this.page.locator(".Toastify__toast-body").isVisible()
+        expect(toastVisible).toBe(true)
+        const toastText = await this.page.locator(".Toastify__toast-body").textContent()
+        expect(typeof toastText).toBe("string")
+        console.log(toastText)
 
         // TC_EM_016
         try {
@@ -552,11 +551,10 @@ export class Employee_Management extends BasePage {
             expect(WorkAccordionkeytext).toEqual(this.WorkAccordionBody[i])
         }
 
-
         // TC_EM_017
         await this.WorkAccordion.click()
         await this.page.waitForTimeout(1000)
-        expect(await this.page.locator("heading2").isHidden()).toBe(true)
+        await expect(this.page.locator("heading2")).toBeHidden();
 
         // TC_EM_018
         await this.WorkAccordion.click()
@@ -619,18 +617,15 @@ export class Employee_Management extends BasePage {
         for (let i = 0; i < PersonalDetailskeycount; i++) {
             const PersonalDetailsKey = await this.PersonalDetailsKey.nth(i)
             const PersonalDetailskeytext = await PersonalDetailsKey.textContent()
-            // console.log(PersonalDetailskeytext)
             expect(PersonalDetailskeytext).toEqual(this.PersonalDetailsBody[i])
         }
-
 
         // TC_EM_023
         await this.PersonalDetails.click()
         await this.page.waitForTimeout(1000)
-        expect(await this.page.locator("heading3").isHidden()).toBe(true)
+        await expect(this.page.locator("heading3")).toBeHidden();
 
         // TC_EM_024
-
         await this.PersonalDetails.click()
         await this.PersonalDetailsEditButton.click()
         await this.PersonalDetailsDate.clear()
@@ -682,7 +677,6 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please select an item in the list.')
         await this.BloodGroup.selectOption({ label: 'O+ve' })
 
-
         // TC_EM_029
         await this.MaritalStatus.selectOption({ label: 'Select Marital Status' })
         await this.UpdateButton.click()
@@ -711,7 +705,6 @@ export class Employee_Management extends BasePage {
         console.log('PermanentAddress :-', tooltipMessage);
         expect(tooltipMessage).toBe('Please fill out this field.')
         await this.PermanentAddress.fill("dsadasdasdsa")
-
 
         // TC_EM_032
         await this.PassportNumber.clear()
@@ -759,14 +752,16 @@ export class Employee_Management extends BasePage {
         await this.PermanentAddress.clear()
         await this.PermanentAddress.fill(permanentAddress)
         await this.UpdateButton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+        const toastVisible2 = await this.page.locator(".Toastify__toast-body").isVisible()
+        expect(toastVisible2).toBe(true)
+        const toastText2 = await this.page.locator(".Toastify__toast-body").textContent()
+        expect(typeof toastText2).toBe("string")
+        console.log(toastText2)
         var currentaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
         var currentPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
         var CurrentpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
         expect(OriginalpermanentAddress).not.toEqual(CurrentpermanentAddress)
         await this.page.waitForTimeout(1000)
-
 
         // TC_EM_035 && TC_EM_037
         try {
@@ -776,9 +771,7 @@ export class Employee_Management extends BasePage {
             console.error('Experience tab Does not expanded', error)
         }
         var Norecord = await this.page.locator('//*[@id="collapse4"]/div/div/div/div/div').textContent()
-
         expect(Norecord).toEqual("No records available")
-
 
         // TC_EM_036
         try {
@@ -787,7 +780,6 @@ export class Employee_Management extends BasePage {
         } catch (error) {
             console.error('Experience tab Does not Collapse', error)
         }
-
 
         // TC_EM_038 
         try {
@@ -806,7 +798,6 @@ export class Employee_Management extends BasePage {
         } catch (error) {
             console.error('Education tab Does not Collapse', error)
         }
-
 
         // TC_EM_40  && TC_EM_041
         try {
@@ -1337,7 +1328,7 @@ export class Employee_Management extends BasePage {
 
         let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
         console.log(message)
-        expect(message).toEqual(" The role has been successfully assigned to Autom Mation User .")
+        expect(message).toEqual(" The role has been successfully assigned to Vishal     .")
     }
 
     async approve_document() {
@@ -1701,7 +1692,7 @@ export class Employee_Management extends BasePage {
     async Departments_Add_Department() {
         // TC_EM_129
         await this.Department()
-        await this.page.waitForTimeout(2000)
+        await this.page.waitForTimeout(5000)
         await this.AddDepartmentButton.click()
         await expect(this.Pop_Up_Header).toBeVisible()
     }

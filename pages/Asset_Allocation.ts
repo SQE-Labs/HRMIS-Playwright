@@ -72,18 +72,14 @@ export class AssetAllocation extends BasePage {
         this.assetTypeName = page.locator("tr>td:nth-child(2)");
         this.assetSerialNumber = page.locator("tr>td:nth-child(3)");
         this.assetEmployeeName = page.locator("tr>td:nth-child(5)");
-        this.employeeOption = page.locator('#react-select-3-option-6');
-        this.assetTypeOption = page.locator("#react-select-2-option-9");
         this.assetTypeField = page.locator('input[name="selectedAsset"]');
         this.assetTypeRequiredField = page.locator("input[class = 'css-1a0ro4n-requiredInput']");
-        this.assetListSelectedOption = page.locator("div[id='asset_list'] div[class=' css-1dimb5e-singleValue']");
         this.employeeSelectedOption = page.locator("div[class='dropdown-container'] div[class=' css-1dimb5e-singleValue']");
         this.assetRadioButton = page.locator("div>input[type='radio']");
         this.assetCommentField = page.locator('textarea[name="comment"]');
         this.assetInputGroupTextarea = page.locator("div[class='input-group '] textarea");
         this.toastContainer = page.locator(".Toastify__toast-container");
         this.popupNoRecordsHeader = page.locator("div>h4");
-        this.assetTableSerialNumber = page.locator("tbody>tr>td:nth-child(4)");
         this.assetTableRowSix = page.locator(">tr:nth-child(1)>td:nth-child(6)");
         this.assetTypeDropdownSvg = page.locator("(//*[name()='svg'][@class='css-8mmkcg'])[1]");
         this.employeeOption = this.page.locator('#react-select-3-option-6');
@@ -100,6 +96,19 @@ export class AssetAllocation extends BasePage {
         this.assetTableSerialNumber = this.page.locator("tbody>tr>td:nth-child(4)");
         this.assetTableRowSix = this.page.locator(">tr:nth-child(1)>td:nth-child(6)");
         this.assetTypeDropdownSvg = this.page.locator("(//*[name()='svg'][@class='css-8mmkcg'])[1]");
+        this.assetInvalidData = this.page.locator(".fs-4.m-5.text-secondary.text-center")
+        this.allocationSelectEmployee = this.page.locator('//*[@id="assign-asset"]/div/div[1]/div[2]/div/div/div/div[2]/div')
+        this.allocationSelectEmployeeOption = this.page.locator("#react-select-3-option-6");
+        this.allocationSelectAssetType = this.page.locator('//*[@id="asset_list"]/div/div[2]/div')
+        this.allocationSelectAssetTypeOption = this.page.locator("#react-select-2-option-9");
+        this.assetTypePopUp = this.page.locator(".css-1dimb5e-menu");
+        this.popupSearchBar = this.page.getByPlaceholder("Search By Serial Number");
+        this.popupTable = this.page.locator(".css-1dimb5e-table");
+        this.radioButton = this.page.locator(".css-1dimb5e-radio");
+        this.allocationComment = this.page.locator('textarea[name="comment"]');
+        this.submitButton = this.page.locator("button[type='submit']");
+        this.crossButton = this.page.locator("//button[@type = 'button'][@aria-label = 'Close']");
+        this.assetOwnerName = this.page.locator("tr>td:nth-child(4)");
         this.loader = new Loader(page);
     }
 
@@ -109,8 +118,8 @@ export class AssetAllocation extends BasePage {
         await assetManagementTab.expandAssetManagementTab();
         await this.allocationAsset.click();
 
-        expect(await this.allocationPageHeader.isVisible());
-        expect(await this.allocationAssignAsset.isVisible());
+        expect(await this.allocationPageHeader.isVisible()).toBeTruthy();
+        expect(await this.allocationAssignAsset.isVisible()).toBeTruthy();
         await this.page.waitForTimeout(1000);
 
         const totalAllocationAsset = await this.totalAssetAssigned.allTextContents();
@@ -119,7 +128,7 @@ export class AssetAllocation extends BasePage {
 
         console.log("TotalAsset :  ", totalAssetCount);
 
-        expect(this.searchBar.isVisible());
+        expect(await this.searchBar.isVisible()).toBeTruthy();
 
         const colHeader = await this.columnHeader.allTextContents();
         let allMatched = true;
@@ -129,6 +138,7 @@ export class AssetAllocation extends BasePage {
                 allMatched = false;
             }
         }
+        expect(allMatched).toBeTruthy();
         if (allMatched) {
             console.log("All subtab titles matched successfully!");
         } else {
@@ -154,6 +164,7 @@ export class AssetAllocation extends BasePage {
                 foundKeyword = false;
             }
         }
+        expect(foundKeyword).toBeTruthy();
         if (foundKeyword) {
             console.log("Relevant record appears listed");
         } else {
@@ -179,6 +190,7 @@ export class AssetAllocation extends BasePage {
                 foundSerialNumber = false;
             }
         }
+        expect(foundSerialNumber).toBeTruthy();
         if (foundSerialNumber) {
             console.log("Relevant record appears listed when search by serial number");
         } else {
@@ -204,6 +216,7 @@ export class AssetAllocation extends BasePage {
                 foundOwner = false;
             }
         }
+        expect(foundOwner).toBeTruthy();
         if (foundOwner) {
             console.log("Relevant record appears listed when search by Owner name");
         } else {
@@ -229,13 +242,14 @@ export class AssetAllocation extends BasePage {
                 foundEmployee = false;
             }
         }
+        expect(foundEmployee).toBeTruthy();
         if (foundEmployee) {
             console.log("Relevant record appears listed when search by Employee name");
         } else {
             console.log("Relevant record shouldn't appear listed when search by employee name");
         }
 
-        await this.searchBar.fill('');
+        await this.searchBar.clear();
         await this.searchBar.pressSequentially("asdasdas");
         await this.page.waitForTimeout(1000);
         const invalidData = await this.assetInvalidData.textContent();
@@ -263,6 +277,7 @@ export class AssetAllocation extends BasePage {
         const assetNameCount = await this.assetTypeName.count();
         console.log("Selected Value: ", selectedValue);
         console.log("Asset Name Count: ", assetNameCount);
+        expect(selectedValue).toEqual(assetNameCount);
         if (selectedValue === assetNameCount) {
             console.log("The selected option matches the asset count.");
         } else {
@@ -311,7 +326,7 @@ export class AssetAllocation extends BasePage {
         expect(header).toEqual("Assign Asset");
 
         // Locators for assignAsset
-       
+
 
         // TC_AM_031
         await this.allocationSelectEmployee.click();
@@ -340,8 +355,16 @@ export class AssetAllocation extends BasePage {
         // TC_AM_034 & TC_AM_035
         await this.popupSearchBar.pressSequentially("");
         const serialNumbers = await this.assetTableSerialNumber.allTextContents();
-        const enterSerialNumber = "002";
-        expect(serialNumbers.includes(enterSerialNumber));
+        // Pick the first serial number dynamically from the list
+        const enterSerialNumber = serialNumbers.length > 0 ? serialNumbers[0] : "";
+        expect(serialNumbers.includes(enterSerialNumber)).toBeTruthy();
+
+        // Now search for the dynamically picked serial number
+        await this.popupSearchBar.fill('');
+        await this.popupSearchBar.pressSequentially(enterSerialNumber);
+        await this.page.waitForTimeout(1000);
+        const filteredSerialNumbers = await this.assetTableSerialNumber.allTextContents();
+        expect(filteredSerialNumbers).toContain(enterSerialNumber);
 
         // TC_AM_036
         await this.popupSearchBar.fill('');
@@ -391,7 +414,7 @@ export class AssetAllocation extends BasePage {
         console.log('Tooltip message:', tooltipMessage2);
         expect(tooltipMessage2).toBe('Please fill out this field.');
 
-        await this.allocationSelectAssetType.click();
+        await this.allocationSelectEmployee.click();
         await this.employeeOption.click();
 
         // TC_AM_040

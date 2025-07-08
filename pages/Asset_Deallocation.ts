@@ -28,7 +28,7 @@ export class AssetDeallocation extends BasePage {
         this.deallocationHeader = page.locator(".d-flex");
         this.deallocationDropdown = page.locator(".col-md-6");
         this.recordsSelectedOption = page.locator('//*[@id="react-select-2-option-0"]');
-        this.emptySelectedOption = page.locator('//*[@id="react-select-2-option-0"]');
+        this.emptySelectedOption = page.locator('//*[@id="react-select-2-option-9"]');
         this.deallocationDropdownList = page.locator(" .css-1nmdiq5-menu");
         this.deallocationOption = page.locator(" .css-10wo9uf-option");
         this.deallocationOptionDetails = page.locator(".table-responsive");
@@ -128,7 +128,10 @@ export class AssetDeallocation extends BasePage {
         await this.deallocationDropdown.click();
         await this.emptySelectedOption.textContent();
         await this.emptySelectedOption.click();
-        await expect(this.emptySelectedOption).toBeVisible();
+
+        await this.page.pause();
+        // Wait for the "no records" message to appear
+        await expect(this.deallocationNoRecord).toBeVisible();
 
         const emptyDetails = await this.deallocationRecords.allTextContents();
 
