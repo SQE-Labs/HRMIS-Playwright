@@ -1,85 +1,63 @@
-import { Page, Locator} from '@playwright/test'
-import { BasePage } from './Basepage'
+import { Page, Locator } from '@playwright/test';
+import { BasePage } from './Basepage';
 
+export class AssetManagementTab extends BasePage {
+    private assetManagement: Locator;
+    private subTabs: Locator;
 
-export class AssetManagementTab extends BasePage{
-    private AssetManagement : Locator
-    private subtabs : Locator
-    private subtabsTitle : string[]
+    // Locators
+    constructor(page: Page) {
+        super(page);
+        this.page = page;
+        this.assetManagement = page.locator("//a[text()='Asset Management']");
+        this.subTabs = page.locator("//a[text()='Asset Management']/../ul/li");
 
+    }
 
-// Locators
-    constructor(page : Page){
-        super(page)
-        this.page = page
-        this.AssetManagement =  page.locator("//a[text()='Asset Management']")
-        this.subtabs = page.locator("//a[text()='Asset Management']/../ul/li")
-        this.subtabsTitle = [
-            'Asset Overview',
-            'Asset Allocation',
-            'Asset De-allocation',
-            'Asset Request',
-            'New Asset Enrollment',
-            'Approve Asset Request (L1)',
-            'Approve Asset Request (L2)',
-            'Approve Asset Request (IT)',
-            'Asset Delivery (Store)',
-            'RTO Management'
-        ]
+    async expandAssetManagementTab(): Promise<void> {
+        if (!(await this.isExpanded())) {
+            await this.assetManagement.click(
+                { timeout: 5000 }
+            );
+        }
 
 
     }
-    async expandAssetManagementTab(){
-        try{
-            await this.AssetManagement.click()
-        }catch(error){
-            console.error('Asset management tab Does not expanded' , error)
+    async isExpanded(): Promise<boolean> {
+        try {
+            return await this.assetManagement.getAttribute('aria-expanded') === 'true';
+        } catch (error) {
+            console.error('Error checking if asset management tab is expanded', error);
+            return false;
         }
     }
-    
-    async isExpandable():Promise<boolean>{
-        try{
-            return await this.AssetManagement.getAttribute('aria-expanded') === 'true';
-        }catch(error){
-            console.error('Error Checking if asset management tab is expandable' , error)
-            return false
-        }
-}
-    async verifySubTabs(){
-        const title = await this.subtabs.allTextContents()
-        console.log(title)
-        let allMatched = true;
-        for (let i = 0; i < title.length; i++) {
-            if (title[i] !== this.subtabsTitle[i]) {
-                console.log(`Mismatch found at index ${i}: Expected "${this.subtabsTitle[i]}", but got "${title[i]}"`);
+
+    async verifySubTabs(subTabsTitles: string[]): Promise<boolean> {
+        const titles = await this.subTabs.allTextContents();
+        console.debug(titles);
+        var allMatched = true;
+        for (let i = 0; i < titles.length; i++) {
+            if (!titles[i].includes(subTabsTitles[i])) {
+                console.debug(`Mismatch found at index ${i}: Expected "${subTabsTitles[i]}", but got "${titles[i]}"`);
                 allMatched = false;
             }
         }
-        if (allMatched) {
-            console.log("All subtab titles matched successfully!");
-        } else {
-            console.log("Some subtab titles did not match.");
-        }
-    
+        return allMatched
     }
 
-    async collapsesAssetManagementTab(){
-        await this.AssetManagement.click()
-        await this.page.waitForTimeout(2000)
-        try{
-            await this.AssetManagement.click()
-            console.log('Asset management tab collapse Succesfully')
-        }catch(error){
-            console.error('Asset management tab Does not collapse' , error)
+    async collapseAssetManagementTab() {
+       
+        if (!(await this.isCollapsed())) {
+            await this.assetManagement.click({ timeout: 5000 });
+            console.debug('Asset Management tab is clicked to  collapse');
         }
+        else
+        console.debug('Asset Management tab is already collapsed');
     }
+    async isCollapsed(): Promise<boolean> {
+        console.log(await this.assetManagement.getAttribute('aria-expanded') )
 
-    async isCollapses():Promise<boolean>{
-        try{
-            return await this.AssetManagement.getAttribute('aria-expanded') === 'false';
-        }catch(error){
-            console.error('Error Checking if asset management tab is collapse ' , error)
-            return false
-        }
+            return await this.assetManagement.getAttribute('aria-expanded') === 'false';
+        
     }
 }

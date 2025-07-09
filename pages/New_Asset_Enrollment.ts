@@ -3,65 +3,62 @@ import { AssetManagementTab } from "./Asset_Management_Tab";
 import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
-import { Asset_Allocation } from "./Asset_Allocation";
-import { Asset_DeAllocation } from '../pages/Asset_Deallocation';
+import { AssetAllocation } from "./Asset_Allocation";
+import { AssetDeallocation } from '../pages/Asset_Deallocation';
 import { generateRandomString } from "./Employee_Management"
 
-export class Asset_Enrollment extends BasePage {
-    private Asset_Enrollment_subtab: Locator
-    private Asset_Enrollment_Header: Locator
-    private Asset_Enrollment_Tabs: Locator
-    private CreateAssetTabs: Locator
-    private CreateAssetTabsDetails: string[]
-    private SubmitButton: Locator
-    private Asset_type: Locator
-    private AssettypeLocator: Locator
-    private SuperOwnerLocator: Locator
-    private OwnerLocator: Locator
-    private Model: Locator
-    private Manufacturer: Locator
-    private serialNumber: Locator
-    private purchaseCost: Locator
-    private ValidationMessage: Locator
-    private Warranty: Locator
-    private WarrantyYear: Locator
-    private Calender: Locator
-    private comment: Locator
-    private BulkAsset: Locator
-    private ChooseButton: Locator
-    private BulkAssetSubmitbutton: Locator
-    private SccuessPopup: Locator
-    private CancelButton: Locator
-    private Asset_type_Request: Locator
-    private Asset_type_request_coloumn: Locator
-    private Create_Asset_type_button: Locator
-    private Create_asset_type_pop_up_header: Locator
-    private Create_asset_type_pop_up_label: Locator
-    private Pop_up_asset_name_field: Locator
-    private Pop_up_asset_Category: Locator
-    private Pop_up_submit_button: Locator
-    private Pop_up_cancel_button: Locator
-    private Pop_up_cross_icon: Locator
-    private Popupmessage: Locator
-    private Asset_Type_Name: Locator
-    private Approve_Asset_Type_Request: Locator
-    private View_Button: Locator
-    private Action_DropDown: Locator
-    private Loader: Loader
-
-
-
+export class AssetEnrollment extends BasePage {
+    private assetEnrollmentSubtab: Locator;
+    private assetEnrollmentHeader: Locator;
+    private assetEnrollmentTabs: Locator;
+    private createAssetTabs: Locator;
+    private createAssetTabsDetails: string[];
+    private submitButton: Locator;
+    private assetType: Locator;
+    private assetTypeLocator: Locator;
+    private superOwnerLocator: Locator;
+    private ownerLocator: Locator;
+    private model: Locator;
+    private manufacturer: Locator;
+    private serialNumber: Locator;
+    private purchaseCost: Locator;
+    private validationMessage: Locator;
+    private warranty: Locator;
+    private warrantyYear: Locator;
+    private calendar: Locator;
+    private comment: Locator;
+    private bulkAsset: Locator;
+    private chooseButton: Locator;
+    private bulkAssetSubmitButton: Locator;
+    private successPopup: Locator;
+    private cancelButton: Locator;
+    private assetTypeRequest: Locator;
+    private assetTypeRequestColumn: Locator;
+    private createAssetTypeButton: Locator;
+    private createAssetTypePopupHeader: Locator;
+    private createAssetTypePopupLabel: Locator;
+    private popupAssetNameField: Locator;
+    private popupAssetCategory: Locator;
+    private popupSubmitButton: Locator;
+    private popupCancelButton: Locator;
+    private popupCrossIcon: Locator;
+    private popupMessage: Locator;
+    private assetTypeName: Locator;
+    private approveAssetTypeRequest: Locator;
+    private viewButton: Locator;
+    private actionDropdown: Locator;
+    private loader: Loader;
 
     constructor(page: Page) {
-        super(page)
-        this.Asset_Enrollment_subtab = page.locator("//a[text()='New Asset Enrollment']")
-        this.Asset_Enrollment_Header = page.locator(".d-flex.flex-column")
-        this.Asset_Enrollment_Tabs = page.locator(".nav.nav-tabs")
-        this.CreateAssetTabs = page.locator("div>label")
-        this.AssettypeLocator = this.page.locator("//select[@id = 'asset_list']");
-        this.SuperOwnerLocator = this.page.locator("//select[@id = 'superOwner']");
-        this.OwnerLocator = this.page.locator("//select[@id = 'owner']");
-        this.CreateAssetTabsDetails = [
+        super(page);
+        this.assetEnrollmentSubtab = page.locator("//a[text()='New Asset Enrollment']");
+        this.assetEnrollmentHeader = page.locator(".d-flex.flex-column");
+        this.assetEnrollmentTabs = page.locator(".nav.nav-tabs");
+        this.createAssetTabs = page.locator("div>label");
+        this.assetTypeLocator = this.page.locator("//select[@id = 'asset_list']");
+        this.superOwnerLocator = this.page.locator("//select[@id = 'superOwner']");
+        this.ownerLocator = this.page.locator("//select[@id = 'owner']");
+        this.createAssetTabsDetails = [
             'Asset Type',
             'Model',
             'Super Owner',
@@ -72,284 +69,255 @@ export class Asset_Enrollment extends BasePage {
             'Purchase Cost',
             'Purchase Date',
             'Comment'
-
-        ]
-        this.SubmitButton = page.locator(".theme-button ")
-        this.Asset_type = page.locator("select[id='asset_list']")
-        this.Model = page.locator("//input[@name = 'model']")
-        this.Manufacturer = page.locator("//input[@name = 'manufacture']")
-        this.serialNumber = page.locator("//input[@name = 'serialNumber']")
-        this.purchaseCost = page.locator("//div//input[@name = 'purchaseCost']")
-        this.ValidationMessage = page.locator(".text-danger")
-        this.Warranty = page.locator("//input[@type = 'number']")
-        this.WarrantyYear = page.locator("#warrantyUnit")
-        this.Calender = page.locator("//input[@type = 'date']")
-        this.comment = page.locator("//textarea[@id = 'comment']")
-        this.BulkAsset = page.locator("//button[@id = 'tab1-tab']")
-        this.ChooseButton = page.locator("//input[@type = 'file']")
-        this.BulkAssetSubmitbutton = page.locator("//button[@type = 'submit']")
-        this.SccuessPopup = page.locator(".modal-body")
-        this.CancelButton = page.locator(".theme-button.bg-grey.mx-3.w-35")
-        this.Popupmessage = page.locator('div>ol')
-        this.Asset_type_Request = page.locator("#tab2-tab")
-        this.Asset_type_request_coloumn = page.locator("thead>tr>th")
-        this.Create_Asset_type_button = page.locator("(//button[@type= 'button'])[7]")
-        this.Create_asset_type_pop_up_header = page.locator("#staticBackdropLabel")
-        this.Create_asset_type_pop_up_label = page.locator(".col-md-4.pt-1")
-        this.Pop_up_asset_name_field = page.locator("//input[@type = 'text']")
-        this.Pop_up_asset_Category = page.locator(":#assetCategory")
-        this.Pop_up_submit_button = page.locator("(//button[@type= 'submit'])")
-        this.Pop_up_cancel_button = page.locator("(//button[@type= 'button'])[6]")
-        this.Pop_up_cross_icon = page.locator(".btn-close")
-        this.Asset_Type_Name = page.locator("tr>td:nth-child(2)")
-        this.Approve_Asset_Type_Request = page.locator("#tab3-tab")
-        this.View_Button = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a')
-        this.Action_DropDown = page.locator("#status")
-        this.Loader = new Loader(page)
+        ];
+        this.submitButton = page.locator(".theme-button ");
+        this.assetType = page.locator("select[id='asset_list']");
+        this.model = page.locator("//input[@name = 'model']");
+        this.manufacturer = page.locator("//input[@name = 'manufacture']");
+        this.serialNumber = page.locator("//input[@name = 'serialNumber']");
+        this.purchaseCost = page.locator("//div//input[@name = 'purchaseCost']");
+        this.validationMessage = page.locator(".text-danger");
+        this.warranty = page.locator("//input[@type = 'number']");
+        this.warrantyYear = page.locator("#warrantyUnit");
+        this.calendar = page.locator("//input[@type = 'date']");
+        this.comment = page.locator("//textarea[@id = 'comment']");
+        this.bulkAsset = page.locator("//button[@id = 'tab1-tab']");
+        this.chooseButton = page.locator("//input[@type = 'file']");
+        this.bulkAssetSubmitButton = page.locator("//button[@type = 'submit']");
+        this.successPopup = page.locator(".modal-body");
+        this.cancelButton = page.locator(".theme-button.bg-grey.mx-3.w-35");
+        this.popupMessage = page.locator('div>ol');
+        this.assetTypeRequest = page.locator("#tab2-tab");
+        this.assetTypeRequestColumn = page.locator("thead>tr>th");
+        this.createAssetTypeButton = page.locator("(//button[@type= 'button'])[7]");
+        this.createAssetTypePopupHeader = page.locator("#staticBackdropLabel");
+        this.createAssetTypePopupLabel = page.locator(".col-md-4.pt-1");
+        this.popupAssetNameField = page.locator("//input[@type = 'text']");
+        this.popupAssetCategory = page.locator(":#assetCategory");
+        this.popupSubmitButton = page.locator("(//button[@type= 'submit'])");
+        this.popupCancelButton = page.locator("(//button[@type= 'button'])[6]");
+        this.popupCrossIcon = page.locator(".btn-close");
+        this.assetTypeName = page.locator("tr>td:nth-child(2)");
+        this.approveAssetTypeRequest = page.locator("#tab3-tab");
+        this.viewButton = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
+        this.actionDropdown = page.locator("#status");
+        this.loader = new Loader(page);
     }
 
-    async New_enrollment_page() {
+    async newEnrollmentPage() {
         const assetManagementTab = new AssetManagementTab(this.page);
         await assetManagementTab.expandAssetManagementTab();
-        await this.Asset_Enrollment_subtab.click()
+        await this.assetEnrollmentSubtab.click();
     }
 
-    async Enrollment() {
+    async enrollment() {
         // TC_AM_056
-        await this.New_enrollment_page()
-        expect(await this.Asset_Enrollment_Header.isVisible()).toBeTruthy()
-        expect(await this.Asset_Enrollment_Tabs.isVisible()).toBeTruthy()
+        await this.newEnrollmentPage();
+        expect(await this.assetEnrollmentHeader.isVisible()).toBeTruthy();
+        expect(await this.assetEnrollmentTabs.isVisible()).toBeTruthy();
 
         // TC_AM_057
-        expect(await this.CreateAssetTabs.allTextContents()).toEqual(this.CreateAssetTabsDetails)
+        expect(await this.createAssetTabs.allTextContents()).toEqual(this.createAssetTabsDetails);
 
         // TC_AM_058
-        const AssetTypeVisible = await this.AssettypeLocator.isVisible();
-        const AssetTypeinnerText = await this.AssettypeLocator.innerText();
+        const assetTypeVisible = await this.assetTypeLocator.isVisible();
+        const assetTypeInnerText = await this.assetTypeLocator.innerText();
 
-        const SuperOwnerVisible = await this.SuperOwnerLocator.isVisible();
-        const SuperOwnerinnerText = await this.SuperOwnerLocator.innerText();
+        const superOwnerVisible = await this.superOwnerLocator.isVisible();
+        const superOwnerInnerText = await this.superOwnerLocator.innerText();
 
-        const OwnerVisible = await this.OwnerLocator.isVisible();
-        const OwnerinnerText = await this.OwnerLocator.innerText();
-        if ((AssetTypeVisible && AssetTypeinnerText.trim()) && (SuperOwnerVisible && SuperOwnerinnerText.trim()) && (OwnerVisible && OwnerinnerText.trim()) !== "") {
+        const ownerVisible = await this.ownerLocator.isVisible();
+        const ownerInnerText = await this.ownerLocator.innerText();
+        if ((assetTypeVisible && assetTypeInnerText.trim()) && (superOwnerVisible && superOwnerInnerText.trim()) && (ownerVisible && ownerInnerText.trim()) !== "") {
             console.log('The select element is visible and the inner text is visible.');
         } else {
             console.log('The select element or inner text is not visible.');
         }
     }
+
     // TC_AM_059
-    async Create_Asset() {
-        await this.New_enrollment_page()
-        await this.SubmitButton.click()
-        await this.page.waitForTimeout(1000)
-        var assettypeField = this.Asset_type;
+    async createAsset() {
+        await this.newEnrollmentPage();
+        await this.submitButton.click();
+        await this.page.waitForTimeout(1000);
+        const assetTypeField = this.assetType;
         // Get the validation message
-        var tooltipMessage = await assettypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        let tooltipMessage = await assetTypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Asset type Tooltip message:', tooltipMessage);
         // Validate the expected message
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-
-
+        expect(tooltipMessage).toBe('Please select an item in the list.');
 
         // TC_AM_061
-        await this.Asset_type.click()
-        const SelectedOption = await this.AssettypeLocator.selectOption({ label: 'USB HUB Adapter' });
-        const SelectedoptionDetails = this.AssettypeLocator.textContent()
-        expect(this.AssettypeLocator.isVisible()).toBeTruthy()
+        await this.assetType.click();
+        await this.assetTypeLocator.selectOption({ label: 'USB HUB Adapter' });
+        await this.assetTypeLocator.textContent();
+        expect(this.assetTypeLocator.isVisible()).toBeTruthy();
 
         // TC_AM_062
-        await this.SubmitButton.click()
-        await this.page.waitForTimeout(1000)
-        var ModelField = this.Model;
-        // Get the validation message
-        var tooltipMessage = await ModelField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        await this.submitButton.click();
+        await this.page.waitForTimeout(1000);
+        const modelField = this.model;
+        tooltipMessage = await modelField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Model Tooltip message:', tooltipMessage);
-        // Validate the expected message
-        expect(tooltipMessage).toBe('Please fill out this field.')
+        expect(tooltipMessage).toBe('Please fill out this field.');
 
         // TC_AM_063
         // Fill all mandatory Fields.
-        await this.Model.fill('3213')   // Try to enter only numbers
-        await this.SuperOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-        await this.OwnerLocator.selectOption({ label: "Caelius" })
-        await this.Manufacturer.fill("HP01")
-        await this.serialNumber.fill('5900')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
-
-
+        await this.model.fill('3213');   // Try to enter only numbers
+        await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
+        await this.ownerLocator.selectOption({ label: "Caelius" });
+        await this.manufacturer.fill("HP01");
+        await this.serialNumber.fill('5900');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_064
-        await this.Model.clear()
-        await this.Model.fill('12345678901234567890123456789012345678901') // try to enter more then 40 characters
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
-
+        await this.model.clear();
+        await this.model.fill('12345678901234567890123456789012345678901'); // try to enter more then 40 characters
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_065
-        await this.Model.clear()
-        await this.Model.fill('Pavalian')   // Try to enter only numbers
-        await this.SuperOwnerLocator.selectOption({ label: 'Select a super owner' });
-        await this.SubmitButton.click()
-        var SuperOwnerField = this.SuperOwnerLocator;
-        // Get the validation message
-        var tooltipMessage = await SuperOwnerField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        await this.model.clear();
+        await this.model.fill('Pavalian');   // Try to enter only numbers
+        await this.superOwnerLocator.selectOption({ label: 'Select a super owner' });
+        await this.submitButton.click();
+        const superOwnerField = this.superOwnerLocator;
+        tooltipMessage = await superOwnerField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Super Owner Tooltip message:', tooltipMessage);
-        // Validate the expected message
-        expect(tooltipMessage).toBe('Please select an item in the list.')
+        expect(tooltipMessage).toBe('Please select an item in the list.');
 
         // TC_AM_066
-        await this.SuperOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-        // console.log(await this.SuperOwnerLocator.innerText())
-        expect(await this.SuperOwnerLocator.isVisible()).toBeTruthy();
+        await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
+        expect(await this.superOwnerLocator.isVisible()).toBeTruthy();
 
         // TC_AM_067
-        if (await this.SuperOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' })) {
-            console.log("When CAELIUS_OWNED option is selected")
-            console.log(await this.OwnerLocator.innerText())
-            expect(await this.OwnerLocator.isVisible()).toBeTruthy()
+        if (await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' })) {
+            console.log("When CAELIUS_OWNED option is selected");
+            console.log(await this.ownerLocator.innerText());
+            expect(await this.ownerLocator.isVisible()).toBeTruthy();
         }
-        if (await this.SuperOwnerLocator.selectOption({ label: 'CLIENT_OWNED' })) {
-            console.log("When CLIENT_OWNED option is selected")
-            console.log(await this.OwnerLocator.innerText())
-            expect(await this.OwnerLocator.isVisible()).toBeTruthy()
-
+        if (await this.superOwnerLocator.selectOption({ label: 'CLIENT_OWNED' })) {
+            console.log("When CLIENT_OWNED option is selected");
+            console.log(await this.ownerLocator.innerText());
+            expect(await this.ownerLocator.isVisible()).toBeTruthy();
         }
-
 
         // TC_AM_068
         // If CAELIUS_OWNED option is selected.
         try {
-            // Wait for the SuperOwnerLocator to select the option
-            var superOwnerSelected = await this.SuperOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
+            const superOwnerSelected = await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
 
             if (superOwnerSelected) {
-                var ownerTextVisible = await this.OwnerLocator.getByText('Select an Owner').textContent()
+                const ownerTextVisible = await this.ownerLocator.getByText('Select an Owner').textContent();
                 if (ownerTextVisible) {
-                    await this.SubmitButton.click()
+                    await this.submitButton.click();
 
-                    var OwnerField = this.OwnerLocator;
-                    var tooltipMessage = await OwnerField.evaluate(el => (el as HTMLInputElement).validationMessage);
+                    const ownerField = this.ownerLocator;
+                    tooltipMessage = await ownerField.evaluate(el => (el as HTMLInputElement).validationMessage);
                     console.log('Owner Tooltip message:', tooltipMessage);
-                    expect(tooltipMessage).toBe('Please select an item in the list.')
+                    expect(tooltipMessage).toBe('Please select an item in the list.');
 
                 } else {
                     console.error('"Select an owner" text is not visible');
                 }
             } else {
-                console.error('SuperOwnerLocator option was not selected');
+                console.error('superOwnerLocator option was not selected');
             }
         } catch (error) {
             console.error('An error occurred during the test execution:', error);
         }
         // If CLIENT_OWNED option is selected.
-        await this.page.waitForTimeout(2000)
+        await this.page.waitForTimeout(2000);
         try {
-            // Wait for the SuperOwnerLocator to select the option
-            var superOwnerSelected = await this.SuperOwnerLocator.selectOption({ label: 'CLIENT_OWNED' });
+            const superOwnerSelected = await this.superOwnerLocator.selectOption({ label: 'CLIENT_OWNED' });
 
             if (superOwnerSelected) {
-
-                const ownerTextElement = await this.OwnerLocator.getByText('Select an Owner').isVisible();
-
+                const ownerTextElement = await this.ownerLocator.getByText('Select an Owner').isVisible();
 
                 if (ownerTextElement) {
+                    await this.submitButton.click();
 
-                    await this.SubmitButton.click();
-
-                    var OwnerField = this.OwnerLocator;
-                    var tooltipMessage = await OwnerField.evaluate(el => (el as HTMLInputElement).validationMessage);
+                    const ownerField = this.ownerLocator;
+                    tooltipMessage = await ownerField.evaluate(el => (el as HTMLInputElement).validationMessage);
                     console.log('Owner Tooltip message:', tooltipMessage);
-
 
                     expect(tooltipMessage).toBe('Please select an item in the list.');
                 } else {
                     console.error('"Select an Owner" text is not found on the page');
                 }
             } else {
-                console.error('SuperOwnerLocator option was not selected');
-                throw new Error('SuperOwnerLocator option was not selected. Test case failed.');
+                console.error('superOwnerLocator option was not selected');
+                throw new Error('superOwnerLocator option was not selected. Test case failed.');
             }
         } catch (error) {
             console.error('An error occurred during the test execution:', error);
             throw error;
         }
 
-
-
         // TC_AM_069
-        await this.page.waitForTimeout(1000)
-        var superOwnerSelected = await this.SuperOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-        await this.OwnerLocator.selectOption({ label: 'Caelius' })
-        expect(await this.OwnerLocator.isVisible()).toBeTruthy();
+        await this.page.waitForTimeout(1000);
+        await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
+        await this.ownerLocator.selectOption({ label: 'Caelius' });
+        expect(await this.ownerLocator.isVisible()).toBeTruthy();
 
         // TC_AM_70
-        await this.page.waitForTimeout(2000)
-        await this.Manufacturer.clear()
-        await this.SubmitButton.click()
-        var ManufacturerField = this.Manufacturer;
-        // Get the validation message
-        var tooltipMessage = await ManufacturerField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        await this.page.waitForTimeout(2000);
+        await this.manufacturer.clear();
+        await this.submitButton.click();
+        const manufacturerField = this.manufacturer;
+        tooltipMessage = await manufacturerField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Manufacturer Tooltip message:', tooltipMessage);
-        // Validate the expected message
-        expect(tooltipMessage).toBe('Please fill out this field.')
+        expect(tooltipMessage).toBe('Please fill out this field.');
 
         // TC_AM_71
-        await this.page.waitForTimeout(2000)
-        await this.Manufacturer.fill('3213')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
+        await this.page.waitForTimeout(2000);
+        await this.manufacturer.fill('3213');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_72
-        await this.page.waitForTimeout(2000)
-        await this.Manufacturer.clear()
-        await this.Manufacturer.fill('12345678901234567890123456789012345678901') // try to enter more then 40 characters
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
+        await this.page.waitForTimeout(2000);
+        await this.manufacturer.clear();
+        await this.manufacturer.fill('12345678901234567890123456789012345678901'); // try to enter more then 40 characters
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
-        await this.Manufacturer.fill('HP01')
-
-
+        await this.manufacturer.fill('HP01');
 
         // TC_AM_73
-
-        await this.serialNumber.clear()
-        await this.SubmitButton.click()
-        var serialNumberField = this.serialNumber;
-        // Get the validation message
-        var tooltipMessage = await serialNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        await this.serialNumber.clear();
+        await this.submitButton.click();
+        const serialNumberField = this.serialNumber;
+        tooltipMessage = await serialNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('SerialNumber Tooltip message:', tooltipMessage);
-        // Validate the expected message
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
+        expect(tooltipMessage).toBe('Please fill out this field.');
 
         // TC_AM_74
-
-        await this.serialNumber.clear()
-        await this.serialNumber.fill('12345678901234567890123456789012345678901') // try to enter more then 40 characters
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
+        await this.serialNumber.clear();
+        await this.serialNumber.fill('12345678901234567890123456789012345678901'); // try to enter more then 40 characters
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_76   
-        await this.serialNumber.fill('@#$%^')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
+        await this.serialNumber.fill('@#$%^');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_77
         // Try to Enter Existing Serial number
-        const usedSerialNumbers = new Set();
+        const usedSerialNumbers = new Set<number>();
 
         // TC_AM_78
-        let serialNumber = 0
+        let serialNumber = 0;
         do {
-            serialNumber = Math.floor(10000 + Math.random() * 90000)
+            serialNumber = Math.floor(10000 + Math.random() * 90000);
         } while (usedSerialNumbers.has(serialNumber));
 
         // Store the serial number to prevent repetition
@@ -358,150 +326,135 @@ export class Asset_Enrollment extends BasePage {
         await this.page.waitForTimeout(7000);
         await this.serialNumber.fill(serialNumber.toString());
         await this.page.waitForTimeout(1000);  // Wait for 1 second
-        let EnterSerialNumber = await this.serialNumber.inputValue();
-        console.log(EnterSerialNumber)
-        await expect(this.WarrantyYear).toBeDisabled();
-        await this.Warranty.fill('1');
-        await expect(this.WarrantyYear).toBeEnabled();
-
+        const enteredSerialNumber = await this.serialNumber.inputValue();
+        console.log(enteredSerialNumber);
+        await expect(this.warrantyYear).toBeDisabled();
+        await this.warranty.fill('1');
+        await expect(this.warrantyYear).toBeEnabled();
 
         // TC_AM_80
         // Enter negative value
-        await this.Warranty.fill('-1')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
+        await this.warranty.fill('-1');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_81
         // Enter More then 10
-        await this.Warranty.fill('11')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
-
+        await this.warranty.fill('11');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_82
         // Enter More then 120 and select month
-        await this.Warranty.fill('121')
-        await this.WarrantyYear.selectOption({ label: 'Month' });
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
-        await this.Warranty.fill('120')
-
+        await this.warranty.fill('121');
+        await this.warrantyYear.selectOption({ label: 'Month' });
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
+        await this.warranty.fill('120');
 
         // TC_AM_083
-        const PurchaseCost = await this.purchaseCost.getAttribute('value')
-        expect(PurchaseCost).toEqual("0");
+        const purchaseCostValue = await this.purchaseCost.getAttribute('value');
+        expect(purchaseCostValue).toEqual("0");
 
         // TC_AM_84
-        await this.purchaseCost.clear()
-        await this.purchaseCost.fill('@#$%^&*')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
-
-
-
+        await this.purchaseCost.clear();
+        await this.purchaseCost.fill('@#$%^&*');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_85
-        await this.purchaseCost.clear()
-        await this.purchaseCost.fill('1000001')
-        await this.SubmitButton.click()
-        console.log(await this.ValidationMessage.textContent())
-        expect(this.ValidationMessage.isVisible()).toBeTruthy()
-        await this.purchaseCost.fill('100')
-
+        await this.purchaseCost.clear();
+        await this.purchaseCost.fill('1000001');
+        await this.submitButton.click();
+        console.log(await this.validationMessage.textContent());
+        expect(this.validationMessage.isVisible()).toBeTruthy();
+        await this.purchaseCost.fill('100');
 
         // TC_AM_86
-        var futureDate = new Date();
-
-        // Add 1 day to today's date (to get tomorrow's date)
+        const futureDate = new Date();
         futureDate.setDate(futureDate.getDate() + 1);
-
-        // Format the future date as 'YYYY-MM-DD'
-        const futureDates = futureDate.toISOString().split('T')[0];
-        await this.Calender.pressSequentially(futureDates); // Try to enter future dates
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.locator(".Toastify__toast-body").isVisible()
-        await this.page.waitForTimeout(7000)
-
+        const futureDateString = futureDate.toISOString().split('T')[0];
+        await this.calendar.pressSequentially(futureDateString); // Try to enter future dates
+        console.log(await this.page.locator(".Toastify__toast-body").textContent());
+        await this.page.locator(".Toastify__toast-body").isVisible();
+        await this.page.waitForTimeout(7000);
 
         // TC_AM_87
         // Enter more than 256 characters 
-        const today = new Date()
-        today.setDate(today.getDate())
+        const today = new Date();
+        today.setDate(today.getDate());
         const presentDate = today.toISOString().split('T')[0];
-        await this.Calender.pressSequentially(presentDate);
-        await this.comment.fill("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.")
-        await this.SubmitButton.click()
-        // console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.locator(".Toastify__toast-body").isVisible()
-        await this.comment.fill("Thnk you !!")
+        await this.calendar.pressSequentially(presentDate);
+        await this.comment.fill("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.");
+        await this.submitButton.click();
+        await this.page.locator(".Toastify__toast-body").isVisible();
+        await this.comment.fill("Thnk you !!");
 
         // TC_AM_88
-        await this.page.waitForTimeout(7000)
-        await this.SubmitButton.click()
-        await this.page.waitForTimeout(500)
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.locator(".Toastify__toast-body").isVisible()
+        await this.page.waitForTimeout(7000);
+        await this.submitButton.click();
+        await this.page.waitForTimeout(500);
+        console.log(await this.page.locator(".Toastify__toast-body").textContent());
+        await this.page.locator(".Toastify__toast-body").isVisible();
 
         // TC_AM_89
         const overView = new OverView(this.page);
-        this.page.locator("//a[text()='Asset Overview']").click()
-        await expect(this.Loader.getThreeDotClass()).not.toBeAttached()
-        await this.page.getByTitle("USB HUB Adapter").click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        this.page.locator("//a[text()='Asset Overview']").click();
+        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
+        await this.page.getByTitle("USB HUB Adapter").click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
 
-        var ExistingSerialnumber = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents()
-        expect(ExistingSerialnumber).toContain(EnterSerialNumber)
+        const existingSerialNumbers = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents();
+        expect(existingSerialNumbers).toContain(enteredSerialNumber);
     }
-    async Bulk_Create_Asset() {
+    async bulkCreateAsset() {
         // TC_AM_90
-        await this.New_enrollment_page()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.BulkAsset.click()
-        await this.page.locator(".has-asterisk").isVisible()
-        await this.ChooseButton.isVisible()
-        await this.BulkAssetSubmitbutton.isVisible()
-
+        await this.newEnrollmentPage();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.bulkAsset.click();
+        await this.page.locator(".has-asterisk").isVisible();
+        await this.chooseButton.isVisible();
+        await this.bulkAssetSubmitButton.isVisible();
 
         // TC_AM_091
 
-        var fileInputSelector = "//input[@type = 'file']"
+        let fileInputSelector = "//input[@type = 'file']";
 
-        // var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ValidDocument.xlsx'; // Specify the path to the file you want to upload
+        // let filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ValidDocument.xlsx'; // Specify the path to the file you want to upload
         // await this.page.setInputFiles(fileInputSelector, filePath);
-        // await this.BulkAssetSubmitbutton.click()
-        // console.log(await this.SccuessPopup.innerText())
-        // await this.SccuessPopup.isVisible()
-
+        // await this.bulkAssetSubmitButton.click();
+        // console.log(await this.successPopup.innerText());
+        // await this.successPopup.isVisible();
 
         // TC_AM_092
-        await this.page.waitForTimeout(7000)
-        // await this.page.locator(".btn-close").click()``
-        fileInputSelector = "//input[@type = 'file']"
-        var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\abc.docx'; // Specify the path to the file you want to upload
+        await this.page.waitForTimeout(7000);
+        // await this.page.locator(".btn-close").click()
+        fileInputSelector = "//input[@type = 'file']";
+        let filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\abc.docx'; // Specify the path to the file you want to upload
         await this.page.setInputFiles(fileInputSelector, filePath);
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.locator(".Toastify__toast-body").isVisible()
-        await this.page.waitForTimeout(1000)
+        console.log(await this.page.locator(".Toastify__toast-body").textContent());
+        await this.page.locator(".Toastify__toast-body").isVisible();
+        await this.page.waitForTimeout(1000);
 
         // TC_AM_093
-        var BulkAssetField = this.page.locator("//input[@type = 'file']");
-        await this.BulkAssetSubmitbutton.click()
+        const bulkAssetField = this.page.locator("//input[@type = 'file']");
+        await this.bulkAssetSubmitButton.click();
         // Get the validation message
-        var tooltipMessage = await BulkAssetField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        let tooltipMessage = await bulkAssetField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Asset type Tooltip message:', tooltipMessage);
         // Validate the expected message
-        expect(tooltipMessage).toBe('Please select a file.')
+        expect(tooltipMessage).toBe('Please select a file.');
 
         // TC_AM_094
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\AssetType_Column.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();
-        await this.Popupmessage.waitFor({ state: 'visible' });
+        await this.bulkAssetSubmitButton.click();
+        await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
 
         // TC_AM_095
@@ -511,8 +464,8 @@ export class Asset_Enrollment extends BasePage {
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
 
-        await this.BulkAssetSubmitbutton.click();
-        await this.Popupmessage.waitFor({ state: 'visible' });
+        await this.bulkAssetSubmitButton.click();
+        await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
 
@@ -521,20 +474,19 @@ export class Asset_Enrollment extends BasePage {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Owner_Column.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();  // Submit the last file
-        await this.Popupmessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.popupMessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
-
 
         // TC_AM_097
         await this.page.waitForTimeout(2000);
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Manufracture.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();
-        await this.Popupmessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts())
+        await this.bulkAssetSubmitButton.click();
+        await this.popupMessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
 
         // TC_AM_098
@@ -542,9 +494,9 @@ export class Asset_Enrollment extends BasePage {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\SerialNumber.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.BulkAssetSubmitbutton.click();
-        // await this.Popupmessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.bulkAssetSubmitButton.click();
+        // await this.popupMessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
 
         // TC_AM_099
@@ -552,9 +504,9 @@ export class Asset_Enrollment extends BasePage {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Warranty.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.BulkAssetSubmitbutton.click()
-        // await this.Popupmessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.bulkAssetSubmitButton.click();
+        // await this.popupMessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
 
         // TC_AM_100
@@ -562,9 +514,9 @@ export class Asset_Enrollment extends BasePage {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Purchase.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.BulkAssetSubmitbutton.click();
-        // await this.Popupmessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.bulkAssetSubmitButton.click();
+        // await this.popupMessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
 
         // TC_AM_101
@@ -572,9 +524,9 @@ export class Asset_Enrollment extends BasePage {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Processor.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.BulkAssetSubmitbutton.click();  // Submit the last file
-        // await this.Popupmessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts())
+        // await this.bulkAssetSubmitButton.click();  // Submit the last file
+        // await this.popupMessage.waitFor({ state: 'visible' });
+        // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
 
         // TC_AM_102
@@ -582,190 +534,181 @@ export class Asset_Enrollment extends BasePage {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\superOwner.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();  // Submit the last file
-        await this.Popupmessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts())
-        await this.page.locator(".btn-close").click()
+        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.popupMessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
+        await this.page.locator(".btn-close").click();
 
         // TC_AM_106
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ExistingSerialNumber.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();  // Submit the last file
-        await this.Popupmessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts())
-        await this.page.locator(".btn-close").click()
+        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.popupMessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
+        await this.page.locator(".btn-close").click();
 
         // TC_AM_115
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NonExistingAssetType.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();  // Submit the last file
-        await this.Popupmessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts())
-        await this.page.locator(".btn-close").click()
+        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.popupMessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
+        await this.page.locator(".btn-close").click();
 
         // TC_AM_123
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NoUnit.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.BulkAssetSubmitbutton.click();  // Submit the last file
-        await this.Popupmessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts())
-        await this.page.locator(".btn-close").click()
-
+        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.popupMessage.waitFor({ state: 'visible' });
+        console.log(await this.page.locator('div>ol').allInnerTexts());
+        await this.page.locator(".btn-close").click();
     }
 
-    async Asset_Type_Request() {
+    async assetTypeRequests() {
         // TC_AM_124
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Asset_type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        let column_count = await this.Asset_type_request_coloumn.count()
-        for (let i = 0; i < column_count; i++) {
-            let coloumn = await this.Asset_type_request_coloumn.nth(i)
-            await expect(coloumn).toBeVisible()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.assetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        const columnCount = await this.assetTypeRequestColumn.count();
+        for (let i = 0; i < columnCount; i++) {
+            const column = await this.assetTypeRequestColumn.nth(i);
+            await expect(column).toBeVisible();
         }
-        await expect(this.Create_Asset_type_button).toBeVisible()
+        await expect(this.createAssetTypeButton).toBeVisible();
     }
 
-    async Asset_Type_Request_Create_asset_type_request() {
+    async assetTypeRequestCreateAssetTypeRequest() {
         // TC_AM_125
-        await this.Asset_Type_Request()
-        await this.page.waitForTimeout(2000)
-        await this.Create_Asset_type_button.click()
-        await this.page.waitForTimeout(500)
-        let header = await this.Create_asset_type_pop_up_header.textContent()
-        expect(header).toEqual('Create Asset Type')
-        let label_count = await this.Create_asset_type_pop_up_label.count()
-        for (let i = 0; i < label_count; i++) {
-            let label = await this.Create_asset_type_pop_up_label.nth(i)
-            await expect(label).toBeVisible()
+        await this.assetTypeRequests();
+        await this.page.waitForTimeout(2000);
+        await this.createAssetTypeButton.click();
+        await this.page.waitForTimeout(500);
+        const header = await this.createAssetTypePopupHeader.textContent();
+        expect(header).toEqual('Create Asset Type');
+        const labelCount = await this.createAssetTypePopupLabel.count();
+        for (let i = 0; i < labelCount; i++) {
+            const label = await this.createAssetTypePopupLabel.nth(i);
+            await expect(label).toBeVisible();
         }
-
-
-
     }
 
-    async Asset_type_request_empty_field() {
+    async assetTypeRequestEmptyField() {
         // TC_AM_126 &  TC_AM_129 (I combine both test cases)
         // Empty Asset Name 
-        await this.Asset_Type_Request_Create_asset_type_request()
-        await this.Pop_up_submit_button.click()
-        let Asset_name = this.Pop_up_asset_name_field;
-        var tooltipMessage = await Asset_name.evaluate(el => (el as HTMLInputElement).validationMessage);
+        await this.assetTypeRequestCreateAssetTypeRequest();
+        await this.popupSubmitButton.click();
+        const assetNameField = this.popupAssetNameField;
+        const tooltipMessage = await assetNameField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Asset Name tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
+        expect(tooltipMessage).toBe('Please fill out this field.');
 
         // Empty Comment Field
-        await Asset_name.fill(generateRandomString(5))
-        await this.page.waitForTimeout(500)
-        await this.Pop_up_submit_button.click()
-        let Comment_field = this.comment;
-        var tooltipMessage = await Comment_field.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Comment Field tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
+        await assetNameField.fill(generateRandomString(5));
+        await this.page.waitForTimeout(500);
+        await this.popupSubmitButton.click();
+        const commentField = this.comment;
+        const commentTooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log('Comment Field tooltip message:', commentTooltipMessage);
+        expect(commentTooltipMessage).toBe('Please fill out this field.');
     }
 
-    async Asset_type_request_Asset_Name_field_Morethen40Characters() {
+    async assetTypeRequestAssetNameFieldMoreThan40Characters() {
         // TC_AM_127
-        await this.Asset_Type_Request_Create_asset_type_request()
-        await this.page.waitForTimeout(2000)
-        // When user try to enter more then 40 characters in Asset name field.
+        await this.assetTypeRequestCreateAssetTypeRequest();
+        await this.page.waitForTimeout(2000);
         try {
-            let Asset_name = this.Pop_up_asset_name_field;
-            await Asset_name.fill(generateRandomString(5))
-            let text = generateRandomString(41)
+            const assetNameField = this.popupAssetNameField;
+            await assetNameField.fill(generateRandomString(5));
+            const text = generateRandomString(41);
             await this.comment.fill(text);
-            await this.Pop_up_submit_button.click();
-            let Message = await this.ValidationMessage.textContent()
-            console.log(Message)
-            // Wait for it to appear and assert its visibility
-            await expect(this.ValidationMessage).toBeVisible();
-            await expect(Message).toEqual("Asset name must not exceed 40 characters")
+            await this.popupSubmitButton.click();
+            const message = await this.validationMessage.textContent();
+            console.log(message);
+            await expect(this.validationMessage).toBeVisible();
+            await expect(message).toEqual("Asset name must not exceed 40 characters");
         } catch (error) {
             console.error('Validation check failed:', error);
         }
     }
-    async Asset_type_request_Asset_Name_field_Number_Special_Char() {
+
+    async assetTypeRequestAssetNameFieldNumberSpecialChar() {
         // TC_AM_128
-        await this.Asset_Type_Request_Create_asset_type_request()
-        await this.page.waitForTimeout(2000)
+        await this.assetTypeRequestCreateAssetTypeRequest();
+        await this.page.waitForTimeout(2000);
         try {
-            let Input = '@#@#@@#@'; // Special Characters
-            await this.Pop_up_asset_name_field.fill(Input);
+            const input = '@#@#@@#@'; // Special Characters
+            await this.popupAssetNameField.fill(input);
             await this.comment.fill('Abcdef');
-            await this.Pop_up_submit_button.click();
-            // Assuming the validation error is shown as a text element
-            let Message = await this.ValidationMessage.textContent();
-            // Wait for it to appear and assert its visibility
-            await expect(this.ValidationMessage).toBeVisible();
-            await expect(Message).toEqual("Entry cannot contain only numbers and special characters")
+            await this.popupSubmitButton.click();
+            const message = await this.validationMessage.textContent();
+            await expect(this.validationMessage).toBeVisible();
+            await expect(message).toEqual("Entry cannot contain only numbers and special characters");
         } catch (error) {
             console.error('Validation check failed:', error);
         }
         try {
-            let Input = '1111'; // only Numbers
-            await this.Pop_up_asset_name_field.fill(Input);
+            const input = '1111'; // only Numbers
+            await this.popupAssetNameField.fill(input);
             await this.comment.fill('Abcdef');
-            await this.Pop_up_submit_button.click();
-            // Assuming the validation error is shown as a text element
-            let Message = await this.ValidationMessage.textContent();
-            // Wait for it to appear and assert its visibility
-            await expect(this.ValidationMessage).toBeVisible();
-            await expect(Message).toEqual("Entry cannot contain only numbers and special characters")
+            await this.popupSubmitButton.click();
+            const message = await this.validationMessage.textContent();
+            await expect(this.validationMessage).toBeVisible();
+            await expect(message).toEqual("Entry cannot contain only numbers and special characters");
         } catch (error) {
             console.error('Validation check failed:', error);
         }
     }
 
-    async Create_Asset_Type_Cross_icon() {
+    async createAssetTypeCrossIcon() {
         // TC_AM_130
-        await this.Asset_Type_Request_Create_asset_type_request()
-        await this.Pop_up_cross_icon.click()
-        await this.page.waitForTimeout(1000)
-        await expect(this.Create_asset_type_pop_up_header).toBeHidden()
+        await this.assetTypeRequestCreateAssetTypeRequest();
+        await this.popupCrossIcon.click();
+        await this.page.waitForTimeout(1000);
+        await expect(this.createAssetTypePopupHeader).toBeHidden();
     }
-    async Create_Asset_Type_Cancel_Button() {
+
+    async createAssetTypeCancelButton() {
         // TC_AM_131
-        await this.Asset_Type_Request_Create_asset_type_request()
-        await this.Pop_up_cancel_button.click()
-        await this.page.waitForTimeout(1000)
-        await expect(this.Create_asset_type_pop_up_header).toBeHidden()
+        await this.assetTypeRequestCreateAssetTypeRequest();
+        await this.popupCancelButton.click();
+        await this.page.waitForTimeout(1000);
+        await expect(this.createAssetTypePopupHeader).toBeHidden();
     }
 
-    async Create_Asset_Type_Created() {
+    async createAssetTypeCreated() {
         // TC_AM_132
-        await this.Asset_Type_Request_Create_asset_type_request()
-        let name = generateRandomString(8)
-        await this.Pop_up_asset_name_field.fill(name)
-        await this.comment.fill(name)
-        await this.Pop_up_submit_button.click()
-        await this.page.waitForTimeout(6000)
+        await this.assetTypeRequestCreateAssetTypeRequest();
+        const name = generateRandomString(8);
+        await this.popupAssetNameField.fill(name);
+        await this.comment.fill(name);
+        await this.popupSubmitButton.click();
+        await this.page.waitForTimeout(6000);
 
-        let Names = new Set
-
-        let count = await this.Asset_Type_Name.count()
+        const names = new Set<string>();
+        const count = await this.assetTypeName.count();
         for (let i = 0; i < count; i++) {
-            let text = await this.Asset_Type_Name.nth(i).textContent()
+            const text = await this.assetTypeName.nth(i).textContent();
             if (text) {
-                Names.add(text.trim())
+                names.add(text.trim());
             }
         }
-        expect(Names).toContain(name)
+        expect(names).toContain(name);
     }
 
-    async Create_Asset_type_Sorting() {
+    async createAssetTypeSorting() {
         // TC_AM_133
-        await this.Asset_Type_Request()
+        await this.assetTypeRequests();
         await this.page.waitForTimeout(3000);
-        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
+        const beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
 
         // Click to sort in ascending order
         await this.page.locator(`tr>th:nth-child(2)`).click();
         await this.page.waitForTimeout(1000);
-        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        const afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
         let isSortedAsc = true;
         for (let i = 0; i < afterSortingAsc.length - 1; i++) {
             if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
@@ -778,7 +721,7 @@ export class Asset_Enrollment extends BasePage {
         // Click again to sort in descending order
         await this.page.locator(`tr>th:nth-child(2)`).click();
         await this.page.waitForTimeout(1000);
-        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        const afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
 
         let isSortedDesc = true;
         for (let i = 0; i < afterSortingDesc.length - 1; i++) {
@@ -790,253 +733,251 @@ export class Asset_Enrollment extends BasePage {
         expect(isSortedDesc).toBe(true);
     }
 
-    async Asset_Type_request_Status_Approve_Status() {
+    async assetTypeRequestStatusApproveStatus() {
         // TC_AM_134   Step-7
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await this.page.waitForTimeout(4000)
-        if (await this.page.locator(".fs-4").isVisible()) {
-            let noRecordText = await this.page.locator(".fs-4").textContent()
-            expect(noRecordText).toEqual("No records available")
-            return
-        }
-        await this.View_Button.click()
-        await this.page.waitForTimeout(1000)
-        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
-        let Name = name?.trim()
-        console.log("Approved name:", Name)
-
-        await this.page.waitForTimeout(1000)
-        await this.Action_DropDown.click()
-        await this.Action_DropDown.selectOption({ value: 'APPROVED' })
-        await this.page.waitForTimeout(2000)
-        await this.comment.fill("Thank you!!")
-        await this.page.locator("//button[@type = 'submit']").click()
-        await this.page.waitForTimeout(1000)
-        await this.Asset_type_Request.click()
-        await this.page.waitForTimeout(5000)
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-
-        let count = await this.Asset_Type_Name.count()
-        let found = false
-        let Status
-        for (let i = 0; i < count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
-            if (assetText?.trim() === name) {
-                // Assuming the status is in the next sibling <td>
-                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent()
-                console.log('Status : - ', Status)
-                found = true
-                break
-            }
-        }
-        expect(Status).toEqual("APPROVED")
-        if (!found) {
-            console.log("Name not found in the list.")
-        }
-    }
-    async Asset_Type_request_Status_Reject_Status() {
-        // TC_AM_134 Step-14
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await this.page.waitForTimeout(4000)
-        if (await this.page.locator(".fs-4").isVisible()) {
-            let noRecordText = await this.page.locator(".fs-4").textContent()
-            expect(noRecordText).toEqual("No records available")
-            return
-        }
-        await this.View_Button.click()
-        await this.page.waitForTimeout(1000)
-        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
-        let Name = name?.trim()
-        console.log("Rejected name:", Name)
-
-        await this.page.waitForTimeout(1000)
-        await this.Action_DropDown.click()
-        await this.Action_DropDown.selectOption({ value: 'REJECTED' })
-        await this.page.waitForTimeout(2000)
-        await this.comment.fill("Thank you!!")
-        await this.page.locator("//button[@type = 'submit']").click()
-        await this.page.waitForTimeout(1000)
-        await this.Asset_type_Request.click()
-        await this.page.waitForTimeout(5000)
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-
-        let count = await this.Asset_Type_Name.count()
-        let found = false
-        let Status
-        for (let i = 0; i < count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
-            if (assetText?.trim() === name) {
-                // Assuming the status is in the next sibling <td>
-                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent()
-                console.log('Status : - ', Status)
-                found = true
-                break
-            }
-        }
-        expect(Status).toEqual("REJECTED")
-        if (!found) {
-            console.log("Name not found in the list.")
-        }
-    }
-
-    async Asset_Type_request_Approve_Date() {
-        // TC_AM_135 Step-7
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await this.page.waitForTimeout(4000)
-        if (await this.page.locator(".fs-4").isVisible()) {
-            let noRecordText = await this.page.locator(".fs-4").textContent()
-            expect(noRecordText).toEqual("No records available")
-            return
-        }
-        await this.View_Button.click()
-        await this.page.waitForTimeout(1000)
-        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
-        let Name = name?.trim()
-        console.log("Approved name:", Name)
-
-        await this.page.waitForTimeout(1000)
-        await this.Action_DropDown.click()
-        await this.Action_DropDown.selectOption({ value: 'APPROVED' })
-        await this.page.waitForTimeout(2000)
-        await this.comment.fill("Thank you!!")
-        await this.page.locator("//button[@type = 'submit']").click()
-        await this.page.waitForTimeout(1000)
-        await this.Asset_type_Request.click()
-        await this.page.waitForTimeout(5000)
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-
-        let count = await this.Asset_Type_Name.count()
-        let found = false
-        let ApproveDate
-        for (let i = 0; i < count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
-            if (assetText?.trim() === name) {
-                // Assuming the status is in the next sibling <td>
-                ApproveDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent()
-                console.log('Approved Date : - ', ApproveDate)
-                found = true
-                break
-            }
-        }
-        const now = new Date();
-        const formattedDate = new Intl.DateTimeFormat('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        }).format(now);
-
-        console.log(formattedDate);
-        expect(ApproveDate).toEqual(formattedDate)
-        if (!found) {
-            console.log("Name not found in the list.")
-        }
-    }
-    async Asset_Type_request_Reject_Date() {
-        // TC_AM_135 Step-14
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await this.page.waitForTimeout(4000)
-        if (await this.page.locator(".fs-4").isVisible()) {
-            let noRecordText = await this.page.locator(".fs-4").textContent()
-            expect(noRecordText).toEqual("No records available")
-            return
-        }
-        await this.View_Button.click()
-        await this.page.waitForTimeout(1000)
-        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
-        let Name = name?.trim()
-        console.log("Reject name:", Name)
-
-        await this.page.waitForTimeout(1000)
-        await this.Action_DropDown.click()
-        await this.Action_DropDown.selectOption({ value: 'REJECTED' })
-        await this.page.waitForTimeout(2000)
-        await this.comment.fill("Thank you!!")
-        await this.page.locator("//button[@type = 'submit']").click()
-        await this.page.waitForTimeout(1000)
-        await this.Asset_type_Request.click()
-        await this.page.waitForTimeout(5000)
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-
-        let count = await this.Asset_Type_Name.count()
-        let found = false
-        let RejectedDate
-        for (let i = 0; i < count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
-            if (assetText?.trim() === name) {
-                // Assuming the status is in the next sibling <td>
-                RejectedDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent()
-                console.log('Reject Date : - ', RejectedDate)
-                found = true
-                break
-            }
-        }
-        const now = new Date();
-        const formattedDate = new Intl.DateTimeFormat('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        }).format(now);
-
-        console.log(formattedDate);
-        expect(RejectedDate).toEqual(formattedDate)
-        if (!found) {
-            console.log("Name not found in the list.")
-        }
-    }
-
-    async Approve_Asset_type_request_No_record(){
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        if (await this.page.locator(".fs-4").isVisible()) {
-            let noRecordText = await this.page.locator(".fs-4").textContent()
-            console.log("No records available")
-            expect(noRecordText).toEqual("No records available")
-            return
-        }else{
-            console.log("Assets are Present")
-        }
-    }
-
-    async Approve_Asset_type_request_verfication() {
-        await this.New_enrollment_page();
+        await this.newEnrollmentPage();
         await this.page.waitForTimeout(2000);
-    
-        await this.Asset_type_Request.click();
-        await this.Create_Asset_type_button.click();
+        await this.approveAssetTypeRequest.click();
+        await this.page.waitForTimeout(4000);
+        if (await this.page.locator(".fs-4").isVisible()) {
+            const noRecordText = await this.page.locator(".fs-4").textContent();
+            expect(noRecordText).toEqual("No records available");
+            return;
+        }
+        await this.viewButton.click();
+        await this.page.waitForTimeout(1000);
+        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
+        const trimmedName = name?.trim();
+        console.log("Approved name:", trimmedName);
+
+        await this.page.waitForTimeout(1000);
+        await this.actionDropdown.click();
+        await this.actionDropdown.selectOption({ value: 'APPROVED' });
+        await this.page.waitForTimeout(2000);
+        await this.comment.fill("Thank you!!");
+        await this.page.locator("//button[@type = 'submit']").click();
+        await this.page.waitForTimeout(1000);
+        await this.assetTypeRequest.click();
+        await this.page.waitForTimeout(5000);
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+
+        const count = await this.assetTypeName.count();
+        let found = false;
+        let status;
+        for (let i = 0; i < count; i++) {
+            const assetText = await this.assetTypeName.nth(i).textContent();
+            if (assetText?.trim() === name) {
+                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent();
+                console.log('Status : - ', status);
+                found = true;
+                break;
+            }
+        }
+        expect(status).toEqual("APPROVED");
+        if (!found) {
+            console.log("Name not found in the list.");
+        }
+    }
+
+    async assetTypeRequestStatusRejectStatus() {
+        // TC_AM_134 Step-14
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await this.page.waitForTimeout(4000);
+        if (await this.page.locator(".fs-4").isVisible()) {
+            const noRecordText = await this.page.locator(".fs-4").textContent();
+            expect(noRecordText).toEqual("No records available");
+            return;
+        }
+        await this.viewButton.click();
+        await this.page.waitForTimeout(1000);
+        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
+        const trimmedName = name?.trim();
+        console.log("Rejected name:", trimmedName);
+
+        await this.page.waitForTimeout(1000);
+        await this.actionDropdown.click();
+        await this.actionDropdown.selectOption({ value: 'REJECTED' });
+        await this.page.waitForTimeout(2000);
+        await this.comment.fill("Thank you!!");
+        await this.page.locator("//button[@type = 'submit']").click();
+        await this.page.waitForTimeout(1000);
+        await this.assetTypeRequest.click();
+        await this.page.waitForTimeout(5000);
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+
+        const count = await this.assetTypeName.count();
+        let found = false;
+        let status;
+        for (let i = 0; i < count; i++) {
+            const assetText = await this.assetTypeName.nth(i).textContent();
+            if (assetText?.trim() === name) {
+                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent();
+                console.log('Status : - ', status);
+                found = true;
+                break;
+            }
+        }
+        expect(status).toEqual("REJECTED");
+        if (!found) {
+            console.log("Name not found in the list.");
+        }
+    }
+
+    async assetTypeRequestApproveDate() {
+        // TC_AM_135 Step-7
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await this.page.waitForTimeout(4000);
+        if (await this.page.locator(".fs-4").isVisible()) {
+            const noRecordText = await this.page.locator(".fs-4").textContent();
+            expect(noRecordText).toEqual("No records available");
+            return;
+        }
+        await this.viewButton.click();
+        await this.page.waitForTimeout(1000);
+        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
+        const trimmedName = name?.trim();
+        console.log("Approved name:", trimmedName);
+
+        await this.page.waitForTimeout(1000);
+        await this.actionDropdown.click();
+        await this.actionDropdown.selectOption({ value: 'APPROVED' });
+        await this.page.waitForTimeout(2000);
+        await this.comment.fill("Thank you!!");
+        await this.page.locator("//button[@type = 'submit']").click();
+        await this.page.waitForTimeout(1000);
+        await this.assetTypeRequest.click();
+        await this.page.waitForTimeout(5000);
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+
+        const count = await this.assetTypeName.count();
+        let found = false;
+        let approveDate;
+        for (let i = 0; i < count; i++) {
+            const assetText = await this.assetTypeName.nth(i).textContent();
+            if (assetText?.trim() === name) {
+                approveDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent();
+                console.log('Approved Date : - ', approveDate);
+                found = true;
+                break;
+            }
+        }
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(now);
+
+        console.log(formattedDate);
+        expect(approveDate).toEqual(formattedDate);
+        if (!found) {
+            console.log("Name not found in the list.");
+        }
+    }
+
+    async assetTypeRequestRejectDate() {
+        // TC_AM_135 Step-14
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await this.page.waitForTimeout(4000);
+        if (await this.page.locator(".fs-4").isVisible()) {
+            const noRecordText = await this.page.locator(".fs-4").textContent();
+            expect(noRecordText).toEqual("No records available");
+            return;
+        }
+        await this.viewButton.click();
+        await this.page.waitForTimeout(1000);
+        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
+        const trimmedName = name?.trim();
+        console.log("Reject name:", trimmedName);
+
+        await this.page.waitForTimeout(1000);
+        await this.actionDropdown.click();
+        await this.actionDropdown.selectOption({ value: 'REJECTED' });
+        await this.page.waitForTimeout(2000);
+        await this.comment.fill("Thank you!!");
+        await this.page.locator("//button[@type = 'submit']").click();
+        await this.page.waitForTimeout(1000);
+        await this.assetTypeRequest.click();
+        await this.page.waitForTimeout(5000);
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+
+        const count = await this.assetTypeName.count();
+        let found = false;
+        let rejectedDate;
+        for (let i = 0; i < count; i++) {
+            const assetText = await this.assetTypeName.nth(i).textContent();
+            if (assetText?.trim() === name) {
+                rejectedDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent();
+                console.log('Reject Date : - ', rejectedDate);
+                found = true;
+                break;
+            }
+        }
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(now);
+
+        console.log(formattedDate);
+        expect(rejectedDate).toEqual(formattedDate);
+        if (!found) {
+            console.log("Name not found in the list.");
+        }
+    }
+
+    async approveAssetTypeRequestNoRecord() {
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        if (await this.page.locator(".fs-4").isVisible()) {
+            const noRecordText = await this.page.locator(".fs-4").textContent();
+            console.log("No records available");
+            expect(noRecordText).toEqual("No records available");
+            return;
+        } else {
+            console.log("Assets are Present");
+        }
+    }
+
+    async approveAssetTypeRequestVerification() {
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+
+        await this.assetTypeRequest.click();
+        await this.createAssetTypeButton.click();
         await this.page.waitForTimeout(500);
-    
+
         const name = generateRandomString(8);
-        await this.Pop_up_asset_name_field.fill(name);
+        await this.popupAssetNameField.fill(name);
         await this.comment.fill(name);
-        await this.Pop_up_submit_button.click();
+        await this.popupSubmitButton.click();
         await this.page.waitForTimeout(6000);
-    
+
         const createdNames = new Set<string>();
-        const createdCount = await this.Asset_Type_Name.count();
+        const createdCount = await this.assetTypeName.count();
         for (let i = 0; i < createdCount; i++) {
-            const text = await this.Asset_Type_Name.nth(i).textContent();
+            const text = await this.assetTypeName.nth(i).textContent();
             if (text) {
                 createdNames.add(text.trim());
             }
         }
-    
+
         expect(createdNames).toContain(name);
-    
-        await this.Approve_Asset_Type_Request.click();
-        await this.page.waitForTimeout(3000)
+
+        await this.approveAssetTypeRequest.click();
+        await this.page.waitForTimeout(3000);
         const approvedNames = new Set<string>();
-        const approveCount = await this.Asset_Type_Name.count();
+        const approveCount = await this.assetTypeName.count();
         for (let i = 0; i < approveCount; i++) {
-            const text = await this.Asset_Type_Name.nth(i).textContent();
+            const text = await this.assetTypeName.nth(i).textContent();
             if (text) {
                 approvedNames.add(text.trim());
             }
@@ -1044,227 +985,218 @@ export class Asset_Enrollment extends BasePage {
         expect(approvedNames).toContain(name);
     }
 
-    async Approve_Asset_type_request_Approved(){
+    async approveAssetTypeRequestApproved() {
         // TC_AM_141
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.View_Button.click()
-        await this.Pop_up_submit_button.click()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.viewButton.click();
+        await this.popupSubmitButton.click();
 
-        let Action_DropDown = await this.Action_DropDown
-
-        var tooltipMessage = await Action_DropDown.evaluate(el => (el as HTMLInputElement).validationMessage);
+        const actionDropdown = this.actionDropdown;
+        const tooltipMessage = await actionDropdown.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log(tooltipMessage);
 
-        expect(tooltipMessage).toBe('Please select an item in the list.')
+        expect(tooltipMessage).toBe('Please select an item in the list.');
 
-        await this.page.waitForTimeout(1000)
+        await this.page.waitForTimeout(1000);
 
-        await this.Action_DropDown.selectOption({value : 'APPROVED'})
+        await this.actionDropdown.selectOption({ value: 'APPROVED' });
 
-        await this.Pop_up_submit_button.click()
+        await this.popupSubmitButton.click();
 
-        let Comment_field = await this.comment
+        const commentField = this.comment;
+        const commentTooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
+        console.log(commentTooltipMessage);
 
-        var tooltipMessage = await Comment_field.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
+        expect(commentTooltipMessage).toBe('Please fill out this field.');
 
-        expect(tooltipMessage).toBe('Please fill out this field.')
+        await this.page.waitForTimeout(1000);
 
+        await this.comment.fill("Thank you !!");
 
-        await this.page.waitForTimeout(1000)
-
-        await this.comment.fill("Thank you !!")
-
-        await this.Pop_up_submit_button.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.locator(".Toastify__toast-body").isVisible()
+        await this.popupSubmitButton.click();
+        console.log(await this.page.locator(".Toastify__toast-body").textContent());
+        await this.page.locator(".Toastify__toast-body").isVisible();
     }
 
-    async Approve_Asset_type_request_Rejected(){
+    async approveAssetTypeRequestRejected() {
         // TC_AM_142
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.View_Button.click()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.viewButton.click();
 
-        await this.Action_DropDown.selectOption({value : 'REJECTED'})
-        await this.comment.fill("Sorry !!")
-        await this.Pop_up_submit_button.click()
+        await this.actionDropdown.selectOption({ value: 'REJECTED' });
+        await this.comment.fill("Sorry !!");
+        await this.popupSubmitButton.click();
 
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.locator(".Toastify__toast-body").isVisible()
+        console.log(await this.page.locator(".Toastify__toast-body").textContent());
+        await this.page.locator(".Toastify__toast-body").isVisible();
     }
 
-    async Approve_Asset_type_request_Cross(){
+    async approveAssetTypeRequestCross() {
         // TC_AM_143
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.View_Button.click()
-        await this.Pop_up_cross_icon.click()
-        await this.page.waitForTimeout(2000)
-        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden()
-
-
-
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.viewButton.click();
+        await this.popupCrossIcon.click();
+        await this.page.waitForTimeout(2000);
+        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden();
     }
 
-    async Approve_Asset_type_request_Cancel(){
+    async approveAssetTypeRequestCancel() {
         // TC_AM_144
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.page.waitForSelector('//div[@id="tab3"]//tbody/tr[1]/td[6]/a')
-        await this.View_Button.click()
-        await this.page.waitForTimeout(500)
-        await this.Pop_up_cancel_button.click()
-        await this.page.waitForTimeout(3000)
-        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.page.waitForSelector('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
+        await this.viewButton.click();
+        await this.page.waitForTimeout(500);
+        await this.popupCancelButton.click();
+        await this.page.waitForTimeout(3000);
+        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden();
     }
 
-    async Approve_Asset_type_request_comment_Approve(){
+    async approveAssetTypeRequestCommentApprove() {
         // TC_AM_145
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.View_Button.click()
-        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
-        let Name = name?.trim()
-        console.log("Approve name:", Name)
-        await this.Action_DropDown.selectOption({value : 'APPROVED'})
-        let comment = "Thank you for conformation !!"
-        await this.comment.fill(comment)
-        await this.Pop_up_submit_button.click()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.viewButton.click();
+        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
+        const trimmedName = name?.trim();
+        console.log("Approve name:", trimmedName);
+        await this.actionDropdown.selectOption({ value: 'APPROVED' });
+        const comment = "Thank you for conformation !!";
+        await this.comment.fill(comment);
+        await this.popupSubmitButton.click();
 
-        await this.page.waitForTimeout(5000)
+        await this.page.waitForTimeout(5000);
 
-        await this.Asset_type_Request.click()
-        await this.page.waitForTimeout(5000)
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.assetTypeRequest.click();
+        await this.page.waitForTimeout(5000);
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
 
-        let count = await this.Asset_Type_Name.count()
-        let found = false
-        let Status
+        const count = await this.assetTypeName.count();
+        let found = false;
+        let status;
         for (let i = 0; i <= count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            const assetText = await this.assetTypeName.nth(i).textContent();
             if (assetText?.trim() === name) {
-                // Assuming the status is in the next sibling <td>
-                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent()
-                console.log('Status : - ', Status)
-                found = true
-                break
+                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent();
+                console.log('Status : - ', status);
+                found = true;
+                break;
             }
         }
-        expect(Status).toEqual(comment)
+        expect(status).toEqual(comment);
         if (!found) {
-            console.log("Comment Doesn't matched.")
+            console.log("Comment Doesn't matched.");
         }
-        
     }
 
-    async Approve_Asset_type_request_comment_rejected(){
+    async approveAssetTypeRequestCommentRejected() {
         // TC_AM_145
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.View_Button.click()
-        let name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent()
-        let Name = name?.trim()
-        console.log("Reject name:", Name)
-        await this.Action_DropDown.selectOption({value : 'REJECTED'})
-        let comment = "Thank you for conformation !!"
-        await this.comment.fill(comment)
-        await this.Pop_up_submit_button.click()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.viewButton.click();
+        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
+        const trimmedName = name?.trim();
+        console.log("Reject name:", trimmedName);
+        await this.actionDropdown.selectOption({ value: 'REJECTED' });
+        const comment = "Thank you for conformation !!";
+        await this.comment.fill(comment);
+        await this.popupSubmitButton.click();
 
-        await this.page.waitForTimeout(5000)
+        await this.page.waitForTimeout(5000);
 
-        await this.Asset_type_Request.click()
-        await this.page.waitForTimeout(5000)
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.assetTypeRequest.click();
+        await this.page.waitForTimeout(5000);
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
 
-        await this.page.waitForTimeout(2000)
-        let count = await this.Asset_Type_Name.count()
-        console.log(count)
-        let found = false
-        let Status
+        await this.page.waitForTimeout(2000);
+        const count = await this.assetTypeName.count();
+        console.log(count);
+        let found = false;
+        let status;
         for (let i = 0; i <= count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            const assetText = await this.assetTypeName.nth(i).textContent();
             if (assetText?.trim() === name) {
-                // Assuming the status is in the next sibling <td>
-                Status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent()
-                console.log('Status : - ', Status)
-                found = true
-                break
+                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent();
+                console.log('Status : - ', status);
+                found = true;
+                break;
             }
         }
-        expect(Status).toEqual(comment)
+        expect(status).toEqual(comment);
         if (!found) {
-            console.log("Comment Doesn't matched.")
+            console.log("Comment Doesn't matched.");
         }
     }
 
-    async correct_request_date_appear(){
+    async correctRequestDateAppear() {
         // TC_AM_146
         const currentDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: '2-digit'
         });
-        
+
         console.log(currentDate);
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Asset_type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.page.waitForTimeout(3000)
-        await this.Create_Asset_type_button.click()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.assetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.page.waitForTimeout(3000);
+        await this.createAssetTypeButton.click();
         const name = generateRandomString(8);
-        await this.Pop_up_asset_name_field.fill(name);
+        await this.popupAssetNameField.fill(name);
         await this.comment.fill(name);
-        await this.Pop_up_submit_button.click();
+        await this.popupSubmitButton.click();
         await this.page.waitForTimeout(6000);
-        await this.Approve_Asset_Type_Request.click()
-        
-        await this.page.waitForTimeout(5000)
-        let count = await this.Asset_Type_Name.count()
-        let found = false
-        let AssetCreatedate
+        await this.approveAssetTypeRequest.click();
+
+        await this.page.waitForTimeout(5000);
+        const count = await this.assetTypeName.count();
+        let found = false;
+        let assetCreateDate;
         for (let i = 0; i <= count; i++) {
-            let assetText = await this.Asset_Type_Name.nth(i).textContent()
+            const assetText = await this.assetTypeName.nth(i).textContent();
             if (assetText?.trim() === name) {
-                AssetCreatedate = await this.page.locator(`((//table[contains(@class, 'resume')])[2]//tr[${i + 1}])/td[4]`).textContent()
-                console.log('AssetCreateDate : - ', AssetCreatedate)
-                found = true
-                break
+                assetCreateDate = await this.page.locator(`((//table[contains(@class, 'resume')])[2]//tr[${i + 1}])/td[4]`).textContent();
+                console.log('AssetCreateDate : - ', assetCreateDate);
+                found = true;
+                break;
             }
         }
-        (expect(AssetCreatedate).toEqual(currentDate))
+        expect(assetCreateDate).toEqual(currentDate);
         if (!found) {
-            console.log("Date Doesn't matched.")
+            console.log("Date Doesn't matched.");
         }
     }
 
-    async Approve_Asset_type_Sorting(){
+    async approveAssetTypeSorting() {
         // TC_AM_147
-        await this.New_enrollment_page()
-        await this.page.waitForTimeout(2000)
-        await this.Approve_Asset_Type_Request.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
+        await this.newEnrollmentPage();
+        await this.page.waitForTimeout(2000);
+        await this.approveAssetTypeRequest.click();
+        await expect(this.loader.getSpinLoader()).not.toBeAttached();
         await this.page.waitForTimeout(3000);
-        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
+        const beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
 
         // Click to sort in ascending order
         await this.page.locator(`((//table[contains(@class, 'resume')])[2])//tr/th[2]`).click();
         await this.page.waitForTimeout(1000);
-        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        const afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
         let isSortedAsc = true;
         for (let i = 0; i < afterSortingAsc.length - 1; i++) {
             if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
@@ -1277,7 +1209,7 @@ export class Asset_Enrollment extends BasePage {
         // Click again to sort in descending order
         await this.page.locator(`((//table[contains(@class, 'resume')])[2])//tr/th[2]`).click();
         await this.page.waitForTimeout(1000);
-        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
+        const afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
 
         let isSortedDesc = true;
         for (let i = 0; i < afterSortingDesc.length - 1; i++) {
@@ -1288,4 +1220,4 @@ export class Asset_Enrollment extends BasePage {
         }
         expect(isSortedDesc).toBe(true);
     }
-}    
+}

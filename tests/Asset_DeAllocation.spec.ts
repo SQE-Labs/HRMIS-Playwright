@@ -3,9 +3,9 @@ import { OverView } from '../pages/Asset_OverView'
 import { LoginPage } from '../pages/Loginpage';
 import { BasePage } from '../pages/Basepage';
 import { Login } from '../support/command';
-import { Asset_DeAllocation } from '../pages/Asset_Deallocation';
+import { AssetDeallocation } from '../pages/Asset_Deallocation';
 
-let DeAllocation : Asset_DeAllocation
+let DeAllocation : AssetDeallocation
 test.describe("Asset DeAllocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
@@ -13,17 +13,17 @@ test.describe("Asset DeAllocation page", () => {
 
         await basepage.open('url')
         await Login.login(page, "SuperUser")
-        DeAllocation = new Asset_DeAllocation(page)
+        DeAllocation = new AssetDeallocation(page)
     })
 
     test("Asset Deallocation page ", async ({ page }) => {
-        await DeAllocation.DeAllocation()
+        await DeAllocation.deallocation()
         console.log("DeAllocation Page open SucessFully")
     })
     test(" selected employee appear listed after choosing the employee", async ({page}) => {
-        await DeAllocation.RecordSelectedOption()
+        await DeAllocation.recordSelectedOption()
     })
     test(" Empty Records appear listed after choosing the employee", async ({page}) => {
-        await DeAllocation.Emptyselectetoption()
+        await DeAllocation.emptySelectedOptions()
     })
 })

@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import { Asset_Allocation } from './pages/Asset_Allocation';
-import { Asset_DeAllocation } from './pages/Asset_Deallocation';
+import { AssetAllocation } from './pages/Asset_Allocation';
+import { AssetDeallocation } from './pages/Asset_Deallocation';
 dotenv.config();
 
 /**
@@ -16,24 +16,27 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  timeout: 240000, 
+  expect : {
+    timeout: 12_000, // Default timeout for expect assertions
+  },
+  timeout: 240000,
   testDir : './tests',
-  //   testMatch:
+  // testMatch:
   // [
-  //   // "Employee_Management.spec.ts"
+  // "Employee_Management.spec.ts"
   // "tests/Asset_Enrollment.spec.ts",
-  // // "tests/Asset_Allocation.spec.ts",
-  // // "tests/Asset_DeAllocation.spec.ts",
-  //  // "tests/Asset_OverView.spec.ts",
-  // //  "tests/AssetManagement.spec.ts",
-  // //  "LoginPage.spec.ts"
+  // "tests/Asset_Allocation.spec.ts",
+  // "tests/Asset_DeAllocation.spec.ts",
+  // "tests/Asset_OverView.spec.ts",
+  //  "tests/AssetManagement.spec.ts",
+  //  "LoginPage.spec.ts"
   // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   // workers: process.env.CI ? 1 : undefined,
-  workers : 1,
-  reporter: [["html"] , ['line'] , ["allure-playwright"]],
+  workers: 1,
+  reporter: [["html"], ['line'], ["allure-playwright"]],
   // reporter: [
   //   ["dot"],
   //   ['allure-playwright'],
@@ -42,6 +45,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    headless: true,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 

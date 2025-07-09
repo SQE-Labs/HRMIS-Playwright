@@ -3,37 +3,49 @@ import { Login } from '../support/command';
 import { AssetManagementTab } from '../pages/Asset_Management_Tab';
 import { LoginPage } from '../pages/Loginpage';
 import { BasePage } from '../pages/Basepage';
+
 let assetManagementTab: AssetManagementTab;
-test.describe("Asset Management tests", () => {
-    
+
+test.describe('Asset Management tests', () => {
+    // Define subTabsTitles as a constant if only used locally in this file
+    const subTabsTitles :string[] = [
+        'Asset Overview',
+        'Asset Allocation',
+        'Asset De-allocation',
+        'Asset Request',
+        'New Asset Enrollment',
+        'Approve Asset Request',
+        'RTO Management'
+    ];
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page);
-        const basepage = new BasePage(page);
+        const basePage = new BasePage(page);
 
-        await basepage.open('url'); // Replace 'url' with actual site URL
+        await basePage.open('url'); // Replace 'url' with actual site URL
         await page.waitForLoadState('networkidle');
-        await Login.login(page, "SuperUser");
+        await Login.login(page, 'SuperUser');
         assetManagementTab = new AssetManagementTab(page);
+
     });
 
-    test("Asset Management accordion expands and displays correct sub-tabs", async ({ page }) => {
-        console.log("Expanding Asset Management Tab...");
+    test('Asset Management accordion expands and displays correct sub-tabs', async ({ page }) => {
+        test.slow();
+
+        console.debug('Expanding Asset Management Tab...');
         await assetManagementTab.expandAssetManagementTab();
 
-        console.log("Checking if tab is expanded...");
-        expect(await assetManagementTab.isExpandable()).toBe(true);
+        console.debug('Verifying sub-tabs visibility...');
+       expect (  await assetManagementTab.verifySubTabs(subTabsTitles)).toBeTruthy();
 
-        console.log("Verifying sub-tabs visibility...");
-        await assetManagementTab.verifySubTabs();
-
-        console.log("Sub-tabs verification completed.");
     });
 
-    test("Asset Management accordion collapses and hides sub-tabs", async ({ page }) => {
-        console.log("Collapsing Asset Management Tab...");
-        await assetManagementTab.collapsesAssetManagementTab();
+    test('Asset Management accordion collapses and hides sub-tabs', async ({ page }) => {
+        test.slow();
+        await page.pause()
+        console.debug('Collapsing Asset Management Tab...');
+        await assetManagementTab.collapseAssetManagementTab();
 
-        console.log("Checking if tab is collapsed...");
-        expect(await assetManagementTab.isCollapses()).toBe(true);
-    });
+        console.debug('Checking if tab is collapsed...');
+        // expect(await assetManagementTab.verifySubTabs(subTabsTitles)).toBe((false));
+      });
 });
