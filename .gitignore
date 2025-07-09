@@ -9,4 +9,5 @@ node_modules/
 /playwright/.cache/
 .allure/
 .github/
-downloads/
+download/
+.env/
