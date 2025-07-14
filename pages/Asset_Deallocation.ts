@@ -2,14 +2,13 @@ import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
-import { AssetAllocation } from "./Asset_Allocation";
+import { AssetHelper } from "../helpers/AssetHelpers";
 
 export class AssetDeallocation extends BasePage {
     private deallocationSubtab: Locator;
     private deallocationHeader: Locator;
     private deallocationDropdown: Locator;
-    private recordsSelectedOption: Locator;
-    private emptySelectedOption: Locator;
+    private SelectedOption: Locator;
     private deallocationDropdownList: Locator;
     private deallocationOption: Locator;
     private deallocationOptionDetails: Locator;
@@ -27,8 +26,7 @@ export class AssetDeallocation extends BasePage {
         this.deallocationSubtab = page.locator("//a[text()='Asset De-allocation']");
         this.deallocationHeader = page.locator(".d-flex");
         this.deallocationDropdown = page.locator(".col-md-6");
-        this.recordsSelectedOption = page.locator('//*[@id="react-select-2-option-0"]');
-        this.emptySelectedOption = page.locator('//*[@id="react-select-2-option-9"]');
+        this.SelectedOption = page.locator('//*[@id="react-select-2-option-1"]');
         this.deallocationDropdownList = page.locator(" .css-1nmdiq5-menu");
         this.deallocationOption = page.locator(" .css-10wo9uf-option");
         this.deallocationOptionDetails = page.locator(".table-responsive");
@@ -43,101 +41,74 @@ export class AssetDeallocation extends BasePage {
     }
 
     async deallocation() {
-        // TC_AM_044
         const assetManagementTab = new AssetManagementTab(this.page);
-        await assetManagementTab.expandAssetManagementTab();
-        await this.deallocationSubtab.click();
+        await AssetHelper.navigateToDeallocationTab(this.deallocationSubtab, assetManagementTab);
 
-        // Assert visibility
         expect(await this.deallocationHeader.isVisible()).toBeTruthy();
         expect(await this.deallocationDropdown.isVisible()).toBeTruthy();
 
-        // TC_AM_045 - Click and validate dropdown
         await this.deallocationDropdown.click();
         await expect(this.deallocationDropdownList).toBeVisible();
     }
 
-    // TC_AM_046
-    async recordSelectedOption() {
-        const assetManagementTab = new AssetManagementTab(this.page);
-        await assetManagementTab.expandAssetManagementTab();
-        await this.deallocationSubtab.click();
-        await this.deallocationDropdown.click();
-        console.log(await this.recordsSelectedOption.textContent());
-        await this.recordsSelectedOption.click();
-        await this.page.waitForTimeout(1000);
-        await this.recordsSelectedOption.isVisible();
 
+    async handleDeallocationFlow() {
+        const assetManagementTab = new AssetManagementTab(this.page);
+        await AssetHelper.navigateToDeallocationTab(this.deallocationSubtab, assetManagementTab);
+
+        await this.deallocationDropdown.click();
+        await this.SelectedOption.click();
+        await expect(this.loader.getThreeDotLoader()).not.toBeAttached();
         const validDetails = await this.deallocationRecords.allTextContents();
-
-        if (validDetails.length !== 0) {
-            console.log("Selected Employee List appears");
-            console.log(await this.page.locator("tbody>tr").allTextContents());
-
-            //    TC_AM_047
-            await this.deleteButton.click();
-            await this.page.waitForTimeout(1000);
-
-            expect(await this.popup.isVisible()).toBeTruthy();
-            expect(await this.page.locator(".modal-body").isVisible()).toBeTruthy();
-
-            // TC_AM_048
-            await this.submitButton.click();
-            const assetConditionField = this.page.locator("select[id='assetCondition']");
-            // Get the validation message
-            const tooltipMessage = await assetConditionField.evaluate(el => (el as HTMLInputElement).validationMessage);
-            console.log('Tooltip message:', tooltipMessage);
-            // Validate the expected message
-            expect(tooltipMessage).toBe('Please select an item in the list.');
-
-            // TC_AM_049
-            await this.deallocationAssetCondition.click();
-            await this.deallocationAssetCondition.isVisible();
-            // TC_AM_050
-            await this.page.selectOption('#assetCondition', { label: 'Good condition' });
-
-            // TC_AM_051
-            await this.submitButton.click();
-
-            const repairCostField = this.page.locator("//input[@type = 'tel']");
-            const tooltipMessage2 = await repairCostField.evaluate(el => (el as HTMLInputElement).validationMessage);
-            console.log('Tooltip message:', tooltipMessage2);
-            expect(tooltipMessage2).toBe('Please fill out this field.');
-
-            // TC_AM_053
-            await this.page.locator("//input[@type = 'tel']").fill('150');
-
-            // TC_AM_054
-            await this.submitButton.click();
-            const commentField = this.page.locator("#comment");
-            const tooltipMessage3 = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
-            console.log('Tooltip message:', tooltipMessage3);
-            expect(tooltipMessage3).toBe('Please fill out this field.');
-
-            // TC_AM_055
-            await this.page.locator("#comment").fill("received");
-            await this.submitButton.click();
-            await this.page.getByText("Successfully deallocated!").isVisible();
+        if (validDetails.length === 0) {
+            if (await this.deallocationNoRecord.isVisible()) {
+                console.debug(await this.deallocationNoRecord.textContent());
+                return;
+            } else {
+                throw new Error("No records found, but 'No Records' message not visible.");
+            }
         }
-    }
 
-    async emptySelectedOptions() {
-        const assetManagementTab = new AssetManagementTab(this.page);
-        await assetManagementTab.expandAssetManagementTab();
-        await this.deallocationSubtab.click();
-        await this.deallocationDropdown.click();
-        await this.emptySelectedOption.textContent();
-        await this.emptySelectedOption.click();
+        console.debug("Selected Employee List appears");
+        expect(await this.deallocationOptionDetails.isVisible()).toBeTruthy();
+        // console.debug(await this.page.locator("tbody>tr").allTextContents());
 
-        await this.page.pause();
-        // Wait for the "no records" message to appear
-        await expect(this.deallocationNoRecord).toBeVisible();
+        // TC_AM_047
+        await this.deleteButton.click();
+        await this.page.waitForTimeout(1000);
+        expect(await this.popup.isVisible()).toBeTruthy();
+        expect(await this.page.locator(".modal-body").isVisible()).toBeTruthy();
 
-        const emptyDetails = await this.deallocationRecords.allTextContents();
+        // TC_AM_048
+        await this.submitButton.click();
+        const assetConditionField = this.page.locator("select[id='assetCondition']");
+        const tooltipMessage = await AssetHelper.getValidationMessage(assetConditionField);
+        // console.debug("Tooltip message:", tooltipMessage);
+        expect(tooltipMessage).toBe("Please select an item in the list.");
 
-        if (emptyDetails.length === 0) {
-            console.log(await this.deallocationNoRecord.textContent());
-            return null;
-        }
+        // TC_AM_049 & TC_AM_050
+        await this.deallocationAssetCondition.click();
+        await this.page.selectOption("#assetCondition", { label: "Good condition" });
+
+        // TC_AM_051
+        await this.submitButton.click();
+        const repairCostField = this.page.locator("//input[@type = 'tel']");
+        const tooltipMessage2 = await AssetHelper.getValidationMessage(repairCostField);
+        // console.debug("Tooltip message:", tooltipMessage2);
+        expect(tooltipMessage2).toBe("Please fill out this field.");
+
+        // TC_AM_053
+        await repairCostField.fill("150");
+
+        // TC_AM_054
+        await this.submitButton.click();
+        const commentField = this.page.locator("#comment");
+        const tooltipMessage3 = await AssetHelper.getValidationMessage(commentField);
+        // console.debug("Tooltip message:", tooltipMessage3);
+        expect(tooltipMessage3).toBe("Please fill out this field.");
+
+        // TC_AM_055
+        await AssetHelper.fillAndSubmitField(commentField, "received", this.submitButton);
+        await this.page.getByText("Successfully deallocated!").isVisible();
     }
 }

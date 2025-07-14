@@ -13,12 +13,8 @@ test.describe("Asset DeAllocation page", () => {
 
     test("Asset Deallocation page ", async ({ page }) => {
         await DeAllocation.deallocation()
-        console.log("DeAllocation Page open SucessFully")
     })
-    test(" selected employee appear listed after choosing the employee", async ({ page }) => {
-        await DeAllocation.recordSelectedOption()
-    })
-    test(" Empty Records appear listed after choosing the employee", async ({ page }) => {
-        await DeAllocation.emptySelectedOptions()
+    test("handles deallocation flow with or without available records", async ({ page }) => {
+        await DeAllocation.handleDeallocationFlow()
     })
 })

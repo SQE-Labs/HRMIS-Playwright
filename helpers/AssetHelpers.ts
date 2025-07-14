@@ -1,6 +1,7 @@
 // AssetHelpers.ts
 import { expect, Page, Locator } from '@playwright/test';
 import { AssetManagementTab } from '../pages/Asset_Management_Tab'; // Adjust import path if needed
+import fs from 'fs';
 
 export const AssetHelper = {
   /**
@@ -80,5 +81,120 @@ export const AssetHelper = {
     const currentPage = matches && matches[0] ? parseInt(matches[0], 10) : 0;
     const totalPage = matches && matches[1] ? parseInt(matches[1], 10) : 0;
     return [currentPage, totalPage];
-  }
+  },
+
+  async navigateToDeallocationTab(deallocationSubtab: Locator, assetManagementTab: { expandAssetManagementTab: () => Promise<void> }) {
+    await assetManagementTab.expandAssetManagementTab();
+    await deallocationSubtab.click();
+  },
+
+  async getValidationMessage(locator: Locator): Promise<string> {
+    return await locator.evaluate(el => (el as HTMLInputElement).validationMessage);
+  },
+
+  async fillAndSubmitField(locator: Locator, value: string, submitButton: Locator) {
+    await locator.fill(value);
+    await submitButton.click();
+  },
+  async isExpanded(locator: Locator): Promise<boolean> {
+    const state = await locator.getAttribute('aria-expanded');
+    expect(state).not.toBeNull();
+    return state === 'true';
+  },
+
+  async isCollapsed(locator: Locator): Promise<boolean> {
+    const state = await locator.getAttribute('aria-expanded');
+    expect(state).not.toBeNull();
+    return state === 'false';
+  },
+
+  async expandIfCollapsed(locator: Locator): Promise<void> {
+    const isExpanded = await AssetHelper.isExpanded(locator);
+    if (!isExpanded) {
+      await locator.click({ timeout: 5000 });
+    }
+  },
+
+  async collapseIfExpanded(locator: Locator): Promise<void> {
+    const isCollapsed = await AssetHelper.isCollapsed(locator);
+    if (!isCollapsed) {
+      await locator.click({ timeout: 5000 });
+    }
+  },
+  async selectRandomOptionFromDropdown(dropdownLocator: Locator): Promise<string | null> {
+    await dropdownLocator.waitFor({ state: "visible", timeout: 5000 });
+    const options = await dropdownLocator.locator("option").allInnerTexts();
+
+    const validOptions = options.filter(option => option.trim() !== "");
+    if (validOptions.length === 0) {
+      console.error("No valid options available in the dropdown.");
+      return null;
+    }
+
+    const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
+    console.log(`Randomly selected option: ${randomOption}`);
+    try {
+      await dropdownLocator.selectOption({ label: randomOption });
+      console.log(`Successfully selected: ${randomOption}`);
+      return randomOption;
+    } catch (error) {
+      console.error(`Failed to select option '${randomOption}' from dropdown:`, error);
+      return null;
+    }
+  },
+
+
+  async parseNumberFromText(text: string): Promise<number> {
+    const parsed = parseInt(text.replace(/\D/g, ''), 10);
+    return isNaN(parsed) ? 0 : parsed;
+  },
+  async waitForLoaderToDisappear(loaderLocator: Locator, timeout: number = 10000): Promise<void> {
+    console.log("Waiting for loader to disappear...");
+    await expect(loaderLocator).not.toBeAttached({ timeout });
+    console.log("Loader disappeared.");
+  },
+
+
+  async verifyFileDownload(
+    page: Page,
+    downloadButtonLocator: Locator,
+    expectedFileNamePart: string,
+    subFolderPath: string = 'HRMIS-Playwright\\Download'
+  ): Promise<string> {
+    console.log("Attempting to download file...");
+    const [download] = await Promise.all([
+      page.waitForEvent("download", { timeout: 30000 }), // Increased timeout for downloads
+      downloadButtonLocator.click()
+    ]);
+
+    const downloadedFile = download.suggestedFilename();
+    console.log("Suggested downloaded file name:", downloadedFile);
+    expect(downloadedFile).toContain(expectedFileNamePart);
+
+    const userHomeDir = process.env.HOME || process.env.USERPROFILE;
+    if (!userHomeDir) {
+      throw new Error("Could not determine user home directory for download path.");
+    }
+    const downloadDir = `${userHomeDir}\\Desktop\\${subFolderPath}`;
+
+    // Ensure the directory exists
+    if (!fs.existsSync(downloadDir)) {
+      fs.mkdirSync(downloadDir, { recursive: true });
+    }
+
+    const downloadPath = `${downloadDir}\\${downloadedFile}`;
+    await download.saveAs(downloadPath);
+
+    expect(fs.existsSync(downloadPath)).toBeTruthy();
+    console.log(`File successfully downloaded to: ${downloadPath}`);
+    return downloadPath;
+  },
+  async verifyAlertMessage(alertLocator: Locator, expectedText: string, timeout: number = 5000): Promise<void> {
+    console.log(`Waiting for alert with text: "${expectedText}"`);
+    await expect(alertLocator).toBeVisible({ timeout });
+    const alertMessage = await alertLocator.textContent();
+    expect(alertMessage?.trim()).toContain(expectedText);
+    console.log("Alert message appeared as expected:", alertMessage);
+  },
+
 };

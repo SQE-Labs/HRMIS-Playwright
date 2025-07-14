@@ -28,7 +28,6 @@ test.describe('Asset Management tests', () => {
     });
 
     test('Asset Management accordion expands and displays correct sub-tabs', async ({ page }) => {
-        test.slow();
 
         console.debug('Expanding Asset Management Tab...');
         await assetManagementTab.expandAssetManagementTab();
@@ -39,8 +38,7 @@ test.describe('Asset Management tests', () => {
     });
 
     test('Asset Management accordion collapses and hides sub-tabs', async ({ page }) => {
-        test.slow();
-        await page.pause()
+
         console.debug('Collapsing Asset Management Tab...');
         await assetManagementTab.collapseAssetManagementTab();
 
