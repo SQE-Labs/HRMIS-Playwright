@@ -4,33 +4,34 @@ import fs from "fs";
 import { Alert } from '../components/alert'
 
 export class OverView extends AssetManagementTab {
-    private overviewAsset: Locator;
-    private overviewHeader: Locator;
-    private overviewDropdown: Locator;
-    private overviewCards: Locator;
-    private totalAsset: Locator;
+    public overviewAsset: Locator;
+    public overviewHeader: Locator;
+    public overviewDropdown: Locator;
+    public overviewCards: Locator;
+    public totalAsset: Locator;
     public cardsCount: number;
-    private assetTypeDropdown: Locator;
-    private filterButton: Locator;
+    public assetTypeDropdown: Locator;
+    public filterButton: Locator;
     public randomOption: string;
-    private exportButton: Locator;
-    private alert: Alert;
+    public exportButton: Locator;
+    public alert: Alert;
     public totalAssetsAfterFilter: number;
-    private emptyRecord: Locator;
-    private assignedBadge: Locator;
-    private availableBadge: Locator;
-    private totalBadge: Locator;
-    private card: Locator;
-    private cardHeader: Locator;
-    private serialNoRows: Locator;
+    public emptyRecord: Locator;
+    public assignedBadge: Locator;
+    public availableBadge: Locator;
+    public totalBadge: Locator;
+    public card: Locator;
+    public cardHeader: Locator;
+    public serialNoRows: Locator;
     public innerAssetCount: number;
-    private superOwnerDropdown: Locator;
-    private ownerDropdown: Locator;
-    private availabilityDropdown: Locator;
+    public superOwnerDropdown: Locator;
+    public ownerDropdown: Locator;
+    public availabilityDropdown: Locator;
     public superOwnerRandomOption: string;
     public ownerRandomOption: string;
     public availabilityRandomOption: string;
-    private assetOverviewRedirect: Locator;
+    public assetOverviewRedirect: Locator;
+    public toast: Locator;
     static this: any;
 
     constructor(page: Page) {
@@ -58,12 +59,12 @@ export class OverView extends AssetManagementTab {
         this.ownerDropdown = page.locator("#ownerFilter")
         this.availabilityDropdown = page.locator("#availabilityFilter")
         this.assetOverviewRedirect = page.locator("div>span>a")
+        this.toast = page.locator(".Toastify__toast-body>div:nth-child(2)")
 
     }
 
 
     async navigateToAssetOverview() {
-
         this.overviewAsset.click();
     }
     async getHeaderText(): Promise<string | null> {
@@ -75,9 +76,12 @@ export class OverView extends AssetManagementTab {
     async verifyDefaultDropdown(): Promise<void> {
         await expect(this.overviewDropdown).toHaveText("All")
     }
-
+    // TO-DO
     async getCardsCount(): Promise<number> {
+        await this.waitforLoaderToDisappear()
+        await this.page.waitForLoadState('networkidle');
 
+        await this.page.waitForTimeout(8000)
         const cards = await this.overviewCards.allTextContents()
         console.log(cards)
         this.cardsCount = await this.overviewCards.count()
@@ -115,130 +119,112 @@ export class OverView extends AssetManagementTab {
         return totalAssetCount
     }
 
-    // Random Selection from Dropdown
-    // TC_AM_005
-    async randomAssetTypeSelection(): Promise<string | null> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        console.log("Click on Asset Type Dropdown");
-        await this.assetTypeDropdown.waitFor({ state: "visible", timeout: 2000 });
+
+    async getFilterDropdownOption(): Promise<string[]> {
+        expect(this.assetTypeDropdown).toBeVisible();
+
         const options = await this.assetTypeDropdown.locator("option").allInnerTexts();
-        if (options.length === 0) {
-            console.error("No options available in the dropdown.");
-            return null;
-        }
         const validOptions = options.filter(option => option.trim() !== "");
-        if (validOptions.length === 0) {
-            console.error("No valid options found in the dropdown.");
-            return null;
-        }
-        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
-        console.log(`Randomly selected option: ${randomOption}`);
-        try {
-            await this.assetTypeDropdown.selectOption({ label: randomOption });
-            console.log(`Successfully selected: ${randomOption}`);
-        } catch (error) {
-            console.error(`Failed to select option: ${randomOption}`, error);
-            return null;
-        }
-        const selectedValue = (await this.assetTypeDropdown.inputValue()).trim();
-        console.log(`Selected value: ${selectedValue}`);
-        return randomOption;
+        return validOptions;
     }
+    async selectFilterDropdownOption(optionText: string): Promise<void> {
+        // const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
+        await this.assetTypeDropdown.selectOption({ label: optionText });
+        console.log(`Successfully selected: ${optionText}`);
+    }
+    async clickFilterButton(): Promise<void> {
+        await this.filterButton.click();
+        await this.waitforLoaderToDisappear();
+
+
+    }
+    async clickExportButton(): Promise<void> {
+        await this.exportButton.click();
+        await this.waitforLoaderToDisappear();
+
+    }
+
+
 
     // TC_AM_006
-    async verifyFilter(): Promise<number | void> {
-        console.log("Verifying Filter button functionality...");
-        await this.page.reload()
-        await expect(this.overviewDropdown).toHaveText("All");
-        await this.filterButton.click();
-        await this.waitForDotsLoaderToDisappear()
-        await this.waitForSpinnerLoaderToDisappear()
-        this.cardsCount = await this.overviewCards.count();
-        console.log("Data is filtered when no option is selected");
-        let totalAssetsAfterFilter = await this.getTotalAssetCount();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        this.randomOption = await this.randomAssetTypeSelection() || '';
-        if (!this.randomOption) {
-            console.warn("No valid option selected. Skipping filter verification.");
-            return;
-        }
-        console.log(`Randomly selected asset type: ${this.randomOption}`);
-        await this.filterButton.click();
-        await this.waitForDotsLoaderToDisappear()
-        await this.waitForSpinnerLoaderToDisappear()
-        await this.page.waitForTimeout(1000);
-        this.cardsCount = await this.overviewCards.count();
-        totalAssetsAfterFilter = await this.getTotalAssetCount();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        console.log("The data is filtered based on a randomly selected option.");
-        return totalAssetsAfterFilter
-    }
+    // async verifyFilter(): Promise<number | void> {
 
-    // TC_AM_007
-    async verifyExport(): Promise<void> {
-        console.log("Verifying Export functionality...");
-        this.randomOption = await this.randomAssetTypeSelection() || '';
-        if (!this.randomOption) {
-            console.warn("No valid option selected. Skipping export verification.");
-            return;
-        }
-        console.log(`Selected asset type: ${this.randomOption}`);
-        await this.filterButton.click();
-        await this.waitForDotsLoaderToDisappear()
-        await this.waitForSpinnerLoaderToDisappear()
-        await this.page.waitForTimeout(1000);
-        this.cardsCount = await this.overviewCards.count();
-        const totalAssetsAfterFilter = await this.getTotalAssetCount();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        const noRecordText = "No Record Available!";
-        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
-        let emptyRecordText = "";
-        if (noRecordElement) {
-            emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
-        }
-        if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
-            console.log("Case 1: No records available after filtering.");
-            await this.exportButton.click();
-            await this.page.waitForTimeout(1500);
-            await expect(this.alert.getAlertElement()).toBeVisible();
-            const alertMessage = await this.alert.getAlertText();
-            console.log("Alert message appeared as expected:", alertMessage);
-            expect(alertMessage).toContain(noRecordText);
-            console.log(" Export should not trigger a file download.");
-        } else {
-            console.log(" Case 2: One or more assets found. Proceeding with export...");
-            try {
-                const [download] = await Promise.all([
-                    this.page.waitForEvent("download", { timeout: 5000 }),
-                    this.exportButton.click()
-                ]);
-                const downloadedFile = download.suggestedFilename();
-                console.log("Downloaded file:", downloadedFile);
-                if (!downloadedFile.endsWith(".xlsx")) {
-                    throw new Error(`Invalid file extension: ${downloadedFile}`);
-                }
-                const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
-                await download.saveAs(downloadPath);
-                if (fs.existsSync(downloadPath)) {
-                    console.log(`File successfully downloaded: ${downloadPath}`);
-                } else {
-                    throw new Error("Error: Downloaded file not found in expected location!");
-                }
-                expect(fs.existsSync(downloadPath)).toBeTruthy();
-            } catch (error) {
-                console.error("Error during file download:", error);
-            }
-        }
-    }
+
+
+    //     await this.filterButton.click();
+    //     await this.waitForDotsLoaderToDisappear()
+    //     await this.waitForSpinnerLoaderToDisappear()
+    //     this.cardsCount = await this.overviewCards.count();
+    //     console.log("Data is filtered when no option is selected");
+    //     let totalAssetsAfterFilter = await this.getTotalAssetCount();
+    //     console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
+    //     this.randomOption = await this.randomAssetTypeSelection() || '';
+    //     if (!this.randomOption) {
+    //         console.warn("No valid option selected. Skipping filter verification.");
+    //         return;
+    //     }
+    //     console.log(`Randomly selected asset type: ${this.randomOption}`);
+
+    //     await this.waitForDotsLoaderToDisappear()
+    //     await this.waitForSpinnerLoaderToDisappear()
+    //     await this.page.waitForTimeout(1000);
+    //     this.cardsCount = await this.overviewCards.count();
+    //     totalAssetsAfterFilter = await this.getTotalAssetCount();
+    //     console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
+    //     console.log("The data is filtered based on a randomly selected option.");
+    //     return totalAssetsAfterFilter
+    // }
+
+    // // TC_AM_007
+    // async verifyExport(): Promise<void> {
+
+    //     const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
+    //     let emptyRecordText = "";
+    //     if (noRecordElement) {
+    //         emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
+    //     }
+    //     if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
+    //         console.log("Case 1: No records available after filtering.");
+    //         await this.exportButton.click();
+    //         await this.page.waitForTimeout(1500);
+    //         await expect(this.alert.getAlertElement()).toBeVisible();
+    //         const alertMessage = await this.alert.getAlertText();
+    //         console.log("Alert message appeared as expected:", alertMessage);
+    //         expect(alertMessage).toContain(noRecordText);
+    //         console.log(" Export should not trigger a file download.");
+    //     } else {
+    //         console.log(" Case 2: One or more assets found. Proceeding with export...");
+    //         try {
+    //             const [download] = await Promise.all([
+    // this.page.waitForEvent("download", { timeout: 5000 }),
+    //                 this.exportButton.click()
+    //             ]);
+    //             const downloadedFile = download.suggestedFilename();
+    //             console.log("Downloaded file:", downloadedFile);
+    //             if (!downloadedFile.endsWith(".xlsx")) {
+    //                 throw new Error(`Invalid file extension: ${downloadedFile}`);
+    //             }
+    //             const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
+    //             await download.saveAs(downloadPath);
+    //             if (fs.existsSync(downloadPath)) {
+    //                 console.log(`File successfully downloaded: ${downloadPath}`);
+    //             } else {
+    //                 throw new Error("Error: Downloaded file not found in expected location!");
+    //             }
+    //             expect(fs.existsSync(downloadPath)).toBeTruthy();
+    //         } catch (error) {
+    //             console.error("Error during file download:", error);
+    //         }
+    //     }
+    // }
 
     // TC_AM_008
+
+
+
     async detailsAppearOnCard(): Promise<void> {
-        await this.expandAssetManagementTab()
         await this.overviewAsset.click()
         const expectedDetails = ['Assigned', 'Available', 'Total']
-        await this.page.waitForTimeout(500);
-        await this.page.reload();
         await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 1000 });
         await this.page.waitForTimeout(1000);
         await this.assetTypeDropdown.selectOption({ value: "1" });

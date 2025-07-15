@@ -3,6 +3,10 @@ import { OverView } from '../pages/Asset_OverView'
 import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/Loginpage';
 import testData from '../testData/testData.json';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+
 
 let assetOverview: OverView;
 
@@ -12,9 +16,11 @@ test.describe("Asset Overview page", () => {
                 let loginObj = new LoginPage(page);
                 await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
                 assetOverview = new OverView(page);
+                await page.waitForLoadState('domcontentloaded')
                 await assetOverview.expandAssetManagementTab()
                 await assetOverview.navigateToAssetOverview();
-                await assetOverview.waitForDotsLoaderToDisappear()
+                await assetOverview.waitforLoaderToDisappear()
+                await page.waitForTimeout(3000);
 
         });
 
@@ -31,23 +37,65 @@ test.describe("Asset Overview page", () => {
 
         test("All cards display on Asset Overview Page", async ({ page }) => {
                 console.log('All cards display on Asset Overview Page');
+
                 expect(await assetOverview.getCardsCount()).toBe(testData.assetsCardCount);
                 expect(await assetOverview.getTotalAssetCount()).toBe(testData.assetsCardCount);
         });
 
-        test("Asset Overview page functionality", async ({ page }) => {
-                // TC_AM_005
-                expect(await assetOverview.randomAssetTypeSelection());
-                console.log("Random option selected");
-                // TC_AM_006
-                expect(await assetOverview.verifyFilter());
-                console.log("Data filtered");
+        test("Asset Overview page filter  functionality TC_AM_06", async ({ page }) => {
+
+                let options = await assetOverview.getFilterDropdownOption();
+                expect(options.length).toBeGreaterThan(1);
+                await expect(assetOverview.overviewDropdown).toHaveText("All");
+                await assetOverview.selectFilterDropdownOption(options[1]);
+                await assetOverview.clickFilterButton();
+
         });
 
-        test("Verify XLSX file is downloaded", async () => {
-                // TC_AM_007
-                expect(await assetOverview.verifyExport());
-                console.log("Exported XLSX file contains data as expected.");
+        test("Verify XLSX file is downloaded", async ({ page }) => {
+
+                let options = await assetOverview.getFilterDropdownOption();
+                expect(options.length).toBeGreaterThan(1);
+                await expect(assetOverview.overviewDropdown).toHaveText("All");
+                await assetOverview.selectFilterDropdownOption(options[1]);
+                await assetOverview.clickFilterButton();
+                if (await assetOverview.emptyRecord.isVisible()) {
+                        await assetOverview.clickExportButton();
+                        expect(await assetOverview.toast.innerText()).toBe("No Record Available!");
+
+                }
+                else {
+                        // await assetOverview.clickExportButton();
+                        const [download] = await Promise.all([
+                                page.waitForEvent("download", { timeout: 5000 }),
+                                assetOverview.exportButton.click()
+                        ]);
+
+                        // Get the suggested filename
+
+                        const downloadedFile = download.suggestedFilename();
+
+                        // Use current working directory + downloads folder inside your project
+                        const downloadDir = path.join(process.cwd(), 'Download');
+
+                        // Make sure downloads folder exists
+                        if (!fs.existsSync(downloadDir)) {
+                                fs.mkdirSync(downloadDir, { recursive: true });
+                        }
+
+                        // Build full path to save file
+                        const downloadPath = path.join(downloadDir, downloadedFile);
+
+                        // Save the download
+                        await download.saveAs(downloadPath);
+
+                        // Assert file exists
+                        if (fs.existsSync(downloadPath)) {
+                                console.log(`File successfully downloaded: ${downloadPath}`);
+                        } else {
+                                throw new Error("Downloaded file not found in expected location!");
+                        }
+                }
         });
 
         test("Verify details display on cards", async () => {

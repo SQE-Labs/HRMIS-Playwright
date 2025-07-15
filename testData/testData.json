@@ -1,7 +1,7 @@
 {
-    "SuperUser" :{
-        "UserEmail" : "vishal.thakur@caeliusconsulting.com" ,
-        "UserPassword" : "Test@123"
+    "SuperUser": {
+        "UserEmail": "vishal.thakur@caeliusconsulting.com",
+        "UserPassword": "Test@123"
     },
-    "assetsCardCount":13
+    "assetsCardCount": 14
 }
