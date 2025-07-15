@@ -1,21 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { OverView } from '../pages/Asset_OverView';
 import { LoginPage } from '../pages/Loginpage';
-import { BasePage } from '../pages/Basepage';
-import { Login } from '../support/command';
-import { AssetDeallocation } from '../pages/Asset_Deallocation';
 import { AssetEnrollment } from '../pages/New_Asset_Enrollment';
+import testData from '../testData/testData.json';
 
 let assetEnrollment: AssetEnrollment;
 
 test.describe('Asset Enrollment Page', () => {
     test.beforeEach(async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        const basePage = new BasePage(page);
-
-        await basePage.open('url');
-        // Passwords should never be used directly in test due to security reasons. //To-Do
-        await Login.login(page, 'SuperUser');
+        const loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         assetEnrollment = new AssetEnrollment(page);
     });
 

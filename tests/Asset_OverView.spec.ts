@@ -1,43 +1,38 @@
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/Loginpage';
 import { BasePage } from '../pages/Basepage';
-import { Login } from '../support/command';
+import { LoginPage } from '../pages/Loginpage';
+import testData from '../testData/testData.json';
 
 let assetOverview: OverView;
 
 test.describe("Asset Overview page", () => {
         test.beforeEach(async ({ page }) => {
-                const loginPage = new LoginPage(page);
                 const basePage = new BasePage(page);
-
-                await basePage.open('url');
-                await Login.login(page, "SuperUser");
+                let loginObj = new LoginPage(page);
+                await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
                 assetOverview = new OverView(page);
+                await assetOverview.expandAssetManagementTab()
+                await assetOverview.navigateToAssetOverview();
+                await assetOverview.waitForDotsLoaderToDisappear()
+
         });
 
         // TC_AM_003 & TC_AM_004 (merged)
-        test("Asset Overview page", async ({ page }) => {
+        test("Asset Overview page open and verify  header", async ({ page }) => {
                 console.log("Verify Asset Overview Element");
-                // TC_AM_003
                 console.log('Assert management tab expand');
-                expect(await assetOverview.verifyAsset());
-        });
+                //assertion
+                let headerTxt = await assetOverview.getHeaderText();
+                expect(headerTxt?.trim()).toBe("Asset Overview")
 
-        test("Header should match", async ({ page }) => {
-                console.log('Header should match');
-                expect(await assetOverview.verifyHeader());
+        })
 
-                console.log("By default 'All' appears in Asset type dropdown");
-                expect(await assetOverview.verifyDefaultDropdown());
-        });
 
         test("All cards display on Asset Overview Page", async ({ page }) => {
                 console.log('All cards display on Asset Overview Page');
-                expect(await assetOverview.verifyViewCards());
-
-                console.log("Count of cards is equal to TotalAsset displayed on right-top");
-                expect(await assetOverview.verifyTotalAsset());
+                expect(await assetOverview.getCardsCount()).toBe(testData.assetsCardCount);
+                expect(await assetOverview.getTotalAssetCount()).toBe(testData.assetsCardCount);
         });
 
         test("Asset Overview page functionality", async ({ page }) => {
@@ -64,7 +59,6 @@ test.describe("Asset Overview page", () => {
         test("Verify when clicking on any card, card opens up", async () => {
                 // TC_AM_009
                 expect(await assetOverview.openCard());
-
                 expect(await assetOverview.countInnerAssets());
         });
 

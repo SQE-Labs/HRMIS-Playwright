@@ -1,9 +1,6 @@
 import { test, expect } from '@playwright/test'
-import { AssetAllocation } from '../pages/Asset_Allocation'
-import { OverView } from '../pages/Asset_OverView'
 import { LoginPage } from '../pages/Loginpage';
-import { BasePage } from '../pages/Basepage';
-import { Login } from '../support/command';
+import testData from '../testData/testData.json';
 import { Reimbursement } from '../pages/Reimbursement';
 
 let reimbursement: Reimbursement;
@@ -11,9 +8,7 @@ let reimbursement: Reimbursement;
 test.describe("My Reimbursement page", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page);
-
-        await loginPage.open('url');
-        await Login.login(page, "SuperUser");
+        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         reimbursement = new Reimbursement(page);
     });
 

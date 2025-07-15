@@ -1,53 +1,35 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
-import { Loader } from "../components/loaders";
-import { BasePage } from "./Basepage";
-import * as xlsx from 'xlsx'
 import fs from "fs";
-import { assert } from "console";
 import { Alert } from '../components/alert'
 
 export class OverView extends AssetManagementTab {
-    // TC_AM_003
     private overviewAsset: Locator;
     private overviewHeader: Locator;
     private overviewDropdown: Locator;
     private overviewCards: Locator;
-    private loader: Loader;
-    // TC_AM_004
     private totalAsset: Locator;
     public cardsCount: number;
-    // TC_AM_005
     private assetTypeDropdown: Locator;
-    // TC_AM_006
     private filterButton: Locator;
     public randomOption: string;
-    // TC_AM_007
     private exportButton: Locator;
     private alert: Alert;
     public totalAssetsAfterFilter: number;
     private emptyRecord: Locator;
-    // TC_AM_008
     private assignedBadge: Locator;
     private availableBadge: Locator;
     private totalBadge: Locator;
-    // TC_AM_009   
     private card: Locator;
     private cardHeader: Locator;
-    //TC_AM_010 
     private serialNoRows: Locator;
     public innerAssetCount: number;
-    // TC_AM_011
     private superOwnerDropdown: Locator;
-    // TC_AM_012
     private ownerDropdown: Locator;
-    // TC_AM_013
     private availabilityDropdown: Locator;
-    // Tc_AM_017
     public superOwnerRandomOption: string;
     public ownerRandomOption: string;
     public availabilityRandomOption: string;
-    // TC_AM_020
     private assetOverviewRedirect: Locator;
     static this: any;
 
@@ -76,41 +58,26 @@ export class OverView extends AssetManagementTab {
         this.ownerDropdown = page.locator("#ownerFilter")
         this.availabilityDropdown = page.locator("#availabilityFilter")
         this.assetOverviewRedirect = page.locator("div>span>a")
-        this.loader = new Loader(page)
-        this.alert = new Alert(page)
+
     }
 
-    async verifyAsset(): Promise<void> {
-        try {
-            await this.expandAssetManagementTab()
-            await this.overviewAsset.click()
-            console.log("Redirected towards Asset OverView page")
-        } catch (error) {
-            console.log('Unable to redirect towards Asset OverView page', error)
-        }
-    }
 
-    async verifyHeader(): Promise<string | null> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        await this.page.waitForTimeout(2000)
+    async navigateToAssetOverview() {
+
+        this.overviewAsset.click();
+    }
+    async getHeaderText(): Promise<string | null> {
+
         const headerText = await this.overviewHeader.textContent();
-        if (headerText?.trim() === "Asset Overview") {
-            console.log("Redirected towards :-", headerText);
-        } else {
-            console.warn("Unexpected header text found:", headerText);
-        }
+
         return headerText;
     }
-
     async verifyDefaultDropdown(): Promise<void> {
         await expect(this.overviewDropdown).toHaveText("All")
     }
 
-    async verifyViewCards(): Promise<number> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached()
+    async getCardsCount(): Promise<number> {
+
         const cards = await this.overviewCards.allTextContents()
         console.log(cards)
         this.cardsCount = await this.overviewCards.count()
@@ -130,8 +97,8 @@ export class OverView extends AssetManagementTab {
     }
 
     // TC_AM_004
-    async verifyTotalAsset(): Promise<number> {
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached()
+    async getTotalAssetCount(): Promise<number> {
+
         const totalAssetTexts = await this.totalAsset.allTextContents()
         const totalAssetCount = totalAssetTexts.length > 0 ? parseInt(totalAssetTexts[0].replace(/\D/g, ''), 10) : 0;
         await this.page.waitForTimeout(1000)
@@ -185,10 +152,11 @@ export class OverView extends AssetManagementTab {
         await this.page.reload()
         await expect(this.overviewDropdown).toHaveText("All");
         await this.filterButton.click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
+        await this.waitForDotsLoaderToDisappear()
+        await this.waitForSpinnerLoaderToDisappear()
         this.cardsCount = await this.overviewCards.count();
         console.log("Data is filtered when no option is selected");
-        let totalAssetsAfterFilter = await this.verifyTotalAsset();
+        let totalAssetsAfterFilter = await this.getTotalAssetCount();
         console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
         this.randomOption = await this.randomAssetTypeSelection() || '';
         if (!this.randomOption) {
@@ -197,10 +165,11 @@ export class OverView extends AssetManagementTab {
         }
         console.log(`Randomly selected asset type: ${this.randomOption}`);
         await this.filterButton.click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
+        await this.waitForDotsLoaderToDisappear()
+        await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForTimeout(1000);
         this.cardsCount = await this.overviewCards.count();
-        totalAssetsAfterFilter = await this.verifyTotalAsset();
+        totalAssetsAfterFilter = await this.getTotalAssetCount();
         console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
         console.log("The data is filtered based on a randomly selected option.");
         return totalAssetsAfterFilter
@@ -216,10 +185,11 @@ export class OverView extends AssetManagementTab {
         }
         console.log(`Selected asset type: ${this.randomOption}`);
         await this.filterButton.click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
+        await this.waitForDotsLoaderToDisappear()
+        await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForTimeout(1000);
         this.cardsCount = await this.overviewCards.count();
-        const totalAssetsAfterFilter = await this.verifyTotalAsset();
+        const totalAssetsAfterFilter = await this.getTotalAssetCount();
         console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
         const noRecordText = "No Record Available!";
         const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
@@ -294,7 +264,6 @@ export class OverView extends AssetManagementTab {
         await this.page.waitForTimeout(2000);
         await this.card.click()
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
         let header = await this.cardHeader.textContent()
         if (header?.trim() === 'Desktop PC') {
             console.log("Redirected towards :-", header)
@@ -445,9 +414,10 @@ export class OverView extends AssetManagementTab {
         console.log("Selected Dropdown Values:", cardsData);
         await this.filterButton.click()
         await this.page.waitForTimeout(500);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
-        await this.page.waitForTimeout(500);
-        const totalAssetsAfterFilter = await this.verifyTotalAsset();
+        await this.waitForDotsLoaderToDisappear();
+        await this.waitForSpinnerLoaderToDisappear();
+
+        const totalAssetsAfterFilter = await this.getTotalAssetCount();
         console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
         const noRecordText = "No Record Available!";
         const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
@@ -536,6 +506,6 @@ export class OverView extends AssetManagementTab {
     async verifyRedirected(): Promise<void> {
         await this.assetOverviewRedirect.click()
         await this.page.waitForTimeout(1000)
-        await this.verifyHeader()
+        // await this.getHeaderText()
     }
 }

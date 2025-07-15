@@ -6,7 +6,6 @@ export class LoginPage extends BasePage {
     private email: Locator;
     private password: Locator;
     private submitButton: Locator;
-    private loader: Loader;
 
     // Locators
 
@@ -16,14 +15,26 @@ export class LoginPage extends BasePage {
         this.email = page.locator("[type='email']");
         this.password = page.locator("[type='password']");
         this.submitButton = page.locator("#submitButton");
-        this.loader = new Loader(page);
     }
 
     async validLogin(userEmail: string, userPassword: string) {
+        await this.open('url');
         await this.email.fill(userEmail);
         await this.password.fill(userPassword);
         await this.submitButton.click();
-        await expect(this.loader.getSpinoverlay()).not.toBeAttached();
+        await this.waitForDotsLoaderToDisappear()
+        await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForLoadState('networkidle');
+    }
+    async loginUsingJson(page: Page, loginObj: string) {
+        //json paarsingl;
+
+        // const user = users[username];
+
+        // if (!user) {
+        //     throw new Error(`User '${username}' not found in LoginDetail.json`);
+        // }
+
+        // await this.validLogin(user.UserEmail, user.UserPassword);
     }
 }

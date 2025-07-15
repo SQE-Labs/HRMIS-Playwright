@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { Login } from '../support/command';
 import { AssetManagementTab } from '../pages/Asset_Management_Tab';
 import { LoginPage } from '../pages/Loginpage';
 import { BasePage } from '../pages/Basepage';
+import testData from '../testData/testData.json';
 
 let assetManagementTab: AssetManagementTab;
 
 test.describe('Asset Management tests', () => {
     // Define subTabsTitles as a constant if only used locally in this file
-    const subTabsTitles :string[] = [
+    const subTabsTitles: string[] = [
         'Asset Overview',
         'Asset Allocation',
         'Asset De-allocation',
@@ -21,9 +21,8 @@ test.describe('Asset Management tests', () => {
         const loginPage = new LoginPage(page);
         const basePage = new BasePage(page);
 
-        await basePage.open('url'); // Replace 'url' with actual site URL
-        await page.waitForLoadState('networkidle');
-        await Login.login(page, 'SuperUser');
+        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+
         assetManagementTab = new AssetManagementTab(page);
 
     });
@@ -35,7 +34,7 @@ test.describe('Asset Management tests', () => {
         await assetManagementTab.expandAssetManagementTab();
 
         console.debug('Verifying sub-tabs visibility...');
-       expect (  await assetManagementTab.verifySubTabs(subTabsTitles)).toBeTruthy();
+        expect(await assetManagementTab.verifySubTabs(subTabsTitles)).toBeTruthy();
 
     });
 
@@ -47,5 +46,5 @@ test.describe('Asset Management tests', () => {
 
         console.debug('Checking if tab is collapsed...');
         // expect(await assetManagementTab.verifySubTabs(subTabsTitles)).toBe((false));
-      });
+    });
 });

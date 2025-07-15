@@ -1,18 +1,17 @@
-import { test, expect} from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/Loginpage';
-import { Login } from '../support/command';
 import { Employee_Management } from '../pages/Employee_Management';
+import testData from '../testData/testData.json';
 
-let Employee_Directory : Employee_Management
+let Employee_Directory: Employee_Management
 test.describe("'Employee Management module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
-        await basepage.open('url')
-        await page.waitForTimeout(2000)
-        await Login.login(page, "SuperUser")
+        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+
         Employee_Directory = new Employee_Management(page)
 
     });
@@ -124,7 +123,7 @@ test.describe("'Employee Management module'", () => {
     test("Departments Update Icon ...  ", async ({ page }) => {
         await Employee_Directory.Departments_Update_Icon()
     })
-    
+
     test("Departments Cancel Button ...  ", async ({ page }) => {
         await Employee_Directory.Departments_cancel_button()
     })

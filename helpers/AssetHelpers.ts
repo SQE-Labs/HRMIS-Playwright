@@ -9,14 +9,13 @@ export const AssetHelper = {
   async navigateToAllocationAsset(
     page: Page,
     allocationAsset: Locator,
-    loader: Locator
   ): Promise<void> {
     const assetManagementTab = new AssetManagementTab(page);
     await assetManagementTab.expandAssetManagementTab();
     await allocationAsset.click();
-    await expect(loader).not.toBeAttached();
     await page.waitForTimeout(1000);
   },
+
 
   /**
    * Verifies that all items in a result array match the expected keyword
