@@ -14,11 +14,11 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  expect : {
+  expect: {
     timeout: 12_000, // Default timeout for expect assertions
   },
   timeout: 240000,
-  testDir : './tests',
+  testDir: './tests',
   // testMatch:
   // [
   // "Employee_Management.spec.ts"
@@ -43,7 +43,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless: false,
+    headless: true,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 

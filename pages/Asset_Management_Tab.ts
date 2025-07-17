@@ -1,22 +1,22 @@
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from './Basepage';
-import { AssetHelper } from "../helpers/AssetHelpers";
+import { AssetHelper } from "../utils/AssetHelpers";
 
 
 export class AssetManagementTab extends BasePage {
-    private assetManagement: Locator;
-    private subTabs: Locator;
+  private assetManagement: Locator;
+  private subTabs: Locator;
 
-    // Locators
-    constructor(page: Page) {
-        super(page);
-        this.page = page;
-        this.assetManagement = page.locator("//a[text()='Asset Management']");
-        this.subTabs = page.locator("//a[text()='Asset Management']/../ul/li");
+  // Locators
+  constructor(page: Page) {
+    super(page);
+    this.page = page;
+    this.assetManagement = page.locator("//a[text()='Asset Management']");
+    this.subTabs = page.locator("//a[text()='Asset Management']/../ul/li");
 
-    }
+  }
 
-   async expandAssetManagementTab(): Promise<void> {
+  async expandAssetManagementTab(): Promise<void> {
     await AssetHelper.expandIfCollapsed(this.assetManagement);
   }
 

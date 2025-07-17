@@ -2,7 +2,7 @@ import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
-import { AssetHelper } from "../helpers/AssetHelpers";
+import { AssetHelper } from "../utils/AssetHelpers";
 
 export class AssetDeallocation extends BasePage {
     private deallocationSubtab: Locator;
@@ -19,7 +19,7 @@ export class AssetDeallocation extends BasePage {
     private deallocationAssetCondition: Locator;
     private deallocationAssetConditionOptions: Locator;
     private submitButton: Locator;
-    public loader: Loader;
+
 
     constructor(page: Page) {
         super(page);

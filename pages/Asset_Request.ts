@@ -1,6 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
-import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
 import exp from "constants";
@@ -12,7 +11,6 @@ export class AssetRequests extends BasePage {
     private column: Locator;
     private assetRequestButton: Locator;
     private card: Locator;
-    private loader: Loader;
 
     constructor(page: Page) {
         super(page);
@@ -22,7 +20,6 @@ export class AssetRequests extends BasePage {
         this.column = page.locator("(//thead//tr)[1]");
         this.assetRequestButton = page.locator('//a[@class="export theme-button"][text() = "Asset Request"]');
         this.card = page.locator('.card');
-        this.loader = new Loader(page);
     }
 
     async openAssetRequestTab() {
@@ -55,7 +52,7 @@ export class AssetRequests extends BasePage {
         await this.openAssetRequestTab();
         await this.page.waitForTimeout(3000);
         await this.assetRequestButton.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear()
         await this.page.waitForTimeout(1000);
         await expect(this.card).toBeVisible();
     }

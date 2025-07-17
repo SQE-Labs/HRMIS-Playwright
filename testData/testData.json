@@ -3,5 +3,9 @@
         "UserEmail": "vishal.thakur@caeliusconsulting.com",
         "UserPassword": "Test@123"
     },
+    "DefaultSelectedoption": "All",
+    "DefaultOwner": "Consultant",
+    "DefaultSuperOwner": "CAELIUS_OWNED",
+    "DefaultAvailablity": "Available",
     "assetsCardCount": 14
 }

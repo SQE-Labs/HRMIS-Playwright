@@ -87,6 +87,14 @@ export const AssetHelper = {
     await assetManagementTab.expandAssetManagementTab();
     await deallocationSubtab.click();
   },
+  async navigateToNewAssetEnrollmet() {
+    await this.assetEnrollmentSubtab.click();
+  },
+  async navigateToAssetTypeRequest(assetEnrollmentSubtab: Locator, assetManagementTab: { expandAssetManagementTab: () => Promise<void> }) {
+    await this.assetEnrollmentSubtab.click();
+    await this.approveAssetTypeRequest.click();
+  },
+
 
   async getValidationMessage(locator: Locator): Promise<string> {
     return await locator.evaluate(el => (el as HTMLInputElement).validationMessage);

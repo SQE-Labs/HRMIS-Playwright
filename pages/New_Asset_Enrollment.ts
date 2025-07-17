@@ -1,53 +1,51 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
-import { Loader } from "../components/loaders";
-import { BasePage } from "./Basepage";
 import { OverView } from "./Asset_OverView";
-import { AssetAllocation } from "./Asset_Allocation";
-import { AssetDeallocation } from '../pages/Asset_Deallocation';
-import { generateRandomString } from "./Employee_Management"
 
-export class AssetEnrollment extends BasePage {
-    private assetEnrollmentSubtab: Locator;
-    private assetEnrollmentHeader: Locator;
-    private assetEnrollmentTabs: Locator;
-    private createAssetTabs: Locator;
-    private createAssetTabsDetails: string[];
-    private submitButton: Locator;
-    private assetType: Locator;
-    private assetTypeLocator: Locator;
-    private superOwnerLocator: Locator;
-    private ownerLocator: Locator;
-    private model: Locator;
-    private manufacturer: Locator;
-    private serialNumber: Locator;
-    private purchaseCost: Locator;
-    private validationMessage: Locator;
-    private warranty: Locator;
-    private warrantyYear: Locator;
-    private calendar: Locator;
-    private comment: Locator;
-    private bulkAsset: Locator;
-    private chooseButton: Locator;
-    private bulkAssetSubmitButton: Locator;
-    private successPopup: Locator;
-    private cancelButton: Locator;
-    private assetTypeRequest: Locator;
-    private assetTypeRequestColumn: Locator;
-    private createAssetTypeButton: Locator;
-    private createAssetTypePopupHeader: Locator;
-    private createAssetTypePopupLabel: Locator;
-    private popupAssetNameField: Locator;
-    private popupAssetCategory: Locator;
-    private popupSubmitButton: Locator;
-    private popupCancelButton: Locator;
-    private popupCrossIcon: Locator;
-    private popupMessage: Locator;
-    private assetTypeName: Locator;
-    private approveAssetTypeRequest: Locator;
-    private viewButton: Locator;
-    private actionDropdown: Locator;
-    private loader: Loader;
+
+import { generateRandomString } from "./Employee_Management"
+import { serialize } from "v8";
+
+export class AssetEnrollment extends AssetManagementTab {
+    public assetEnrollmentSubtab: Locator;
+    public assetEnrollmentHeader: Locator;
+    public assetEnrollmentTabs: Locator;
+    public createAssetTabs: Locator;
+    public createAssetTabsDetails: string[];
+    public submitButton: Locator;
+    public assetType: Locator;
+    public assetTypeLocator: Locator;
+    public superOwnerLocator: Locator;
+    public ownerLocator: Locator;
+    public model: Locator;
+    public manufacturer: Locator;
+    public serialNumber: Locator;
+    public purchaseCost: Locator;
+    public validationMessage: Locator;
+    public warranty: Locator;
+    public warrantyYear: Locator;
+    public calendar: Locator;
+    public comment: Locator;
+    public bulkAsset: Locator;
+    public chooseButton: Locator;
+    public bulkAssetSubmitButton: Locator;
+    public successPopup: Locator;
+    public cancelButton: Locator;
+    public assetTypeRequest: Locator;
+    public assetTypeRequestColumn: Locator;
+    public createAssetTypeButton: Locator;
+    public createAssetTypePopupHeader: Locator;
+    public createAssetTypePopupLabel: Locator;
+    public popupAssetNameField: Locator;
+    public popupAssetCategory: Locator;
+    public popupSubmitButton: Locator;
+    public popupCancelButton: Locator;
+    public popupCrossIcon: Locator;
+    public popupMessage: Locator;
+    public assetTypeName: Locator;
+    public approveAssetTypeRequest: Locator;
+    public viewButton: Locator;
+    public actionDropdown: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -101,278 +99,86 @@ export class AssetEnrollment extends BasePage {
         this.approveAssetTypeRequest = page.locator("#tab3-tab");
         this.viewButton = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
         this.actionDropdown = page.locator("#status");
-        this.loader = new Loader(page);
     }
 
-    async newEnrollmentPage() {
-        const assetManagementTab = new AssetManagementTab(this.page);
-        await assetManagementTab.expandAssetManagementTab();
-        await this.assetEnrollmentSubtab.click();
-    }
+   
 
     async enrollment() {
-        // TC_AM_056
-        await this.newEnrollmentPage();
-        expect(await this.assetEnrollmentHeader.isVisible()).toBeTruthy();
-        expect(await this.assetEnrollmentTabs.isVisible()).toBeTruthy();
-
-        // TC_AM_057
-        expect(await this.createAssetTabs.allTextContents()).toEqual(this.createAssetTabsDetails);
-
         // TC_AM_058
-        const assetTypeVisible = await this.assetTypeLocator.isVisible();
+        const assetTypeVisible = this.assetTypeLocator;
+        expect(assetTypeVisible).toBeVisible()
         const assetTypeInnerText = await this.assetTypeLocator.innerText();
-
-        const superOwnerVisible = await this.superOwnerLocator.isVisible();
+        const superOwnerVisible = this.superOwnerLocator;
+        expect(superOwnerVisible).toBeVisible()
         const superOwnerInnerText = await this.superOwnerLocator.innerText();
-
-        const ownerVisible = await this.ownerLocator.isVisible();
+        const ownerVisible = this.ownerLocator;
+        expect(ownerVisible).toBeVisible()
         const ownerInnerText = await this.ownerLocator.innerText();
+
         if ((assetTypeVisible && assetTypeInnerText.trim()) && (superOwnerVisible && superOwnerInnerText.trim()) && (ownerVisible && ownerInnerText.trim()) !== "") {
             console.log('The select element is visible and the inner text is visible.');
         } else {
             console.log('The select element or inner text is not visible.');
         }
     }
+    async clickOnSubmitButton() {
+        await this.submitButton.click();
+    }
 
+    async SelectAssetType(ddvalue) {
+        await this.assetType.click();
+        await this.assetTypeLocator.selectOption({ label: ddvalue });
+        let selectedoption = await this.assetTypeLocator.textContent();
+        expect(this.assetTypeLocator.isVisible()).toBeTruthy();
+    }
+
+    async fillAllMandatoryField(assetType, modelnumber, superOwner, owner, Manufracture, serialNumber) {
+        await this.assetTypeLocator.selectOption({ label: assetType });
+        await this.model.fill(modelnumber);   // Try to enter only numbers
+        await this.superOwnerLocator.selectOption({ label: superOwner });
+        await this.ownerLocator.selectOption({ label: owner });
+        await this.manufacturer.fill(Manufracture);
+        await this.serialNumber.fill(serialNumber);
+    }
+
+    async fillModelNumber(modelnumber) {
+        await this.model.fill(modelnumber)
+    }
+
+    async selectSuperOwner(ddvalue) {
+        await this.superOwnerLocator.selectOption({ label: ddvalue });
+    }
+    async selectOwner(ddvalue) {
+        await this.ownerLocator.selectOption({ label: ddvalue });
+
+    }
+    async fillManufracture(value) {
+        await this.manufacturer.fill(value);
+
+    }
+
+
+
+    async fillSerialNumber(uniqueSerial) {
+
+        await this.serialNumber.fill(uniqueSerial.toString());
+
+    }
+
+    async fillWarrantyYear(input) {
+        await expect(this.warrantyYear).toBeDisabled();
+        await this.warranty.fill(input);
+
+    }
+
+    async fillPurchase(input) {
+       
+        await this.purchaseCost.fill(input)
+    }
     // TC_AM_059
     async createAsset() {
-        await this.newEnrollmentPage();
-        await this.submitButton.click();
-        await this.page.waitForTimeout(1000);
-        const assetTypeField = this.assetType;
-        // Get the validation message
-        let tooltipMessage = await assetTypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Asset type Tooltip message:', tooltipMessage);
-        // Validate the expected message
-        expect(tooltipMessage).toBe('Please select an item in the list.');
-
-        // TC_AM_061
-        await this.assetType.click();
-        await this.assetTypeLocator.selectOption({ label: 'USB HUB Adapter' });
-        await this.assetTypeLocator.textContent();
-        expect(this.assetTypeLocator.isVisible()).toBeTruthy();
-
-        // TC_AM_062
-        await this.submitButton.click();
-        await this.page.waitForTimeout(1000);
-        const modelField = this.model;
-        tooltipMessage = await modelField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Model Tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.');
-
-        // TC_AM_063
-        // Fill all mandatory Fields.
-        await this.model.fill('3213');   // Try to enter only numbers
-        await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-        await this.ownerLocator.selectOption({ label: "Caelius" });
-        await this.manufacturer.fill("HP01");
-        await this.serialNumber.fill('5900');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_064
-        await this.model.clear();
-        await this.model.fill('12345678901234567890123456789012345678901'); // try to enter more then 40 characters
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_065
-        await this.model.clear();
-        await this.model.fill('Pavalian');   // Try to enter only numbers
-        await this.superOwnerLocator.selectOption({ label: 'Select a super owner' });
-        await this.submitButton.click();
-        const superOwnerField = this.superOwnerLocator;
-        tooltipMessage = await superOwnerField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Super Owner Tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please select an item in the list.');
-
-        // TC_AM_066
-        await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-        expect(await this.superOwnerLocator.isVisible()).toBeTruthy();
-
-        // TC_AM_067
-        if (await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' })) {
-            console.log("When CAELIUS_OWNED option is selected");
-            console.log(await this.ownerLocator.innerText());
-            expect(await this.ownerLocator.isVisible()).toBeTruthy();
-        }
-        if (await this.superOwnerLocator.selectOption({ label: 'CLIENT_OWNED' })) {
-            console.log("When CLIENT_OWNED option is selected");
-            console.log(await this.ownerLocator.innerText());
-            expect(await this.ownerLocator.isVisible()).toBeTruthy();
-        }
-
-        // TC_AM_068
-        // If CAELIUS_OWNED option is selected.
-        try {
-            const superOwnerSelected = await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-
-            if (superOwnerSelected) {
-                const ownerTextVisible = await this.ownerLocator.getByText('Select an Owner').textContent();
-                if (ownerTextVisible) {
-                    await this.submitButton.click();
-
-                    const ownerField = this.ownerLocator;
-                    tooltipMessage = await ownerField.evaluate(el => (el as HTMLInputElement).validationMessage);
-                    console.log('Owner Tooltip message:', tooltipMessage);
-                    expect(tooltipMessage).toBe('Please select an item in the list.');
-
-                } else {
-                    console.error('"Select an owner" text is not visible');
-                }
-            } else {
-                console.error('superOwnerLocator option was not selected');
-            }
-        } catch (error) {
-            console.error('An error occurred during the test execution:', error);
-        }
-        // If CLIENT_OWNED option is selected.
-        await this.page.waitForTimeout(2000);
-        try {
-            const superOwnerSelected = await this.superOwnerLocator.selectOption({ label: 'CLIENT_OWNED' });
-
-            if (superOwnerSelected) {
-                const ownerTextElement = await this.ownerLocator.getByText('Select an Owner').isVisible();
-
-                if (ownerTextElement) {
-                    await this.submitButton.click();
-
-                    const ownerField = this.ownerLocator;
-                    tooltipMessage = await ownerField.evaluate(el => (el as HTMLInputElement).validationMessage);
-                    console.log('Owner Tooltip message:', tooltipMessage);
-
-                    expect(tooltipMessage).toBe('Please select an item in the list.');
-                } else {
-                    console.error('"Select an Owner" text is not found on the page');
-                }
-            } else {
-                console.error('superOwnerLocator option was not selected');
-                throw new Error('superOwnerLocator option was not selected. Test case failed.');
-            }
-        } catch (error) {
-            console.error('An error occurred during the test execution:', error);
-            throw error;
-        }
-
-        // TC_AM_069
-        await this.page.waitForTimeout(1000);
-        await this.superOwnerLocator.selectOption({ label: 'CAELIUS_OWNED' });
-        await this.ownerLocator.selectOption({ label: 'Caelius' });
-        expect(await this.ownerLocator.isVisible()).toBeTruthy();
-
-        // TC_AM_70
-        await this.page.waitForTimeout(2000);
-        await this.manufacturer.clear();
-        await this.submitButton.click();
-        const manufacturerField = this.manufacturer;
-        tooltipMessage = await manufacturerField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Manufacturer Tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.');
-
-        // TC_AM_71
-        await this.page.waitForTimeout(2000);
-        await this.manufacturer.fill('3213');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_72
-        await this.page.waitForTimeout(2000);
-        await this.manufacturer.clear();
-        await this.manufacturer.fill('12345678901234567890123456789012345678901'); // try to enter more then 40 characters
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        await this.manufacturer.fill('HP01');
-
-        // TC_AM_73
-        await this.serialNumber.clear();
-        await this.submitButton.click();
-        const serialNumberField = this.serialNumber;
-        tooltipMessage = await serialNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('SerialNumber Tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.');
-
-        // TC_AM_74
-        await this.serialNumber.clear();
-        await this.serialNumber.fill('12345678901234567890123456789012345678901'); // try to enter more then 40 characters
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_76   
-        await this.serialNumber.fill('@#$%^');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_77
-        // Try to Enter Existing Serial number
-        const usedSerialNumbers = new Set<number>();
-
-        // TC_AM_78
-        let serialNumber = 0;
-        do {
-            serialNumber = Math.floor(10000 + Math.random() * 90000);
-        } while (usedSerialNumbers.has(serialNumber));
-
-        // Store the serial number to prevent repetition
-        usedSerialNumbers.add(serialNumber);
-
-        await this.page.waitForTimeout(7000);
-        await this.serialNumber.fill(serialNumber.toString());
-        await this.page.waitForTimeout(1000);  // Wait for 1 second
-        const enteredSerialNumber = await this.serialNumber.inputValue();
-        console.log(enteredSerialNumber);
-        await expect(this.warrantyYear).toBeDisabled();
-        await this.warranty.fill('1');
-        await expect(this.warrantyYear).toBeEnabled();
-
-        // TC_AM_80
-        // Enter negative value
-        await this.warranty.fill('-1');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_81
-        // Enter More then 10
-        await this.warranty.fill('11');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-
-        // TC_AM_82
-        // Enter More then 120 and select month
-        await this.warranty.fill('121');
-        await this.warrantyYear.selectOption({ label: 'Month' });
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-        await this.warranty.fill('120');
-
-        // TC_AM_083
-        const purchaseCostValue = await this.purchaseCost.getAttribute('value');
-        expect(purchaseCostValue).toEqual("0");
-
-        // TC_AM_84
-        await this.purchaseCost.clear();
-        await this.purchaseCost.fill('@#$%^&*');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
 
         // TC_AM_85
-        await this.purchaseCost.clear();
-        await this.purchaseCost.fill('1000001');
-        await this.submitButton.click();
-        console.log(await this.validationMessage.textContent());
-        expect(this.validationMessage.isVisible()).toBeTruthy();
-        await this.purchaseCost.fill('100');
 
         // TC_AM_86
         const futureDate = new Date();
@@ -404,17 +210,17 @@ export class AssetEnrollment extends BasePage {
         // TC_AM_89
         const overView = new OverView(this.page);
         this.page.locator("//a[text()='Asset Overview']").click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.page.getByTitle("USB HUB Adapter").click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         const existingSerialNumbers = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents();
         expect(existingSerialNumbers).toContain(enteredSerialNumber);
     }
     async bulkCreateAsset() {
         // TC_AM_90
-        await this.newEnrollmentPage();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+
+        await this.waitforLoaderToDisappear();
         await this.bulkAsset.click();
         await this.page.locator(".has-asterisk").isVisible();
         await this.chooseButton.isVisible();
@@ -569,10 +375,10 @@ export class AssetEnrollment extends BasePage {
 
     async assetTypeRequests() {
         // TC_AM_124
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.assetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         const columnCount = await this.assetTypeRequestColumn.count();
         for (let i = 0; i < columnCount; i++) {
             const column = await this.assetTypeRequestColumn.nth(i);
@@ -735,7 +541,7 @@ export class AssetEnrollment extends BasePage {
 
     async assetTypeRequestStatusApproveStatus() {
         // TC_AM_134   Step-7
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
         await this.page.waitForTimeout(4000);
@@ -759,7 +565,7 @@ export class AssetEnrollment extends BasePage {
         await this.page.waitForTimeout(1000);
         await this.assetTypeRequest.click();
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         const count = await this.assetTypeName.count();
         let found = false;
@@ -781,7 +587,7 @@ export class AssetEnrollment extends BasePage {
 
     async assetTypeRequestStatusRejectStatus() {
         // TC_AM_134 Step-14
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
         await this.page.waitForTimeout(4000);
@@ -805,7 +611,7 @@ export class AssetEnrollment extends BasePage {
         await this.page.waitForTimeout(1000);
         await this.assetTypeRequest.click();
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         const count = await this.assetTypeName.count();
         let found = false;
@@ -827,7 +633,7 @@ export class AssetEnrollment extends BasePage {
 
     async assetTypeRequestApproveDate() {
         // TC_AM_135 Step-7
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
         await this.page.waitForTimeout(4000);
@@ -851,7 +657,7 @@ export class AssetEnrollment extends BasePage {
         await this.page.waitForTimeout(1000);
         await this.assetTypeRequest.click();
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         const count = await this.assetTypeName.count();
         let found = false;
@@ -881,7 +687,7 @@ export class AssetEnrollment extends BasePage {
 
     async assetTypeRequestRejectDate() {
         // TC_AM_135 Step-14
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
         await this.page.waitForTimeout(4000);
@@ -905,7 +711,7 @@ export class AssetEnrollment extends BasePage {
         await this.page.waitForTimeout(1000);
         await this.assetTypeRequest.click();
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         const count = await this.assetTypeName.count();
         let found = false;
@@ -934,7 +740,7 @@ export class AssetEnrollment extends BasePage {
     }
 
     async approveAssetTypeRequestNoRecord() {
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
         if (await this.page.locator(".fs-4").isVisible()) {
@@ -948,7 +754,7 @@ export class AssetEnrollment extends BasePage {
     }
 
     async approveAssetTypeRequestVerification() {
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
 
         await this.assetTypeRequest.click();
@@ -987,10 +793,10 @@ export class AssetEnrollment extends BasePage {
 
     async approveAssetTypeRequestApproved() {
         // TC_AM_141
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.viewButton.click();
         await this.popupSubmitButton.click();
 
@@ -1023,10 +829,10 @@ export class AssetEnrollment extends BasePage {
 
     async approveAssetTypeRequestRejected() {
         // TC_AM_142
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.viewButton.click();
 
         await this.actionDropdown.selectOption({ value: 'REJECTED' });
@@ -1039,10 +845,10 @@ export class AssetEnrollment extends BasePage {
 
     async approveAssetTypeRequestCross() {
         // TC_AM_143
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.viewButton.click();
         await this.popupCrossIcon.click();
         await this.page.waitForTimeout(2000);
@@ -1051,10 +857,10 @@ export class AssetEnrollment extends BasePage {
 
     async approveAssetTypeRequestCancel() {
         // TC_AM_144
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.page.waitForSelector('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
         await this.viewButton.click();
         await this.page.waitForTimeout(500);
@@ -1065,10 +871,10 @@ export class AssetEnrollment extends BasePage {
 
     async approveAssetTypeRequestCommentApprove() {
         // TC_AM_145
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.viewButton.click();
         const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
         const trimmedName = name?.trim();
@@ -1082,7 +888,7 @@ export class AssetEnrollment extends BasePage {
 
         await this.assetTypeRequest.click();
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         const count = await this.assetTypeName.count();
         let found = false;
@@ -1104,10 +910,10 @@ export class AssetEnrollment extends BasePage {
 
     async approveAssetTypeRequestCommentRejected() {
         // TC_AM_145
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.viewButton.click();
         const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
         const trimmedName = name?.trim();
@@ -1121,7 +927,7 @@ export class AssetEnrollment extends BasePage {
 
         await this.assetTypeRequest.click();
         await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
 
         await this.page.waitForTimeout(2000);
         const count = await this.assetTypeName.count();
@@ -1152,10 +958,10 @@ export class AssetEnrollment extends BasePage {
         });
 
         console.log(currentDate);
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.assetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.page.waitForTimeout(3000);
         await this.createAssetTypeButton.click();
         const name = generateRandomString(8);
@@ -1184,12 +990,16 @@ export class AssetEnrollment extends BasePage {
         }
     }
 
+
+
+    
+
     async approveAssetTypeSorting() {
         // TC_AM_147
-        await this.newEnrollmentPage();
+
         await this.page.waitForTimeout(2000);
         await this.approveAssetTypeRequest.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear();
         await this.page.waitForTimeout(3000);
         const beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
 
