@@ -1,10 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
-import { OverView } from "./Asset_OverView";
-
 
 import { generateRandomString } from "./Employee_Management"
-import { serialize } from "v8";
 
 export class AssetEnrollment extends AssetManagementTab {
     public assetEnrollmentSubtab: Locator;
@@ -27,8 +24,9 @@ export class AssetEnrollment extends AssetManagementTab {
     public calendar: Locator;
     public comment: Locator;
     public bulkAsset: Locator;
+    public fileInputSelector: Locator
+    public bulkAssetHeader: Locator
     public chooseButton: Locator;
-    public bulkAssetSubmitButton: Locator;
     public successPopup: Locator;
     public cancelButton: Locator;
     public assetTypeRequest: Locator;
@@ -38,7 +36,6 @@ export class AssetEnrollment extends AssetManagementTab {
     public createAssetTypePopupLabel: Locator;
     public popupAssetNameField: Locator;
     public popupAssetCategory: Locator;
-    public popupSubmitButton: Locator;
     public popupCancelButton: Locator;
     public popupCrossIcon: Locator;
     public popupMessage: Locator;
@@ -68,7 +65,6 @@ export class AssetEnrollment extends AssetManagementTab {
             'Purchase Date',
             'Comment'
         ];
-        this.submitButton = page.locator(".theme-button ");
         this.assetType = page.locator("select[id='asset_list']");
         this.model = page.locator("//input[@name = 'model']");
         this.manufacturer = page.locator("//input[@name = 'manufacture']");
@@ -81,18 +77,19 @@ export class AssetEnrollment extends AssetManagementTab {
         this.comment = page.locator("//textarea[@id = 'comment']");
         this.bulkAsset = page.locator("//button[@id = 'tab1-tab']");
         this.chooseButton = page.locator("//input[@type = 'file']");
-        this.bulkAssetSubmitButton = page.locator("//button[@type = 'submit']");
+        this.submitButton = page.locator("//button[@type = 'submit']");
         this.successPopup = page.locator(".modal-body");
         this.cancelButton = page.locator(".theme-button.bg-grey.mx-3.w-35");
         this.popupMessage = page.locator('div>ol');
         this.assetTypeRequest = page.locator("#tab2-tab");
+        this.bulkAssetHeader = page.locator(".has-asterisk")
+        this.fileInputSelector = page.locator("//input[@type = 'file']")
         this.assetTypeRequestColumn = page.locator("thead>tr>th");
         this.createAssetTypeButton = page.locator("(//button[@type= 'button'])[7]");
         this.createAssetTypePopupHeader = page.locator("#staticBackdropLabel");
         this.createAssetTypePopupLabel = page.locator(".col-md-4.pt-1");
         this.popupAssetNameField = page.locator("//input[@type = 'text']");
         this.popupAssetCategory = page.locator(":#assetCategory");
-        this.popupSubmitButton = page.locator("(//button[@type= 'submit'])");
         this.popupCancelButton = page.locator("(//button[@type= 'button'])[6]");
         this.popupCrossIcon = page.locator(".btn-close");
         this.assetTypeName = page.locator("tr>td:nth-child(2)");
@@ -101,7 +98,9 @@ export class AssetEnrollment extends AssetManagementTab {
         this.actionDropdown = page.locator("#status");
     }
 
-   
+    async navigateToNewAssetEnrollmet() {
+        await this.assetEnrollmentSubtab.click();
+    }
 
     async enrollment() {
         // TC_AM_058
@@ -140,11 +139,9 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.manufacturer.fill(Manufracture);
         await this.serialNumber.fill(serialNumber);
     }
-
     async fillModelNumber(modelnumber) {
         await this.model.fill(modelnumber)
     }
-
     async selectSuperOwner(ddvalue) {
         await this.superOwnerLocator.selectOption({ label: ddvalue });
     }
@@ -156,9 +153,6 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.manufacturer.fill(value);
 
     }
-
-
-
     async fillSerialNumber(uniqueSerial) {
 
         await this.serialNumber.fill(uniqueSerial.toString());
@@ -166,102 +160,38 @@ export class AssetEnrollment extends AssetManagementTab {
     }
 
     async fillWarrantyYear(input) {
-        await expect(this.warrantyYear).toBeDisabled();
         await this.warranty.fill(input);
 
     }
 
     async fillPurchase(input) {
-       
+
         await this.purchaseCost.fill(input)
     }
-    // TC_AM_059
-    async createAsset() {
 
-        // TC_AM_85
 
-        // TC_AM_86
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + 1);
-        const futureDateString = futureDate.toISOString().split('T')[0];
-        await this.calendar.pressSequentially(futureDateString); // Try to enter future dates
-        console.log(await this.page.locator(".Toastify__toast-body").textContent());
-        await this.page.locator(".Toastify__toast-body").isVisible();
-        await this.page.waitForTimeout(7000);
-
-        // TC_AM_87
-        // Enter more than 256 characters 
-        const today = new Date();
-        today.setDate(today.getDate());
-        const presentDate = today.toISOString().split('T')[0];
-        await this.calendar.pressSequentially(presentDate);
-        await this.comment.fill("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.");
-        await this.submitButton.click();
-        await this.page.locator(".Toastify__toast-body").isVisible();
-        await this.comment.fill("Thnk you !!");
-
-        // TC_AM_88
-        await this.page.waitForTimeout(7000);
-        await this.submitButton.click();
-        await this.page.waitForTimeout(500);
-        console.log(await this.page.locator(".Toastify__toast-body").textContent());
-        await this.page.locator(".Toastify__toast-body").isVisible();
-
-        // TC_AM_89
-        const overView = new OverView(this.page);
-        this.page.locator("//a[text()='Asset Overview']").click();
-        await this.waitforLoaderToDisappear();
-        await this.page.getByTitle("USB HUB Adapter").click();
-        await this.waitforLoaderToDisappear();
-
-        const existingSerialNumbers = await this.page.locator("tbody>tr>td:nth-child(4)").allTextContents();
-        expect(existingSerialNumbers).toContain(enteredSerialNumber);
-    }
-    async bulkCreateAsset() {
-        // TC_AM_90
-
-        await this.waitforLoaderToDisappear();
+    async navigateToBulkCreateAsset() {
         await this.bulkAsset.click();
-        await this.page.locator(".has-asterisk").isVisible();
-        await this.chooseButton.isVisible();
-        await this.bulkAssetSubmitButton.isVisible();
+    }
 
-        // TC_AM_091
+    async validBulkAssetFileFileUpload() {
 
-        let fileInputSelector = "//input[@type = 'file']";
+    }
 
-        // let filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ValidDocument.xlsx'; // Specify the path to the file you want to upload
-        // await this.page.setInputFiles(fileInputSelector, filePath);
-        // await this.bulkAssetSubmitButton.click();
-        // console.log(await this.successPopup.innerText());
-        // await this.successPopup.isVisible();
+
+
+    async bulkCreateAsset() {
+
+
+    
 
         // TC_AM_092
-        await this.page.waitForTimeout(7000);
-        // await this.page.locator(".btn-close").click()
-        fileInputSelector = "//input[@type = 'file']";
-        let filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\abc.docx'; // Specify the path to the file you want to upload
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        console.log(await this.page.locator(".Toastify__toast-body").textContent());
-        await this.page.locator(".Toastify__toast-body").isVisible();
-        await this.page.waitForTimeout(1000);
 
         // TC_AM_093
-        const bulkAssetField = this.page.locator("//input[@type = 'file']");
-        await this.bulkAssetSubmitButton.click();
-        // Get the validation message
-        let tooltipMessage = await bulkAssetField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Asset type Tooltip message:', tooltipMessage);
-        // Validate the expected message
-        expect(tooltipMessage).toBe('Please select a file.');
+       
 
         // TC_AM_094
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\AssetType_Column.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
+       
 
         // TC_AM_095
         await this.page.locator(".btn-close").click();
@@ -270,7 +200,7 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
 
-        await this.bulkAssetSubmitButton.click();
+        await this.submitButton.click();
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -280,7 +210,7 @@ export class AssetEnrollment extends AssetManagementTab {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Owner_Column.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.submitButton.click();  // Submit the last file
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -290,7 +220,7 @@ export class AssetEnrollment extends AssetManagementTab {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Manufracture.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();
+        await this.submitButton.click();
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -300,7 +230,7 @@ export class AssetEnrollment extends AssetManagementTab {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\SerialNumber.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.bulkAssetSubmitButton.click();
+        // await this.submitButton.click();
         // await this.popupMessage.waitFor({ state: 'visible' });
         // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
@@ -310,7 +240,7 @@ export class AssetEnrollment extends AssetManagementTab {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Warranty.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.bulkAssetSubmitButton.click();
+        // await this.submitButton.click();
         // await this.popupMessage.waitFor({ state: 'visible' });
         // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
@@ -320,7 +250,7 @@ export class AssetEnrollment extends AssetManagementTab {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Purchase.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.bulkAssetSubmitButton.click();
+        // await this.submitButton.click();
         // await this.popupMessage.waitFor({ state: 'visible' });
         // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
@@ -330,7 +260,7 @@ export class AssetEnrollment extends AssetManagementTab {
         // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Processor.xlsx';
         // await this.page.setInputFiles(fileInputSelector, filePath);
         // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.bulkAssetSubmitButton.click();  // Submit the last file
+        // await this.submitButton.click();  // Submit the last file
         // await this.popupMessage.waitFor({ state: 'visible' });
         // console.log(await this.page.locator('div>ol').allInnerTexts());
         // await this.page.locator(".btn-close").click();
@@ -340,7 +270,7 @@ export class AssetEnrollment extends AssetManagementTab {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\superOwner.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.submitButton.click();  // Submit the last file
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -349,7 +279,7 @@ export class AssetEnrollment extends AssetManagementTab {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ExistingSerialNumber.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.submitButton.click();  // Submit the last file
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -358,7 +288,7 @@ export class AssetEnrollment extends AssetManagementTab {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NonExistingAssetType.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.submitButton.click();  // Submit the last file
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -367,7 +297,7 @@ export class AssetEnrollment extends AssetManagementTab {
         filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NoUnit.xlsx';
         await this.page.setInputFiles(fileInputSelector, filePath);
         await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.bulkAssetSubmitButton.click();  // Submit the last file
+        await this.submitButton.click();  // Submit the last file
         await this.popupMessage.waitFor({ state: 'visible' });
         console.log(await this.page.locator('div>ol').allInnerTexts());
         await this.page.locator(".btn-close").click();
@@ -406,7 +336,7 @@ export class AssetEnrollment extends AssetManagementTab {
         // TC_AM_126 &  TC_AM_129 (I combine both test cases)
         // Empty Asset Name 
         await this.assetTypeRequestCreateAssetTypeRequest();
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
         const assetNameField = this.popupAssetNameField;
         const tooltipMessage = await assetNameField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Asset Name tooltip message:', tooltipMessage);
@@ -415,7 +345,7 @@ export class AssetEnrollment extends AssetManagementTab {
         // Empty Comment Field
         await assetNameField.fill(generateRandomString(5));
         await this.page.waitForTimeout(500);
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
         const commentField = this.comment;
         const commentTooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Comment Field tooltip message:', commentTooltipMessage);
@@ -431,7 +361,7 @@ export class AssetEnrollment extends AssetManagementTab {
             await assetNameField.fill(generateRandomString(5));
             const text = generateRandomString(41);
             await this.comment.fill(text);
-            await this.popupSubmitButton.click();
+            await this.submitButton.click();
             const message = await this.validationMessage.textContent();
             console.log(message);
             await expect(this.validationMessage).toBeVisible();
@@ -449,7 +379,7 @@ export class AssetEnrollment extends AssetManagementTab {
             const input = '@#@#@@#@'; // Special Characters
             await this.popupAssetNameField.fill(input);
             await this.comment.fill('Abcdef');
-            await this.popupSubmitButton.click();
+            await this.submitButton.click();
             const message = await this.validationMessage.textContent();
             await expect(this.validationMessage).toBeVisible();
             await expect(message).toEqual("Entry cannot contain only numbers and special characters");
@@ -460,7 +390,7 @@ export class AssetEnrollment extends AssetManagementTab {
             const input = '1111'; // only Numbers
             await this.popupAssetNameField.fill(input);
             await this.comment.fill('Abcdef');
-            await this.popupSubmitButton.click();
+            await this.submitButton.click();
             const message = await this.validationMessage.textContent();
             await expect(this.validationMessage).toBeVisible();
             await expect(message).toEqual("Entry cannot contain only numbers and special characters");
@@ -491,7 +421,7 @@ export class AssetEnrollment extends AssetManagementTab {
         const name = generateRandomString(8);
         await this.popupAssetNameField.fill(name);
         await this.comment.fill(name);
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
         await this.page.waitForTimeout(6000);
 
         const names = new Set<string>();
@@ -764,7 +694,7 @@ export class AssetEnrollment extends AssetManagementTab {
         const name = generateRandomString(8);
         await this.popupAssetNameField.fill(name);
         await this.comment.fill(name);
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
         await this.page.waitForTimeout(6000);
 
         const createdNames = new Set<string>();
@@ -798,7 +728,7 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.approveAssetTypeRequest.click();
         await this.waitforLoaderToDisappear();
         await this.viewButton.click();
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
 
         const actionDropdown = this.actionDropdown;
         const tooltipMessage = await actionDropdown.evaluate(el => (el as HTMLInputElement).validationMessage);
@@ -810,7 +740,7 @@ export class AssetEnrollment extends AssetManagementTab {
 
         await this.actionDropdown.selectOption({ value: 'APPROVED' });
 
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
 
         const commentField = this.comment;
         const commentTooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
@@ -822,7 +752,7 @@ export class AssetEnrollment extends AssetManagementTab {
 
         await this.comment.fill("Thank you !!");
 
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
         console.log(await this.page.locator(".Toastify__toast-body").textContent());
         await this.page.locator(".Toastify__toast-body").isVisible();
     }
@@ -837,7 +767,7 @@ export class AssetEnrollment extends AssetManagementTab {
 
         await this.actionDropdown.selectOption({ value: 'REJECTED' });
         await this.comment.fill("Sorry !!");
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
 
         console.log(await this.page.locator(".Toastify__toast-body").textContent());
         await this.page.locator(".Toastify__toast-body").isVisible();
@@ -882,7 +812,7 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.actionDropdown.selectOption({ value: 'APPROVED' });
         const comment = "Thank you for conformation !!";
         await this.comment.fill(comment);
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
 
         await this.page.waitForTimeout(5000);
 
@@ -921,7 +851,7 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.actionDropdown.selectOption({ value: 'REJECTED' });
         const comment = "Thank you for conformation !!";
         await this.comment.fill(comment);
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
 
         await this.page.waitForTimeout(5000);
 
@@ -967,7 +897,7 @@ export class AssetEnrollment extends AssetManagementTab {
         const name = generateRandomString(8);
         await this.popupAssetNameField.fill(name);
         await this.comment.fill(name);
-        await this.popupSubmitButton.click();
+        await this.submitButton.click();
         await this.page.waitForTimeout(6000);
         await this.approveAssetTypeRequest.click();
 
@@ -992,7 +922,7 @@ export class AssetEnrollment extends AssetManagementTab {
 
 
 
-    
+
 
     async approveAssetTypeSorting() {
         // TC_AM_147

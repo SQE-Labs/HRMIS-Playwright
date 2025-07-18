@@ -50,7 +50,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     //use baseurl from 
     baseURL: process.env.URL || 'https://topuptalent.com/',
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     // actionTimeout : 10000,
   },

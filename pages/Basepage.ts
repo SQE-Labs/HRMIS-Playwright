@@ -9,6 +9,7 @@ export class BasePage extends CommonUtils {
   readonly Spinoverlay: Locator
   readonly threeDotclass: Locator
   readonly toast: Locator
+  readonly popUp : Locator
 
   // Adjust the selector based on your 
 
@@ -55,6 +56,12 @@ export class BasePage extends CommonUtils {
   async getToastMessage() {
     await this.toast.waitFor({ state: 'visible', timeout: 5000 })
     let message = await this.toast.textContent()
+    console.debug(message)
+    return message
+  }
+  async toastMessage() {
+    await this.page.waitForSelector('.Toastify__toast-body')
+    let message = await this.popUp.textContent()
     console.debug(message)
     return message
   }

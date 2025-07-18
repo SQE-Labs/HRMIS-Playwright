@@ -1,7 +1,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect, Page, Download } from '@playwright/test';
+import { expect, Page, Download, Locator } from '@playwright/test';
 
 export class CommonUtils {
     async verifyXLSXDownload(page: Page, exportTrigger: () => Promise<void>): Promise<void> {
@@ -50,8 +50,8 @@ export class CommonUtils {
         expect(elementsText).toEqual(sortedElements)
 
     }
-    async generateRandomInteger(length = 5) {
-        const characters = '0234567891';
+    async generateRandomInteger(length: number) {
+        const characters = '0123456789';
         let result = '';
         const charactersLength = characters.length;
         for (let i = 0; i < length; i++) {
@@ -77,5 +77,40 @@ export class CommonUtils {
         }
         return result;
     }
+    async uploadAndVerifyFile(
+        fileName: string,
+        page: Page,
+        submitButton: Locator,
+        popupMessage: Locator
+    ) {
+        let fileInputSelector = "//input[@type = 'file']"
+        // Construct full cross-platform file path
+        const filePath = path.resolve(__dirname, '..', 'files', fileName);
 
+        // Validate file before uploading
+        expect(fs.existsSync(filePath)).toBe(true);
+        const fileStats = fs.statSync(filePath);
+        expect(fileStats.size).toBeGreaterThan(0);
+        expect(path.extname(filePath)).toMatch(/\.xlsx|\.docx/); // adjust if needed
+
+        // Upload file
+        await page.setInputFiles(fileInputSelector, filePath);
+        await page.waitForSelector(fileInputSelector, { state: 'attached' });
+
+        
+        
+        
+        
+        // Submit
+        // await submitButton.click();
+        // await popupMessage.waitFor({ state: 'visible' });
+
+        // // Log result
+        // const messages = await page.locator('div>ol').allInnerTexts();
+        // console.log(`Upload result for ${fileName}:\n`, messages);
+
+        // // Close popup
+        // await page.locator(".btn-close").click();
+        // await page.waitForTimeout(500);
+    }
 }
