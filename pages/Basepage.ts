@@ -9,7 +9,7 @@ export class BasePage extends CommonUtils {
   readonly Spinoverlay: Locator
   readonly threeDotclass: Locator
   readonly toast: Locator
-  readonly popUp : Locator
+  readonly popUp: Locator
 
   // Adjust the selector based on your 
 
@@ -22,6 +22,7 @@ export class BasePage extends CommonUtils {
     this.Spinoverlay = page.locator(".overlay")
     this.threeDotclass = page.locator(".centered-loader")
     this.toast = page.getByRole('alert')
+    this.popUp = page.locator('.Toastify__toast-body')
   }
 
   async open(url: string): Promise<void> {

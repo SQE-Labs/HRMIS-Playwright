@@ -7,6 +7,7 @@ import { count, error, timeStamp } from 'console'
 import exp from 'constants'
 import { text } from 'stream/consumers'
 import fs from "fs";
+import { AssetHelper } from '../utils/AssetHelpers'
 
 
 
@@ -505,9 +506,9 @@ export class Employee_Management extends BasePage {
         expect(originalMiddleName).toEqual(CurrentMiddleName)
 
         // TC_EM_015
-        // Generate random first and last names
-        var randomFirstName = generateRandomString(8);
-        var randomLastName = generateRandomString(10);
+        // Generate random first and last name
+        var randomFirstName = await AssetHelper.generateRandomString(5);
+        var randomLastName = await AssetHelper.generateRandomString(5);
 
         // Get the original names before editing
         var originalFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
@@ -741,7 +742,7 @@ export class Employee_Management extends BasePage {
         var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
         var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
         var OriginalpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
-        var permanentAddress = generateRandomString(8);
+        var permanentAddress = await AssetHelper.generateRandomString(5);
 
         await this.PersonalDetailsEditButton.click()
         await this.AadhaarCardNumber.clear()
@@ -1681,7 +1682,7 @@ export class Employee_Management extends BasePage {
         expect(tooltipMessage).toBe('Please fill out this field.')
 
         // TC_EM_0128
-        let Department_name = generateRandomString(6);
+        let Department_name = await AssetHelper.generateRandomString(6);
         await this.Name_TextArea.pressSequentially(Department_name)
         await this.PopUP_Submit_button.click()
         toast_message = await this.page.locator(".Toastify__toast-body").textContent()
@@ -1725,7 +1726,7 @@ export class Employee_Management extends BasePage {
         await this.page.waitForTimeout(6000)
 
         // TC_EM_0133
-        let Department_name = generateRandomString(6);
+        let Department_name = await AssetHelper.generateRandomString(6);
         await this.Name_TextArea.pressSequentially(Department_name)
         await this.PopUP_Submit_button.click()
         let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
@@ -1736,12 +1737,12 @@ export class Employee_Management extends BasePage {
 
     
 }
-export function generateRandomString(length: any) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
+// export function await AssetHelper.generateRandomString(5)(length: any) {
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+//     let result = '';
+//     const charactersLength = characters.length;
+//     for (let i = 0; i < length; i++) {
+//         result += characters.charAt(Math.floor(Math.random() * charactersLength));
+//     }
+//     return result;
+// }

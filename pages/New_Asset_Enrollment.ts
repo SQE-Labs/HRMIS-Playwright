@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 
-import { generateRandomString } from "./Employee_Management"
+import { AssetHelper } from "../utils/AssetHelpers";
 
 export class AssetEnrollment extends AssetManagementTab {
     public assetEnrollmentSubtab: Locator;
@@ -43,6 +43,12 @@ export class AssetEnrollment extends AssetManagementTab {
     public approveAssetTypeRequest: Locator;
     public viewButton: Locator;
     public actionDropdown: Locator;
+    public assetTypeRow: Locator;
+    public categoryRow: Locator
+    public requestDateRow: Locator
+    public approvedDateRow: Locator
+    public commentRow: Locator
+    public statusRow: Locator
 
     constructor(page: Page) {
         super(page);
@@ -96,6 +102,14 @@ export class AssetEnrollment extends AssetManagementTab {
         this.approveAssetTypeRequest = page.locator("#tab3-tab");
         this.viewButton = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
         this.actionDropdown = page.locator("#status");
+        this.assetTypeRow = page.locator('tr>th:nth-child(2)')
+        this.categoryRow = page.locator('tr>th:nth-child(3)')
+        this.requestDateRow = page.locator('tr>th:nth-child(4)')
+        this.approvedDateRow = page.locator('tr>th:nth-child(5)')
+        this.commentRow = page.locator('tr>th:nth-child(6)')
+        this.statusRow = page.locator('tr>th:nth-child(7)')
+
+
     }
 
     async navigateToNewAssetEnrollmet() {
@@ -174,433 +188,110 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.bulkAsset.click();
     }
 
-    async validBulkAssetFileFileUpload() {
-
-    }
-
-
-
-    async bulkCreateAsset() {
-
-
-    
-
-        // TC_AM_092
-
-        // TC_AM_093
-       
-
-        // TC_AM_094
-       
-
-        // TC_AM_095
-        await this.page.locator(".btn-close").click();
-        await this.page.waitForTimeout(1000);
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Model_Column.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-
-        await this.submitButton.click();
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-
-        // TC_AM_096
-        await this.page.waitForTimeout(2000);
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Owner_Column.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.submitButton.click();  // Submit the last file
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-
-        // TC_AM_097
-        await this.page.waitForTimeout(2000);
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Manufracture.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.submitButton.click();
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-
-        // TC_AM_098
-        // await this.page.waitForTimeout(2000);
-        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\SerialNumber.xlsx';
-        // await this.page.setInputFiles(fileInputSelector, filePath);
-        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.submitButton.click();
-        // await this.popupMessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts());
-        // await this.page.locator(".btn-close").click();
-
-        // TC_AM_099
-        // await this.page.waitForTimeout(2000);
-        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Warranty.xlsx';
-        // await this.page.setInputFiles(fileInputSelector, filePath);
-        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.submitButton.click();
-        // await this.popupMessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts());
-        // await this.page.locator(".btn-close").click();
-
-        // TC_AM_100
-        // await this.page.waitForTimeout(2000);
-        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Purchase.xlsx';
-        // await this.page.setInputFiles(fileInputSelector, filePath);
-        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.submitButton.click();
-        // await this.popupMessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts());
-        // await this.page.locator(".btn-close").click();
-
-        // TC_AM_101
-        // await this.page.waitForTimeout(2000);
-        // filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\Processor.xlsx';
-        // await this.page.setInputFiles(fileInputSelector, filePath);
-        // await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        // await this.submitButton.click();  // Submit the last file
-        // await this.popupMessage.waitFor({ state: 'visible' });
-        // console.log(await this.page.locator('div>ol').allInnerTexts());
-        // await this.page.locator(".btn-close").click();
-
-        // TC_AM_102
-        await this.page.waitForTimeout(2000);
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\superOwner.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.submitButton.click();  // Submit the last file
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-
-        // TC_AM_106
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\ExistingSerialNumber.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.submitButton.click();  // Submit the last file
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-
-        // TC_AM_115
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NonExistingAssetType.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.submitButton.click();  // Submit the last file
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-
-        // TC_AM_123
-        filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\NoUnit.xlsx';
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForSelector(fileInputSelector, { state: 'attached' });
-        await this.submitButton.click();  // Submit the last file
-        await this.popupMessage.waitFor({ state: 'visible' });
-        console.log(await this.page.locator('div>ol').allInnerTexts());
-        await this.page.locator(".btn-close").click();
-    }
-
-    async assetTypeRequests() {
-        // TC_AM_124
-
-        await this.page.waitForTimeout(2000);
+    async navigateToAssetTypeRequest() {
         await this.assetTypeRequest.click();
         await this.waitforLoaderToDisappear();
+
+    }
+
+    async verifyAllAssetTypeRequestColumnsVisible() {
         const columnCount = await this.assetTypeRequestColumn.count();
         for (let i = 0; i < columnCount; i++) {
             const column = await this.assetTypeRequestColumn.nth(i);
             await expect(column).toBeVisible();
         }
-        await expect(this.createAssetTypeButton).toBeVisible();
     }
 
-    async assetTypeRequestCreateAssetTypeRequest() {
-        // TC_AM_125
-        await this.assetTypeRequests();
-        await this.page.waitForTimeout(2000);
+    async clickOnCreateAssetTypeButton() {
         await this.createAssetTypeButton.click();
-        await this.page.waitForTimeout(500);
-        const header = await this.createAssetTypePopupHeader.textContent();
-        expect(header).toEqual('Create Asset Type');
-        const labelCount = await this.createAssetTypePopupLabel.count();
-        for (let i = 0; i < labelCount; i++) {
-            const label = await this.createAssetTypePopupLabel.nth(i);
-            await expect(label).toBeVisible();
-        }
+
     }
-
-    async assetTypeRequestEmptyField() {
-        // TC_AM_126 &  TC_AM_129 (I combine both test cases)
-        // Empty Asset Name 
-        await this.assetTypeRequestCreateAssetTypeRequest();
-        await this.submitButton.click();
-        const assetNameField = this.popupAssetNameField;
-        const tooltipMessage = await assetNameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Asset Name tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.');
-
-        // Empty Comment Field
-        await assetNameField.fill(generateRandomString(5));
-        await this.page.waitForTimeout(500);
-        await this.submitButton.click();
-        const commentField = this.comment;
-        const commentTooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('Comment Field tooltip message:', commentTooltipMessage);
-        expect(commentTooltipMessage).toBe('Please fill out this field.');
-    }
-
-    async assetTypeRequestAssetNameFieldMoreThan40Characters() {
-        // TC_AM_127
-        await this.assetTypeRequestCreateAssetTypeRequest();
-        await this.page.waitForTimeout(2000);
-        try {
-            const assetNameField = this.popupAssetNameField;
-            await assetNameField.fill(generateRandomString(5));
-            const text = generateRandomString(41);
-            await this.comment.fill(text);
-            await this.submitButton.click();
-            const message = await this.validationMessage.textContent();
-            console.log(message);
-            await expect(this.validationMessage).toBeVisible();
-            await expect(message).toEqual("Asset name must not exceed 40 characters");
-        } catch (error) {
-            console.error('Validation check failed:', error);
-        }
-    }
-
-    async assetTypeRequestAssetNameFieldNumberSpecialChar() {
-        // TC_AM_128
-        await this.assetTypeRequestCreateAssetTypeRequest();
-        await this.page.waitForTimeout(2000);
-        try {
-            const input = '@#@#@@#@'; // Special Characters
-            await this.popupAssetNameField.fill(input);
-            await this.comment.fill('Abcdef');
-            await this.submitButton.click();
-            const message = await this.validationMessage.textContent();
-            await expect(this.validationMessage).toBeVisible();
-            await expect(message).toEqual("Entry cannot contain only numbers and special characters");
-        } catch (error) {
-            console.error('Validation check failed:', error);
-        }
-        try {
-            const input = '1111'; // only Numbers
-            await this.popupAssetNameField.fill(input);
-            await this.comment.fill('Abcdef');
-            await this.submitButton.click();
-            const message = await this.validationMessage.textContent();
-            await expect(this.validationMessage).toBeVisible();
-            await expect(message).toEqual("Entry cannot contain only numbers and special characters");
-        } catch (error) {
-            console.error('Validation check failed:', error);
-        }
-    }
-
-    async createAssetTypeCrossIcon() {
-        // TC_AM_130
-        await this.assetTypeRequestCreateAssetTypeRequest();
+    async clickOnPopUpCrossIcon() {
         await this.popupCrossIcon.click();
-        await this.page.waitForTimeout(1000);
-        await expect(this.createAssetTypePopupHeader).toBeHidden();
     }
-
-    async createAssetTypeCancelButton() {
-        // TC_AM_131
-        await this.assetTypeRequestCreateAssetTypeRequest();
+    async clickOnPopUpCancelButton() {
         await this.popupCancelButton.click();
-        await this.page.waitForTimeout(1000);
-        await expect(this.createAssetTypePopupHeader).toBeHidden();
     }
 
-    async createAssetTypeCreated() {
-        // TC_AM_132
-        await this.assetTypeRequestCreateAssetTypeRequest();
-        const name = generateRandomString(8);
-        await this.popupAssetNameField.fill(name);
-        await this.comment.fill(name);
-        await this.submitButton.click();
-        await this.page.waitForTimeout(6000);
-
-        const names = new Set<string>();
-        const count = await this.assetTypeName.count();
-        for (let i = 0; i < count; i++) {
-            const text = await this.assetTypeName.nth(i).textContent();
-            if (text) {
-                names.add(text.trim());
-            }
-        }
-        expect(names).toContain(name);
-    }
-
-    async createAssetTypeSorting() {
-        // TC_AM_133
-        await this.assetTypeRequests();
-        await this.page.waitForTimeout(3000);
-        const beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
-
-        // Click to sort in ascending order
+    async clickAssetTypeHeader() {
         await this.page.locator(`tr>th:nth-child(2)`).click();
-        await this.page.waitForTimeout(1000);
-        const afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-        let isSortedAsc = true;
-        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
-            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
-                isSortedAsc = false;
-                break;
-            }
-        }
-        expect(isSortedAsc).toBe(true);
-
-        // Click again to sort in descending order
-        await this.page.locator(`tr>th:nth-child(2)`).click();
-        await this.page.waitForTimeout(1000);
-        const afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-
-        let isSortedDesc = true;
-        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
-            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
-                isSortedDesc = false;
-                break;
-            }
-        }
-        expect(isSortedDesc).toBe(true);
+    }
+    async clickcategoryHeader() {
+        await this.page.locator(`tr>th:nth-child(3)`).click();
+    }
+    async clickRequestDateHeader() {
+        await this.page.locator(`tr>th:nth-child(4)`).click();
+    }
+    async clickApprovedDateHeader() {
+        await this.page.locator(`tr>th:nth-child(5)`).click();
+    }
+    async clickCommentHeader() {
+        await this.page.locator(`tr>th:nth-child(6)`).click();
+    }
+    async clickStatusHeader() {
+        await this.page.locator(`tr>th:nth-child(7)`).click();
     }
 
-    async assetTypeRequestStatusApproveStatus() {
-        // TC_AM_134   Step-7
-
-        await this.page.waitForTimeout(2000);
+    async navigateToApproveAssetTypeRequest() {
         await this.approveAssetTypeRequest.click();
-        await this.page.waitForTimeout(4000);
-        if (await this.page.locator(".fs-4").isVisible()) {
-            const noRecordText = await this.page.locator(".fs-4").textContent();
-            expect(noRecordText).toEqual("No records available");
-            return;
-        }
+        await this.waitforLoaderToDisappear();
+    }
+
+    async clickOnViewButton() {
         await this.viewButton.click();
-        await this.page.waitForTimeout(1000);
+    }
+
+    async verifyNoAssetTypeRequestsExist() {
+        const noRecordLocator = this.page.locator(".fs-4");
+        if (await noRecordLocator.isVisible()) {
+            const noRecordText = await noRecordLocator.textContent();
+            expect(noRecordText?.trim()).toEqual("No records available");
+        }
+    }
+    async AssetTypeRequestAndVerifyStatus(option: string) {
         const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
         const trimmedName = name?.trim();
-        console.log("Approved name:", trimmedName);
-
-        await this.page.waitForTimeout(1000);
+        console.log(`${option} name:`, trimmedName);
         await this.actionDropdown.click();
-        await this.actionDropdown.selectOption({ value: 'APPROVED' });
-        await this.page.waitForTimeout(2000);
+        await this.actionDropdown.selectOption({ value: option });
         await this.comment.fill("Thank you!!");
-        await this.page.locator("//button[@type = 'submit']").click();
-        await this.page.waitForTimeout(1000);
-        await this.assetTypeRequest.click();
-        await this.page.waitForTimeout(5000);
-        await this.waitforLoaderToDisappear();
-
+        return trimmedName;
+    }
+    async verifyAssetTypeStatusByName(expectedName: string, expectedStatus: string) {
         const count = await this.assetTypeName.count();
         let found = false;
-        let status;
+        let actualStatus;
         for (let i = 0; i < count; i++) {
             const assetText = await this.assetTypeName.nth(i).textContent();
-            if (assetText?.trim() === name) {
-                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent();
-                console.log('Status : - ', status);
+            if (assetText?.trim() === expectedName.trim()) {
+                actualStatus = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent();
+                console.log(`Status for '${expectedName}':`, actualStatus);
                 found = true;
                 break;
             }
         }
-        expect(status).toEqual("APPROVED");
         if (!found) {
-            console.log("Name not found in the list.");
+            throw new Error(`Asset type '${expectedName}' not found in the list.`);
         }
+        expect(actualStatus?.trim()).toEqual(expectedStatus);
     }
 
-    async assetTypeRequestStatusRejectStatus() {
-        // TC_AM_134 Step-14
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.page.waitForTimeout(4000);
-        if (await this.page.locator(".fs-4").isVisible()) {
-            const noRecordText = await this.page.locator(".fs-4").textContent();
-            expect(noRecordText).toEqual("No records available");
-            return;
-        }
-        await this.viewButton.click();
-        await this.page.waitForTimeout(1000);
-        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
-        const trimmedName = name?.trim();
-        console.log("Rejected name:", trimmedName);
-
-        await this.page.waitForTimeout(1000);
-        await this.actionDropdown.click();
-        await this.actionDropdown.selectOption({ value: 'REJECTED' });
-        await this.page.waitForTimeout(2000);
-        await this.comment.fill("Thank you!!");
-        await this.page.locator("//button[@type = 'submit']").click();
-        await this.page.waitForTimeout(1000);
-        await this.assetTypeRequest.click();
-        await this.page.waitForTimeout(5000);
-        await this.waitforLoaderToDisappear();
-
+    async AssetTypeRequestAndVerifyDate(name) {
         const count = await this.assetTypeName.count();
         let found = false;
-        let status;
+        let verifyDate;
         for (let i = 0; i < count; i++) {
             const assetText = await this.assetTypeName.nth(i).textContent();
             if (assetText?.trim() === name) {
-                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`).textContent();
-                console.log('Status : - ', status);
+                verifyDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent();
+                console.log(` Date : - `, verifyDate);
                 found = true;
                 break;
             }
         }
-        expect(status).toEqual("REJECTED");
-        if (!found) {
-            console.log("Name not found in the list.");
-        }
+        return { verifyDate, found };
     }
-
-    async assetTypeRequestApproveDate() {
-        // TC_AM_135 Step-7
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.page.waitForTimeout(4000);
-        if (await this.page.locator(".fs-4").isVisible()) {
-            const noRecordText = await this.page.locator(".fs-4").textContent();
-            expect(noRecordText).toEqual("No records available");
-            return;
-        }
-        await this.viewButton.click();
-        await this.page.waitForTimeout(1000);
-        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
-        const trimmedName = name?.trim();
-        console.log("Approved name:", trimmedName);
-
-        await this.page.waitForTimeout(1000);
-        await this.actionDropdown.click();
-        await this.actionDropdown.selectOption({ value: 'APPROVED' });
-        await this.page.waitForTimeout(2000);
-        await this.comment.fill("Thank you!!");
-        await this.page.locator("//button[@type = 'submit']").click();
-        await this.page.waitForTimeout(1000);
-        await this.assetTypeRequest.click();
-        await this.page.waitForTimeout(5000);
-        await this.waitforLoaderToDisappear();
-
-        const count = await this.assetTypeName.count();
-        let found = false;
-        let approveDate;
-        for (let i = 0; i < count; i++) {
-            const assetText = await this.assetTypeName.nth(i).textContent();
-            if (assetText?.trim() === name) {
-                approveDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent();
-                console.log('Approved Date : - ', approveDate);
-                found = true;
-                break;
-            }
-        }
+    async verifyAssetTypeApprovedDateIsToday(verifyDate, found: boolean) {
         const now = new Date();
         const formattedDate = new Intl.DateTimeFormat('en-US', {
             month: 'long',
@@ -609,70 +300,13 @@ export class AssetEnrollment extends AssetManagementTab {
         }).format(now);
 
         console.log(formattedDate);
-        expect(approveDate).toEqual(formattedDate);
-        if (!found) {
-            console.log("Name not found in the list.");
-        }
-    }
-
-    async assetTypeRequestRejectDate() {
-        // TC_AM_135 Step-14
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.page.waitForTimeout(4000);
-        if (await this.page.locator(".fs-4").isVisible()) {
-            const noRecordText = await this.page.locator(".fs-4").textContent();
-            expect(noRecordText).toEqual("No records available");
-            return;
-        }
-        await this.viewButton.click();
-        await this.page.waitForTimeout(1000);
-        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
-        const trimmedName = name?.trim();
-        console.log("Reject name:", trimmedName);
-
-        await this.page.waitForTimeout(1000);
-        await this.actionDropdown.click();
-        await this.actionDropdown.selectOption({ value: 'REJECTED' });
-        await this.page.waitForTimeout(2000);
-        await this.comment.fill("Thank you!!");
-        await this.page.locator("//button[@type = 'submit']").click();
-        await this.page.waitForTimeout(1000);
-        await this.assetTypeRequest.click();
-        await this.page.waitForTimeout(5000);
-        await this.waitforLoaderToDisappear();
-
-        const count = await this.assetTypeName.count();
-        let found = false;
-        let rejectedDate;
-        for (let i = 0; i < count; i++) {
-            const assetText = await this.assetTypeName.nth(i).textContent();
-            if (assetText?.trim() === name) {
-                rejectedDate = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[5]`).textContent();
-                console.log('Reject Date : - ', rejectedDate);
-                found = true;
-                break;
-            }
-        }
-        const now = new Date();
-        const formattedDate = new Intl.DateTimeFormat('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        }).format(now);
-
-        console.log(formattedDate);
-        expect(rejectedDate).toEqual(formattedDate);
+        expect(verifyDate).toEqual(formattedDate);
         if (!found) {
             console.log("Name not found in the list.");
         }
     }
 
     async approveAssetTypeRequestNoRecord() {
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
         if (await this.page.locator(".fs-4").isVisible()) {
             const noRecordText = await this.page.locator(".fs-4").textContent();
             console.log("No records available");
@@ -683,79 +317,27 @@ export class AssetEnrollment extends AssetManagementTab {
         }
     }
 
-    async approveAssetTypeRequestVerification() {
 
-        await this.page.waitForTimeout(2000);
+    async verifyAssetTypeIsPresentInList(name: string) {
+        // Wait for the list container or elements to be visible first
+        await this.assetTypeName.first().waitFor({ state: 'visible' });
 
-        await this.assetTypeRequest.click();
-        await this.createAssetTypeButton.click();
-        await this.page.waitForTimeout(500);
+        const names = new Set<string>();
+        const count = await this.assetTypeName.count();
 
-        const name = generateRandomString(8);
-        await this.popupAssetNameField.fill(name);
-        await this.comment.fill(name);
-        await this.submitButton.click();
-        await this.page.waitForTimeout(6000);
-
-        const createdNames = new Set<string>();
-        const createdCount = await this.assetTypeName.count();
-        for (let i = 0; i < createdCount; i++) {
+        for (let i = 0; i < count; i++) {
+            // Wait for each element to be visible before accessing text
+            await this.assetTypeName.nth(i).waitFor({ state: 'visible' });
             const text = await this.assetTypeName.nth(i).textContent();
             if (text) {
-                createdNames.add(text.trim());
+                names.add(text.trim());
             }
         }
-
-        expect(createdNames).toContain(name);
-
-        await this.approveAssetTypeRequest.click();
-        await this.page.waitForTimeout(3000);
-        const approvedNames = new Set<string>();
-        const approveCount = await this.assetTypeName.count();
-        for (let i = 0; i < approveCount; i++) {
-            const text = await this.assetTypeName.nth(i).textContent();
-            if (text) {
-                approvedNames.add(text.trim());
-            }
-        }
-        expect(approvedNames).toContain(name);
+        expect(names).toContain(name);
     }
 
-    async approveAssetTypeRequestApproved() {
-        // TC_AM_141
 
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.viewButton.click();
-        await this.submitButton.click();
 
-        const actionDropdown = this.actionDropdown;
-        const tooltipMessage = await actionDropdown.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please select an item in the list.');
-
-        await this.page.waitForTimeout(1000);
-
-        await this.actionDropdown.selectOption({ value: 'APPROVED' });
-
-        await this.submitButton.click();
-
-        const commentField = this.comment;
-        const commentTooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(commentTooltipMessage);
-
-        expect(commentTooltipMessage).toBe('Please fill out this field.');
-
-        await this.page.waitForTimeout(1000);
-
-        await this.comment.fill("Thank you !!");
-
-        await this.submitButton.click();
-        console.log(await this.page.locator(".Toastify__toast-body").textContent());
-        await this.page.locator(".Toastify__toast-body").isVisible();
-    }
 
     async approveAssetTypeRequestRejected() {
         // TC_AM_142
@@ -773,70 +355,53 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.page.locator(".Toastify__toast-body").isVisible();
     }
 
-    async approveAssetTypeRequestCross() {
-        // TC_AM_143
 
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.viewButton.click();
-        await this.popupCrossIcon.click();
-        await this.page.waitForTimeout(2000);
-        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden();
-    }
 
-    async approveAssetTypeRequestCancel() {
-        // TC_AM_144
 
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.page.waitForSelector('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
-        await this.viewButton.click();
-        await this.page.waitForTimeout(500);
-        await this.popupCancelButton.click();
-        await this.page.waitForTimeout(3000);
-        await expect(this.page.locator("#staticBackdropLabel")).toBeHidden();
-    }
-
-    async approveAssetTypeRequestCommentApprove() {
-        // TC_AM_145
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.viewButton.click();
+    async AssetTypeRequestCommentApprove(option, customComment) {
         const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
         const trimmedName = name?.trim();
-        console.log("Approve name:", trimmedName);
-        await this.actionDropdown.selectOption({ value: 'APPROVED' });
-        const comment = "Thank you for conformation !!";
+        console.log("Asset Name for", option, ":", trimmedName);
+
+        await this.actionDropdown.selectOption({ value: option });
+
+        const comment = customComment || "Thank you for confirmation !!";
         await this.comment.fill(comment);
-        await this.submitButton.click();
 
-        await this.page.waitForTimeout(5000);
+        return { option, comment };
+    }
 
-        await this.assetTypeRequest.click();
-        await this.page.waitForTimeout(5000);
-        await this.waitforLoaderToDisappear();
-
-        const count = await this.assetTypeName.count();
+    async verifyAssetStatusByComment(expectedStatus, comment) {
+        const rowCount = await this.assetTypeName.count();
         let found = false;
-        let status;
-        for (let i = 0; i <= count; i++) {
-            const assetText = await this.assetTypeName.nth(i).textContent();
-            if (assetText?.trim() === name) {
-                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent();
-                console.log('Status : - ', status);
+        let actualStatus;
+
+        for (let i = 0; i < rowCount; i++) {
+            const commentText = await this.page
+                .locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`)
+                .textContent();
+
+            if (commentText?.trim() === comment) {
+                actualStatus = await this.page
+                    .locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`)
+                    .textContent();
+                console.log(`Found comment: "${comment}" with status: "${actualStatus}"`);
                 found = true;
                 break;
             }
         }
-        expect(status).toEqual(comment);
-        if (!found) {
-            console.log("Comment Doesn't matched.");
+
+        if (found) {
+            expect(actualStatus?.trim()).toEqual(expectedStatus);
+        } else {
+            console.log(`No asset found with comment "${comment}"`);
+            throw new Error(`Comment "${comment}" not found in the table.`);
         }
     }
+
+
+
+
 
     async approveAssetTypeRequestCommentRejected() {
         // TC_AM_145

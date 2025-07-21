@@ -435,30 +435,4 @@ export class OverView extends AssetManagementTab {
         await this.page.locator(`tr>th:nth-child(8)`).click();
     }
 
-    // TC_AM_019
-    async verifySorting(): Promise<void> {
-        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
-        await this.page.locator(`tr>th:nth-child(2)`).click();
-        await this.page.waitForTimeout(1000);
-        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-        let isSortedAsc = true;
-        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
-            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
-                isSortedAsc = false;
-                break;
-            }
-        }
-        expect(isSortedAsc).toBe(true);
-        await this.page.locator(`tr>th:nth-child(2)`).click();
-        await this.page.waitForTimeout(1000);
-        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-        let isSortedDesc = true;
-        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
-            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
-                isSortedDesc = false;
-                break;
-            }
-        }
-        expect(isSortedDesc).toBe(true);
-    }
 }
