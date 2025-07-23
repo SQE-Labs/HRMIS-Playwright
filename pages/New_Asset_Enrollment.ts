@@ -1,8 +1,6 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 
-import { AssetHelper } from "../utils/AssetHelpers";
-
 export class AssetEnrollment extends AssetManagementTab {
     public assetEnrollmentSubtab: Locator;
     public assetEnrollmentHeader: Locator;
@@ -232,6 +230,19 @@ export class AssetEnrollment extends AssetManagementTab {
         await this.page.locator(`tr>th:nth-child(7)`).click();
     }
 
+    async clickApproveAssetTypeHeader() {
+        await this.page.locator(`tr>th:nth-child(2)`).last().click();
+    }
+    async clickApprovecategoryHeader() {
+        await this.page.locator(`tr>th:nth-child(3)`).last().click();
+    }
+    async clickApproveRequestDateHeader() {
+        await this.page.locator(`tr>th:nth-child(4)`).last().click();
+    }
+    async clickApproveCommentHeader() {
+        await this.page.locator(`tr>th:nth-child(5)`).last().click();
+    }
+
     async navigateToApproveAssetTypeRequest() {
         await this.approveAssetTypeRequest.click();
         await this.waitforLoaderToDisappear();
@@ -358,14 +369,14 @@ export class AssetEnrollment extends AssetManagementTab {
 
 
 
-    async AssetTypeRequestCommentApprove(option, customComment) {
+    async AssetTypeRequestCommentApprove(option) {
         const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
         const trimmedName = name?.trim();
         console.log("Asset Name for", option, ":", trimmedName);
 
         await this.actionDropdown.selectOption({ value: option });
 
-        const comment = customComment || "Thank you for confirmation !!";
+        const comment = `Thank you for confirmation !! - ${option}`;
         await this.comment.fill(comment);
 
         return { option, comment };
@@ -399,74 +410,18 @@ export class AssetEnrollment extends AssetManagementTab {
         }
     }
 
-
-
-
-
-    async approveAssetTypeRequestCommentRejected() {
-        // TC_AM_145
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.viewButton.click();
-        const name = await this.page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
-        const trimmedName = name?.trim();
-        console.log("Reject name:", trimmedName);
-        await this.actionDropdown.selectOption({ value: 'REJECTED' });
-        const comment = "Thank you for conformation !!";
-        await this.comment.fill(comment);
-        await this.submitButton.click();
-
-        await this.page.waitForTimeout(5000);
-
-        await this.assetTypeRequest.click();
-        await this.page.waitForTimeout(5000);
-        await this.waitforLoaderToDisappear();
-
-        await this.page.waitForTimeout(2000);
-        const count = await this.assetTypeName.count();
-        console.log(count);
-        let found = false;
-        let status;
-        for (let i = 0; i <= count; i++) {
-            const assetText = await this.assetTypeName.nth(i).textContent();
-            if (assetText?.trim() === name) {
-                status = await this.page.locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[6]`).textContent();
-                console.log('Status : - ', status);
-                found = true;
-                break;
-            }
-        }
-        expect(status).toEqual(comment);
-        if (!found) {
-            console.log("Comment Doesn't matched.");
-        }
-    }
-
-    async correctRequestDateAppear() {
-        // TC_AM_146
+    async getCurrentDate() {
         const currentDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: '2-digit'
         });
+        return currentDate
 
-        console.log(currentDate);
+    }
 
-        await this.page.waitForTimeout(2000);
-        await this.assetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.page.waitForTimeout(3000);
-        await this.createAssetTypeButton.click();
-        const name = generateRandomString(8);
-        await this.popupAssetNameField.fill(name);
-        await this.comment.fill(name);
-        await this.submitButton.click();
-        await this.page.waitForTimeout(6000);
-        await this.approveAssetTypeRequest.click();
-
-        await this.page.waitForTimeout(5000);
+    async getAssetCreationDateByName(name) {
+        // TC_AM_146
         const count = await this.assetTypeName.count();
         let found = false;
         let assetCreateDate;
@@ -479,50 +434,6 @@ export class AssetEnrollment extends AssetManagementTab {
                 break;
             }
         }
-        expect(assetCreateDate).toEqual(currentDate);
-        if (!found) {
-            console.log("Date Doesn't matched.");
-        }
-    }
-
-
-
-
-
-    async approveAssetTypeSorting() {
-        // TC_AM_147
-
-        await this.page.waitForTimeout(2000);
-        await this.approveAssetTypeRequest.click();
-        await this.waitforLoaderToDisappear();
-        await this.page.waitForTimeout(3000);
-        const beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
-
-        // Click to sort in ascending order
-        await this.page.locator(`((//table[contains(@class, 'resume')])[2])//tr/th[2]`).click();
-        await this.page.waitForTimeout(1000);
-        const afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-        let isSortedAsc = true;
-        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
-            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
-                isSortedAsc = false;
-                break;
-            }
-        }
-        expect(isSortedAsc).toBe(true);
-
-        // Click again to sort in descending order
-        await this.page.locator(`((//table[contains(@class, 'resume')])[2])//tr/th[2]`).click();
-        await this.page.waitForTimeout(1000);
-        const afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-
-        let isSortedDesc = true;
-        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
-            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
-                isSortedDesc = false;
-                break;
-            }
-        }
-        expect(isSortedDesc).toBe(true);
+        return assetCreateDate
     }
 }

@@ -37,7 +37,6 @@ export class AssetDeallocation extends BasePage {
         this.popup = page.locator(".modal-title");
         this.deallocationAssetConditionOptions = page.locator("(//select[@id='assetCondition']/option)[8]");
         this.submitButton = page.locator("button[type = 'submit']");
-        this.loader = new Loader(page);
     }
 
     async deallocation() {

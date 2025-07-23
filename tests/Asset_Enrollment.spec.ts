@@ -2,12 +2,8 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/Loginpage';
 import { AssetEnrollment } from '../pages/New_Asset_Enrollment';
 import testData from '../testData/testData.json';
-import { ASSET_TYPE_COLUMN_LEFT, EXISTINGSERIALNUMBER_COLUMN, FILL_FIELD, MANUFRACTURE_COLUMN, MODEL_COLUMN, NONEXISTINGSERIALNUMBER_COLUMN, NOUNIT_COLUMN, OWNER_COLUMN, PROCESSOR_COLUMN, PURCHASE_COLUMN, SELECT_ITEM, SERIALNUMBER_COLUMN, SUPEROWNER_COLUMN, UNSUPPORTED_FILE, VALID_XLSX_FILE, WARRANTY_COLUMN } from '../utils/constants';
+import { ASSET_TYPE_COLUMN_LEFT, EXISTINGSERIALNUMBER_COLUMN, FILL_FIELD, MANUFRACTURE_COLUMN, MODEL_COLUMN, NONEXISTINGASSETTYPE_COLUMN, NOUNIT_COLUMN, OWNER_COLUMN, PROCESSOR_COLUMN, PURCHASE_COLUMN, SELECT_ITEM, SERIALNUMBER_COLUMN, SUPEROWNER_COLUMN, UNSUPPORTED_FILE, VALID_XLSX_FILE, WARRANTY_COLUMN } from '../utils/constants';
 import { AssetHelper } from '../utils/AssetHelpers';
-import { asyncWrapProviders } from 'async_hooks';
-import { allowedNodeEnvironmentFlags } from 'process';
-import { fileURLToPath } from 'url';
-
 
 let assetEnrollment: AssetEnrollment;
 
@@ -59,7 +55,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage).toBe(FILL_FIELD);
     });
     test('New Asset Enrollment Create Asset-   Model validation', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '342ASD', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
+        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '543543', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
         await assetEnrollment.clickOnSubmitButton()
         let message2 = await assetEnrollment.validationMessage.textContent();
         console.debug(message2)
@@ -176,7 +172,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toEqual('Manufacturer cannot exceed 40 characters.')
     })
     test('Try to enter only numbers in Manufracturer field', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", '342ASD', '6900')
+        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", '232332', '6900')
         await assetEnrollment.clickOnSubmitButton()
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
@@ -342,7 +338,8 @@ test.describe('Asset Enrollment Page', () => {
 
     test('Bulk Create - When user enter NonExistingSerialNumber coloumn ', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
-        await assetEnrollment.uploadAndVerifyFile(NONEXISTINGSERIALNUMBER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
+        await page.pause()
+        await assetEnrollment.uploadAndVerifyFile(NONEXISTINGASSETTYPE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
         await assetEnrollment.clickOnSubmitButton();
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
@@ -655,7 +652,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.verifyAssetStatusByComment(option, comment);
     });
     // to-do
-    test.only('Approve Asset Type Request with Comment', async ({ page }) => {
+    test('Approve Asset Type Request with Comment', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
 
@@ -668,10 +665,48 @@ test.describe('Asset Enrollment Page', () => {
 
 
     test('Correct Request Date Appear', async ({ page }) => {
-        await assetEnrollment.correctRequestDateAppear();
+        await assetEnrollment.navigateToAssetTypeRequest();
+        await assetEnrollment.clickOnCreateAssetTypeButton()
+        let name = await AssetHelper.generateRandomString(5)
+        await assetEnrollment.popupAssetNameField.fill(name);
+        await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(5));
+        await assetEnrollment.clickOnSubmitButton()
+        await assetEnrollment.navigateToApproveAssetTypeRequest();
+        let assetCreateDate = await assetEnrollment.getAssetCreationDateByName(name)
+        let currentDate = await assetEnrollment.getCurrentDate()
+        expect(assetCreateDate).toEqual(currentDate);
+
     });
 
     test('Approve Asset Type Sorting', async ({ page }) => {
-        await assetEnrollment.approveAssetTypeSorting()
+        await assetEnrollment.navigateToApproveAssetTypeRequest();
+
+
+        await assetEnrollment.clickApproveAssetTypeHeader()
+        await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow.last())//checking asc sort
+        await assetEnrollment.clickApproveAssetTypeHeader()
+        await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow.last(), "dsc")
+
+        // Category Header
+        await assetEnrollment.clickApprovecategoryHeader()
+        await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow.last())//checking asc sort
+        await assetEnrollment.clickApprovecategoryHeader()
+        await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow.last(), "dsc")
+
+
+        // Request Date Header
+        await assetEnrollment.clickApproveRequestDateHeader()
+        await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow.last())//checking asc sort
+        await assetEnrollment.clickApproveRequestDateHeader()
+        await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow.last(), "dsc")
+   
+        // Comment Header
+        let commentrow = page.locator("tr>th:nth-child(5)").last()
+        await assetEnrollment.clickApproveCommentHeader()
+        await assetEnrollment.verifyRowsSorting(commentrow)
+        await assetEnrollment.clickApproveCommentHeader()
+        await assetEnrollment.verifyRowsSorting(commentrow, "dsc")
+
+
     });
 });
