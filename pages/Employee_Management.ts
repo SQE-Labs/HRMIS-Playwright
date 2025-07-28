@@ -1,11 +1,6 @@
 import { Page, Locator, expect, BrowserContext } from '@playwright/test'
 import { BasePage } from './Basepage'
 import { Loader } from '../components/loaders'
-import { ADDRGETNETWORKPARAMS, TIMEOUT } from 'dns'
-import { totalmem } from 'os'
-import { count, error, timeStamp } from 'console'
-import exp from 'constants'
-import { text } from 'stream/consumers'
 import fs from "fs";
 import { AssetHelper } from '../utils/AssetHelpers'
 
@@ -14,142 +9,142 @@ import { AssetHelper } from '../utils/AssetHelpers'
 
 export class Employee_Management extends BasePage {
 
-    private Employee_Management: Locator
-    private Employee_Directory_tab: Locator
-    private Employee_Directory_tab_Header: Locator
-    private Employee_Directory_Cards: Locator
-    private TotalEmployeecount: Locator
-    private Employee_Directory_Searchbar: Locator
-    private Employee_Directory_cards_title: Locator
-    private Employee_Directory_Card_notfound: Locator
-    private SelectDepartment: Locator
-    private cardTextDepartment: Locator
-    private SelectStatus: Locator
-    private Card: Locator
-    private EmployeeProfile: Locator
-    private BasicInfo: Locator
-    private AccordionBodyKey: Locator
-    private AccordionBodyValue: Locator
-    private BasicInfoAccordionBody: string[]
-    private BasicInfoEditButton: Locator
-    private BasicInfoFirstname: Locator
-    private BasicInfoLastName: Locator
-    private UpdateButton: Locator
-    private CloseButton: Locator
-    private WorkAccordion: Locator
-    private WorkAccordionkey: Locator
-    private WorkAccordionBody: string[]
-    private WorkDate: Locator
-    private EmployeeType: Locator
-    private WorkEditButton: Locator
-    private PersonalDetails: Locator
-    private PersonalDetailsKey: Locator
-    private PersonalDetailsBody: string[]
-    private PersonalDetailsEditButton: Locator
-    private PersonalDetailsDate: Locator
-    private AadhaarCardNumber: Locator
-    private PanCardNumber: Locator
-    private PresentAddress: Locator
-    private BloodGroup: Locator
-    private MaritalStatus: Locator
-    private AlternateNumber: Locator
-    private PermanentAddress: Locator
-    private PassportNumber: Locator
-    private WorkExperience: Locator
-    private Education: Locator
-    private Dependents: Locator
-    private AssignedAssets: Locator
-    private AssignedRecords: Locator
-    private NextButton: Locator
-    private PreviousButton: Locator
-    private EmployeeAccess: Locator
-    private CurrentStatus: Locator
-    private Status: Locator
-    private EmployeeAccessStatus: Locator
-    private EmployeeAccessSubmitButton: Locator
-    private CardName: Locator
-    private Loader: Loader
-    private LeftOutDate: Locator
-    private Leftreason: Locator
-    private LeftOutSubmitbutton: Locator
-    private AssignManagertab: Locator
-    private AssignManagerHeader: Locator
-    private AssignManagerSubTabManager: Locator
-    private AssignManagerSubTabLeaveManager: Locator
-    private AssignManagerDropdown: Locator
-    private Coloumn: Locator
-    private ColoumnBody: string[]
-    private ManagerActionButton: Locator
-    private PopupHeader: Locator
-    private CrossButton: Locator
-    private PopupDropDown: Locator
-    private PopupSubmitButton: Locator
-    private CancelButton: Locator
-    private LeaveManagerPopupDropDown: Locator
-    private LeaveManagerActionButton: Locator
-    private Pop_Up_Header: Locator
-    private NoButton: Locator
-    private YesButton: Locator
-    private AssignButton: Locator
-    private AssignManagerPopUpDropdown: Locator
-    private AssignManagerPopupHeader: Locator
-    private AssignManagerPopupDropdownOption: Locator
-    private AssignManagerPopupCrossicon: Locator
-    private AssignManagerPopupCancleButton: Locator
-    private AssignManagerPopupSubmitbutton: Locator
-    private PromotionManagement: Locator
-    private PromotionHeader: Locator
-    private PromotionColoumn: Locator
-    private PromotionColoumntext: string[]
-    private Dropdown: Locator
-    private PromotionDropdownOption: Locator
-    private PromoteButton: Locator
-    private PromotionPopUpHeader: Locator
-    private PromotionPopUpLabel: Locator
-    private PromotionCancelButton: Locator
-    private DepartmentDropdown: Locator
-    private DesignationDropdown: Locator
-    private DesignationDropDownOptions: Locator
-    private PromoteEmployeePopUpSubmitButton: Locator
-    private Document_upload_Tab: Locator
-    private Document_upload_Header: Locator
-    private Document_Upload_Column: Locator
-    private Document_Upload_Column_text: string[]
-    private Upload_Icon: Locator
-    private PopUp_Header: Locator
-    private Popup_Cross_button: Locator
-    private Popup_Cancel_button: Locator
-    private Choose_file: Locator
-    private PopUP_Submit_button: Locator
-    private PopUp_comment: Locator
-    private EyeIcon: Locator
-    private Performance_Evaluation: Locator
-    private Performance_Header: Locator
-    private Performance_Export_button: Locator
-    private Role_Managment: Locator
-    private Role_Header: Locator
-    private Approve_Document: Locator
-    private Approve_Header: Locator
-    private Approve_Label: Locator
-    private Approve_Label_Document_type_dropdown: Locator
-    private Approve_Label_Employee_dropdown: Locator
-    private Approve_Label_Exiting_Document_type: Locator
-    private Approve_Label_Exiting_Employee: Locator
-    private Action_button: Locator
-    private Action_Button_popup: Locator
-    private View_button: Locator
-    private Select_action_dropdown: Locator
-    private Reason_Section: Locator
-    private Departments: Locator
-    private Departments_Header: Locator
-    private AddDepartmentButton: Locator
-    private Departments_SearchBar: Locator
-    private No_Of_records: Locator
-    private Department_name: Locator
-    private No_Record_avialable: Locator
-    private updateIcon: Locator
-    private Name_TextArea: Locator
-    private No_record: Locator
+    public Employee_Management: Locator
+    public Employee_Directory_tab: Locator
+    public Employee_Directory_tab_Header: Locator
+    public Employee_Directory_Cards: Locator
+    public TotalEmployeecount: Locator
+    public Employee_Directory_Searchbar: Locator
+    public Employee_Directory_cards_title: Locator
+    public Employee_Directory_Card_notfound: Locator
+    public SelectDepartment: Locator
+    public cardTextDepartment: Locator
+    public SelectStatus: Locator
+    public Card: Locator
+    public EmployeeProfile: Locator
+    public BasicInfo: Locator
+    public AccordionBodyKey: Locator
+    public AccordionBodyValue: Locator
+    public BasicInfoAccordionBody: string[]
+    public BasicInfoEditButton: Locator
+    public BasicInfoFirstname: Locator
+    public BasicInfoLastName: Locator
+    public UpdateButton: Locator
+    public CloseButton: Locator
+    public WorkAccordion: Locator
+    public WorkAccordionkey: Locator
+    public WorkAccordionBody: string[]
+    public WorkDate: Locator
+    public EmployeeType: Locator
+    public WorkEditButton: Locator
+    public PersonalDetails: Locator
+    public PersonalDetailsKey: Locator
+    public PersonalDetailsBody: string[]
+    public PersonalDetailsEditButton: Locator
+    public PersonalDetailsDate: Locator
+    public AadhaarCardNumber: Locator
+    public PanCardNumber: Locator
+    public PresentAddress: Locator
+    public BloodGroup: Locator
+    public MaritalStatus: Locator
+    public AlternateNumber: Locator
+    public PermanentAddress: Locator
+    public PassportNumber: Locator
+    public WorkExperience: Locator
+    public Education: Locator
+    public Dependents: Locator
+    public AssignedAssets: Locator
+    public AssignedRecords: Locator
+    public NextButton: Locator
+    public PreviousButton: Locator
+    public EmployeeAccess: Locator
+    public CurrentStatus: Locator
+    public Status: Locator
+    public EmployeeAccessStatus: Locator
+    public EmployeeAccessSubmitButton: Locator
+    public CardName: Locator
+    public Loader: Loader
+    public LeftOutDate: Locator
+    public Leftreason: Locator
+    public LeftOutSubmitbutton: Locator
+    public AssignManagertab: Locator
+    public AssignManagerHeader: Locator
+    public AssignManagerSubTabManager: Locator
+    public AssignManagerSubTabLeaveManager: Locator
+    public AssignManagerDropdown: Locator
+    public Coloumn: Locator
+    public ColoumnBody: string[]
+    public ManagerActionButton: Locator
+    public PopupHeader: Locator
+    public CrossButton: Locator
+    public PopupDropDown: Locator
+    public PopupSubmitButton: Locator
+    public CancelButton: Locator
+    public LeaveManagerPopupDropDown: Locator
+    public LeaveManagerActionButton: Locator
+    public Pop_Up_Header: Locator
+    public NoButton: Locator
+    public YesButton: Locator
+    public AssignButton: Locator
+    public AssignManagerPopUpDropdown: Locator
+    public AssignManagerPopupHeader: Locator
+    public AssignManagerPopupDropdownOption: Locator
+    public AssignManagerPopupCrossicon: Locator
+    public AssignManagerPopupCancleButton: Locator
+    public AssignManagerPopupSubmitbutton: Locator
+    public PromotionManagement: Locator
+    public PromotionHeader: Locator
+    public PromotionColoumn: Locator
+    public PromotionColoumntext: string[]
+    public Dropdown: Locator
+    public PromotionDropdownOption: Locator
+    public PromoteButton: Locator
+    public PromotionPopUpHeader: Locator
+    public PromotionPopUpLabel: Locator
+    public PromotionCancelButton: Locator
+    public DepartmentDropdown: Locator
+    public DesignationDropdown: Locator
+    public DesignationDropDownOptions: Locator
+    public PromoteEmployeePopUpSubmitButton: Locator
+    public Document_upload_Tab: Locator
+    public Document_upload_Header: Locator
+    public Document_Upload_Column: Locator
+    public Document_Upload_Column_text: string[]
+    public Upload_Icon: Locator
+    public PopUp_Header: Locator
+    public Popup_Cross_button: Locator
+    public Popup_Cancel_button: Locator
+    public Choose_file: Locator
+    public PopUP_Submit_button: Locator
+    public PopUp_comment: Locator
+    public EyeIcon: Locator
+    public Performance_Evaluation: Locator
+    public Performance_Header: Locator
+    public Performance_Export_button: Locator
+    public Role_Managment: Locator
+    public Role_Header: Locator
+    public Approve_Document: Locator
+    public Approve_Header: Locator
+    public Approve_Label: Locator
+    public Approve_Label_Document_type_dropdown: Locator
+    public Approve_Label_Employee_dropdown: Locator
+    public Approve_Label_Exiting_Document_type: Locator
+    public Approve_Label_Exiting_Employee: Locator
+    public Action_button: Locator
+    public Action_Button_popup: Locator
+    public View_button: Locator
+    public Select_action_dropdown: Locator
+    public Reason_Section: Locator
+    public Departments: Locator
+    public Departments_Header: Locator
+    public AddDepartmentButton: Locator
+    public Departments_SearchBar: Locator
+    public No_Of_records: Locator
+    public Department_name: Locator
+    public No_Record_avialable: Locator
+    public updateIcon: Locator
+    public Name_TextArea: Locator
+    public No_record: Locator
 
     constructor(page: Page) {
         super(page)
@@ -164,9 +159,9 @@ export class Employee_Management extends BasePage {
         this.SelectDepartment = page.locator("#department")
         this.cardTextDepartment = page.locator("//small[@class = 'card-text']")
         this.SelectStatus = page.locator("#selectedStatus")
-        this.Card = page.locator(".col-md-4.col-lg-3:nth-child(14)")
+        this.Card = page.locator(`.col-md-4.col-lg-3`)
         this.EmployeeProfile = page.locator(".employee-profile")
-        this.BasicInfo = page.locator("#heading1")
+        this.BasicInfo = page.locator('#heading1')
         this.AccordionBodyKey = page.locator("#collapse1 div.d-flex.flex-column.text-black-50>p")
         this.AccordionBodyValue = page.locator("h2[@id='heading1']/following-sibling::div/div/div[2]/div[4]/div/p")
         this.BasicInfoEditButton = page.locator("#heading1 + div i.fa-edit")
@@ -339,270 +334,140 @@ export class Employee_Management extends BasePage {
         this.No_record = page.locator(".fs-4.text-secondary.text-center.mt-5")
 
     }
-    async Employee() {
-        // TC_EM_001
-        try {
-            await this.Employee_Management.click()
-            console.log('Employee Management tab expanded Succesfully')
-        } catch (error) {
-            console.error('Employee Managment tab Does not expanded', error)
-        }
-        await this.page.waitForTimeout(2000)
-        await this.Employee_Directory_tab.click()
-        expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        const Directory_Header = await this.Employee_Directory_tab_Header.textContent()
-        expect(Directory_Header?.trim()).toEqual("Employee Directory")
 
-        await this.page.waitForTimeout(3000)
+    async expandEmployeeManagementTab(): Promise<void> {
+        await AssetHelper.expandIfCollapsed(this.Employee_Management);
+    }
+    async isExpanded(): Promise<boolean> {
+        return await AssetHelper.isExpanded(this.Employee_Management);
+    }
+    async collapseAssetManagementTab(): Promise<void> {
+        await AssetHelper.collapseIfExpanded(this.Employee_Management);
+    }
+    async isCollapsed(): Promise<boolean> {
+        return await AssetHelper.isCollapsed(this.Employee_Management);
+    }
+    async naviagteToEmployeeDirectoryTab() {
+        await this.Employee_Directory_tab.click()
+    }
+
+    async totalCardsCount() {
         var TotalCards = await this.Employee_Directory_Cards.count()
+        console.debug(TotalCards)
         var TotalEmployeeText = await this.TotalEmployeecount.textContent() || ""
         var TotalEmployeecount = parseFloat(TotalEmployeeText.replace(/[^\d.]/g, '')) || 0
-        expect(TotalCards).toEqual(TotalEmployeecount)
+        console.debug(TotalEmployeecount)
+        return { TotalCards, TotalEmployeecount }
+    }
 
-        // TC_EM_002
-        await this.Employee_Directory_Searchbar.pressSequentially("Autom Mation User")
-        var TotalCards = await this.Employee_Directory_Cards.count()
-        var TotalCardsText = await this.Employee_Directory_cards_title.textContent() || ""
-        expect(TotalCardsText.trim().replace(/\s+/g, ' ')).toContain("Autom Mation User")
-        var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
-        var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
-        expect(TotalCards).toEqual(TotalEmployeecount)
+    async searchByEmployeeDirectorySearchBar(EmployeeName: string) {
+        await this.Employee_Directory_Searchbar.pressSequentially(EmployeeName)
+    }
 
+    async selectDepartment(Option: string) {
+        await this.SelectDepartment.selectOption({ label: Option });
+    }
 
-        // TC_EM_003
-        await this.Employee_Directory_Searchbar.clear()
-        await this.Employee_Directory_Searchbar.pressSequentially("123213") //Invalid Employee
-        var Norecord = await this.Employee_Directory_Card_notfound.textContent()
-        expect(Norecord).toEqual("No Record Available")
-
-
-        // TC_EM_004
-        await this.Employee_Directory_Searchbar.clear()
-        await this.page.waitForTimeout(2000)
-        // await this.SelectDepartment.click()
-        await this.SelectDepartment.selectOption({ label: 'Technical' });
-        await this.page.waitForTimeout(7000)
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        var TotalCards = await this.Employee_Directory_Cards.count()
-        var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
-        var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
-        expect(TotalCards).toEqual(TotalEmployeecount)
-
-
-        // TC_EM_005
-        await this.page.waitForTimeout(2000)
-        await this.SelectStatus.selectOption({ label: 'LEFTOUT (Permanently Disable)' });
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        var TotalCards = await this.Employee_Directory_Cards.count()
-        var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
-        var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
-        expect(TotalCards).toEqual(TotalEmployeecount)
-
-
-        // TC_EM_006
-        await this.SelectDepartment.selectOption({ label: 'Admin' });
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        var TotalCards = await this.Employee_Directory_Cards.count()
-        if (TotalCards === 0) {
-            try {
-                var Norecord = await this.Employee_Directory_Card_notfound.textContent()
-                expect(Norecord).toEqual("No Record Available")
-            } catch (error) {
-                throw error
-            }
-        } else {
-            var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
-            var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
-            expect(TotalCards).toEqual(TotalEmployeecount)
-        }
-
-
-        // TC_EM_007
-        await this.SelectDepartment.selectOption({ label: 'Technical' });
-        await this.SelectStatus.selectOption({ label: 'BLOCKED (Temporally Disable)' });
-        await this.page.waitForTimeout(4000)
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        var TotalCards = await this.Employee_Directory_Cards.count()
-        if (TotalCards === 0) {
-            try {
-                var Norecord = await this.Employee_Directory_Card_notfound.textContent()
-                expect(Norecord).toEqual("No Record Available")
-            } catch (error) {
-                throw error
-            }
-        } else {
-            var TotalEmployeeTextContent = await this.TotalEmployeecount.textContent() || ""
-            var TotalEmployeecount = parseFloat(TotalEmployeeTextContent.replace(/[^\d.]/g, '')) || 0
-            expect(TotalCards).toEqual(TotalEmployeecount)
-        }
-
+    async selectStatus(Status: string) {
+        await this.SelectStatus.selectOption({ label: Status });
 
     }
-    async EmployeedirectoryCard() {
-        // TC_EM_008
-        await this.Employee_Management.click()
-        await this.page.waitForTimeout(2000)
-        await this.Employee_Directory_tab.click()
-        await this.Card.click()
-        await expect(this.EmployeeProfile).toBeVisible()
+    async noRecord() {
+        var Norecord = await this.Employee_Directory_Card_notfound.textContent()
+        console.debug(Norecord)
+        return Norecord
+    }
 
-        // TC_EM_009
+    async fechingEmployeeName() {
+        let employee = this.Card.nth(14)
+        let employeeName = await employee.textContent()
+        console.debug(employeeName)
+        return employeeName
+    }
+
+    async clickOnEmployeeCard() {
+        await this.Card.nth(14).click()
+    }
+
+    async clickOnBasicInfo() {
         await this.BasicInfo.click()
-        const AccordionBodycount = await this.AccordionBodyKey.count();
+    }
 
+    async getAccordionBodycountAndText(Locator: Locator, dropdownLocator) {
+        const AccordionBodycount = await Locator.count();
         for (let i = 0; i < AccordionBodycount; i++) {
-            var AccordionBodydata = this.AccordionBodyKey.nth(i);
-            var AccordionBodyText = await AccordionBodydata.textContent();
-            expect(AccordionBodyText).toEqual(this.BasicInfoAccordionBody[i])
+            const AccordionBodydata = Locator.nth(i);
+            const AccordionBodyText = await AccordionBodydata.textContent();
+            expect(AccordionBodyText).toEqual(dropdownLocator[i])
         }
+    }
 
-        // TC_EM_010
-        await this.BasicInfo.click();
-        await this.page.waitForTimeout(1000);
-        await expect(this.page.locator("heading1")).toBeHidden();
-
-        // TC_EM_011
-        await this.page.waitForTimeout(5000)
-        await this.BasicInfo.click();
+    async clickOnBasicInfoEditButton() {
         await this.BasicInfoEditButton.click()
-        await this.BasicInfoFirstname.clear()
+    }
+
+    async clickOnUpdateButton() {
         await this.UpdateButton.click()
-        var FirstnameField = await this.BasicInfoFirstname
-
-        var tooltipMessage = await FirstnameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-        // TC_EM_013
-        await this.BasicInfo.click();
-        await this.page.waitForTimeout(2000)
-        await this.BasicInfoEditButton.click()
-        await this.BasicInfoLastName.clear()
-        await this.UpdateButton.click()
-        var LastNameField = await this.BasicInfoFirstname
-
-        var tooltipMessage = await LastNameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-        // TC_EM_014
-        await this.CloseButton.click()
+    }
+    async getOriginalBasicInfoName() {
         var originalFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
         var originalLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
         var originalMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent();
-        await this.BasicInfoEditButton.click()
-        await this.BasicInfoFirstname.clear()
-        await this.BasicInfoFirstname.fill('Archit')
-        await this.BasicInfoLastName.clear()
-        await this.BasicInfoLastName.fill('Khurana')
+        return { originalFirstName, originalLastName, originalMiddleName }
+    }
+    async clickOnCloseButton() {
         await this.CloseButton.click()
-        var CurrentFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
-        var CurrentLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
-        var CurrentMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent();
-        expect(originalFirstName).toEqual(CurrentFirstName)
-        expect(originalLastName).toEqual(CurrentLastName)
-        expect(originalMiddleName).toEqual(CurrentMiddleName)
+    }
 
-        // TC_EM_015
-        // Generate random first and last name
-        var randomFirstName = await AssetHelper.generateRandomString(5);
-        var randomLastName = await AssetHelper.generateRandomString(5);
+    async getUpdatedBasicInfoName() {
+        var updatedFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
+        var updatedLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
+        var updatedMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent();
 
-        // Get the original names before editing
-        var originalFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
-        var originalLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
+        return { updatedFirstName, updatedLastName, updatedMiddleName }
+    }
 
-        // Click edit button and update names
-        await this.BasicInfoEditButton.click();
-        await this.BasicInfoFirstname.clear();
-        await this.BasicInfoFirstname.fill(randomFirstName);
-        await this.BasicInfoLastName.clear();
-        await this.BasicInfoLastName.fill(randomLastName);
-        await this.UpdateButton.click();
-
-        // Get the updated names
-        var CurrentFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
-        var CurrentLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
-
-        expect(originalFirstName).not.toEqual(CurrentFirstName)
-        expect(originalLastName).not.toEqual(CurrentLastName)
-        await this.page.waitForTimeout(500)
-        const toastVisible = await this.page.locator(".Toastify__toast-body").isVisible()
-        expect(toastVisible).toBe(true)
-        const toastText = await this.page.locator(".Toastify__toast-body").textContent()
-        expect(typeof toastText).toBe("string")
-        console.log(toastText)
-
-        // TC_EM_016
-        try {
-            await this.WorkAccordion.click()
-            console.log(' WorkAccordion expanded Succesfully')
-        } catch (error) {
-            console.error('WorkAccordion Does not expanded', error)
-        }
-        await this.page.waitForTimeout(1000)
-
-        const WorkAccordionkeycount = await this.WorkAccordionkey.count()
-
-        for (let i = 0; i < WorkAccordionkeycount; i++) {
-            const WorkAccordionkey = await this.WorkAccordionkey.nth(i)
-            const WorkAccordionkeytext = await WorkAccordionkey.textContent()
-            expect(WorkAccordionkeytext).toEqual(this.WorkAccordionBody[i])
-        }
-
-        // TC_EM_017
+    async clickOnWorkAccordion() {
         await this.WorkAccordion.click()
-        await this.page.waitForTimeout(1000)
-        await expect(this.page.locator("heading2")).toBeHidden();
+    }
 
-        // TC_EM_018
-        await this.WorkAccordion.click()
+    async clickOnWorkEditButton() {
         await this.WorkEditButton.click()
-        await this.WorkDate.clear()
-        await this.UpdateButton.click()
 
-        var DateOfjoiningField = await this.WorkDate
+    }
 
-        var tooltipMessage = await DateOfjoiningField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-        // TC_EM_019
-        await this.WorkDate.fill("2090-12-12")
-        await this.EmployeeType.selectOption({ label: 'Select Employee Sub Type' })
-        await this.UpdateButton.click()
-        var EmployeeTypeField = await this.EmployeeType
-
-        var tooltipMessage = await EmployeeTypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-
-        // TC_EM_020
-        await this.CloseButton.click()
+    async getExistingDate() {
         var ExistingDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
-        await this.WorkEditButton.click()
-        await this.WorkDate.fill("2090-12-12")
-        await this.CloseButton.click()
+        return ExistingDate
+    }
+    async getCurrentDate() {
         var CurrentDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
-        expect(ExistingDate).toEqual(CurrentDate)
+        return CurrentDate
+    }
 
-        // TC_EM_021
-        var ExistingDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
-        await this.WorkEditButton.click()
+    async getfutureDate() {
         var futureDate = new Date();
         // Generate a random number of days between 1 and 365 (1 year ahead)
         var randomDays = Math.floor(Math.random() * 365) + 1;
         futureDate.setDate(futureDate.getDate() + randomDays);
         // Format the future date as 'YYYY-MM-DD'
         const futureDates = futureDate.toISOString().split('T')[0];
-        await this.WorkDate.fill(futureDates);
-        await this.UpdateButton.click()
-        var CurrentDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
-        expect(ExistingDate).not.toEqual(CurrentDate)
+        return futureDates
+    }
+
+    async clickOnPersonalDetails(){
+        await this.PersonalDetails.click()
+
+    }
+    async EmployeedirectoryCard() {
+
+
+
+
+
+
+       
+    
 
         // TC_EM_022
         try {
@@ -1329,7 +1194,7 @@ export class Employee_Management extends BasePage {
 
         let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
         console.log(message)
-        expect(message).toEqual(" The role has been successfully assigned to Vishal     .")
+        expect(message).toEqual(" The role has been successfully assigned to Autom Mation User .")
     }
 
     async approve_document() {
@@ -1359,23 +1224,23 @@ export class Employee_Management extends BasePage {
         // TC_EM_105
         let isAvailable = await this.approve_document();
         if (!isAvailable) return;
-    
+
         await this.page.waitForTimeout(2000);
         const labelCount = await this.Approve_Label_Exiting_Document_type.count();
         const uniqueTypes = new Set();
-    
+
         for (let i = 0; i < labelCount - 1; i++) {
             const existingType = await this.Approve_Label_Exiting_Document_type.nth(i).textContent();
             if (existingType) {
                 uniqueTypes.add(existingType.trim());
             }
         }
-    
+
         console.log("Unique Approved Document Types:", [...uniqueTypes]);
-    
+
         await this.Approve_Label_Document_type_dropdown.click();
         await this.page.waitForTimeout(2000);
-    
+
         const options = this.page.locator('[id^="react-select-2-option"]');
         const dropdownCount = await options.count();
         const DropdownTypes = new Set();
@@ -1386,7 +1251,7 @@ export class Employee_Management extends BasePage {
             }
         }
         console.log("Unique Approved Document Types:", [...DropdownTypes]);
-    
+
         expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort());
     }
 
@@ -1735,7 +1600,7 @@ export class Employee_Management extends BasePage {
         expect(toast_message).toEqual("Department created successfully!")
     }
 
-    
+
 }
 // export function await AssetHelper.generateRandomString(5)(length: any) {
 //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

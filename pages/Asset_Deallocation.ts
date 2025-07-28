@@ -57,7 +57,7 @@ export class AssetDeallocation extends BasePage {
 
         await this.deallocationDropdown.click();
         await this.SelectedOption.click();
-        await expect(this.loader.getThreeDotLoader()).not.toBeAttached();
+        await this.waitforLoaderToDisappear()
         const validDetails = await this.deallocationRecords.allTextContents();
         if (validDetails.length === 0) {
             if (await this.deallocationNoRecord.isVisible()) {

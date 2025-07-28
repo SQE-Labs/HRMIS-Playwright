@@ -19,18 +19,18 @@ test.describe("Asset Allocation page", () => {
         await allocation.getColumnHeader()
     })
 
-    test.only("Functionality of search Bar ", async ({ page }) => {
+    test("Functionality of search Bar ", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetTypeName, "KeyWord" , "Asset Name")
     })
-    test.only("Functionality of search Bar serial Number ", async ({ page }) => {
+    test("Functionality of search Bar serial Number ", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetSerialNumber,"DELL004", "serial Number")
     })
 
-    test.only("Functionality of search Bar Owner name ", async ({ page }) => {
+    test("Functionality of search Bar Owner name ", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetOwnerName,"Caelius", "Owner name")
     })
 
-    test.only("Functionality of search Bar Employee name ", async ({ page }) => {
+    test("Functionality of search Bar Employee name ", async ({ page }) => {
         await allocation.searchByEmployeeName()
     })
 
