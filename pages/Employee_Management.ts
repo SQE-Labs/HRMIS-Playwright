@@ -8,7 +8,6 @@ import { AssetHelper } from '../utils/AssetHelpers'
 
 
 export class Employee_Management extends BasePage {
-
     public Employee_Management: Locator
     public Employee_Directory_tab: Locator
     public Employee_Directory_tab_Header: Locator
@@ -16,7 +15,7 @@ export class Employee_Management extends BasePage {
     public TotalEmployeecount: Locator
     public Employee_Directory_Searchbar: Locator
     public Employee_Directory_cards_title: Locator
-    public Employee_Directory_Card_notfound: Locator
+    public Record_notfound: Locator
     public SelectDepartment: Locator
     public cardTextDepartment: Locator
     public SelectStatus: Locator
@@ -54,6 +53,7 @@ export class Employee_Management extends BasePage {
     public Education: Locator
     public Dependents: Locator
     public AssignedAssets: Locator
+    public refreshbutton: Locator
     public AssignedRecords: Locator
     public NextButton: Locator
     public PreviousButton: Locator
@@ -145,6 +145,9 @@ export class Employee_Management extends BasePage {
     public updateIcon: Locator
     public Name_TextArea: Locator
     public No_record: Locator
+    public AssignedAsset: Locator
+    public itemsPerPage: Locator
+    public pageCount : Locator
 
     constructor(page: Page) {
         super(page)
@@ -155,7 +158,7 @@ export class Employee_Management extends BasePage {
         this.TotalEmployeecount = page.locator(".total")
         this.Employee_Directory_Searchbar = page.locator("//input[@name = 'search']")
         this.Employee_Directory_cards_title = page.locator(".card-title.text-primary")
-        this.Employee_Directory_Card_notfound = page.locator(".fs-4")
+        this.Record_notfound = page.locator(".fs-4")
         this.SelectDepartment = page.locator("#department")
         this.cardTextDepartment = page.locator("//small[@class = 'card-text']")
         this.SelectStatus = page.locator("#selectedStatus")
@@ -190,9 +193,10 @@ export class Employee_Management extends BasePage {
         this.Education = page.locator("#heading5")
         this.Dependents = page.locator("#heading6")
         this.AssignedAssets = page.locator("#tab4-tab")
+        this.refreshbutton = page.locator('//button[text() = "Refresh"]')
         this.AssignedRecords = page.locator(".table-responsive.mt-4")
         this.NextButton = page.getByText('Next')
-        this.NextButton = page.getByText('Previous')
+        this.PreviousButton = page.getByText('Previous')
         this.EmployeeAccess = page.locator("#tab11-tab")
         this.CurrentStatus = page.getByLabel("Current Status")
         this.Status = page.getByLabel('//*[@id="tab11"]/form/div[1]/div[2]/div[2]/label')
@@ -332,6 +336,11 @@ export class Employee_Management extends BasePage {
         this.updateIcon = page.locator("(//i[@class = 'fa fa-edit'])[1]")
         this.Name_TextArea = page.getByPlaceholder("Enter Department Name")
         this.No_record = page.locator(".fs-4.text-secondary.text-center.mt-5")
+        this.AssignedAsset = page.locator('(//div[@class ="table-responsive mt-4"])/table/tbody/tr')
+        this.itemsPerPage = page.locator("#itemsPerPage");
+        this.pageCount = page.locator(".page-link.text-dark.disabled");
+
+        
 
     }
 
@@ -360,20 +369,36 @@ export class Employee_Management extends BasePage {
         return { TotalCards, TotalEmployeecount }
     }
 
+    async getWorkExperience() {
+        let TotalExperience = await this.page.locator('(//table[@class = "resume custom"])[1]/tbody/tr').count()
+        console.debug(TotalExperience)
+
+        return TotalExperience
+    }
+
+    async getEmployeeEducation() {
+        let TotalEducation = await this.page.locator('(//table[@class = "resume custom"])[2]/tbody/tr').count()
+        console.debug(TotalEducation)
+
+        return TotalEducation
+    }
+    async getEmployeeDependents() {
+        let TotalDependents = await this.page.locator('(//table[@class = "resume custom"])[3]/tbody/tr').count()
+        console.debug(TotalDependents)
+
+        return TotalDependents
+    }
+
     async searchByEmployeeDirectorySearchBar(EmployeeName: string) {
         await this.Employee_Directory_Searchbar.pressSequentially(EmployeeName)
     }
 
-    async selectDepartment(Option: string) {
-        await this.SelectDepartment.selectOption({ label: Option });
+    async optionSelection(locator: Locator, Option: string) {
+        await locator.selectOption({ label: Option });
     }
 
-    async selectStatus(Status: string) {
-        await this.SelectStatus.selectOption({ label: Status });
-
-    }
-    async noRecord() {
-        var Norecord = await this.Employee_Directory_Card_notfound.textContent()
+    async noRecord(value) {
+        var Norecord = await this.Record_notfound.nth(value).textContent()
         console.debug(Norecord)
         return Norecord
     }
@@ -455,239 +480,49 @@ export class Employee_Management extends BasePage {
         return futureDates
     }
 
-    async clickOnPersonalDetails(){
+    async clickOnPersonalDetails() {
         await this.PersonalDetails.click()
 
     }
-    async EmployeedirectoryCard() {
-
-
-
-
-
-
-       
-    
-
-        // TC_EM_022
-        try {
-            await this.PersonalDetails.click()
-            console.log(' PersonalDetails expanded Succesfully')
-        } catch (error) {
-            console.error('PersonalDetails Does not expanded', error)
-        }
-        await this.page.waitForTimeout(1000)
-
-        const PersonalDetailskeycount = await this.PersonalDetailsKey.count()
-
-        for (let i = 0; i < PersonalDetailskeycount; i++) {
-            const PersonalDetailsKey = await this.PersonalDetailsKey.nth(i)
-            const PersonalDetailskeytext = await PersonalDetailsKey.textContent()
-            expect(PersonalDetailskeytext).toEqual(this.PersonalDetailsBody[i])
-        }
-
-        // TC_EM_023
-        await this.PersonalDetails.click()
-        await this.page.waitForTimeout(1000)
-        await expect(this.page.locator("heading3")).toBeHidden();
-
-        // TC_EM_024
-        await this.PersonalDetails.click()
+    async clickOnPersonalDetailEdit() {
         await this.PersonalDetailsEditButton.click()
-        await this.PersonalDetailsDate.clear()
-        await this.UpdateButton.click()
-        var DateofBirthField = await this.PersonalDetailsDate
-        var tooltipMessage = await DateofBirthField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.PersonalDetailsDate.fill('1993-08-08')
 
-        // TC_EM_025
-        await this.AadhaarCardNumber.clear()
-        await this.UpdateButton.click()
-        var AadhaarCardNumberField = await this.AadhaarCardNumber
+    }
 
-        var tooltipMessage = await AadhaarCardNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('AadhaarCardField :- ', tooltipMessage);
-        expect(tooltipMessage).toBe('Please enter a 12-digit Aadhar card number')
-        await this.AadhaarCardNumber.fill('765432131242')
-
-        // TC_EM_026
-        await this.PanCardNumber.clear()
-        await this.UpdateButton.click()
-        var PanCardNumberField = await this.PanCardNumber
-
-        var tooltipMessage = await PanCardNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('PanCardField :-', tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please enter a 10-digit PAN card number')
-        await this.PanCardNumber.fill('2324354231')
-
-        // TC_EM_027
-        await this.PresentAddress.clear()
-        await this.UpdateButton.click()
-        var PresentAddressField = await this.PresentAddress
-
-        var tooltipMessage = await PresentAddressField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('PresentAddress :-', tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.PresentAddress.fill('Hello World !!')
-
-        // TC_EM_028
-        await this.BloodGroup.selectOption({ label: 'Select Blood Group' })
-        await this.UpdateButton.click()
-        var BloodGroupField = await this.BloodGroup
-        var tooltipMessage = await BloodGroupField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('BloodGroup :-', tooltipMessage);
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-        await this.BloodGroup.selectOption({ label: 'O+ve' })
-
-        // TC_EM_029
-        await this.MaritalStatus.selectOption({ label: 'Select Marital Status' })
-        await this.UpdateButton.click()
-        var MaritalStatusField = await this.MaritalStatus
-        var tooltipMessage = await MaritalStatusField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('MaritalStatus :-', tooltipMessage);
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-        await this.MaritalStatus.selectOption({ label: 'Single' })
-
-        // TC_EM_030
-        await this.AlternateNumber.clear()
-        await this.UpdateButton.click()
-        var AlternateNumberField = await this.AlternateNumber
-
-        var tooltipMessage = await AlternateNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('AlternateNumber :-', tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.AlternateNumber.fill('9987651232')
-
-        // TC_EM_031
-        await this.PermanentAddress.clear()
-        await this.UpdateButton.click()
-        var PermanentAddressField = await this.PermanentAddress
-        var tooltipMessage = await PermanentAddressField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('PermanentAddress :-', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.PermanentAddress.fill("dsadasdasdsa")
-
-        // TC_EM_032
-        await this.PassportNumber.clear()
-        await this.UpdateButton.click()
-        var PassportNumberField = await this.PassportNumber
-        var tooltipMessage = await PassportNumberField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log('PassportNumberField :-', tooltipMessage);
-        expect(tooltipMessage).toBe('Please enter a 12-digit Passport number')
-        await this.PermanentAddress.fill('123213213123')
-
-        // TC_EM_033
-        await this.CloseButton.click()
+    async getOriginalPeronalDetails() {
         var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
         var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
         var OriginalpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
-        await this.PersonalDetailsEditButton.click()
-        await this.AadhaarCardNumber.clear()
-        await this.AadhaarCardNumber.fill('765432131242')
-        await this.PanCardNumber.clear()
-        await this.PanCardNumber.fill('2324354231')
-        await this.BloodGroup.selectOption({ label: 'B+ve' })
-        await this.PermanentAddress.clear()
-        await this.PermanentAddress.fill('Hello')
-        await this.CloseButton.click()
+        return { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress }
+    }
 
+    async getUpdatedPerosnalDetails() {
         var currentaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
         var currentPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
         var CurrentpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
-        expect(OriginalaadharNumber).toEqual(currentaadharNumber)
-        expect(OriginalPanCardNumber).toEqual(currentPanCardNumber)
-        expect(OriginalpermanentAddress).toEqual(CurrentpermanentAddress)
+        return { currentaadharNumber, currentPanCardNumber, CurrentpermanentAddress }
+    }
 
-        // TC_EM_034
-        var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
-        var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
-        var OriginalpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
-        var permanentAddress = await AssetHelper.generateRandomString(5);
+    async clickOnWorkExperience() {
+        await this.WorkExperience.click()
+    }
 
-        await this.PersonalDetailsEditButton.click()
-        await this.AadhaarCardNumber.clear()
-        await this.AadhaarCardNumber.fill('765432131242')
-        await this.PanCardNumber.clear()
-        await this.PanCardNumber.fill('2324354231')
-        await this.BloodGroup.selectOption({ label: 'B+ve' })
-        await this.PermanentAddress.clear()
-        await this.PermanentAddress.fill(permanentAddress)
-        await this.UpdateButton.click()
-        const toastVisible2 = await this.page.locator(".Toastify__toast-body").isVisible()
-        expect(toastVisible2).toBe(true)
-        const toastText2 = await this.page.locator(".Toastify__toast-body").textContent()
-        expect(typeof toastText2).toBe("string")
-        console.log(toastText2)
-        var currentaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
-        var currentPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
-        var CurrentpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
-        expect(OriginalpermanentAddress).not.toEqual(CurrentpermanentAddress)
-        await this.page.waitForTimeout(1000)
+    async clickOnEducation() {
+        await this.Education.click()
+    }
+    async clickOnDependents() {
+        await this.Dependents.click()
+    }
 
-        // TC_EM_035 && TC_EM_037
-        try {
-            await this.WorkExperience.click()
-            console.log('WorkExperince tab expanded Succesfully')
-        } catch (error) {
-            console.error('Experience tab Does not expanded', error)
-        }
-        var Norecord = await this.page.locator('//*[@id="collapse4"]/div/div/div/div/div').textContent()
-        expect(Norecord).toEqual("No records available")
+    async clickOnAssignedAssets() {
+        await this.AssignedAssets.click()
 
-        // TC_EM_036
-        try {
-            await this.WorkExperience.click()
-            console.log('WorkExperince tab collapse Succesfully')
-        } catch (error) {
-            console.error('Experience tab Does not Collapse', error)
-        }
-
-        // TC_EM_038 
-        try {
-            await this.Education.click()
-            console.log('Education tab expanded Succesfully')
-        } catch (error) {
-            console.error('Education tab Does not expanded', error)
-        }
-        var Norecord = await this.page.locator('//*[@id="collapse5"]/div/div/div/div/div').textContent()
-        expect(Norecord).toEqual("No records available")
-
-        // TC_EM_039
-        try {
-            await this.Education.click()
-            console.log('Education tab Collapse Succesfully')
-        } catch (error) {
-            console.error('Education tab Does not Collapse', error)
-        }
-
-        // TC_EM_40  && TC_EM_041
-        try {
-            await this.Dependents.click()
-            console.log('Dependents tab expanded Succesfully')
-        } catch (error) {
-            console.error('Dependents tab Does not expanded', error)
-        }
-        var Norecord = await this.page.locator('//*[@id="collapse6"]/div/div/div/div/div').textContent()
-        expect(Norecord).toEqual("No records available")
-
-        // TC_EM_42
-        try {
-            await this.Dependents.click()
-            console.log('Dependents tab Collapse Succesfully')
-        } catch (error) {
-            console.error('Dependents tab Does not Collapse', error)
-        }
     }
 
     // async
     //     // TC_EM_043
     //     await this.AssignedAssets.click()
-    //     await expect(this.AssignedRecords).toBeVisible()
+    // await expect(this.AssignedRecords).toBeVisible()
 
     //     // TC_EM_044
     //     // await this.NextButton.click()
@@ -699,28 +534,13 @@ export class Employee_Management extends BasePage {
     //     // expect(await this.NextButton.isEnabled()).toBeTruthy();
     //     // expect(await this.PreviousButton.isEnabled()).toBeTruthy();
 
-    async Employee_Access_Block() {
-        // TC_EM_050
 
-        await this.Employee_Management.click()
-        await this.page.waitForTimeout(2000)
-        await this.Employee_Directory_tab.click()
-        await this.Card.click()
+    async clickOnEmployeeAccessSubTab() {
         await this.EmployeeAccess.click()
-        expect(await this.CurrentStatus.isVisible())
-        expect(await this.Status.isVisible())
 
-
-        // TC_EM_051
-        await this.EmployeeAccessStatus.textContent()
-        await this.EmployeeAccessSubmitButton.click()
-        var EmployeeAccessStatus = await this.EmployeeAccessStatus
-
-        var tooltipMessage = await EmployeeAccessStatus.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-
-        // TC_EM_052'
+    }
+    async Employee_Access_Block() {
+       
         // await this.page.pause()
         await this.EmployeeAccessStatus.selectOption({ label: 'BLOCKED (Temporally Disable)' })
         var CardName = await this.CardName.textContent()
@@ -730,6 +550,27 @@ export class Employee_Management extends BasePage {
         expect(await this.page.locator(".Toastify__toast-body").isVisible())
 
     }
+    async getItemPerPage() {
+        await this.itemsPerPage.waitFor({ state: 'visible' });
+        await this.itemsPerPage.click();
+        const selectedValue = parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
+        console.log("Selected Value: ", selectedValue);
+        return selectedValue
+    }
+
+    async getAssignedAssets() {
+        let TotalAssignedAssets = await this.AssignedAsset.count()
+        console.debug(TotalAssignedAssets)
+        return TotalAssignedAssets
+    }
+
+
+    async pagination() {
+        
+    }
+
+
+
     async Employee_Access_LeftOut() {
 
 

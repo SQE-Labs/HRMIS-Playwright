@@ -144,6 +144,9 @@ export class AssetAllocation extends BasePage {
         console.log(invalidData);
     }
 
+    async clickOnNextButton() {
+        await this.nextButton.click();
+    }
     async pagination() {
       
         const totalAllocationAsset = await this.totalAssetAssigned.allTextContents();
@@ -158,7 +161,6 @@ export class AssetAllocation extends BasePage {
         console.log("Selected Value: ", selectedValue);
         console.log("Asset Name Count: ", assetNameCount);
         expect(selectedValue).toEqual(assetNameCount);
-        await this.nextButton.click();
         await this.page.waitForTimeout(1000);
         expect(await this.previousButton.isEnabled()).toBeTruthy();
         await this.previousButton.click();

@@ -49,6 +49,7 @@ export class BasePage extends CommonUtils {
 
 
   async getValidationMessage(locator: Locator) {
+    await locator.waitFor({state : 'visible' , timeout : 2000})
     let tooltipMessage = await locator.evaluate(el => (el as HTMLInputElement).validationMessage);
     return tooltipMessage
 

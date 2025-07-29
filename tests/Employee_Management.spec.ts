@@ -3,8 +3,10 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/Loginpage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { FILL_FIELD, SELECT_ITEM } from '../utils/constants';
+import { AADHAAR_FIELD, FILL_FIELD, PANCARD_FIELD, PASSPORT_FIELD, SELECT_ITEM } from '../utils/constants';
 import { emit } from 'process';
+import { getRandomValues } from 'crypto';
+import { AssetHelper } from '../utils/AssetHelpers';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management module'", () => {
@@ -39,30 +41,30 @@ test.describe("'Employee Management module'", () => {
 
     test("Verify NoRecordMessage For Invalid Employee Search", async ({ page }) => {
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("978735")  //invalid Employee name
-        let Norecord = await EmployeeDirectory.noRecord()
+        let Norecord = await EmployeeDirectory.noRecord(1)
         expect(Norecord).toEqual("No Record Available")
     })
 
     test("verify Employee Count Matches After Department Filter Applied", async ({ page }) => {
-        await EmployeeDirectory.selectDepartment('Technical')
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
     test("verify Employee Count After Selecting Status Filter", async ({ page }) => {
-        await EmployeeDirectory.selectStatus('LEFTOUT (Permanently Disable)')
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
     test("verify Department Filter Results With Or Without Employees", async ({ page }) => {
-        await EmployeeDirectory.selectDepartment('Admin')
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Admin')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         if (TotalCards === 0) {
-            var Norecord = await EmployeeDirectory.noRecord()
+            var Norecord = await EmployeeDirectory.noRecord(1)
             expect(Norecord).toEqual("No Record Available")
         } else {
             expect(TotalCards).toEqual(TotalEmployeecount)
@@ -70,13 +72,13 @@ test.describe("'Employee Management module'", () => {
     })
 
     test("verify Status Filter Results With Or Without Employees", async ({ page }) => {
-        await EmployeeDirectory.selectDepartment('Technical')
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.selectStatus('BLOCKED (Temporally Disable)')
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         if (TotalCards === 0) {
-            var Norecord = await EmployeeDirectory.noRecord()
+            var Norecord = await EmployeeDirectory.noRecord(1)
             expect(Norecord).toEqual("No Record Available")
         } else {
             expect(TotalCards).toEqual(TotalEmployeecount)
@@ -241,10 +243,303 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.getAccordionBodycountAndText(EmployeeDirectory.PersonalDetailsKey, EmployeeDirectory.PersonalDetailsBody)
     })
 
+    test("Verify Personal Details Toggle Behavior", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await expect(page.locator("#collapse3").last()).toBeHidden()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await expect(page.locator("#collapse3").last()).toBeVisible()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await expect(page.locator("#collapse3").last()).toBeHidden()
+    })
+
+    test("verify Validation Message When Date Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.PersonalDetailsDate.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PersonalDetailsDate)
+        expect(tooltipMessage).toBe(FILL_FIELD)
+    })
+
+    test("verify Validation Message When Aadhaar number Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.AadhaarCardNumber.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.AadhaarCardNumber)
+        expect(tooltipMessage).toBe(AADHAAR_FIELD)
+    })
+
+    test("verify Validation Message When Pan number Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.PanCardNumber.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PanCardNumber)
+        expect(tooltipMessage).toBe(PANCARD_FIELD)
+    })
+
+    test("verify Validation Message When Present Address Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.PresentAddress.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PresentAddress)
+        expect(tooltipMessage).toBe(FILL_FIELD)
+    })
+
+    test("verify Validation Message When Blood Group option selects 'Select blood Group' In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.BloodGroup, 'Select Blood Group')
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.BloodGroup)
+        expect(tooltipMessage).toBe(SELECT_ITEM)
+    })
+
+    test("verify Validation Message When Marital status selects 'Select Marital Status' In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.MaritalStatus, 'Select Marital Status')
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.MaritalStatus)
+        expect(tooltipMessage).toBe(SELECT_ITEM)
+    })
+
+    test("verify Validation Message When Alternate number Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.AlternateNumber.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.AlternateNumber)
+        expect(tooltipMessage).toBe(FILL_FIELD)
+    })
 
 
-    test("EmployeeAccessBlock ", async ({ page }) => {
-        await EmployeeDirectory.Employee_Access_Block()
+    test("verify Validation Message When Permanent Address Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.PermanentAddress.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PermanentAddress)
+        expect(tooltipMessage).toBe(FILL_FIELD)
+    })
+
+
+    test("verify Validation Message When Passport Number Is Cleared In Perosnal Details", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.PassportNumber.clear()
+        await EmployeeDirectory.clickOnUpdateButton()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PassportNumber)
+        expect(tooltipMessage).toBe(PASSPORT_FIELD)
+    })
+
+    test("verify Profile Update With Random Peronal Details clicking on closw button ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        let { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress } = await EmployeeDirectory.getOriginalPeronalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.AadhaarCardNumber.fill("765432131242")
+        await EmployeeDirectory.PanCardNumber.fill("2324354231")
+        await EmployeeDirectory.PermanentAddress.fill("Hello")
+        await EmployeeDirectory.clickOnCloseButton()
+
+        let { currentaadharNumber, currentPanCardNumber, CurrentpermanentAddress } = await EmployeeDirectory.getUpdatedPerosnalDetails()
+        expect(OriginalaadharNumber).toEqual(currentaadharNumber)
+        expect(OriginalPanCardNumber).toEqual(currentPanCardNumber)
+        expect(OriginalpermanentAddress).toEqual(CurrentpermanentAddress)
+    })
+
+
+    test("verify Profile Update With Random Perosnal details Info Fields", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnPersonalDetails()
+        let { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress } = await EmployeeDirectory.getOriginalPeronalDetails()
+        await EmployeeDirectory.clickOnPersonalDetailEdit()
+        await EmployeeDirectory.AadhaarCardNumber.fill("765432131242")
+        await EmployeeDirectory.PanCardNumber.fill("2324354231")
+        await EmployeeDirectory.PermanentAddress.fill(await EmployeeDirectory.generateRandomString(5))
+        await EmployeeDirectory.clickOnUpdateButton()
+
+
+        let message = await EmployeeDirectory.toastMessage()
+        expect(message).toEqual("Profile updated successfully")
+        let { currentaadharNumber, currentPanCardNumber, CurrentpermanentAddress } = await EmployeeDirectory.getUpdatedPerosnalDetails()
+        expect(OriginalaadharNumber).not.toEqual(currentaadharNumber)
+        expect(OriginalPanCardNumber).not.toEqual(currentPanCardNumber)
+        expect(OriginalpermanentAddress).not.toEqual(CurrentpermanentAddress)
+
+    })
+
+    test("verify Employee have work experience or not ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnWorkExperience()
+        let TotalExperience = await EmployeeDirectory.getWorkExperience()
+        if (TotalExperience === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            console.debug("Employee have work Experience")
+        }
+    })
+    test("Verify Work Experience  Toggle Behavior", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await expect(page.locator("#collapse4").last()).toBeHidden()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnWorkExperience()
+        await expect(page.locator("#collapse4").last()).toBeVisible()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnWorkExperience()
+        await expect(page.locator("#collapse4").last()).toBeHidden()
+    })
+
+    test("verify Employee have Education or not ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnWorkExperience()
+        let EmloyeeEducation = await EmployeeDirectory.getEmployeeEducation()
+        if (EmloyeeEducation === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            console.debug("Employee have Education")
+        }
+    })
+
+    test("Verify Education  Toggle Behavior", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await expect(page.locator("#collapse5").last()).toBeHidden()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnEducation()
+        await expect(page.locator("#collapse5").last()).toBeVisible()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnEducation()
+        await expect(page.locator("#collapse5").last()).toBeHidden()
+    })
+
+    test("verify Employee have Dependents or not ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnDependents()
+        let EmloyeeEducation = await EmployeeDirectory.getEmployeeDependents()
+        if (EmloyeeEducation === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            console.debug("Employee have Dependents")
+        }
+    })
+
+    test("Verify Dependents  Toggle Behavior", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await expect(page.locator("#collapse6").last()).toBeHidden()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnDependents()
+        await expect(page.locator("#collapse6").last()).toBeVisible()
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnDependents()
+        await expect(page.locator("#collapse6").last()).toBeHidden()
+    })
+
+    test("Navigating to the Employee Directory tab > Assigned Assets ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnAssignedAssets()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        expect(EmployeeDirectory.refreshbutton).toBeVisible()
+        let AssignedAsset = await EmployeeDirectory.getAssignedAssets()
+        if (AssignedAsset === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            expect(EmployeeDirectory.AssignedAsset.first()).toBeVisible()
+        }
+    })
+
+    // test("Verify Assigned assets show according to itemPer page selected", async ({ page }) => {
+    //     await EmployeeDirectory.clickOnEmployeeCard()
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     await EmployeeDirectory.clickOnAssignedAssets()
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     let AssignedAsset = await EmployeeDirectory.getAssignedAssets()
+    //     if (AssignedAsset === 0) {
+    //         var Norecord = await EmployeeDirectory.noRecord(1)
+    //         expect(Norecord).toEqual("No records available")
+    //     } else {
+    //         let ItemPerpage = await EmployeeDirectory.getItemPerPage()
+    //         expect(AssignedAsset).toEqual(ItemPerpage);
+    //         expect(await EmployeeDirectory.PreviousButton.isDisabled()).toBeTruthy();
+    //         const pageCountText = await EmployeeDirectory.pageCount.textContent();
+    //         const [currentPage, totalPageCount] = AssetHelper.extractPageCount(pageCountText || '');
+    //         const difference = totalPageCount - currentPage;
+    //         const pageTotalCount = totalRecordCount * difference;
+    //         for (let i = 0; i < difference; i++) {
+    //             await EmployeeDirectory.NextButton.click();
+    //         }
+
+
+
+    //     }
+
+    // })
+
+
+
+
+
+    test("navigate to Employee Access Block ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        expect(await EmployeeDirectory.CurrentStatus.isVisible())
+        expect(await EmployeeDirectory.Status.isVisible())
+        // await EmployeeDirectory.Employee_Access_Block()
+    })
+
+    test("Verify validation message appears in Employee access status  in  Employee Access Block ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        await EmployeeDirectory.EmployeeAccessSubmitButton.click()
+        let tooltipMessage  = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.EmployeeAccessStatus)
+        expect(tooltipMessage).toEqual(SELECT_ITEM)
+    })
+
+    test(" ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+            
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.EmployeeAccessStatus)
+        expect(tooltipMessage).toEqual(SELECT_ITEM)
     })
 
     test.skip("EmployeeAccessLeftout ", async ({ page }) => {
