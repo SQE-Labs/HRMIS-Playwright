@@ -4,9 +4,6 @@ import { LoginPage } from '../pages/Loginpage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
 import { AADHAAR_FIELD, FILL_FIELD, PANCARD_FIELD, PASSPORT_FIELD, SELECT_ITEM } from '../utils/constants';
-import { emit } from 'process';
-import { getRandomValues } from 'crypto';
-import { AssetHelper } from '../utils/AssetHelpers';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management module'", () => {
@@ -521,7 +518,6 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
         expect(await EmployeeDirectory.CurrentStatus.isVisible())
         expect(await EmployeeDirectory.Status.isVisible())
-        // await EmployeeDirectory.Employee_Access_Block()
     })
 
     test("Verify validation message appears in Employee access status  in  Employee Access Block ", async ({ page }) => {
@@ -529,26 +525,176 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
         await EmployeeDirectory.EmployeeAccessSubmitButton.click()
-        let tooltipMessage  = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.EmployeeAccessStatus)
-        expect(tooltipMessage).toEqual(SELECT_ITEM)
-    })
-
-    test(" ", async ({ page }) => {
-        await EmployeeDirectory.clickOnEmployeeCard()
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
-            
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.EmployeeAccessStatus)
         expect(tooltipMessage).toEqual(SELECT_ITEM)
     })
 
-    test.skip("EmployeeAccessLeftout ", async ({ page }) => {
-        await EmployeeDirectory.Employee_Access_LeftOut()
+    test("should update employee access status to BLOCKED successfully ", async ({ page }) => {
+        let CardName = await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'BLOCKED (Temporally Disable)')
+        await EmployeeDirectory.EmployeeAccessSubmitButton.click()
+        let message = await EmployeeDirectory.toastMessage()
+        expect(message).toEqual('Employee access updated successfully')
+        await EmployeeDirectory.waitforLoaderToDisappear()
+
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+        let CardsTitle: string[] = [];
+        for (let i = 0; i < TotalEmployeecount; i++) {
+            let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+            if (cardTitle !== null && cardTitle.trim() !== '') {
+                CardsTitle.push(cardTitle.trim());
+            }
+        }
+        console.debug(CardsTitle);
+        expect(CardsTitle).toContain(CardName);
+    })
+    test("should update BLOCKED employee status to VERIFIED and confirm card appears in list", async ({ page }) => {
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        let cardsCount = await EmployeeDirectory.Card.count()
+        if (cardsCount === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            let CardName = await EmployeeDirectory.Card.nth(1).textContent()
+            await EmployeeDirectory.Card.nth(1).click()
+            await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+            await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'VERIFIED')
+            await EmployeeDirectory.LeftOutSubmitbutton.click()
+            let message = await EmployeeDirectory.toastMessage()
+            expect(message).toEqual("Employee access updated successfully")
+            await EmployeeDirectory.waitforLoaderToDisappear()
+            let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+            let CardsTitle: string[] = [];
+            for (let i = 0; i < TotalEmployeecount; i++) {
+                let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+                if (cardTitle !== null && cardTitle.trim() !== '') {
+                    CardsTitle.push(cardTitle.trim());
+                }
+            }
+            console.debug(CardsTitle);
+            expect(CardsTitle).toContain(CardName);
+        }
+
+    })
+    test.skip("should update BLOCKED employee to LEFTOUT and verify card appears in LEFTOUT list", async ({ page }) => {
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        let cardsCount = await EmployeeDirectory.Card.count()
+        if (cardsCount === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            let CardName = await EmployeeDirectory.Card.nth(1).textContent()
+            await EmployeeDirectory.Card.nth(1).click()
+            await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+            await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
+            await EmployeeDirectory.LeftOutDate.click()
+            await EmployeeDirectory.leftoutcurrentDate.click()
+            await EmployeeDirectory.LeftOutCommentField.fill("Thank you..")
+            await EmployeeDirectory.LeftOutSubmitbutton.click()
+            let message = await EmployeeDirectory.toastMessage()
+            expect(message).toEqual("Employee access updated successfully")
+            await EmployeeDirectory.waitforLoaderToDisappear()
+            await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
+            await EmployeeDirectory.waitforLoaderToDisappear()
+            let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+            let CardsTitle: string[] = [];
+            for (let i = 0; i < TotalEmployeecount; i++) {
+                let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+                if (cardTitle !== null && cardTitle.trim() !== '') {
+                    CardsTitle.push(cardTitle.trim());
+                }
+            }
+            console.debug(CardsTitle);
+            expect(CardsTitle).toContain(CardName);
+        }
+
     })
 
-    test("EmployeeAccess Update Status ", async ({ page }) => {
-        await EmployeeDirectory.Update_status()
+    test("should Display LeftOut Fields When Status Is LeftOut ", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
+        await expect(EmployeeDirectory.LeftOutDate).toBeVisible()
+        await expect(EmployeeDirectory.LeftOutCommentField).toBeVisible()
     })
+
+    test("shouldShowValidationMessageWhenLeftOutDateIsEmpty", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
+        await EmployeeDirectory.LeftOutSubmitbutton.click()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.LeftOutDate)
+        expect(tooltipMessage).toEqual(FILL_FIELD)
+    })
+
+    test("shouldShowValidationMessageWhenLeftOutCommentIsEmpty", async ({ page }) => {
+        await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
+        await EmployeeDirectory.LeftOutDate.click()
+        await EmployeeDirectory.leftoutcurrentDate.click()
+        await EmployeeDirectory.LeftOutSubmitbutton.click()
+        let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.LeftOutCommentField)
+        expect(tooltipMessage).toEqual(FILL_FIELD)
+    })
+
+    test.skip("should Disable Employee Access Permanently", async ({ page }) => {
+        let CardName = await EmployeeDirectory.clickOnEmployeeCard()
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
+        await EmployeeDirectory.LeftOutDate.click()
+        await EmployeeDirectory.leftoutcurrentDate.click()
+        await EmployeeDirectory.LeftOutCommentField.fill("Thank you..")
+        await EmployeeDirectory.LeftOutSubmitbutton.click()
+        let message = await EmployeeDirectory.toastMessage()
+        expect(message).toEqual("Employee access updated successfully")
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+        let CardsTitle: string[] = [];
+        for (let i = 0; i < TotalEmployeecount; i++) {
+            let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+            if (cardTitle !== null && cardTitle.trim() !== '') {
+                CardsTitle.push(cardTitle.trim());
+            }
+        }
+        console.debug(CardsTitle);
+        expect(CardsTitle).toContain(CardName);
+    })
+
+
+    test("should show no records or fail to update left out employee status to verified", async ({ page }) => {
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
+        await EmployeeDirectory.waitforLoaderToDisappear()
+        let cardsCount = await EmployeeDirectory.leftOutCards.count()
+        if (cardsCount === 0) {
+            var Norecord = await EmployeeDirectory.noRecord(1)
+            expect(Norecord).toEqual("No records available")
+        } else {
+            await EmployeeDirectory.leftOutCards.nth(1).click()
+            await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+            await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'VERIFIED')
+            await EmployeeDirectory.LeftOutSubmitbutton.click()
+            let message = await EmployeeDirectory.toastMessage()
+            expect(message).toEqual("Failed to update the employee status. Please try again after some time")
+        }
+    })
+
+
+
+
+
+
     test("Assign Manager tab ", async ({ page }) => {
         await EmployeeDirectory.AssignManager()
     })

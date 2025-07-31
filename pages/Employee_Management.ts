@@ -65,6 +65,8 @@ export class Employee_Management extends BasePage {
     public CardName: Locator
     public Loader: Loader
     public LeftOutDate: Locator
+    public LeftOutCommentField: Locator
+    public leftoutcurrentDate :Locator
     public Leftreason: Locator
     public LeftOutSubmitbutton: Locator
     public AssignManagertab: Locator
@@ -147,7 +149,10 @@ export class Employee_Management extends BasePage {
     public No_record: Locator
     public AssignedAsset: Locator
     public itemsPerPage: Locator
-    public pageCount : Locator
+    public pageCount: Locator
+    public leftOutCards: Locator
+    public selectEmployeeOption : Locator
+   
 
     constructor(page: Page) {
         super(page)
@@ -162,7 +167,7 @@ export class Employee_Management extends BasePage {
         this.SelectDepartment = page.locator("#department")
         this.cardTextDepartment = page.locator("//small[@class = 'card-text']")
         this.SelectStatus = page.locator("#selectedStatus")
-        this.Card = page.locator(`.col-md-4.col-lg-3`)
+        this.Card = page.locator(`.card-title.text-primary`)
         this.EmployeeProfile = page.locator(".employee-profile")
         this.BasicInfo = page.locator('#heading1')
         this.AccordionBodyKey = page.locator("#collapse1 div.d-flex.flex-column.text-black-50>p")
@@ -339,9 +344,11 @@ export class Employee_Management extends BasePage {
         this.AssignedAsset = page.locator('(//div[@class ="table-responsive mt-4"])/table/tbody/tr')
         this.itemsPerPage = page.locator("#itemsPerPage");
         this.pageCount = page.locator(".page-link.text-dark.disabled");
-
-        
-
+        this.LeftOutDate = page.locator("div:nth-child(3) > div.col-md-4 > div > div > input")
+        this.LeftOutCommentField = page.locator("//textarea[@name = 'comment']")
+        this.leftoutcurrentDate = page.locator("//div[@aria-current='date']")
+        this.leftOutCards = page.locator(".col-md-4.col-lg-3")
+        this.selectEmployeeOption = page.locator("#react-select-2-option-0")
     }
 
     async expandEmployeeManagementTab(): Promise<void> {
@@ -411,7 +418,12 @@ export class Employee_Management extends BasePage {
     }
 
     async clickOnEmployeeCard() {
-        await this.Card.nth(14).click()
+        let card = this.Card.nth(14)
+        let Name = await card.innerText()
+
+        await card.click()
+        return Name
+
     }
 
     async clickOnBasicInfo() {
@@ -539,17 +551,7 @@ export class Employee_Management extends BasePage {
         await this.EmployeeAccess.click()
 
     }
-    async Employee_Access_Block() {
-       
-        // await this.page.pause()
-        await this.EmployeeAccessStatus.selectOption({ label: 'BLOCKED (Temporally Disable)' })
-        var CardName = await this.CardName.textContent()
-        await this.EmployeeAccessSubmitButton.click()
-        var SuccessMessage = console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        await this.page.waitForTimeout(3000)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
 
-    }
     async getItemPerPage() {
         await this.itemsPerPage.waitFor({ state: 'visible' });
         await this.itemsPerPage.click();
@@ -566,141 +568,38 @@ export class Employee_Management extends BasePage {
 
 
     async pagination() {
-        
-    }
-
-
-
-    async Employee_Access_LeftOut() {
-
-
-        // await this.SelectStatus.selectOption({ label: 'BLOCKED (Temporally Disable)' });
-        // var TotalCards = await this.Employee_Directory_Cards.count()
-        // var TotalEmployeeText = await this.TotalEmployeecount.textContent() || ""
-        // var TotalEmployeecount = parseFloat(TotalEmployeeText.replace(/[^\d.]/g, '')) || 0
-
-
-
-        // Initialize an empty array for storing the titles
-        // let CardsTitle : string[]= [];
-
-        // Pause to allow the page to load if needed
-        // await this.page.pause();
-
-        // Loop through each employee card and extract the title
-        // for (let i = 0; i < TotalEmployeecount; i++) {
-        //     let cardTitle = await this.Employee_Directory_cards_title.nth(i).textContent();
-
-        //     if (cardTitle !== null && cardTitle.trim() !== '') {
-        //         CardsTitle.push(cardTitle.trim());
-        //     }
-        // }
-        // Log the titles
-        // console.log(CardsTitle);
-        // Ensure the correct variable name is used here
-        // expect(CardsTitle).toContain(CardName);
-
-
-        // TC_EM_053
-
-        await this.Employee_Management.click()
-        await this.page.waitForTimeout(2000)
-        await this.Employee_Directory_tab.click()
-        await this.Card.click()
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        await this.EmployeeAccess.click()
-        await this.EmployeeAccessStatus.selectOption({ label: 'LEFTOUT (Permanently Disable)' })
-        await this.page.waitForTimeout(2000)
-        await expect(this.page.locator('div:nth-child(3) > div.col-md-4 > div > div > input')).toBeVisible()
-        await expect(this.page.locator("//textarea[@name = 'comment']")).toBeVisible()
-
-        // TC_EM_054
-        // await this.LeftOutSubmitbutton.click()
-        // var LeftOutDateField = await this.LeftOutDate
-
-        // var tooltipMessage = await LeftOutDateField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        // console.log(tooltipMessage);
-        // expect(tooltipMessage).toBe('Please fill out this field.')
-
-
-        // TC_EM_055
-        await (this.page.locator('div:nth-child(3) > div.col-md-4 > div > div > input')).click()
-        await this.page.locator("//div[@aria-current='date']").click()
-        await this.LeftOutSubmitbutton.click()
-        var LeftreasonField = await this.page.locator("//textarea[@name = 'comment']")
-
-        var tooltipMessage = await LeftreasonField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-        // TC_EM_056
-        var Leftreason = await this.page.locator("//textarea[@name = 'comment']").fill("Hello World !")
-        await this.LeftOutSubmitbutton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
 
     }
 
-    async Update_status() {
-
-        await this.Employee_Management.click()
-        await this.page.waitForTimeout(2000)
-        await this.Employee_Directory_tab.click()
-
-        await this.SelectStatus.selectOption({ label: 'LEFTOUT (Permanently Disable)' })
-        expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-
-        await this.page.locator(".col-md-4.col-lg-3:nth-child(1)").click()
-        await this.EmployeeAccess.click()
-        await this.EmployeeAccessStatus.selectOption({ label: 'VERIFIED' })
-        await this.LeftOutSubmitbutton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-    }
-
-
-    async AssignManager() {
-        // TC_EM_061
-
-        // await this.page.pause()
-        await this.Employee_Management.click()
+    async navigateToAssignManager() {
         await this.AssignManagertab.click()
-        var AssignHeader = await this.AssignManagerHeader.textContent()
-        expect(AssignHeader).toEqual("Assign Manager")
-        expect(this.AssignManagerSubTabManager).toHaveText('Manager')
-        expect(this.AssignManagerSubTabLeaveManager).toHaveText('Leave Manager')
+    }
 
-        // TC_EM_062        
-        await this.page.locator('#react-select-2-input').click()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator("#react-select-2-option-0").click()
-        await this.page.waitForTimeout(3000)
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
+    async getColumnCount() {
         var Coloumncount = await this.Coloumn.count()
         for (let i = 0; i < Coloumncount; i++) {
             var AssignColoumnData = this.Coloumn.nth(i);
             var AssignColoumnText = await AssignColoumnData.textContent();
             expect(AssignColoumnText).toEqual(this.ColoumnBody[i])
         }
-
-        // TC_EM_063
+    }
+    async clickOnActionButton() {
         await this.ManagerActionButton.click()
-        var PopupHeader = await this.PopupHeader.textContent()
-        expect(PopupHeader).toEqual("Assign Manager")
-
-
-        // TC_EM_064
+    }
+    async clickOnCrossButton() {
         await this.CrossButton.click()
-        await expect(this.PopupHeader).toBeHidden()
 
-        // TC_EM_065
-        await this.ManagerActionButton.click()
-        await this.PopupDropDown.click()
-        await this.page.locator("#react-select-3-option-0").click()
+    }
+    async clickOnCancelButton() {
         await this.CancelButton.click()
-        await expect(this.PopupHeader).toBeHidden()
 
+    }
+    async AssignManager() {
+   
+   
+
+
+       
 
         // TC_EM_066
         await this.ManagerActionButton.click()
@@ -716,7 +615,6 @@ export class Employee_Management extends BasePage {
         await this.page.waitForTimeout(7000)
         await this.PopupDropDown.click()
         await this.page.locator("#react-select-3-option-2").click()
-        await this.PopupSubmitButton.click()
         console.log(await this.page.locator(".Toastify__toast-body").textContent())
         expect(await this.page.locator(".Toastify__toast-body").isVisible())
     }

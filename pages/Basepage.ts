@@ -49,18 +49,18 @@ export class BasePage extends CommonUtils {
 
 
   async getValidationMessage(locator: Locator) {
-    await locator.waitFor({state : 'visible' , timeout : 2000})
+    await locator.waitFor({ state: 'visible', timeout: 2000 })
     let tooltipMessage = await locator.evaluate(el => (el as HTMLInputElement).validationMessage);
     return tooltipMessage
 
   }
 
-  async getToastMessage() {
-    await this.toast.waitFor({ state: 'visible', timeout: 5000 })
-    let message = await this.toast.textContent()
-    console.debug(message)
-    return message
-  }
+  // async getToastMessage() {
+  //   await this.toast.waitFor({ state: 'visible', timeout: 5000 })
+  //   let message = await this.toast.textContent()
+  //   console.debug(message)
+  //   return message
+  // }
   async toastMessage() {
     await this.page.waitForSelector('.Toastify__toast-body')
     let message = await this.popUp.textContent()
