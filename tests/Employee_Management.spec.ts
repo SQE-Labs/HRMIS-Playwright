@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { BasePage } from '../pages/Basepage';
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
 import { AADHAAR_FIELD, FILL_FIELD, PANCARD_FIELD, PASSPORT_FIELD, SELECT_ITEM } from '../utils/constants';
@@ -100,13 +100,15 @@ test.describe("'Employee Management module'", () => {
     test("Verify Basic Info Accordion Toggle Behavior", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await expect(page.locator("#collapse1").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(1)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnBasicInfo()
-        await expect(page.locator("#collapse1").last()).toBeVisible()
+        await EmployeeDirectory.verifyCollapseIsHidden(1)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnBasicInfo()
-        await expect(page.locator("#collapse1").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(1)
+
     })
 
     test("verify Validation Message When First Name Is Cleared In BasicInfo", async ({ page }) => {
@@ -177,13 +179,16 @@ test.describe("'Employee Management module'", () => {
     test("Verify Work Accordion Toggle Behavior", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await expect(page.locator("#collapse2").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(2)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkAccordion()
-        await expect(page.locator("#collapse2").last()).toBeVisible()
+        await EmployeeDirectory.verifyCollapseIsHidden(2)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkAccordion()
-        await expect(page.locator("#collapse2").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(2)
+
     })
 
     test("verify Validation Message When WorkDate Is Cleared In Work", async ({ page }) => {
@@ -243,13 +248,16 @@ test.describe("'Employee Management module'", () => {
     test("Verify Personal Details Toggle Behavior", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await expect(page.locator("#collapse3").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(3)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnPersonalDetails()
-        await expect(page.locator("#collapse3").last()).toBeVisible()
+        await EmployeeDirectory.verifyCollapseIsHidden(3)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnPersonalDetails()
-        await expect(page.locator("#collapse3").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(3)
+
     })
 
     test("verify Validation Message When Date Is Cleared In Perosnal Details", async ({ page }) => {
@@ -407,13 +415,16 @@ test.describe("'Employee Management module'", () => {
     test("Verify Work Experience  Toggle Behavior", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await expect(page.locator("#collapse4").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(4)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkExperience()
-        await expect(page.locator("#collapse4").last()).toBeVisible()
+        await EmployeeDirectory.verifyCollapseIsHidden(4)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkExperience()
-        await expect(page.locator("#collapse4").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(4)
+
     })
 
     test("verify Employee have Education or not ", async ({ page }) => {
@@ -432,13 +443,15 @@ test.describe("'Employee Management module'", () => {
     test("Verify Education  Toggle Behavior", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await expect(page.locator("#collapse5").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(5)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnEducation()
-        await expect(page.locator("#collapse5").last()).toBeVisible()
+        await EmployeeDirectory.verifyCollapseIsHidden(5)
+
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnEducation()
-        await expect(page.locator("#collapse5").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(5)
+
     })
 
     test("verify Employee have Dependents or not ", async ({ page }) => {
@@ -457,13 +470,14 @@ test.describe("'Employee Management module'", () => {
     test("Verify Dependents  Toggle Behavior", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await expect(page.locator("#collapse6").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(6)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnDependents()
-        await expect(page.locator("#collapse6").last()).toBeVisible()
+        await EmployeeDirectory.verifyCollapseIsHidden(6)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnDependents()
-        await expect(page.locator("#collapse6").last()).toBeHidden()
+        await EmployeeDirectory.verifyCollapseIsHidden(6)
+
     })
 
     test("Navigating to the Employee Directory tab > Assigned Assets ", async ({ page }) => {
@@ -694,33 +708,7 @@ test.describe("'Employee Management module'", () => {
 
 
 
-
-    test("Assign Manager tab ", async ({ page }) => {
-        await EmployeeDirectory.AssignManager()
-    })
-    test("Assign Leave manager tab ", async ({ page }) => {
-        await EmployeeDirectory.Assign_Leave_Manager()
-    })
-
-    test("Promotion Management tab ", async ({ page }) => {
-        await EmployeeDirectory.Promotion_Management()
-    })
-
-    test("Documents Upload Tab", async ({ page }) => {
-        await EmployeeDirectory.Document_Upload()
-    })
-    test("Documents Upload Dropdown", async ({ page }) => {
-        await EmployeeDirectory.Document_Upload_DropDown()
-    })
-    test("Documents Upload upload button ", async ({ page }) => {
-        await EmployeeDirectory.Document_Upload_Upload_button()
-    })
-    test("Documents Upload upload button cancel button functionality ", async ({ page }) => {
-        await EmployeeDirectory.Document_Upload_Upload_button_Cancel_button()
-    })
-    test("Documents Upload upload button cross icon functionality ", async ({ page }) => {
-        await EmployeeDirectory.Document_Upload_Upload_button_cross_Icon()
-    })
+    
     test("Documents Upload PopUp Functionality ", async ({ page }) => {
         await EmployeeDirectory.Document_upload_PopUp_Functionality()
     })

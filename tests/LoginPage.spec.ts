@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import testData from '../testData/testData.json';
 // import dotenv from 'dotenv';
 // dotenv.config();

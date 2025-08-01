@@ -30,7 +30,7 @@ export class BasePage extends CommonUtils {
   }
   async waitForDotsLoaderToDisappear(): Promise<void> {
 
-    await this.threeDotLoader.waitFor({ state: 'detached' });
+    await this.threeDotLoader.first().waitFor({ state: 'detached' });
     //expect(this.threeDotLoader.first()).not.toBeAttached();
 
 

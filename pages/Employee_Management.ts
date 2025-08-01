@@ -66,7 +66,7 @@ export class Employee_Management extends BasePage {
     public Loader: Loader
     public LeftOutDate: Locator
     public LeftOutCommentField: Locator
-    public leftoutcurrentDate :Locator
+    public leftoutcurrentDate: Locator
     public Leftreason: Locator
     public LeftOutSubmitbutton: Locator
     public AssignManagertab: Locator
@@ -99,7 +99,7 @@ export class Employee_Management extends BasePage {
     public PromotionColoumn: Locator
     public PromotionColoumntext: string[]
     public Dropdown: Locator
-    public PromotionDropdownOption: Locator
+    public DropdownOption: Locator
     public PromoteButton: Locator
     public PromotionPopUpHeader: Locator
     public PromotionPopUpLabel: Locator
@@ -151,8 +151,8 @@ export class Employee_Management extends BasePage {
     public itemsPerPage: Locator
     public pageCount: Locator
     public leftOutCards: Locator
-    public selectEmployeeOption : Locator
-   
+    public selectEmployeeOption: Locator
+
 
     constructor(page: Page) {
         super(page)
@@ -275,7 +275,7 @@ export class Employee_Management extends BasePage {
         this.PromotionHeader = page.locator(".page-heading")
         this.PromotionColoumn = page.locator("thead>tr>th")
         this.Dropdown = page.locator("#react-select-2-input")
-        this.PromotionDropdownOption = page.locator("#react-select-2-option-0")
+        this.DropdownOption = page.locator("#react-select-2-option-0")
         this.PromoteButton = page.locator(".btn.btn-secondary")
         this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
         this.PromotionPopUpLabel = page.locator("div>label")
@@ -348,7 +348,7 @@ export class Employee_Management extends BasePage {
         this.LeftOutCommentField = page.locator("//textarea[@name = 'comment']")
         this.leftoutcurrentDate = page.locator("//div[@aria-current='date']")
         this.leftOutCards = page.locator(".col-md-4.col-lg-3")
-        this.selectEmployeeOption = page.locator("#react-select-2-option-0")
+        this.selectEmployeeOption = page.locator("#react-select-2-option-2")
     }
 
     async expandEmployeeManagementTab(): Promise<void> {
@@ -575,13 +575,14 @@ export class Employee_Management extends BasePage {
         await this.AssignManagertab.click()
     }
 
-    async getColumnCount() {
+    async  getColumnCount() {
         var Coloumncount = await this.Coloumn.count()
         for (let i = 0; i < Coloumncount; i++) {
             var AssignColoumnData = this.Coloumn.nth(i);
             var AssignColoumnText = await AssignColoumnData.textContent();
             expect(AssignColoumnText).toEqual(this.ColoumnBody[i])
         }
+        return Coloumncount
     }
     async clickOnActionButton() {
         await this.ManagerActionButton.click()
@@ -594,233 +595,131 @@ export class Employee_Management extends BasePage {
         await this.CancelButton.click()
 
     }
-    async AssignManager() {
-   
-   
 
-
-       
-
-        // TC_EM_066
-        await this.ManagerActionButton.click()
-        await this.PopupDropDown.click()
-        await this.page.locator("#react-select-3-option-0").click()
-        await this.PopupSubmitButton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
-
-
-        // TC_EM_067
-        await this.page.waitForTimeout(7000)
-        await this.PopupDropDown.click()
-        await this.page.locator("#react-select-3-option-2").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
+    async verifyCollapseIsHidden(value: number) {
+        await expect(this.page.locator(`#collapse${value}`).last()).toBeHidden()
     }
+    async selectionofAssignManager(value) {
+        await this.page.locator(`#react-select-3-option-${value}`).click()
 
-    async Assign_Leave_Manager() {
-        // TC_EM_071
-        await this.Employee_Management.click()
-        await this.AssignManagertab.click()
+    }
+    async selectionOfLeaveManager(value) {
+        await this.page.locator(`#react-select-4-option-${value}`).click()
+
+    }
+    async clickOnAssignManagerSubTabLeaveManager() {
         await this.AssignManagerSubTabLeaveManager.click()
-        let LeaveManagerHeader = await this.page.locator("(//h3[@class = 'heading'])[2]").textContent()
-        expect(LeaveManagerHeader).toEqual("Leave Manager")
-
-
-        // TC_EM_072
-        await this.LeaveManagerPopupDropDown.click()
-        await this.page.locator("#react-select-4-option-0").click()
-        await this.page.waitForTimeout(3000)
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        var Coloumncount = await this.Coloumn.count()
-        for (let i = 0; i < Coloumncount; i++) {
-            var LeaveManagerData = this.Coloumn.nth(i);
-            var LeaveManagerText = await LeaveManagerData.textContent();
-            expect(LeaveManagerText).toEqual(this.ColoumnBody[i])
+    }
+    async leaveManagerNotAssigned() {
+        let Coloumncount = await this.getColumnCount()
+        if (Coloumncount === 0) {
+            expect(this.noRecord(1)).toEqual("Leave manager not assigned")
+            await this.AssignButton.click()
+            await this.PopupDropDown.click()
+            await this.selectionofAssignManager(0)
+            await this.PopupSubmitButton.click()
+            let message = await this.toastMessage()
+            expect(message).toEqual("Successfully Assigned!")
         }
-        // TC_EM_073
-        await this.LeaveManagerActionButton.click()
-        var LeavePopupheader = await this.Pop_Up_Header.textContent()
-        expect(LeavePopupheader).toEqual("Are you sure you want to delete ?")
-
-        // TC_EM_074
+    }
+    async clickOnNOButton() {
         await this.NoButton.click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-
-        // TC_EM_075
-        await this.LeaveManagerActionButton.click()
-        await this.YesButton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        console.log(await this.page.locator("div>h4").textContent())
-        await expect(this.page.locator("div>h4")).toBeVisible()
-        await this.page.waitForTimeout(6000)
-
-        // TC_EM_076
-
-        await this.AssignButton.click()
-        console.log(await this.AssignManagerPopupHeader.textContent())
-        await expect(this.AssignManagerPopupHeader).toBeVisible()
-
-        // TC_EM_077
-        await this.AssignManagerPopupCrossicon.click()
-        await expect(this.AssignManagerPopupHeader).toBeHidden()
-
-
-        // TC_EM_078
-        await this.AssignButton.click()
-        await this.AssignManagerPopupCancleButton.click()
-        await expect(this.AssignManagerPopupHeader).toBeHidden()
-
-        // -----------------------------------------------------------
-        await this.AssignButton.click()
-        await this.AssignManagerPopupSubmitbutton.click()
-        await this.page.waitForSelector(".Toastify__toast-body")
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        await this.page.waitForTimeout(6000)
-        // -----------------------------------------------------------
-
-
-        // TC_EM_079
-        // Select himself as manager
-        await this.AssignManagerPopUpDropdown.click()
-        await this.page.locator("#react-select-5-option-0").click()
-        await this.AssignManagerPopupSubmitbutton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        await this.page.waitForTimeout(6000)
-
-        // TC_EM_080
-        await this.AssignManagerPopUpDropdown.click()
-        await this.AssignManagerPopupDropdownOption.click()
-        await this.AssignManagerPopupSubmitbutton.click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        await this.page.waitForTimeout(6000)
 
     }
 
+    async clickOnYesButton() {
+        await this.YesButton.click()
 
-    async Promotion_Management() {
-        // TC_EM_081
-        await this.Employee_Management.click()
+    }
+
+    // async Assign_Leave_Manager() {
+
+
+    //     await this.AssignButton.click()
+    //     console.log(await this.AssignManagerPopupHeader.textContent())
+    //     await expect(this.AssignManagerPopupHeader).toBeVisible()
+
+    //     // TC_EM_077
+    //     await this.AssignManagerPopupCrossicon.click()
+    //     await expect(this.AssignManagerPopupHeader).toBeHidden()
+
+
+    //     // TC_EM_078
+    //     await this.AssignButton.click()
+    //     await this.AssignManagerPopupCancleButton.click()
+    //     await expect(this.AssignManagerPopupHeader).toBeHidden()
+
+    //     // -----------------------------------------------------------
+    //     await this.AssignButton.click()
+    //     await this.AssignManagerPopupSubmitbutton.click()
+    //     await this.page.waitForSelector(".Toastify__toast-body")
+    //     console.log(await this.page.locator(".Toastify__toast-body").textContent())
+    //     expect(await this.page.locator(".Toastify__toast-body").isVisible())
+    //     await this.page.waitForTimeout(6000)
+    //     // -----------------------------------------------------------
+
+
+    //     // TC_EM_079
+    //     // Select himself as manager
+    //     await this.AssignManagerPopUpDropdown.click()
+    //     await this.page.locator("#react-select-5-option-0").click()
+    //     await this.AssignManagerPopupSubmitbutton.click()
+    //     console.log(await this.page.locator(".Toastify__toast-body").textContent())
+    //     expect(await this.page.locator(".Toastify__toast-body").isVisible())
+    //     await this.page.waitForTimeout(6000)
+
+    //     // TC_EM_080
+    //     await this.AssignManagerPopUpDropdown.click()
+    //     await this.AssignManagerPopupDropdownOption.click()
+    //     await this.AssignManagerPopupSubmitbutton.click()
+    //     console.log(await this.page.locator(".Toastify__toast-body").textContent())
+    //     expect(await this.page.locator(".Toastify__toast-body").isVisible())
+    //     await this.page.waitForTimeout(6000)
+
+    // }
+
+    async navigateToPromotionManagement() {
         await this.PromotionManagement.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        console.log(await this.PromotionHeader.textContent())
-        await expect(this.PromotionHeader).toBeVisible()
-
-        // TC_EM_082
-        await this.Dropdown.click()
-        await this.PromotionDropdownOption.click()
-        var PromotionColoumnCount = await this.PromotionColoumn.count()
-        for (let i = 0; i < PromotionColoumnCount; i++) {
-            var coloumnText = await this.PromotionColoumn.nth(i).textContent()
-            expect(coloumnText).toEqual(this.PromotionColoumntext[i])
-        }
-
-        // TC_EM_083
-        await this.PromoteButton.click()
-        await expect(this.Loader.getThreeDotLoader()).not.toBeAttached()
-        console.log(await this.PromotionPopUpHeader.textContent())
-        expect(this.PromotionPopUpHeader).toBeVisible()
+    }
+    async getLabelCount() {
         let labelcount = await this.PromotionPopUpLabel.count()
         for (let i = 0; i < labelcount; i++) {
             let labelText = await this.PromotionPopUpLabel.nth(i).textContent()
             console.log(labelText)
         }
 
-        // TC_EM_084
-        await this.CrossButton.click()
-        await expect(this.PromotionPopUpHeader).toBeHidden()
+    }
 
-        // TC_EM_085
-        await this.PromoteButton.click()
-        await this.page.waitForTimeout(1000)
-        await this.PromotionCancelButton.click()
-        await expect(this.PromotionPopUpHeader).toBeHidden()
-
-        // TC_EM_086
-        await this.PromoteButton.click()
-        await this.DepartmentDropdown.selectOption({ value: '5' })
-        await this.page.waitForTimeout(7000)
+    async getDesignationoptionCount() {
         let DesignationoptionCount = await this.DesignationDropDownOptions.count()
         console.log(DesignationoptionCount)
         for (let i = 0; i < DesignationoptionCount; i++) {
             let DesignationOptionText = await this.DesignationDropDownOptions.nth(i).textContent()
             console.log(DesignationOptionText)
         }
-
-        // TC_EM_087
-        await this.DesignationDropdown.selectOption({ label: 'Sr. Solution Architect' })
-        await this.PromoteEmployeePopUpSubmitButton.click()
-        await this.page.waitForTimeout(500)
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
     }
-
-    async Document_Upload() {
-        // TC_EM_088
-        await this.Employee_Management.click()
-        await this.Document_upload_Tab.click()
-        await expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.Document_upload_Header.isVisible()
-        var header = await this.Document_upload_Header.textContent()
-        expect(header).toEqual("Document Upload")
-
-    }
-    async Document_Upload_DropDown() {
-        // TC_EM_089
-        await this.Employee_Management.click()
-        await this.Document_upload_Tab.click()
-        expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.Dropdown.click()
-        await this.page.locator("#react-select-2-option-0").click()
-        await this.page.waitForTimeout(1000)
-        var ColoumnCount = await this.Document_Upload_Column.count()
-        console.log(ColoumnCount)
-        for (let i = 0; i < ColoumnCount; i++) {
-            var coloumnText = await this.Document_Upload_Column.nth(i).textContent()
-            console.log(coloumnText)
-            expect(coloumnText).toEqual(this.Document_Upload_Column_text[i])
+    async LeaveManagerData() {
+        var Coloumncount = await this.Coloumn.count()
+        for (let i = 0; i < Coloumncount; i++) {
+            var LeaveManagerData = this.Coloumn.nth(i);
+            var LeaveManagerText = await LeaveManagerData.textContent();
+            expect(LeaveManagerText).toEqual(this.ColoumnBody[i])
         }
     }
 
-    async Document_Upload_Upload_button() {
-        // TC_EM_090
-        await this.Employee_Management.click()
+    async navigateToDocumentUploadTab() {
         await this.Document_upload_Tab.click()
-        expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.Dropdown.click()
-        await this.page.locator("#react-select-2-option-0").click()
-        await this.page.waitForTimeout(1000)
-        await this.Upload_Icon.click()
-
-        var PopUp_Header = await this.PopUp_Header.textContent()
-        await this.PopUp_Header.isVisible()
-        expect(PopUp_Header).toEqual("Upload Document Action")
-
     }
-    async Document_Upload_Upload_button_Cancel_button() {
-        // TC_EM_091
-        await this.Document_Upload_Upload_button()
-        await this.page.waitForTimeout(2000)
-        await this.Popup_Cancel_button.click()
-        await this.PopUp_Header.isHidden()
 
-    }
-    async Document_Upload_Upload_button_cross_Icon() {
-        // TC_EM_092
-        await this.Document_Upload_Upload_button()
-        await this.page.waitForTimeout(2000)
-        await this.Popup_Cross_button.click()
-        await this.PopUp_Header.isHidden()
-    }
+
+
+
+  
+    
+   
 
     async Document_upload_PopUp_Functionality() {
         // TC_EM_093
-        await this.Document_Upload_Upload_button()
         await this.page.waitForTimeout(200)
         await this.PopUP_Submit_button.click()
         var ChooseFileField = await this.Choose_file

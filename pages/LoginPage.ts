@@ -26,15 +26,4 @@ export class LoginPage extends BasePage {
         await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForLoadState('networkidle');
     }
-    async loginUsingJson(page: Page, loginObj: string) {
-        //json paarsingl;
-
-        // const user = users[username];
-
-        // if (!user) {
-        //     throw new Error(`User '${username}' not found in LoginDetail.json`);
-        // }
-
-        // await this.validLogin(user.UserEmail, user.UserPassword);
-    }
 }
