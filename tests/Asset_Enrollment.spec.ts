@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import { AssetEnrollment } from '../pages/New_Asset_Enrollment';
 import testData from '../testData/testData.json';
 import { ASSET_TYPE_COLUMN_LEFT, EXISTINGSERIALNUMBER_COLUMN, FILL_FIELD, MANUFRACTURE_COLUMN, MODEL_COLUMN, NONEXISTINGASSETTYPE_COLUMN, NOUNIT_COLUMN, OWNER_COLUMN, PROCESSOR_COLUMN, PURCHASE_COLUMN, SELECT_ITEM, SERIALNUMBER_COLUMN, SUPEROWNER_COLUMN, UNSUPPORTED_FILE, VALID_XLSX_FILE, WARRANTY_COLUMN } from '../utils/constants';
@@ -199,7 +199,7 @@ test.describe('Asset Enrollment Page', () => {
     test('User try to enter Existing Serial number', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '13')
         await assetEnrollment.clickOnSubmitButton();
-        expect(await assetEnrollment.getToastMessage()).toEqual("The serial number provided is a duplicate; an asset with this serial number already exists")
+        expect(await assetEnrollment.toastMessage()).toEqual("The serial number provided is a duplicate; an asset with this serial number already exists")
 
     })
 
@@ -699,7 +699,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow.last())//checking asc sort
         await assetEnrollment.clickApproveRequestDateHeader()
         await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow.last(), "dsc")
-   
+
         // Comment Header
         let commentrow = page.locator("tr>th:nth-child(5)").last()
         await assetEnrollment.clickApproveCommentHeader()

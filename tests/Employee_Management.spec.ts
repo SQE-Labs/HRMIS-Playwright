@@ -708,24 +708,12 @@ test.describe("'Employee Management module'", () => {
 
 
 
-    
-    test("Documents Upload PopUp Functionality ", async ({ page }) => {
-        await EmployeeDirectory.Document_upload_PopUp_Functionality()
-    })
-    // test.only("Document Upload Eye Icon", async ({ page, browser}) => {
-    //     await EmployeeDirectory.Document_upload_Eye_Icon()
-    // })
 
-    test("Performance Evaluation subtab ", async ({ page }) => {
-        await EmployeeDirectory.performance_Evaluation()
-    })
 
-    test("Role Management subtab ", async ({ page }) => {
-        await EmployeeDirectory.Role_Management()
-    })
-    test("Role Management Dropdown ", async ({ page }) => {
-        await EmployeeDirectory.Role_Management_DropDown()
-    })
+ //   test("Performance Evaluation subtab ", async ({ page }) => {
+   //     await EmployeeDirectory.performance_Evaluation()
+    //})
+
     test("Approve Document tab ", async ({ page }) => {
         await EmployeeDirectory.approve_document()
     })

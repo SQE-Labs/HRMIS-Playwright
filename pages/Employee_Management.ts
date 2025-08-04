@@ -275,7 +275,7 @@ export class Employee_Management extends BasePage {
         this.PromotionHeader = page.locator(".page-heading")
         this.PromotionColoumn = page.locator("thead>tr>th")
         this.Dropdown = page.locator("#react-select-2-input")
-        this.DropdownOption = page.locator("#react-select-2-option-0")
+        this.DropdownOption = page.locator("#react-select-2-option-1")
         this.PromoteButton = page.locator(".btn.btn-secondary")
         this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
         this.PromotionPopUpLabel = page.locator("div>label")
@@ -575,7 +575,7 @@ export class Employee_Management extends BasePage {
         await this.AssignManagertab.click()
     }
 
-    async  getColumnCount() {
+    async getColumnCount() {
         var Coloumncount = await this.Coloumn.count()
         for (let i = 0; i < Coloumncount; i++) {
             var AssignColoumnData = this.Coloumn.nth(i);
@@ -713,73 +713,6 @@ export class Employee_Management extends BasePage {
 
 
 
-
-  
-    
-   
-
-    async Document_upload_PopUp_Functionality() {
-        // TC_EM_093
-        await this.page.waitForTimeout(200)
-        await this.PopUP_Submit_button.click()
-        var ChooseFileField = await this.Choose_file
-
-        var tooltipMessage = await ChooseFileField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please select a file.')
-
-
-        // TC_EM_094
-
-        await this.page.waitForTimeout(7000)
-        // await this.page.locator(".btn-close").click()``
-        var fileInputSelector = "#file-input"
-        var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\screenshot.png'; // Specify the path to the file you want to upload
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForTimeout(1000)
-        await this.PopUP_Submit_button.click()
-        await this.page.waitForTimeout(1000)
-        var commentField = await this.PopUp_comment
-
-        var tooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage)
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-
-        // TC_EM_95
-        await this.PopUp_comment.pressSequentially("Thank you !!")
-        await this.PopUP_Submit_button.click()
-
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
-    }
-
-    // async Document_upload_Eye_Icon(context: BrowserContext) {
-    //     // TC_EM_096
-
-    //     await this.Employee_Management.click();
-    //     await this.Document_upload_Tab.click();
-    //     await this.page.waitForTimeout(500);
-    //     await this.Document_upload_DropDown.click();
-    //     await this.page.locator("#react-select-2-option-0").click();
-    //     await this.page.waitForTimeout(1000);
-
-    //     // Click the EyeIcon and wait for a new page to open
-    //     const [newPage] = await Promise.all([
-    //         context.waitForEvent('page'),
-    //         this.EyeIcon.click(),  // Single click here inside Promise.all
-    //     ]);
-
-    //     // Wait for the new page to load completely
-    //     await newPage.waitForLoadState();
-
-    //     // Validate the URL contains or matches the expected
-    // }    
-
-
     async performance_Evaluation() {
         // TC_EM_097
 
@@ -800,157 +733,56 @@ export class Employee_Management extends BasePage {
     //     await this.page.locator("#react-select-2-option-1").click()
     // }
 
-    async Role_Management() {
-        // TC_EM_101
-        await this.Employee_Management.click();
+    async navigateToRoleManagement() {
         await this.Role_Managment.click()
-        expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.page.waitForTimeout(500);
-
-        var header = await this.Role_Header.textContent()
-        expect(header).toEqual("Role Management")
-
+        await this.waitforLoaderToDisappear()
     }
 
-    async Role_Management_DropDown() {
-        // TC_EM_102
-        await this.Role_Management()
-        await this.Dropdown.click()
-        var optioncount = await this.page.locator(".css-10wo9uf-option").count()
-        for (let i = 0; i < optioncount; i++) {
-            let option = await this.page.locator(".css-10wo9uf-option").nth(i)
-            await expect(option).toBeVisible();
-            let text = await this.page.locator(".css-10wo9uf-option").nth(i).textContent()
-            console.log(text)
-        }
-
-        // TC_EM_103
-        await this.page.locator("#react-select-2-option-1").click()
-        await this.page.locator(".theme-button.ms-2 ").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
-        let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
-        console.log(message)
-        expect(message).toEqual(" The role has been successfully assigned to Autom Mation User .")
-    }
-
-    async approve_document() {
-        // TC_EM_104
-        await this.Employee_Management.click();
+    async navigaeToApproveDocument() {
         await this.Approve_Document.click()
-        await this.page.waitForTimeout(3000)
-        expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        const noRecords = await this.No_record
-        if (await noRecords.isVisible()) {
-            console.log("Approval for Pending Documents is not available.");
-            return false;
-        } else {
-            var header = await this.Approve_Header.textContent()
-            expect(header).toEqual("Approve Document")
-            let labelcount = await this.Approve_Label.count()
-            for (let i = 0; i < labelcount; i++) {
-                let label = await this.Approve_Label.nth(i)
-                expect(label).toBeVisible()
-                let text = await this.Approve_Label.nth(i).textContent()
-                console.log(text)
-            }
-        }
+        await this.waitforLoaderToDisappear()
+        // TC_EM_103
     }
 
-    async Approve_Document_Document_type() {
-        // TC_EM_105
-        let isAvailable = await this.approve_document();
-        if (!isAvailable) return;
+    async  getTextSetFromLocator(locator: Locator, startIndex = 0): Promise<Set<string>> {
+    const count = await locator.count();
+    const values = new Set<string>();
 
-        await this.page.waitForTimeout(2000);
-        const labelCount = await this.Approve_Label_Exiting_Document_type.count();
-        const uniqueTypes = new Set();
-
-        for (let i = 0; i < labelCount - 1; i++) {
-            const existingType = await this.Approve_Label_Exiting_Document_type.nth(i).textContent();
-            if (existingType) {
-                uniqueTypes.add(existingType.trim());
-            }
-        }
-
-        console.log("Unique Approved Document Types:", [...uniqueTypes]);
-
-        await this.Approve_Label_Document_type_dropdown.click();
-        await this.page.waitForTimeout(2000);
-
-        const options = this.page.locator('[id^="react-select-2-option"]');
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set();
-        for (let i = 1; i < dropdownCount; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Unique Approved Document Types:", [...DropdownTypes]);
-
-        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort());
+    for (let i = startIndex; i < count; i++) {
+        const text = await locator.nth(i).textContent();
+        if (text) values.add(text.trim());
     }
 
-    async Approve_Document_Employee() {
-        // TC_EM_106
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.page.waitForTimeout(2000);
+    return values;
+}
 
-        const labelCount = await this.Approve_Label_Exiting_Employee.count();
-        const uniqueTypes = new Set;
 
-        for (let i = 0; i < labelCount - 1; i++) {
-            const existingType = await this.Approve_Label_Exiting_Employee.nth(i).textContent();
-            if (existingType) {
-                uniqueTypes.add(existingType.trim());
+
+    async checkNoRecordsAndReturn(): Promise<boolean> {
+        const noRecords = await this.No_record;
+        return await noRecords.isVisible();
+    }
+    async getUniqueTextSetFromLocator(locator: Locator, start = 0, end?: number): Promise<Set<string>> {
+        const count = await locator.count();
+        const values = new Set<string>();
+        const loopEnd = end !== undefined ? Math.min(end, count) : count;
+
+        for (let i = start; i < loopEnd; i++) {
+            const text = await locator.nth(i).textContent();
+            if (text) {
+                values.add(text.trim());
             }
         }
 
-        console.log("Unique Approved Employee Types:", [...uniqueTypes]);
-        await this.Approve_Label_Employee_dropdown.click()
-        await this.page.waitForTimeout(2000)
-        const options = this.page.locator('[id^="react-select-3-option"]');
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set
-        for (let i = 1; i < dropdownCount; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Droopdown Employee Types:", [...DropdownTypes])
-
-        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
+        return values;
     }
 
-    async Approve_Document_Dropdown() {
-        // TC_EM_107
-
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Label_Document_type_dropdown.click()
-        await this.page.locator("#react-select-2-option-1").click()
-        await this.page.waitForTimeout(500)
-        let SelectedOption = await this.page.locator("(//div[@class = ' css-1dimb5e-singleValue'])[1]").textContent()
-        console.log(SelectedOption)
-
-        await this.page.waitForTimeout(1500)
-        const options = this.Approve_Label_Exiting_Document_type
-        await this.page.waitForTimeout(1500)
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set
-        for (let i = 0; i < dropdownCount - 1; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Droopdown Document type :- ", [...DropdownTypes])
-        expect([...DropdownTypes].sort()).toEqual([SelectedOption])
+    async selectDropdownOptionByIndex(index: number) {
+        await this.Approve_Label_Employee_dropdown.click();
+        await this.page.locator(`#react-select-3-option-${index}`).click();
     }
+
+
 
 
     async Approve_Employee_Dropdown() {

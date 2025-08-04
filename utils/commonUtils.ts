@@ -80,8 +80,8 @@ export class CommonUtils {
     async uploadAndVerifyFile(
         fileName: string,
         page: Page,
-        submitButton: Locator,
-        popupMessage: Locator
+        submitButton?: Locator,
+        popupMessage?: Locator
     ) {
         let fileInputSelector = "//input[@type = 'file']"
         // Construct full cross-platform file path
@@ -91,7 +91,8 @@ export class CommonUtils {
         expect(fs.existsSync(filePath)).toBe(true);
         const fileStats = fs.statSync(filePath);
         expect(fileStats.size).toBeGreaterThan(0);
-        expect(path.extname(filePath)).toMatch(/\.xlsx|\.docx/); // adjust if needed
+        expect(path.extname(filePath)).toMatch(/\.(xlsx|docx|png)$/);
+
 
         // Upload file
         await page.setInputFiles(fileInputSelector, filePath);
