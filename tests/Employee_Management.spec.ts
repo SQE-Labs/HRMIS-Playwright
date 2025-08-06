@@ -713,37 +713,8 @@ test.describe("'Employee Management module'", () => {
  //   test("Performance Evaluation subtab ", async ({ page }) => {
    //     await EmployeeDirectory.performance_Evaluation()
     //})
-
-    test("Approve Document tab ", async ({ page }) => {
-        await EmployeeDirectory.approve_document()
-    })
-    test("Approve Document Document type ", async ({ page }) => {
-        await EmployeeDirectory.Approve_Document_Document_type()
-    })
-    test("Approve Document Employee ", async ({ page }) => {
-        await EmployeeDirectory.Approve_Document_Employee()
-    })
-    test("Approve Document Dropdown ", async ({ page }) => {
-        await EmployeeDirectory.Approve_Document_Dropdown()
-    })
-    test("Approve Employee Dropdown ", async ({ page }) => {
-        await EmployeeDirectory.Approve_Employee_Dropdown()
-    })
-    test("Approve Action Button ", async ({ page }) => {
-        await EmployeeDirectory.Approve_Document_Action_button()
-    })
-    test("Approve Cancel button ", async ({ page }) => {
-        await EmployeeDirectory.Action_button_popup_cancel()
-    })
-    test("Approve Cross Icon ", async ({ page }) => {
-        await EmployeeDirectory.Action_button_popup_Cross_icon()
-    })
-    test("Approve Popup Approve functionaliy ", async ({ page }) => {
-        await EmployeeDirectory.Action_Button_Popup_Approved()
-    })
-    test("Approve Popup Rejected functionality ", async ({ page }) => {
-        await EmployeeDirectory.Action_Button_Popup_Rejected()
-    })
+  
+    
     test("Departments  ", async ({ page }) => {
         await EmployeeDirectory.Department()
     })

@@ -744,17 +744,17 @@ export class Employee_Management extends BasePage {
         // TC_EM_103
     }
 
-    async  getTextSetFromLocator(locator: Locator, startIndex = 0): Promise<Set<string>> {
-    const count = await locator.count();
-    const values = new Set<string>();
+    async getTextSetFromLocator(locator: Locator, startIndex = 0): Promise<Set<string>> {
+        const count = await locator.count();
+        const values = new Set<string>();
 
-    for (let i = startIndex; i < count; i++) {
-        const text = await locator.nth(i).textContent();
-        if (text) values.add(text.trim());
+        for (let i = startIndex; i < count; i++) {
+            const text = await locator.nth(i).textContent();
+            if (text) values.add(text.trim());
+        }
+
+        return values;
     }
-
-    return values;
-}
 
 
 
@@ -783,153 +783,14 @@ export class Employee_Management extends BasePage {
     }
 
 
-
-
-    async Approve_Employee_Dropdown() {
-        // TC_EM_108
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Label_Employee_dropdown.click()
-        await this.page.locator("#react-select-3-option-2").click()
-        await this.page.waitForTimeout(500)
-        let SelectedOption = await this.page.locator("(//div[@class = ' css-1dimb5e-singleValue'])[2]").textContent()
-        console.log(SelectedOption)
-
-        await this.page.waitForTimeout(1500)
-        const options = this.Approve_Label_Exiting_Employee
-        await this.page.waitForTimeout(1500)
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set
-        for (let i = 0; i < dropdownCount - 1; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Droopdown Document type :- ", [...DropdownTypes])
-        expect([...DropdownTypes].sort()).toEqual([SelectedOption])
+    async navigateToDepartments() {
+        // TC_EM_11;
+        await this.Departments.click()
+        await this.waitforLoaderToDisappear()
     }
 
-    async Approve_Document_Action_button() {
-        // TC_EM_109
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Action_button.click()
-        await this.page.waitForTimeout(1000)
-        await this.Action_Button_popup.isVisible()
-        let header = await this.Action_Button_popup.textContent()
-        console.log(header)
-        expect(header).toEqual('Verify Document')
-    }
-
-    async Action_button_popup_cancel() {
-        // TC_EM_110
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        await this.page.locator(".cancel-approve").click()
-        await this.page.waitForTimeout(1000)
-        expect(await this.Action_Button_popup.isHidden()).toBe(true)
-    }
-    async Action_button_popup_Cross_icon() {
-        // TC_EM_111
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        await this.page.locator(".btn-close").click()
-        await this.page.waitForTimeout(1000)
-        expect(await this.Action_Button_popup.isHidden()).toBe(true)
-    }
-
-    async Action_Button_Popup_Approved() {
-        // TC_EM_112
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        try {
-            const [download] = await Promise.all([
-                this.page.waitForEvent("download", { timeout: 5000 }), // Reduced timeout for efficiency
-                this.View_button.click()
-            ]);
-
-            const downloadedFile = download.suggestedFilename();
-            console.log("Downloaded file:", downloadedFile);
-
-            // Ensure the file has a .xlsx extension
-            if (!downloadedFile) {
-                throw new Error(`Invalid file extension: ${downloadedFile}`);
-            }
-
-            // Define file save path
-            const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
-            await download.saveAs(downloadPath);
-
-            // Verify the file exists
-            if (fs.existsSync(downloadPath)) {
-                console.log(`File successfully downloaded: ${downloadPath}`);
-            } else {
-                throw new Error("Error: Downloaded file not found in expected location!");
-            }
-
-            // Assertion to confirm successful XLSX file download
-            expect(fs.existsSync(downloadPath)).toBeTruthy();
-        } catch (error) {
-            console.error("Error during file download:", error);
-        }
-
-        // TC_EM_113
-        await this.page.waitForTimeout(2000)
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        let Select_action_Dropdown_field = await this.Select_action_dropdown
-
-        var tooltipMessage = await Select_action_Dropdown_field.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-        await this.page.waitForTimeout(500)
-        // TC_EM_114 -- TC_EM_115
-        await this.Select_action_dropdown.selectOption({ value: 'approved' })
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-    }
-
-    async Action_Button_Popup_Rejected() {
-        // TC_EM_116
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        await this.Select_action_dropdown.selectOption({ value: 'rejected' })
-        await this.page.waitForTimeout(1000)
-        await this.Reason_Section.isVisible()
-
-        // TC_EM_117
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        let Reason_Section_Dropdown_field = await this.Reason_Section
-        var tooltipMessage = await Reason_Section_Dropdown_field.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.page.waitForTimeout(1000)
-
-        // TC_EM_118
-        await this.Reason_Section.fill("Thank you !!")
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-    }
-    async Department() {
-        // TC_EM_119
-        await this.Employee_Management.click();
-        this.Departments.click()
-        await this.page.waitForTimeout(4000)
-        expect(await this.Departments_Header.isVisible())
-        let header = await this.Departments_Header.textContent()
-        expect(header).toEqual('Departments')
-
-    }
     async Department_No_of_records() {
         // TC_EM_120
-        await this.Department()
-        await this.page.waitForTimeout(2000)
         let Name_count = await this.Department_name.count()
         await this.page.waitForTimeout(2000)
         console.log(Name_count)
@@ -937,6 +798,7 @@ export class Employee_Management extends BasePage {
         let totalNameCount = total_name.length > 0 ? parseInt(total_name[0].replace(/\D/g, ''), 10) : 0;
         await this.page.waitForTimeout(2000)
         console.log("TotalAsset :  ", totalNameCount)
+        return {Name_count , totalNameCount}
     }
     async Departments_Search_Bar_Valid() {
         // TC_EM_121

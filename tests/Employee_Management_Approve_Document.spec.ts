@@ -3,6 +3,8 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
+import { CommonUtils } from '../utils/commonUtils';
+import { FILL_FIELD, SELECT_ITEM } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management > Assign Manager module'", () => {
@@ -19,20 +21,16 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("Approve Document Tab", async ({ page }) => {
-        const noRecords = await EmployeeDirectory.No_record
-        if (await noRecords.isVisible()) {
-            console.log("Approval for Pending Documents is not available.");
-            return false;
-        } else {
-            var header = await EmployeeDirectory.Approve_Header.textContent()
-            expect(header).toEqual("Approve Document")
-            let labelcount = await EmployeeDirectory.Approve_Label.count()
-            for (let i = 0; i < labelcount; i++) {
-                let label = await EmployeeDirectory.Approve_Label.nth(i)
-                expect(label).toBeVisible()
-                let text = await EmployeeDirectory.Approve_Label.nth(i).textContent()
-                console.log(text)
-            }
+        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+
+        var header = await EmployeeDirectory.Approve_Header.textContent()
+        expect(header).toEqual("Approve Document")
+        let labelcount = await EmployeeDirectory.Approve_Label.count()
+        for (let i = 0; i < labelcount; i++) {
+            let label = await EmployeeDirectory.Approve_Label.nth(i)
+            expect(label).toBeVisible()
+            let text = await EmployeeDirectory.Approve_Label.nth(i).textContent()
+            console.log(text)
         }
     })
 
@@ -124,5 +122,54 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await page.waitForTimeout(2000);
         expect(await EmployeeDirectory.Action_Button_popup.isHidden()).toBe(true);
     });
+
+    test("should download file after clicking View button", async ({ page }) => {
+        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        await EmployeeDirectory.Action_button.click();
+        await EmployeeDirectory.waitforLoaderToDisappear();
+        await EmployeeDirectory.verifyXLSXDownload(page, async () => {
+            await EmployeeDirectory.View_button.click();
+        });
+    })
+
+    test("should show validation message when action is not selected", async ({ page }) => {
+        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        await EmployeeDirectory.Action_button.click();
+        await EmployeeDirectory.waitforLoaderToDisappear();
+        await EmployeeDirectory.PopUP_Submit_button.click();
+        const message = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.Select_action_dropdown)
+        expect(message).toEqual(SELECT_ITEM);
+    })
+
+
+    test("should change document status to approved and show success toast", async ({ page }) => {
+        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        await EmployeeDirectory.Action_button.click();
+        await EmployeeDirectory.waitforLoaderToDisappear();
+        await EmployeeDirectory.PopUP_Submit_button.click();
+        await EmployeeDirectory.waitforLoaderToDisappear();
+        const message = await EmployeeDirectory.toastMessage()
+        console.log("Toast Message:", message);
+        expect(message).toEqual("Document Approval Status Changed to approved");
+    })
+
+    test("should validate rejection reason and change status to rejected", async ({ page }) => {
+        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        await EmployeeDirectory.Action_button.click();
+        await EmployeeDirectory.waitforLoaderToDisappear();
+        await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'rejected' })
+
+        await expect(EmployeeDirectory.Reason_Section).toBeVisible();
+        await EmployeeDirectory.PopUP_Submit_button.click();
+        let message1 = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.Reason_Section)
+        expect(message1).toEqual(FILL_FIELD);
+
+        await EmployeeDirectory.Reason_Section.fill("Test reason for rejection");
+        await EmployeeDirectory.PopUP_Submit_button.click();
+        await EmployeeDirectory.waitforLoaderToDisappear();
+        let message2 = await EmployeeDirectory.toastMessage()
+        console.log("Toast Message:", message2);
+        expect(message2).toEqual("Document Approval Status Changed to rejected");
+    })
 
 })

@@ -25,8 +25,9 @@ export class CommonUtils {
 
         const fileStats = fs.statSync(downloadPath);
         expect(fileStats.size).toBeGreaterThan(0);
+        const allowedExtensions = ['.xlsx', '.jpeg', '.jpg', '.png', '.pdf'];
 
-        expect(path.extname(downloadedFile)).toBe('.xlsx');
+        expect(allowedExtensions).toContain(path.extname(downloadedFile));
         console.log(`File successfully downloaded: ${downloadPath}`);
 
         fs.unlinkSync(downloadPath);

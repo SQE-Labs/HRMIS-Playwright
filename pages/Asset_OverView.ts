@@ -352,67 +352,6 @@ export class OverView extends AssetManagementTab {
 
     }
 
-    async exportFilteredAssets(): Promise<void> {
-        const totalAssetsAfterFilter = await this.getTotalAssetCount();
-        const noRecordText = "No Record Available!";
-        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
-
-        let emptyRecordText = "";
-        if (noRecordElement) {
-            emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
-        }
-
-        if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
-            console.debug("Case 1: No records available after filtering.");
-            const downloadPromise = this.page.waitForEvent('download').catch(() => null);
-            await this.exportButton.click();
-            await this.page.waitForTimeout(1500);
-
-            try {
-                await expect(this.alert.getAlertElement()).toBeVisible();
-                const alertMessage = await this.alert.getAlertText();
-                console.debug("Alert message appeared as expected:", alertMessage);
-                expect(alertMessage).toContain(noRecordText);
-                console.debug("Export did NOT trigger a file download. Everything is correct.");
-            } catch {
-                const download = await downloadPromise;
-                if (download) {
-                    console.warn("File was downloaded when no records were available!");
-                } else {
-                    console.warn("Neither an alert appeared nor was a file downloaded.");
-                }
-            }
-        } else {
-            console.debug("Case 2: Records found. Proceeding with export...");
-            try {
-                const [download] = await Promise.all([
-                    this.page.waitForEvent("download", { timeout: 2000 }),
-                    this.exportButton.click()
-                ]);
-
-                const downloadedFile = download.suggestedFilename();
-                console.debug("Downloaded file:", downloadedFile);
-
-                if (!downloadedFile.endsWith(".xlsx")) {
-                    throw new Error(`Invalid file extension: ${downloadedFile}`);
-                }
-
-                const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
-                await download.saveAs(downloadPath);
-
-                if (fs.existsSync(downloadPath)) {
-                    console.debug(`✅ File successfully downloaded: ${downloadPath}`);
-                } else {
-                    throw new Error("❌ Downloaded file not found!");
-                }
-
-                expect(fs.existsSync(downloadPath)).toBeTruthy();
-            } catch (error) {
-                console.error("Error during file download:", error);
-            }
-        }
-    }
-
     async clickManfHeader() {
         await this.page.locator(`tr>th:nth-child(2)`).click();
     }
