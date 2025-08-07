@@ -4,6 +4,7 @@ import * as path from 'path';
 import { expect, Page, Download, Locator } from '@playwright/test';
 
 export class CommonUtils {
+
     async verifyXLSXDownload(page: Page, exportTrigger: () => Promise<void>): Promise<void> {
         const [download] = await Promise.all([
             page.waitForEvent('download', { timeout: 5000 }),
@@ -81,7 +82,7 @@ export class CommonUtils {
         fileName: string,
         page: Page,
         submitButton: Locator,
-        popupMessage: Locator
+        popupMessage?: Locator
     ) {
         let fileInputSelector = "//input[@type = 'file']"
         // Construct full cross-platform file path
@@ -91,18 +92,15 @@ export class CommonUtils {
         expect(fs.existsSync(filePath)).toBe(true);
         const fileStats = fs.statSync(filePath);
         expect(fileStats.size).toBeGreaterThan(0);
-        expect(path.extname(filePath)).toMatch(/\.xlsx|\.docx/); // adjust if needed
+        expect(path.extname(filePath)).toMatch(/\.xlsx|\.docx|\.pdf/); // adjust if needed
 
         // Upload file
         await page.setInputFiles(fileInputSelector, filePath);
         await page.waitForSelector(fileInputSelector, { state: 'attached' });
 
-        
-        
-        
-        
+
         // Submit
-        // await submitButton.click();
+        await submitButton.click();
         // await popupMessage.waitFor({ state: 'visible' });
 
         // // Log result
@@ -113,4 +111,42 @@ export class CommonUtils {
         // await page.locator(".btn-close").click();
         // await page.waitForTimeout(500);
     }
+
+
+    async openYopmailandNavigaeToVerifyPopup(yopmailUrl: string, context, emailID?: string) {
+
+        // 1.  open new tab for Yopmail
+        const yopmailPage = await context.newPage();
+        await yopmailPage.goto(yopmailUrl);
+
+        // 2. Click the first email (in ifinbox iframe)
+        const inboxFrame = yopmailPage.frameLocator('iframe#ifinbox');
+        await inboxFrame.locator('text=HRMIS SYSTEM').first().click();
+
+        // switch to email content
+        const mailFrame = yopmailPage.frameLocator('iframe#ifmail');
+
+        // wait for and click the Onboard Employee Form link
+        const onboardLink = mailFrame.locator('text=Onboard Employee Form');
+
+        const [newTab] = await Promise.all([
+            // waits for new tab
+            context.waitForEvent('page'),
+            onboardLink.click()
+        ]);
+
+        // wait for the new tab to load
+        await newTab.waitForLoadState('load');
+
+        return newTab;
+    }
+
+    async getTodayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
 }

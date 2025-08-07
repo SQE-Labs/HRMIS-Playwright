@@ -17,6 +17,22 @@ export const SUPEROWNER_COLUMN = "superOwner.xlsx"
 export const EXISTINGSERIALNUMBER_COLUMN = "ExistingSerialNumber.xlsx"
 export const NONEXISTINGASSETTYPE_COLUMN = "NonExistingAssetType.xlsx"
 export const NOUNIT_COLUMN = "NoUnit.xlsx"
+export const DummyResume = "DummyResume.pdf"
+export const AadharNumber = "662223509284"
+export const panCardNumber = "BAJPC4350M"
+export const PassportNumber = "A20964573432"
+export const MaritalStatus = "Single"
+export const dob = "1999-02-20"
+export const doj = "2025-01-10"
+
+export const phoneNumber = "0987654321"
+export const alternateNumber = "1234567890"
+export const relationShip = "Mother"
+export const presentAddress = "ABC Testing Centre, UK"
+export const permanentAddress = "DEF Testing Centre, USA"
+
+export const domain = "@caeliusconsulting.com"
+export const expectedSuccessMessageITApproval = "User Email has been successfully updated."
 
 
 
