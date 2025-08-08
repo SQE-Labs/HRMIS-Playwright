@@ -99,10 +99,10 @@ export class CommonUtils {
         await page.setInputFiles(fileInputSelector, filePath);
         await page.waitForSelector(fileInputSelector, { state: 'attached' });
 
-        
-        
-        
-        
+
+
+
+
         // Submit
         // await submitButton.click();
         // await popupMessage.waitFor({ state: 'visible' });
@@ -115,4 +115,68 @@ export class CommonUtils {
         // await page.locator(".btn-close").click();
         // await page.waitForTimeout(500);
     }
+
+    async validatePagination(getTotalTextContent, extractTotalCount, getItemCountPerPage, getItemElementsCount, getPreviousButton, getNextButton, getPageCountText, extractPageNumbers, getAllItemElements) {
+        // Step 1: Get total asset count
+        const totalText = await getTotalTextContent();
+        const totalCount = extractTotalCount(totalText);
+        console.log("Total Count from text:", totalCount);
+
+        // Step 2: Verify selected items per page equals the number of displayed elements
+        const selectedPerPage = await getItemCountPerPage();
+        const displayedCount = await getItemElementsCount();
+        console.log("Items per page:", selectedPerPage, "Displayed Count:", displayedCount);
+        expect(selectedPerPage).toEqual(displayedCount);
+
+        // Step 3: Navigate to first page if not there already
+        const prevButton = await getPreviousButton();
+        expect(await prevButton.isEnabled()).toBeTruthy();
+        await prevButton.click();
+
+        const nextButton = await getNextButton();
+        expect(await nextButton.isEnabled()).toBeTruthy();
+
+        // Step 4: Calculate total pages and total records
+        const totalPageText = await getPageCountText();
+        const [currentPage, totalPages] = extractPageNumbers(totalPageText || '');
+
+        let records = 0;
+
+        for (let i = currentPage; i < totalPages; i++) {
+            const count = await getAllItemElements();
+            records += count;
+            const nextBtn = await getNextButton();
+            if (i < totalPages - 1 && await nextBtn.isEnabled()) {
+                await nextBtn.click();
+                await nextBtn.page().waitForLoadState(); // Ensure page updates
+            }
+        }
+
+        // Final record count check
+        console.log("Total records counted across pages:", records);
+        expect(totalCount).toEqual(records);
+
+        // Ensure previous button still works
+        expect(await prevButton.isEnabled()).toBeTruthy();
+    }
+
+    // await this.validatePagination({
+    // getTotalTextContent: () => this.totalAssetAssigned.allTextContents(),
+    // extractTotalCount: AssetHelper.getAssetCountFromText,
+    // getItemCountPerPage: async () => {
+    //     await this.itemsPerPage.waitFor({ state: 'visible' });
+    //     await this.itemsPerPage.click();
+    //     await this.itemsPerPage.selectOption({ index: 0 });
+    //     await this.page.waitForTimeout(500);
+    //     return parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
+    // },
+    // getItemElementsCount: () => this.assetTypeName.count(),
+    // getPreviousButton: () => Promise.resolve(this.previousButton),
+    // getNextButton: () => Promise.resolve(this.nextButton),
+    // getPageCountText: () => this.pageCount.textContent(),
+    // extractPageNumbers: AssetHelper.extractPageCount,
+    // getAllItemElements: () => this.allocationRecord.count(),
+// });
+
+
 }

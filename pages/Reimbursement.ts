@@ -1,47 +1,43 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { AssetManagementTab } from "./Asset_Management_Tab";
 import { Loader } from "../components/loaders";
-import { BasePage } from "./Basepage";
-import { OverView } from "./Asset_OverView";
-import { text } from "stream/consumers";
-import { count } from "console";
 import fs from "fs";
+import { AssetHelper } from "../utils/AssetHelpers";
+import { BasePage } from "./Basepage";
 
 
-export class Reimbursement {
-    private Reimbursement_Tab: Locator
-    private Reimburement_subtab: Locator
-    private subtabs: string[]
-    private Reimbursement_Page: Locator
-    private Header: Locator
-    private Table: Locator
-    private loader: Loader
-    private SearchBar: Locator
-    private No_Record: Locator
-    private Withdraw: Locator
-    private cross_icon: Locator
-    private Withdraw_popUp_body: Locator
-    private Cancel_button: Locator
-    private Comment_Field: Locator
-    private Sumbit_button: Locator
-    private View_Link: Locator
-    private ReimbursementRequest: Locator
-    private Back_to_Reimbursement: Locator
-    private Reimbursement_Type: Locator
-    private Invoice_Date: Locator
-    private Invoice_Number: Locator
-    private To_Date: Locator
-    private From_Date: Locator
-    private Receipt: Locator
-    private Amount: Locator
-    private From: Locator
-    private To: Locator
-    private Reset_Button: Locator
-    private page: Page
-    private nextButton: Locator;
+export class Reimbursement extends BasePage {
+    public Reimbursement_Tab: Locator
+    public Reimburement_subtab: Locator
+    public subtabs: string[]
+    public Reimbursement_Page: Locator
+    public Header: Locator
+    public Table: Locator
+
+    public SearchBar: Locator
+    public No_Record: Locator
+    public Withdraw: Locator
+    public cross_icon: Locator
+    public Withdraw_popUp_body: Locator
+    public Cancel_button: Locator
+    public Comment_Field: Locator
+    public Sumbit_button: Locator
+    public View_Link: Locator
+    public ReimbursementRequest: Locator
+    public Back_to_Reimbursement: Locator
+    public Reimbursement_Type: Locator
+    public Invoice_Date: Locator
+    public Invoice_Number: Locator
+    public To_Date: Locator
+    public From_Date: Locator
+    public Receipt: Locator
+    public Amount: Locator
+    public From: Locator
+    public To: Locator
+    public Reset_Button: Locator
+    public nextButton: Locator;
 
     constructor(page: Page) {
-        this.page = page
+        super(page);
         this.Reimbursement_Tab = page.locator('//a[text() = "My Reimbursements"]')
         this.Reimburement_subtab = page.locator('//a[text() = "My Reimbursements"]/..//ul//li')
         this.subtabs = [
@@ -53,7 +49,6 @@ export class Reimbursement {
         ]
         this.Reimbursement_Page = page.locator('//a[text() = "Reimbursement Requests"]')
         this.Header = page.locator("div>h1")
-        this.loader = new Loader(page)
         this.Table = page.locator("div.table-responsive")
         this.SearchBar = page.getByPlaceholder("Search By Reimbursement Type")
         this.No_Record = page.locator("div>h4")
@@ -80,29 +75,24 @@ export class Reimbursement {
 
     }
 
-    async ReimbursementTab() {
-        try {
-            await this.Reimbursement_Tab.click();
-            await expect(this.Reimbursement_Tab).toBeVisible();
-        } catch (error) {
-            console.error('Reimbursement_Tab Does not expanded', error);
-        }
+    async expandReimburmentTab(): Promise<void> {
+        await AssetHelper.expandIfCollapsed(this.Reimbursement_Tab);
     }
-    async Reimbursement_Expand() {
-        await this.ReimbursementTab();
-        try {
-            const expanded = await this.Reimbursement_Tab.getAttribute('aria-expanded');
-            await expect(this.Reimbursement_Tab).toHaveAttribute('aria-expanded', 'true');
-            return expanded === 'true';
-        } catch (error) {
-            console.error('Error Checking if My Reimbursement tab is expandable', error);
-            return false;
-        }
+    async isExpanded(): Promise<boolean> {
+        return await AssetHelper.isExpanded(this.Reimbursement_Tab);
+    }
+    async collapseReimburmentTab(): Promise<void> {
+        await AssetHelper.collapseIfExpanded(this.Reimbursement_Tab);
+    }
+    async isCollapsed(): Promise<boolean> {
+        return await AssetHelper.isCollapsed(this.Reimbursement_Tab);
+    }
+
+    async navigateToreimbursementTab() {
+
     }
 
     async verifySubtabs() {
-        // TC_MR_001
-        await this.Reimbursement_Expand();
         const title = await this.Reimburement_subtab.allTextContents();
         expect(title.length).toBe(this.subtabs.length);
         let allMatched = true;
@@ -121,73 +111,39 @@ export class Reimbursement {
         }
     }
 
-    async collapsesReimbursementTab() {
-        await this.Reimbursement_Tab.click();
-        await this.page.waitForTimeout(2000);
-        try {
-            await this.Reimbursement_Tab.click();
-            await expect(this.Reimbursement_Tab).toBeVisible();
-            console.log('Reimbursement_Tab collapse Succesfully');
-        } catch (error) {
-            console.error('Reimbursement_Tab Does not collapse', error);
-        }
-    }
-
-    async collapsesReimbursement_Tab(): Promise<boolean> {
-        // TC_MR_002
-        await this.collapsesReimbursementTab();
-        try {
-            const collapsed = await this.Reimbursement_Tab.getAttribute('aria-expanded');
-            await expect(this.Reimbursement_Tab).toHaveAttribute('aria-expanded', 'false');
-            return collapsed === 'false';
-        } catch (error) {
-            console.error('Error Checking if collapsesReimbursement_Tab tab is collapse ', error);
-            return false;
-        }
-    }
-
-    async Reimbursement_Request_page() {
-        // TC_MR_003
-        await this.Reimbursement_Expand();
-        await this.page.waitForTimeout(2000);
+    async naviagteToReimbursementRequest() {
         await this.Reimbursement_Page.click();
-        await expect(this.loader.getThreeDotLoader()).not.toBeAttached();
-        await expect(this.Header).toBeVisible();
-        let Header = await this.Header.textContent();
-        await expect(Header).toEqual('Reimbursement Requests');
-        await expect(this.Table).toBeVisible();
+        await this.waitforLoaderToDisappear();
     }
-    async Search_Valid_Data() {
-        // Valid Data ---- TC_MR_004
-        await this.Reimbursement_Request_page();
-        await this.page.waitForSelector("div.table-responsive");
-        let Valid_Data = await this.page.locator("table>tbody>tr:nth-child(1)>td:nth-child(2)").textContent();
-        if (Valid_Data) {
-            Valid_Data = Valid_Data.trim();
-            console.debug(Valid_Data);
-            await this.SearchBar.pressSequentially(Valid_Data);
-            await this.page.waitForTimeout(2000);
-            await expect(this.page.locator("table>tbody>tr:nth-child(2)")).toBeVisible();
-            await expect(this.page.locator("table>tbody>tr:nth-child(1)>td:nth-child(2)")).toHaveText(Valid_Data);
+
+    async getExistingnameFromTable(): Promise<string> {
+        const name = await this.page.locator("table>tbody>tr:nth-child(1)>td:nth-child(2)").textContent();
+        return name ? name.trim() : "";
+    }
+    async searchExistingData(data: string) {
+        await this.SearchBar.fill(data);
+        await this.page.waitForTimeout(2000);
+        const isVisible = await this.page.locator(`table>tbody>tr>td:nth-child(2):has-text("${data}")`).first().isVisible();
+        expect(isVisible).toBeTruthy();
+        if (isVisible) {
+            console.log(`Data "${data}" found in the table.`);
         } else {
-            console.error("No data found in the specified cell.");
+            console.error(`Data "${data}" not found in the table.`);
         }
     }
 
-    async Search_InValid_Data() {
-        // InValid Data ---- TC_MR_005
-        await this.Reimbursement_Request_page();
-        await this.page.waitForSelector("div.table-responsive");
-        let Valid_Data = 'QWERTYU';
-        await this.SearchBar.pressSequentially(Valid_Data);
-        await expect(this.No_Record).toBeVisible();
-        let No_Record = await this.No_Record.textContent();
-        expect(No_Record).toStrictEqual("No Record Available");
+    async clickOnRowHeader(RowHeader) {
+        await this.page.locator(`tr>th`).nth(RowHeader).click();
+        await this.page.waitForTimeout(3000);
+        
     }
 
+    async getRowdata(RowHeader) {
+        const rowData = await this.page.locator(`tr>td`).nth(1);
+        return rowData
+    }
     async Sorting() {
-        await this.Reimbursement_Request_page();
-        await this.page.waitForTimeout(3000);
+
         let beforeSorting = await this.page.locator('tr>td:nth-child(6)').allTextContents();
         expect(beforeSorting.length).toBeGreaterThan(1);
         // Click to sort in ascending order
@@ -222,7 +178,7 @@ export class Reimbursement {
 
     async withdrawal() {
         // Step 1: Go to the Reimbursement Request page
-        await this.Reimbursement_Request_page();
+       
 
         // Step 2: Loop through pages to find and click Withdraw
         while (true) {

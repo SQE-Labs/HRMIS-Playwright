@@ -1,34 +1,62 @@
 import { test, expect } from '@playwright/test'
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import testData from '../testData/testData.json';
 import { Reimbursement } from '../pages/Reimbursement';
+import { BasePage } from '../pages/Basepage';
+
 
 let reimbursement: Reimbursement;
 
 test.describe("My Reimbursement page", () => {
     test.beforeEach(async ({ page }) => {
-        const loginPage = new LoginPage(page);
+        const loginPage = new LoginPage(page)
+        const basepage = new BasePage(page)
+
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
-        reimbursement = new Reimbursement(page);
+
+        reimbursement = new Reimbursement(page)
+        await reimbursement.expandReimburmentTab()
+        await reimbursement.naviagteToReimbursementRequest();
+        await reimbursement.waitforLoaderToDisappear()
     });
 
     test("TC_MR_001 Reimbursement page", async ({ page }) => {
         await reimbursement.verifySubtabs();
     });
     test("TC_MR_002 Reimbursement page Collapse", async ({ page }) => {
-        await reimbursement.collapsesReimbursementTab();
+        await reimbursement.collapseReimburmentTab();
     });
+
+
     test("TC_MR_003 Reimbursement Request page", async ({ page }) => {
-        await reimbursement.Reimbursement_Request_page();
+        await expect(reimbursement.Header).toBeVisible();
+        let Header = await reimbursement.Header.textContent();
+        expect(Header).toEqual('Reimbursement Requests');
+        await expect(reimbursement.Table).toBeVisible();
     });
-    test("TC_MR_004 Search Valid/Invalid Data", async ({ page }) => {
-        await reimbursement.Search_Valid_Data();
+
+    test("TC_MR_004 Search Valid Data", async ({ page }) => {
+        let name = await reimbursement.getExistingnameFromTable()
+        await reimbursement.searchExistingData(name);
     });
+
+
     test("TC_MR_005 Search Invalid Data", async ({ page }) => {
-        await reimbursement.Search_InValid_Data();
+        let name = await reimbursement.generateRandomString(6);
+        await reimbursement.SearchBar.pressSequentially(name);
+        await expect(reimbursement.No_Record).toBeVisible();
+        let No_Record = await reimbursement.No_Record.textContent();
+        expect(No_Record).toStrictEqual("No Record Available");
     });
+    
+
+
     test("TC_MR_006 Sorting", async ({ page }) => {
-        await reimbursement.Sorting();
+        await reimbursement.clickOnRowHeader(1);
+        await reimbursement.verifyRowsSorting(reimbursement.getRowdata(1))
+        await reimbursement.clickOnRowHeader(1);
+        await reimbursement.verifyRowsSorting(reimbursement.getRowdata(1), "dsc")
+   
     });
 
     test("TC_MR_013 Reimbursement Request", async ({ page }) => {

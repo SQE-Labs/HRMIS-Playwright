@@ -85,6 +85,7 @@ export class Employee_Management extends BasePage {
     public LeaveManagerPopupDropDown: Locator
     public LeaveManagerActionButton: Locator
     public Pop_Up_Header: Locator
+    public DepartmentCancelButton: Locator
     public NoButton: Locator
     public YesButton: Locator
     public AssignButton: Locator
@@ -349,6 +350,8 @@ export class Employee_Management extends BasePage {
         this.leftoutcurrentDate = page.locator("//div[@aria-current='date']")
         this.leftOutCards = page.locator(".col-md-4.col-lg-3")
         this.selectEmployeeOption = page.locator("#react-select-2-option-2")
+
+        this.DepartmentCancelButton = page.locator(".cancel-modal")
     }
 
     async expandEmployeeManagementTab(): Promise<void> {
@@ -587,12 +590,13 @@ export class Employee_Management extends BasePage {
     async clickOnActionButton() {
         await this.ManagerActionButton.click()
     }
-    async clickOnCrossButton() {
-        await this.CrossButton.click()
+    async clickOnCrossButton(Locator: Locator) {
+        await Locator.click()
 
     }
-    async clickOnCancelButton() {
-        await this.CancelButton.click()
+    async clickOnCancelButton(Locator : Locator) {
+        await Locator.click()
+        await this.waitforLoaderToDisappear()
 
     }
 
@@ -760,6 +764,7 @@ export class Employee_Management extends BasePage {
 
     async checkNoRecordsAndReturn(): Promise<boolean> {
         const noRecords = await this.No_record;
+        let npRecordText = await noRecords.textContent();
         return await noRecords.isVisible();
     }
     async getUniqueTextSetFromLocator(locator: Locator, start = 0, end?: number): Promise<Set<string>> {
@@ -790,20 +795,17 @@ export class Employee_Management extends BasePage {
     }
 
     async Department_No_of_records() {
-        // TC_EM_120
         let Name_count = await this.Department_name.count()
         await this.page.waitForTimeout(2000)
         console.log(Name_count)
         let total_name = await this.No_Of_records.allTextContents()
         let totalNameCount = total_name.length > 0 ? parseInt(total_name[0].replace(/\D/g, ''), 10) : 0;
-        await this.page.waitForTimeout(2000)
         console.log("TotalAsset :  ", totalNameCount)
         return {Name_count , totalNameCount}
     }
-    async Departments_Search_Bar_Valid() {
+
+    async validateDepartmentSearchBarFunctionality() {
         // TC_EM_121
-        await this.Department()
-        await this.page.waitForTimeout(2000)
         let existingname = await this.Department_name.allTextContents();
         let Entered_Name = [existingname[0]]
         console.log("Extracted Existing names :", Entered_Name);
@@ -819,118 +821,20 @@ export class Employee_Management extends BasePage {
             }
         }
         console.log("After Search Type :- ", [...AfterSearchTypes])
-        expect([...AfterSearchTypes].sort()).toEqual(Entered_Name)
+        return { AfterSearchTypes, Entered_Name }
     }
-    async Departments_Search_Bar_Invalid() {
+
+    async clickOnUpdateIcon() {
         // TC_EM_0122
-        await this.Department()
-        await this.page.waitForTimeout(2000)
-        await this.Departments_SearchBar.pressSequentially('utrewqerwq')
-        await this.page.waitForTimeout(1000)
-        await this.No_Record_avialable.isVisible()
-        let No_record = await this.No_Record_avialable.textContent()
-        console.log(No_record)
-        expect(No_record).toEqual("No Record Available")
-    }
-    async Departments_Update_Icon() {
-        // TC_EM_0123
-        await this.Department()
-        await this.page.waitForTimeout(2000)
         await this.updateIcon.click()
-        await this.page.waitForTimeout(2000)
-        expect(await this.Pop_Up_Header.isVisible())
-        let header = await this.Pop_Up_Header.textContent()
-        // console.log(header)
-        expect(header).toEqual("Update  Department")
-
+        await this.waitforLoaderToDisappear()
     }
-    async Departments_cancel_button() {
-        // TC_EM_0124
-        await this.Departments_Update_Icon()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".cancel-modal").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-    }
-    async Departments_Cross_Icon() {
-        // TC_EM_0125
-        await this.Departments_Update_Icon()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".btn-close").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-    }
-    async Departments_Pop_up_functionality() {
-        // TC_EM_0126
-        await this.Departments_Update_Icon()
-        await this.page.waitForTimeout(2000)
-        await this.PopUP_Submit_button.click()
-        let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
-        console.log(toast_message)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        expect(toast_message).toEqual('Department not updated. Please try again after some time')
 
-
-        // TC_EM_0127
-        await this.page.waitForTimeout(7000)
-        await this.Name_TextArea.clear()
-        await this.PopUP_Submit_button.click()
-        let NameField = await this.Name_TextArea
-        var tooltipMessage = await NameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-        // TC_EM_0128
-        let Department_name = await AssetHelper.generateRandomString(6);
-        await this.Name_TextArea.pressSequentially(Department_name)
-        await this.PopUP_Submit_button.click()
-        toast_message = await this.page.locator(".Toastify__toast-body").textContent()
-        console.log(toast_message)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        expect(toast_message).toEqual('Department successfully updated!')
-    }
-    async Departments_Add_Department() {
-        // TC_EM_129
-        await this.Department()
-        await this.page.waitForTimeout(5000)
+    async clickOnAddDepartmentButton() { 
         await this.AddDepartmentButton.click()
-        await expect(this.Pop_Up_Header).toBeVisible()
-    }
-    async Departments_Add_Department_cancel_button() {
-        // TC_EM_0130
-        await this.Departments_Add_Department()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".cancel-modal").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-    }
-    async Departments_Add_Department_Cross_Icon() {
-        // TC_EM_0131
-        await this.Departments_Add_Department()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".btn-close").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
+        await this.waitforLoaderToDisappear()
     }
 
-    async Departments_Add_Department_functionality() {
-        // TC_EM_0132
-        await this.Departments_Add_Department()
-        await this.page.waitForTimeout(2000)
-        await this.PopUP_Submit_button.click()
-        var NameField = await this.Name_TextArea
-
-        var tooltipMessage = await NameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.page.waitForTimeout(6000)
-
-        // TC_EM_0133
-        let Department_name = await AssetHelper.generateRandomString(6);
-        await this.Name_TextArea.pressSequentially(Department_name)
-        await this.PopUP_Submit_button.click()
-        let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
-        console.log(toast_message)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        expect(toast_message).toEqual("Department created successfully!")
-    }
 
 
 }

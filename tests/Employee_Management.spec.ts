@@ -705,52 +705,8 @@ test.describe("'Employee Management module'", () => {
     })
 
 
-
-
-
-
-
  //   test("Performance Evaluation subtab ", async ({ page }) => {
    //     await EmployeeDirectory.performance_Evaluation()
     //})
   
-    
-    test("Departments  ", async ({ page }) => {
-        await EmployeeDirectory.Department()
-    })
-    test("Departments no. of records...  ", async ({ page }) => {
-        await EmployeeDirectory.Department_No_of_records()
-    })
-    test("Departments search bar valid ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Search_Bar_Valid()
-    })
-    test("Departments search bar Invalid ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Search_Bar_Invalid()
-    })
-    test("Departments Update Icon ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Update_Icon()
-    })
-
-    test("Departments Cancel Button ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_cancel_button()
-    })
-    test("Departments Cross Icon ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Cross_Icon()
-    })
-    test("Departments pop up functionality ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Pop_up_functionality()
-    })
-    test("Departments + Add Department  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Add_Department()
-    })
-    test("Departments Add Department Cancel Button ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Add_Department_cancel_button()
-    })
-    test("Departments Add Department Cross Icon ...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Add_Department_Cross_Icon()
-    })
-    test("Departments + Add Department Functionality...  ", async ({ page }) => {
-        await EmployeeDirectory.Departments_Add_Department_functionality()
-    })
-
 })

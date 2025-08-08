@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { AssetAllocation } from '../pages/Asset_Allocation';
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import testData from '../testData/testData.json';
 import { AssetHelper } from '../utils/AssetHelpers';
 let allocation: AssetAllocation
@@ -45,7 +45,7 @@ test.describe("Asset Allocation page", () => {
     // TC_AM_029
 
     test("Pagination", async () => {
-        expect(await allocation.pagination())
+        expect(await allocation.validatePagination())
         console.log("Pagination verified !!")
     })
 
