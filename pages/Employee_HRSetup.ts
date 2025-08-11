@@ -19,6 +19,7 @@ export class Employee_HRSetup extends BasePage {
     public caeliusEmailField: Locator
     public submitBttn: Locator
     public hrSetupTab: Locator
+    public approvBttn: Locator
 
 
     constructor(page: Page) {
@@ -34,6 +35,7 @@ export class Employee_HRSetup extends BasePage {
         this.caeliusEmailField = this.page.locator("input[name=email]");
         this.submitBttn = this.page.locator("//button[text()='Submit']")
         this.hrSetupTab = page.locator("//a[text()='HR Setup']")
+        this.approvBttn = page.locator("//button[text()='Approve']")
 
     }
 
@@ -85,6 +87,47 @@ export class Employee_HRSetup extends BasePage {
         await this.submitBttn.click();
     }
 
+
+    async fillHrApprovalForm(page: Page, {
+        department,
+        designation,
+        assignManager,
+        leaveManager,
+        employeeType,
+        employeeSubType
+    }: {
+        department: string;
+        designation: string;
+        assignManager: string;
+        leaveManager: string;
+        employeeType: string;
+        employeeSubType: string;
+    }) {
+
+        // Helper function to handle React-Select style dropdowns
+        const selectReactDropdown = async (placeholder: string, value: string) => {
+            await this.page.locator(`//div[text()='${placeholder}']/ancestor::div[contains(@class,'control')]`).click();
+            await this.page.waitForTimeout(1000)
+            const form = page.locator('form');
+
+            await form.getByText(value, { exact: true }).click();
+
+        
+        };
+
+        await selectReactDropdown("Select Department", department);
+        await selectReactDropdown("Select Designation",designation );
+        await selectReactDropdown("Select Manager", assignManager);
+        await selectReactDropdown("Select Leave Manager", leaveManager);
+        await selectReactDropdown("Select Employee Type",employeeType );
+        await selectReactDropdown("Select Sub Employee Type",  employeeSubType);
+    }
+
+
+    async clickApprovBttn() {
+        await this.approvBttn.last().click();
+        await this.page.waitForTimeout(1000);
+    }
 
 
 

@@ -81,7 +81,7 @@ export class CommonUtils {
     async uploadAndVerifyFile(
         fileName: string,
         page: Page,
-        submitButton: Locator,
+        submitButton?: Locator,
         popupMessage?: Locator
     ) {
         let fileInputSelector = "//input[@type = 'file']"
@@ -100,6 +100,9 @@ export class CommonUtils {
 
 
         // Submit
+        if (!submitButton) {
+            throw new Error('Submit button locator is not provided.');
+        }
         await submitButton.click();
         // await popupMessage.waitFor({ state: 'visible' });
 

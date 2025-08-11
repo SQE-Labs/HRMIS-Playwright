@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { DummyResume, AadharNumber, panCardNumber, PassportNumber, MaritalStatus, doj, dob, phoneNumber, alternateNumber, relationShip, presentAddress, permanentAddress, domain, expectedSuccessMessageITApproval } from '../utils/constants';
+import { DummyResume, AadharNumber, panCardNumber, PassportNumber, MaritalStatus, doj, dob, phoneNumber, alternateNumber, relationShip, presentAddress, permanentAddress, domain, expectedSuccessMessageITApproval, expectedSuccessMessageHRMISAccountCreated } from '../utils/constants';
 import { Employee_Onboarding } from '../pages/Employee_Onboarding';
 import { Employee_CreateEmployee } from '../pages/Employee_CreateEmployee';
 import { Employee_ITApproval } from '../pages/Employee_ITApproval';
@@ -92,20 +92,39 @@ test.describe.serial("'Employee Management module'", () => {
         let successMessage = await Employee_ITApprovalTable.toastMessage();
         expect(successMessage).toEqual(expectedSuccessMessageITApproval);
 
-        await page.pause();
+        // await page.pause();
+
+
+    })
+
+
+    test("Verify that Profile appear under the HRSetup and Verify that Profile update successfully", async ({ page, context, browser }) => {
+
         Employe_HRSetupTable = new Employee_HRSetup(page);
         await Employe_HRSetupTable.navigateToHRSetup();
         const HRaaprovedname = await Employe_HRSetupTable.fetchLastRecordView('40');
         expect(HRaaprovedname).toEqual(Emplpoyee_nameObj);
 
-    })
+        await Employe_HRSetupTable.clickOnViewLink();
+        await Employe_HRSetupTable.clickOnApproveTab();
+        // await page.pause();
+
+        await Employe_HRSetupTable.fillHrApprovalForm(page, {
+            department: "APIs",
+            designation: "Customer Success Manager",
+            assignManager: "Elon Mask",
+            leaveManager: "Autom Mation User",
+            employeeType: "REGULAR",
+            employeeSubType: "Full time"
+        });
 
 
-     test(" Verify that Profile update successfully", async ({ page, context, browser }) => {
+        await Employe_HRSetupTable.clickApprovBttn();
+        // await page.pause()
 
-        Employe_HRSetupTable = new Employee_HRSetup(page);
-        await Employe_HRSetupTable.navigateToHRSetup();
-        
+        let HRMISsuccessMessage = await Employe_HRSetupTable.toastMessage();
+        expect(HRMISsuccessMessage).toEqual(expectedSuccessMessageHRMISAccountCreated);
+
 
     })
 
