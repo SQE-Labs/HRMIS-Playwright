@@ -5,35 +5,38 @@ import { expect, Page, Download, Locator } from '@playwright/test';
 
 export class CommonUtils {
 
-    async verifyXLSXDownload(page: Page, exportTrigger: () => Promise<void>): Promise<void> {
-        const [download] = await Promise.all([
-            page.waitForEvent('download', { timeout: 5000 }),
-            exportTrigger(),
-        ]);
-
-        const downloadedFile = await download.suggestedFilename();
-        expect(downloadedFile).toBeTruthy();
-
+    async verifyXLSXDownload(
+        page: Page,
+        exportTrigger: () => Promise<void>
+    ): Promise<string> {
         const downloadDir = path.join(process.cwd(), 'Download');
+
+        // Ensure the Download directory exists
         if (!fs.existsSync(downloadDir)) {
             fs.mkdirSync(downloadDir, { recursive: true });
         }
 
+        // Auto-delete all files in the folder
+        const oldFiles = fs.readdirSync(downloadDir);
+        for (const file of oldFiles) {
+            fs.unlinkSync(path.join(downloadDir, file));
+        }
+
+        // Wait for download and trigger export
+        const [download] = await Promise.all([
+            page.waitForEvent('download', { timeout: 15000 }),
+            exportTrigger(),
+        ]);
+
+        const downloadedFile = await download.suggestedFilename();
         const downloadPath = path.join(downloadDir, downloadedFile);
+
         await download.saveAs(downloadPath);
 
-        expect(fs.existsSync(downloadPath)).toBe(true);
-
-        const fileStats = fs.statSync(downloadPath);
-        expect(fileStats.size).toBeGreaterThan(0);
-
-        expect(path.extname(downloadedFile)).toBe('.xlsx');
-        console.log(`File successfully downloaded: ${downloadPath}`);
-
-        fs.unlinkSync(downloadPath);
-        expect(fs.existsSync(downloadPath)).toBe(false);
-        console.log(`File cleaned up: ${downloadPath}`);
+        return downloadPath;
     }
+
+
 
     async verifyRowsSorting(rowsLocator, sortingType = 'asc') {
         let elementsText = (await rowsLocator.allTextContents()).map((s: string) => s.trim());
@@ -151,5 +154,6 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+
 
 }

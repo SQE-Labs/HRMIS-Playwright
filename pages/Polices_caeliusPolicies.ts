@@ -17,8 +17,9 @@ export class Polices_caeliusPolicies extends BasePage {
     public policyValidFormField: Locator
     public descriptionField: Locator
     public submitBttn: Locator
-
-
+    public tableRows: Locator
+    public policyEditBttn: Locator
+    public viewLink: Locator
 
     constructor(page: Page) {
         super(page)
@@ -31,6 +32,10 @@ export class Polices_caeliusPolicies extends BasePage {
         this.policyValidFormField = page.locator("input[name='policyValidFrom']");
         this.descriptionField = page.locator("textarea[name='description']");
         this.submitBttn = page.locator("button[type='submit']");
+        this.tableRows = page.locator("//table[contains(@class,'resume')]//tbody/tr");
+        this.policyEditBttn = this.tableRows.last().locator("td:nth-child(6)");
+        this.viewLink = this.tableRows.last().locator("td:last-child a");
+
     }
 
     async expandTab(): Promise<void> {
@@ -42,7 +47,7 @@ export class Polices_caeliusPolicies extends BasePage {
     }
 
     async naviagateToPolicyViewerPage(): Promise<void> {
-        await this.policyEditor.click();
+        await this.policyViewwer.click();
     }
 
     async clickOnAddPolicyBttn() {
@@ -66,6 +71,19 @@ export class Polices_caeliusPolicies extends BasePage {
 
     async clickOnSubmitBttn() {
         await this.submitBttn.click();
+    }
+
+    async clickOnLastEditBttn() {
+        await this.policyEditBttn.click();
+    }
+
+    async fillTitle(title) {
+        await this.policyTileField.fill(title);
+    }
+
+    async clickOnViewLink() {
+        await this.viewLink.click();
+        await this.page.waitForTimeout(2000);
     }
 
 }
