@@ -25,7 +25,7 @@ export class CommonUtils {
 
         const fileStats = fs.statSync(downloadPath);
         expect(fileStats.size).toBeGreaterThan(0);
-        const allowedExtensions = ['.xlsx', '.jpeg', '.jpg', '.png', '.pdf'];
+        const allowedExtensions = ['.xlsx', '.jpeg', '.jpg', '.png', '.pdf', '.json'];
 
         expect(allowedExtensions).toContain(path.extname(downloadedFile));
         console.log(`File successfully downloaded: ${downloadPath}`);
@@ -51,6 +51,7 @@ export class CommonUtils {
         expect(elementsText).toEqual(sortedElements)
 
     }
+
     async generateRandomInteger(length: number) {
         const characters = '0123456789';
         let result = '';
@@ -176,7 +177,7 @@ export class CommonUtils {
     // getPageCountText: () => this.pageCount.textContent(),
     // extractPageNumbers: AssetHelper.extractPageCount,
     // getAllItemElements: () => this.allocationRecord.count(),
-// });
+    // });
 
 
 }

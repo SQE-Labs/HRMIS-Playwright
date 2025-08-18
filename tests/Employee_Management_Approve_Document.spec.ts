@@ -21,7 +21,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("Approve Document Tab", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
 
         var header = await EmployeeDirectory.Approve_Header.textContent()
         expect(header).toEqual("Approve Document")
@@ -36,7 +36,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     test("compares approved document types in UI with dropdown options", async ({ page }) => {
         // Exit if no records
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
 
         // Collect unique approved document types from the UI table
         const uniqueTypes = await EmployeeDirectory.getTextSetFromLocator(
@@ -60,7 +60,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("compares unique employee types with dropdown options", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
 
         const uniqueTypes = await EmployeeDirectory.getUniqueTextSetFromLocator(EmployeeDirectory.Approve_Label_Exiting_Employee, 0, undefined);
         console.log("Unique Approved Employee Types:", [...uniqueTypes]);
@@ -75,7 +75,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("filters employee records based on dropdown selection", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
 
         await EmployeeDirectory.selectDropdownOptionByIndex(2);
         await page.waitForTimeout(500);
@@ -92,7 +92,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
     test("opens verify document popup after clicking action button", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
 
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
@@ -105,7 +105,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
     test("closes action popup on cancel button click", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await page.locator(".cancel-approve").click();
@@ -115,7 +115,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("closes action popup on close icon click", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await page.locator(".btn-close").click();
@@ -124,7 +124,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("should download file after clicking View button", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.verifyXLSXDownload(page, async () => {
@@ -133,7 +133,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
     test("should show validation message when action is not selected", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.PopUP_Submit_button.click();
@@ -143,7 +143,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
     test("should change document status to approved and show success toast", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.PopUP_Submit_button.click();
@@ -154,7 +154,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
     test("should validate rejection reason and change status to rejected", async ({ page }) => {
-        if (await EmployeeDirectory.checkNoRecordsAndReturn()) return;
+        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'rejected' })

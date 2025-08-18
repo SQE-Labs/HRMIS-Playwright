@@ -28,6 +28,7 @@ export class Employee_Management extends BasePage {
     public BasicInfoEditButton: Locator
     public BasicInfoFirstname: Locator
     public BasicInfoLastName: Locator
+    public BasicInfoMiddleName: Locator
     public UpdateButton: Locator
     public CloseButton: Locator
     public WorkAccordion: Locator
@@ -176,6 +177,8 @@ export class Employee_Management extends BasePage {
         this.BasicInfoEditButton = page.locator("#heading1 + div i.fa-edit")
         this.BasicInfoFirstname = page.locator("div:nth-child(2)>div>div:nth-child(1)>input")
         this.BasicInfoLastName = page.locator("div:nth-child(2)>div>div:nth-child(2)>input")
+        this.BasicInfoMiddleName = page.locator('(//input[@name = "middleName"])[1]')
+
         this.UpdateButton = page.locator(".btn.btn-primary.btn-sm")
         this.CloseButton = page.locator(".btn.btn-secondary.btn-sm.ms-2")
         this.WorkAccordion = page.locator("#heading2")
@@ -216,6 +219,7 @@ export class Employee_Management extends BasePage {
             'First Name',
             'Last Name',
             'Employee Id',
+            'Employee Flag',
             'Middle Name',
             'Email'
         ]
@@ -594,7 +598,7 @@ export class Employee_Management extends BasePage {
         await Locator.click()
 
     }
-    async clickOnCancelButton(Locator : Locator) {
+    async clickOnCancelButton(Locator: Locator) {
         await Locator.click()
         await this.waitforLoaderToDisappear()
 
@@ -602,6 +606,9 @@ export class Employee_Management extends BasePage {
 
     async verifyCollapseIsHidden(value: number) {
         await expect(this.page.locator(`#collapse${value}`).last()).toBeHidden()
+    }
+    async verifyCollapseIsVisible(value: number) {
+        await expect(this.page.locator(`#collapse${value}`).last()).toBeVisible()
     }
     async selectionofAssignManager(value) {
         await this.page.locator(`#react-select-3-option-${value}`).click()
@@ -801,7 +808,7 @@ export class Employee_Management extends BasePage {
         let total_name = await this.No_Of_records.allTextContents()
         let totalNameCount = total_name.length > 0 ? parseInt(total_name[0].replace(/\D/g, ''), 10) : 0;
         console.log("TotalAsset :  ", totalNameCount)
-        return {Name_count , totalNameCount}
+        return { Name_count, totalNameCount }
     }
 
     async validateDepartmentSearchBarFunctionality() {
@@ -830,7 +837,7 @@ export class Employee_Management extends BasePage {
         await this.waitforLoaderToDisappear()
     }
 
-    async clickOnAddDepartmentButton() { 
+    async clickOnAddDepartmentButton() {
         await this.AddDepartmentButton.click()
         await this.waitforLoaderToDisappear()
     }

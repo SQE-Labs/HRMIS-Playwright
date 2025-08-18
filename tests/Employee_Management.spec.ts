@@ -38,7 +38,7 @@ test.describe("'Employee Management module'", () => {
 
     test("Verify NoRecordMessage For Invalid Employee Search", async ({ page }) => {
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("978735")  //invalid Employee name
-        let Norecord = await EmployeeDirectory.noRecord(1)
+        let Norecord = await EmployeeDirectory.noRecord(0)
         expect(Norecord).toEqual("No Record Available")
     })
 
@@ -156,11 +156,10 @@ test.describe("'Employee Management module'", () => {
         var randomFirstName = await EmployeeDirectory.generateRandomString(5);
         var randomLastName = await EmployeeDirectory.generateRandomString(5);
         var randomMiddlename = await EmployeeDirectory.generateRandomString(5);
-
         await EmployeeDirectory.clickOnBasicInfoEditButton()
         await EmployeeDirectory.BasicInfoFirstname.fill(randomFirstName)
         await EmployeeDirectory.BasicInfoLastName.fill(randomLastName)
-        await EmployeeDirectory.BasicInfoLastName.fill(randomMiddlename)
+        await EmployeeDirectory.BasicInfoMiddleName.fill(randomMiddlename)
         await EmployeeDirectory.clickOnUpdateButton()
         let message = await EmployeeDirectory.toastMessage()
         expect(message).toEqual("Profile updated successfully")
@@ -233,6 +232,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.clickOnWorkEditButton()
         let futureDate = await EmployeeDirectory.getfutureDate()
         await EmployeeDirectory.WorkDate.fill(futureDate)
+        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeType, 'Full time')
         await EmployeeDirectory.clickOnUpdateButton()
         let CurrentDate = await EmployeeDirectory.getCurrentDate()
         expect(ExistingDate).not.toEqual(CurrentDate)
@@ -246,6 +246,7 @@ test.describe("'Employee Management module'", () => {
     })
 
     test("Verify Personal Details Toggle Behavior", async ({ page }) => {
+
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(3)
@@ -255,7 +256,20 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.verifyCollapseIsHidden(3)
 
         await page.waitForTimeout(1000)
-        await EmployeeDirectory.clickOnPersonalDetails()
+        await EmployeeDirectory.clickOnEducation()
+        await EmployeeDirectory.verifyCollapseIsHidden(3)
+
+
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnWorkExperience()
+        await EmployeeDirectory.verifyCollapseIsHidden(3)
+
+
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnDependents()
+        await EmployeeDirectory.verifyCollapseIsHidden(3)
+        await page.waitForTimeout(1000)
+        await EmployeeDirectory.clickOnAssignedAssets()
         await EmployeeDirectory.verifyCollapseIsHidden(3)
 
     })
@@ -364,6 +378,7 @@ test.describe("'Employee Management module'", () => {
     test("verify Profile Update With Random Peronal Details clicking on closw button ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
+        await page.pause()
         await EmployeeDirectory.clickOnPersonalDetails()
         let { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress } = await EmployeeDirectory.getOriginalPeronalDetails()
         await EmployeeDirectory.clickOnPersonalDetailEdit()
@@ -705,8 +720,8 @@ test.describe("'Employee Management module'", () => {
     })
 
 
- //   test("Performance Evaluation subtab ", async ({ page }) => {
-   //     await EmployeeDirectory.performance_Evaluation()
+    //   test("Performance Evaluation subtab ", async ({ page }) => {
+    //     await EmployeeDirectory.performance_Evaluation()
     //})
-  
+
 })
