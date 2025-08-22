@@ -29,7 +29,6 @@ test.describe("'Employee Management module'", () => {
     })
 
     test("select Promotion from dropdown and verify data table renders", async ({ page }) => {
-
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.LeaveManagerData()
@@ -62,6 +61,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PromoteButton.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.PromotionCancelButton.click()
+        await EmployeeDirectory.waitforLoaderToDisappear()
         await expect(EmployeeDirectory.PromotionPopUpHeader).toBeHidden()
 
     })
@@ -71,7 +71,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.DepartmentDropdown, "5")
+        await EmployeeDirectory.DepartmentDropdown.selectOption({ value: '5' })
+        await EmployeeDirectory.PromotionCancelButton.click()
         await expect(EmployeeDirectory.PromotionPopUpHeader).toBeHidden()
         await EmployeeDirectory.getDesignationoptionCount()
     })

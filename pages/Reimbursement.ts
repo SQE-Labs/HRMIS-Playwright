@@ -37,7 +37,7 @@ export class Reimbursement extends BasePage {
     public nextButton: Locator;
     public vechileType: Locator;
     public distance: Locator;
-    
+
 
     constructor(page: Page) {
         super(page);
@@ -137,25 +137,33 @@ export class Reimbursement extends BasePage {
         }
     }
 
-    async clickOnRowHeader(RowHeader) {
-        await this.page.locator(`tr>th`).nth(RowHeader).click();
+    async clickOnRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr > th:nth-child(${columnIndex}) > img`);
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
 
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
     }
 
-    async getRowdata(columnIndex: number): Promise<string[]> {
-        // Wait for at least one row (excluding header) to be visible
-        await this.page.waitForSelector('table tr:nth-child(2) td');
 
-        const rows = await this.page.locator('table tr');
-        const columnData: any[] = [];
+    async getRowdata(columnIndex: number): Promise<string[]> {
+        // Wait for at least one cell in the desired column to appear
+        await this.page.waitForSelector(`tbody > tr > td:nth-child(${columnIndex})`);
+
+        const rows = await this.page.locator('tbody > tr');
+        const columnData: string[] = [];
 
         const rowCount = await rows.count();
-        for (let i = 1; i < rowCount; i++) { // Skip header
-            const cell = rows.nth(i).locator('td').nth(columnIndex);
 
-            // Wait for cell to be visible before accessing its content
+        if (rowCount === 0) {
+            console.warn("No data rows found in <tbody>.");
+            return [];
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
             await cell.waitFor({ state: 'visible' });
-
             const text = await cell.textContent();
             columnData.push((text ?? '').trim());
         }
@@ -163,6 +171,8 @@ export class Reimbursement extends BasePage {
         console.log(`Column ${columnIndex} data:`, columnData);
         return columnData;
     }
+
+
 
     async withdrawal() {
         while (true) {
@@ -183,7 +193,7 @@ export class Reimbursement extends BasePage {
         }
     }
 
-    
+
     async clickOnReimbursementRequestButton() {
         await this.ReimbursementRequest.click();
         await this.waitforLoaderToDisappear();

@@ -378,7 +378,6 @@ test.describe("'Employee Management module'", () => {
     test("verify Profile Update With Random Peronal Details clicking on closw button ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await page.pause()
         await EmployeeDirectory.clickOnPersonalDetails()
         let { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress } = await EmployeeDirectory.getOriginalPeronalDetails()
         await EmployeeDirectory.clickOnPersonalDetailEdit()
@@ -400,9 +399,10 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.clickOnPersonalDetails()
         let { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress } = await EmployeeDirectory.getOriginalPeronalDetails()
         await EmployeeDirectory.clickOnPersonalDetailEdit()
-        await EmployeeDirectory.AadhaarCardNumber.fill("765432131242")
-        await EmployeeDirectory.PanCardNumber.fill("2324354231")
+        await EmployeeDirectory.AadhaarCardNumber.fill(await EmployeeDirectory.generateRandomInteger(12))
+        await EmployeeDirectory.PanCardNumber.fill(await EmployeeDirectory.generateRandomInteger(10))
         await EmployeeDirectory.PermanentAddress.fill(await EmployeeDirectory.generateRandomString(5))
+        await EmployeeDirectory.AlternateNumber.fill(await EmployeeDirectory.generateRandomInteger(10))
         await EmployeeDirectory.clickOnUpdateButton()
 
 

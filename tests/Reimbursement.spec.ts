@@ -53,40 +53,30 @@ test.describe("My Reimbursement page", () => {
 
     //  To-do:
     test("TC_MR_006 Sorting", async ({ page }) => {
+        await page.pause();
 
-        await reimbursement.clickOnRowHeader(1);
-        var ascData = await reimbursement.getRowdata(1);
-        await reimbursement.verifyRowsSorting(ascData, "asc");
-        await reimbursement.clickOnRowHeader(1);
-        var descData = await reimbursement.getRowdata(1);
-        await reimbursement.verifyRowsSorting(descData, "desc");
+        const columnsToTest = [1, 2, 3, 4, 5, 6]; // Assuming 1-based column indices
 
-        await reimbursement.clickOnRowHeader(3);
-        var ascData = await reimbursement.getRowdata(3);
-        await reimbursement.verifyRowsSorting(ascData, "asc");
-        await reimbursement.clickOnRowHeader(3);
-        var descData = await reimbursement.getRowdata(3);
-        await reimbursement.verifyRowsSorting(descData, "desc");
+        for (const columnIndex of columnsToTest) {
+            console.log(`Testing Column ${columnIndex} - Ascending Sort`);
+            await reimbursement.clickOnRowHeader(columnIndex);
 
-        await reimbursement.clickOnRowHeader(4);
-        var ascData = await reimbursement.getRowdata(4);
-        await reimbursement.verifyRowsSorting(ascData, "asc");
-        await reimbursement.clickOnRowHeader(4);
-        var descData = await reimbursement.getRowdata(4);
-        await reimbursement.verifyRowsSorting(descData, "desc");
+            // Wait to allow table sort/render to complete
+            await page.waitForTimeout(2000);
 
+            const ascData = await reimbursement.getRowdata(columnIndex);
+            await reimbursement.verifyRowsSorting(ascData, "asc");
 
-        await reimbursement.clickOnRowHeader(6);
-        var ascData = await reimbursement.getRowdata(6);
-        await reimbursement.verifyRowsSorting(ascData, "asc");
-        await reimbursement.clickOnRowHeader(6);
-        var descData = await reimbursement.getRowdata(6);
-        await reimbursement.verifyRowsSorting(descData, "desc");
+            console.log(`Testing Column ${columnIndex} - Descending Sort`);
+            await reimbursement.clickOnRowHeader(columnIndex);
 
+            // Wait again for descending sort
+            await page.waitForTimeout(2000);
+
+            const descData = await reimbursement.getRowdata(columnIndex);
+            await reimbursement.verifyRowsSorting(descData, "desc");
+        }
     });
-
-
-
 
     test("TC_MR_013 Reimbursement Request", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
@@ -104,6 +94,8 @@ test.describe("My Reimbursement page", () => {
     });
     test("should_show_travel_specific_fields_for_travel_expense_claim_type", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
+        await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
+
         expect(reimbursement.From).toBeVisible();
         expect(reimbursement.To).toBeVisible();
         expect(reimbursement.vechileType).toBeVisible();

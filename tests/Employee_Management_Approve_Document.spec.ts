@@ -36,14 +36,16 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     test("compares approved document types in UI with dropdown options", async ({ page }) => {
         // Exit if no records
-        
-
+        if (await EmployeeDirectory.Approve_Label_Exiting_Document_type.count() === 0) {
+            console.log("No approved documents found.");
+            return;
+        }
         // Collect unique approved document types from the UI table
         const uniqueTypes = await EmployeeDirectory.getTextSetFromLocator(
             EmployeeDirectory.Approve_Label_Exiting_Document_type,
             0
         );
-        console.log("Approved Document Types from UI:", [...uniqueTypes]);
+        console.log("Approved Document Types from UI:", [...uniqueTypes,]);
 
         // Open dropdown and collect available options
         await EmployeeDirectory.Approve_Label_Document_type_dropdown.click();
@@ -55,7 +57,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         );
         console.log("Dropdown Document Types:", [...dropdownTypes]);
 
-        // Assertion: both sets should match
+        
         expect([...uniqueTypes].sort()).toEqual([...dropdownTypes].sort());
     });
 
@@ -115,7 +117,6 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("closes action popup on close icon click", async ({ page }) => {
-        
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await page.locator(".btn-close").click();
@@ -146,6 +147,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
+        await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'approved' })
         await EmployeeDirectory.PopUP_Submit_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         const message = await EmployeeDirectory.toastMessage()

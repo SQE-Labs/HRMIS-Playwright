@@ -270,8 +270,10 @@ export class Employee_Management extends BasePage {
         this.AssignManagerPopupDropdownOption = page.locator("#react-select-5-option-1")
         this.AssignManagerPopupSubmitbutton = page.locator("(//button[@class = 'theme-button'])[2]")
         this.ColoumnBody = [
+            'Employee Id',
             'Name',
-            'Assigned Manager',
+            'Department',
+            'Designation',
             'Action'
         ]
 
@@ -329,7 +331,7 @@ export class Employee_Management extends BasePage {
 
         this.Approve_Label_Document_type_dropdown = page.locator("#react-select-2-input")
         this.Approve_Label_Employee_dropdown = page.locator("#react-select-3-input")
-        this.Approve_Label_Exiting_Document_type = page.locator("tr>td:nth-child(3)")
+        this.Approve_Label_Exiting_Document_type = page.locator("tr > td:nth-child(3):visible")
         this.Approve_Label_Exiting_Employee = page.locator("tr>td:nth-child(2)")
         this.Action_button = page.locator("(//button[@class = 'btn btn-secondary'])[1]")
         this.Action_Button_popup = page.locator("#staticBackdropLabel")
@@ -509,16 +511,16 @@ export class Employee_Management extends BasePage {
     }
 
     async getOriginalPeronalDetails() {
-        var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
-        var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
-        var OriginalpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
+        var OriginalaadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
+        var OriginalPanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
+        var OriginalpermanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
         return { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress }
     }
 
     async getUpdatedPerosnalDetails() {
-        var currentaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
-        var currentPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
-        var CurrentpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
+        var currentaadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
+        var currentPanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
+        var CurrentpermanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
         return { currentaadharNumber, currentPanCardNumber, CurrentpermanentAddress }
     }
 

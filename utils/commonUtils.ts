@@ -35,22 +35,45 @@ export class CommonUtils {
         console.log(`File cleaned up: ${downloadPath}`);
     }
 
-    async verifyRowsSorting(rowsLocator, sortingType = 'asc') {
-        let elementsText = (await rowsLocator.allTextContents()).map((s: string) => s.trim());
-        // console.log("unsorted " + elementsText)
-        let sortedElements;
-        if (sortingType.toLowerCase().includes("asc")) {
+    async verifyRowsSorting(data: string[], sortingType = 'asc') {
+        const trimmedData = data.map(s => s.trim());
+        console.log(`Unsorted data (${sortingType}):`, trimmedData);
 
-            sortedElements = [...elementsText].sort((a: string, b: any) => a.localeCompare(b));
+        let expectedSortedData = [...trimmedData];
+
+        const isDate = expectedSortedData.every(val => !isNaN(Date.parse(val)));
+
+        const isNumeric = expectedSortedData.every(val => {
+            const cleaned = val.replace(/,/g, ''); // Remove commas for numeric check
+            return !isNaN(Number(cleaned));
+        });
+
+        if (isNumeric) {
+            expectedSortedData.sort((a, b) => {
+                const numA = Number(a.replace(/,/g, ''));
+                const numB = Number(b.replace(/,/g, ''));
+                return sortingType === 'asc' ? numA - numB : numB - numA;
+            });
+        } else if (isDate) {
+            expectedSortedData.sort((a, b) => {
+                const dateA = new Date(a).getTime();
+                const dateB = new Date(b).getTime();
+                return sortingType === 'asc' ? dateA - dateB : dateB - dateA;
+            });
+        } else {
+            expectedSortedData.sort((a, b) =>
+                sortingType === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
+            );
         }
-        else {
-            sortedElements = [...elementsText].sort((a: any, b: string) => b.localeCompare(a));
-        }
-        //console.log("sorted" + sortedElements)
 
-        expect(elementsText).toEqual(sortedElements)
-
+        console.log(`Expected sorted data (${sortingType}):`, expectedSortedData);
+        expect(trimmedData).toEqual(expectedSortedData);
     }
+
+
+
+
+
 
     async generateRandomInteger(length: number) {
         const characters = '0123456789';

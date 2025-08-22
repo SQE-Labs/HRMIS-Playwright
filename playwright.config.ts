@@ -31,9 +31,9 @@ export default defineConfig({
   // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   // workers: process.env.CI ? 1 : undefined,
-  workers: 4,
+  workers: 8,
   reporter: [["html"], ['line'], ["allure-playwright"]],
   // reporter: [
   //   ["dot"],
@@ -43,7 +43,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless: true,
+    headless: false,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 

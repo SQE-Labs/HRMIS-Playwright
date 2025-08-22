@@ -102,7 +102,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.PopUP_Submit_button.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         let message = await EmployeeDirectory.toastMessage()
-        expect(message).toContain("uploaded")
+        expect(message).toContain("Uploaded")
         await EmployeeDirectory.PopUp_Header.isHidden()
         const [newPage] = await Promise.all([
             context.waitForEvent('page'), // listens for new page (tab/window)
