@@ -77,7 +77,7 @@ export class Employee_ITApproval extends BasePage {
         await this.caeliusEmailField.fill(finalEmail);
     }
 
- async clickOnSubmitBttn(): Promise<void> {
+    async clickOnSubmitBttn(): Promise<void> {
         await this.submitBttn.click();
     }
 

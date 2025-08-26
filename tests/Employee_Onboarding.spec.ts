@@ -3,11 +3,15 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { DummyResume, AadharNumber, panCardNumber, PassportNumber, MaritalStatus, doj, dob, phoneNumber, alternateNumber, relationShip, presentAddress, permanentAddress, domain, expectedSuccessMessageITApproval, expectedSuccessMessageHRMISAccountCreated } from '../utils/constants';
+import { DummyResume, AadharNumber, panCardNumber, PassportNumber, MaritalStatus, doj, dob, phoneNumber, alternateNumber, relationShip, presentAddress, permanentAddress, domain, expectedSuccessMessageITApproval, expectedSuccessMessageHRMISAccountCreated, actualSuccessMessage } from '../utils/constants';
 import { Employee_Onboarding } from '../pages/Employee_Onboarding';
 import { Employee_CreateEmployee } from '../pages/Employee_CreateEmployee';
 import { Employee_ITApproval } from '../pages/Employee_ITApproval';
 import { Employee_HRSetup } from '../pages/Employee_HRSetup';
+import { Employee_EmailSetup } from "../pages/Employee_EmailSetup";
+import { CommonUtils } from '../utils/commonUtils';
+import * as path from 'path';
+import { Employee_EmailApprove } from "../pages/Employee_EmailApprove";
 
 
 
@@ -15,6 +19,13 @@ let EmployeeOnboarding: Employee_Onboarding
 let Employee_CreateEmployeForm: Employee_CreateEmployee
 let Employee_ITApprovalTable: Employee_ITApproval
 let Employe_HRSetupTable: Employee_HRSetup
+let Employee_EmailSetupPage: Employee_EmailSetup
+let utils: CommonUtils;
+let approveEmailSetupPage: Employee_EmailApprove
+let suggestedNameTxt: string;
+
+
+
 
 test.describe.serial("'Employee Management module'", () => {
     let Employee_emailID: string;
@@ -115,7 +126,8 @@ test.describe.serial("'Employee Management module'", () => {
             assignManager: "Elon Mask",
             leaveManager: "Autom Mation User",
             employeeType: "REGULAR",
-            employeeSubType: "Full time"
+            employeeSubType: "Full time",
+            employeeFlag: "CCI_INDIA"
         });
 
 
@@ -124,9 +136,64 @@ test.describe.serial("'Employee Management module'", () => {
 
         let HRMISsuccessMessage = await Employe_HRSetupTable.toastMessage();
         expect(HRMISsuccessMessage).toEqual(expectedSuccessMessageHRMISAccountCreated);
-
-
     })
 
+    test("Fill Email Setup Request form", async ({ page }) => {
+        const emailSetupPage = new Employee_EmailSetup(page);
+
+        await emailSetupPage.navigateToEmailSetupPage();
+        await emailSetupPage.clickOnAddrequestBttn();
+        // await page.pause();
+
+        const purposedEmailtxt = await emailSetupPage.generateRandomString(5)
+            + domain;
+        suggestedNameTxt = await emailSetupPage.generateRandomString(5)
+        const personalEmailtxt = suggestedNameTxt + "@yopmail.com";
+        const phoneNumberTxt = await emailSetupPage.generateRandomInteger(10);
+
+
+        await emailSetupPage.fillAndSubmitForm({
+            purposedEmail: purposedEmailtxt,
+            suggestedName: suggestedNameTxt,
+            personalEmail: personalEmailtxt,
+            phoneNumber: phoneNumberTxt,
+            comment: "Urgent email creation request."
+
+        });
+        await emailSetupPage.waitforLoaderToDisappear();
+        const successMessage = await emailSetupPage.toastMessage();
+        expect(successMessage).toEqual(actualSuccessMessage);
+
+    });
+
+
+    test("Export the excel", async ({ page }) => {
+        const emailSetupPage = new Employee_EmailSetup(page);
+        utils = new CommonUtils;
+        await emailSetupPage.navigateToEmailSetupPage();
+        const downloadPath = await utils.verifyXLSXDownload(page, async () => {
+            await emailSetupPage.clickOnExportToExcelBttn();
+        });
+        expect(path.extname(downloadPath)).toBe('.xlsx');
+
+    });
+
+    test("View option", async ({ page }) => {
+        approveEmailSetupPage = new Employee_EmailApprove(page);
+        utils = new CommonUtils;
+        await approveEmailSetupPage.navigateToApproveEmailSetupPage();
+        await approveEmailSetupPage.clickViewByName(suggestedNameTxt);
+        const suggestedEmailTxt = "Auto" + await approveEmailSetupPage.generateRandomString(5)
+            + domain;
+        await approveEmailSetupPage.fillApproveEmailForm(
+            "Approved",
+            suggestedEmailTxt,
+            "StrongPassword123",
+            "Approved email creation request"
+        );
+
+        const successMessage = await approveEmailSetupPage.toastMessage();
+        expect(successMessage).toEqual("Successfully updated");
+    });
 
 });
