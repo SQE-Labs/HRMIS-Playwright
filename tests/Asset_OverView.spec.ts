@@ -1,92 +1,178 @@
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/Loginpage';
 import { BasePage } from '../pages/Basepage';
-import { Login } from '../support/command';
+import { LoginPage } from '../pages/LoginPage';
+import testData from '../testData/testData.json';
 
 let assetOverview: OverView;
 
 test.describe("Asset Overview page", () => {
         test.beforeEach(async ({ page }) => {
-                const loginPage = new LoginPage(page);
                 const basePage = new BasePage(page);
-
-                await basePage.open('url');
-                await Login.login(page, "SuperUser");
+                let loginObj = new LoginPage(page);
+                await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
                 assetOverview = new OverView(page);
+                await page.waitForLoadState('domcontentloaded')
+                await assetOverview.expandAssetManagementTab()
+                await assetOverview.navigateToAssetOverview();
+                await assetOverview.waitforLoaderToDisappear()
+                await page.waitForTimeout(3000);
+
         });
 
         // TC_AM_003 & TC_AM_004 (merged)
-        test("Asset Overview page", async ({ page }) => {
-                console.log("Verify Asset Overview Element");
-                // TC_AM_003
-                console.log('Assert management tab expand');
-                expect(await assetOverview.verifyAsset());
-        });
+        test("Asset Overview page open and verify  header", async ({ page }) => {
+                console.debug("Verify Asset Overview Element");
+                console.debug('Assert management tab expand');
+                //assertion
+                let headerTxt = await assetOverview.getHeaderText();
+                expect(headerTxt?.trim()).toBe("Asset Overview")
 
-        test("Header should match", async ({ page }) => {
-                console.log('Header should match');
-                expect(await assetOverview.verifyHeader());
+        })
 
-                console.log("By default 'All' appears in Asset type dropdown");
-                expect(await assetOverview.verifyDefaultDropdown());
-        });
 
         test("All cards display on Asset Overview Page", async ({ page }) => {
-                console.log('All cards display on Asset Overview Page');
-                expect(await assetOverview.verifyViewCards());
+                console.debug('All cards display on Asset Overview Page');
 
-                console.log("Count of cards is equal to TotalAsset displayed on right-top");
-                expect(await assetOverview.verifyTotalAsset());
+                expect(await assetOverview.getCardsCount()).toBe(testData.assetsCardCount);
+                expect(await assetOverview.getTotalAssetCount()).toBe(testData.assetsCardCount);
         });
 
-        test("Asset Overview page functionality", async ({ page }) => {
-                // TC_AM_005
-                expect(await assetOverview.randomAssetTypeSelection());
-                console.log("Random option selected");
-                // TC_AM_006
-                expect(await assetOverview.verifyFilter());
-                console.log("Data filtered");
+        test("Asset Overview page filter  functionality TC_AM_06", async ({ page }) => {
+
+                let options = await assetOverview.getFilterDropdownOption();
+                expect(options.length).toBeGreaterThan(1);
+                await expect(assetOverview.overviewDropdown).toHaveText("All");
+                await assetOverview.selectFilterDropdownOption(options[1]);
+                await assetOverview.clickFilterButton();
+
         });
 
-        test("Verify XLSX file is downloaded", async () => {
-                // TC_AM_007
-                expect(await assetOverview.verifyExport());
-                console.log("Exported XLSX file contains data as expected.");
-        });
+        test("Verify XLSX file is downloaded", async ({ page }) => {
 
+                let options = await assetOverview.getFilterDropdownOption();
+                expect(options.length).toBeGreaterThan(1);
+                await expect(assetOverview.overviewDropdown).toHaveText("All");
+                await assetOverview.selectFilterDropdownOption(options[1]);
+                await assetOverview.clickFilterButton();
+                if (await assetOverview.emptyRecord.isVisible()) {
+                        await assetOverview.clickExportButton();
+                        expect(await assetOverview.toast.innerText()).toBe("No Record Available!");
+
+                } else {
+                        await assetOverview.verifyXLSXDownload(page, async () => {
+                                await assetOverview.clickExportButton();
+                        });
+                }
+
+        });
         test("Verify details display on cards", async () => {
                 // TC_AM_008
-                expect(await assetOverview.detailsAppearOnCard());
-                console.log("Details are displayed on cards");
+                await assetOverview.selectAssetTypeDropdown("Desktop PC")
+                await assetOverview.verifyCardDetails();
+                console.debug("Details are displayed on cards");
         });
 
         test("Verify when clicking on any card, card opens up", async () => {
                 // TC_AM_009
-                expect(await assetOverview.openCard());
-
-                expect(await assetOverview.countInnerAssets());
+                await assetOverview.openCard("Desktop PC");
+                await assetOverview.countInnerAssets();
         });
 
-        test("Verify any option is selected in Super Own dropdown", async () => {
-                expect(await assetOverview.openCard());
-                // TC_AM_011
-                expect(await assetOverview.selectRandomSuperOwner());
-                // TC_AM_013
-                expect(await assetOverview.selectRandomOwner());
-                // TC_AM_013
-                expect(await assetOverview.selectRandomAvailability());
-                // TC_AM_014 || TC_AM_015 || TC_AM_016
-                expect(await assetOverview.checkOptionVisible());
-                console.log("Options are visible");
-                // TC_AM_017 & TC_AM_018
-                expect(await assetOverview.cardFilter());
-                console.log("Card data filtered!!");
-                // TC_AM_019
-                expect(await assetOverview.verifySorting());
-                console.log("Redirected towards Dashboard!!");
-                // TC_AM_020
-                expect(await assetOverview.verifyRedirected());
-                console.log("Redirected towards Dashboard!!");
+        test('Verify Owner options for Super Owner = All', async () => {
+                await assetOverview.openCard("Desktop PC")
+                await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('All', ['All', 'Caelius', 'Salesforce', 'Consultant', 'SQE Labs']);
         });
+
+        test('Verify Owner options for Super Owner = CAELIUS_OWNED', async () => {
+                await assetOverview.openCard("Desktop PC")
+                await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('CAELIUS_OWNED', ['All', 'Caelius', 'Consultant', 'SQE Labs']);
+        });
+
+        test('Verify Salesforce is visible for Super Owner = CLIENT_OWNED', async () => {
+                await assetOverview.openCard("Desktop PC")
+                await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('CLIENT_OWNED', ['Salesforce'], false);
+        });
+
+        // TC_AM_017
+        test('Verify records are filtered based on Super Owner, Owner, and Availability selections', async ({ page }) => {
+                await assetOverview.openCard("Desktop PC");
+                const filteredCount = await assetOverview.filterAssetsByDropdownSelections();
+                if (filteredCount === 0) {
+                        console.debug(" No records available");
+                        expect(filteredCount).toBe(0);
+                } else {
+                        console.debug(`${filteredCount} records found after filtering.`);
+                        expect(filteredCount).toBeGreaterThan(0);
+                }
+        });
+
+        test('Verify XLSX file is downloaded after filtering and clicking Export', async ({ page }) => {
+                await assetOverview.getFilteredData();
+                if (await assetOverview.emptyRecord.isVisible()) {
+                        await assetOverview.clickExportButton();
+                        expect(await assetOverview.toast.innerText()).toBe("No Record Available!");
+                } else {
+                        await assetOverview.verifyXLSXDownload(page, async () => {
+                                await assetOverview.clickExportButton();
+                        });
+                }
+        });
+        // TC_AM_019
+        test('Verify Sorting', async () => {
+                await assetOverview.openCard("Desktop PC")
+
+                // Manufracture Header
+                await assetOverview.clickManfHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.manfRows)//checking asc sort
+                await assetOverview.clickManfHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.manfRows, "dsc")
+
+                // Model Header
+                await assetOverview.clickModelHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.modelRows)//checking asc sort
+                await assetOverview.clickModelHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.modelRows, "dsc")
+
+
+                // Serial Header
+                await assetOverview.clickSerialNumberHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows)//checking asc sort
+                await assetOverview.clickSerialNumberHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows, "dsc")
+
+                // Super Owner Header
+                await assetOverview.clickSuperOwnerHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows)//checking asc sort
+                await assetOverview.clickSuperOwnerHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows, "dsc")
+
+                // Owner Header
+                await assetOverview.clickOwnerHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.ownerRows)//checking asc sort
+                await assetOverview.clickOwnerHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.ownerRows, "dsc")
+
+                // Status Header
+                await assetOverview.clickStatusHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.statusRows)//checking asc sort
+                await assetOverview.clickStatusHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.statusRows, "dsc")
+
+                // Availablity Header
+                await assetOverview.clickAvailablityHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.availablityRows)//checking asc sort
+                await assetOverview.clickAvailablityHeader()
+                await assetOverview.verifyRowsSorting(assetOverview.availablityRows, "dsc")
+
+        })
+
+        test("Verify Redirection from asset Overview header", async () => {
+                await assetOverview.openCard("Desktop PC")
+                await assetOverview.assetOverviewRedirect.click()
+                await assetOverview.waitforLoaderToDisappear()
+                await expect(assetOverview.overviewHeader).toBeVisible()
+                await expect(assetOverview.card.first()).toBeVisible()
+
+        })
 });

@@ -1,54 +1,45 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
-import { Loader } from "../components/loaders";
-import { BasePage } from "./Basepage";
-import * as xlsx from 'xlsx'
 import fs from "fs";
-import { assert } from "console";
 import { Alert } from '../components/alert'
 
 export class OverView extends AssetManagementTab {
-    // TC_AM_003
-    private overviewAsset: Locator;
-    private overviewHeader: Locator;
-    private overviewDropdown: Locator;
-    private overviewCards: Locator;
-    private loader: Loader;
-    // TC_AM_004
-    private totalAsset: Locator;
+    public overviewAsset: Locator;
+    public overviewHeader: Locator;
+    public overviewDropdown: Locator;
+    public overviewCards: Locator;
+    public totalAsset: Locator;
     public cardsCount: number;
-    // TC_AM_005
-    private assetTypeDropdown: Locator;
-    // TC_AM_006
-    private filterButton: Locator;
+    public assetTypeDropdown: Locator;
+    public filterButton: Locator;
     public randomOption: string;
-    // TC_AM_007
-    private exportButton: Locator;
-    private alert: Alert;
+    public exportButton: Locator;
+    public alert: Alert;
     public totalAssetsAfterFilter: number;
-    private emptyRecord: Locator;
-    // TC_AM_008
-    private assignedBadge: Locator;
-    private availableBadge: Locator;
-    private totalBadge: Locator;
-    // TC_AM_009   
-    private card: Locator;
-    private cardHeader: Locator;
-    //TC_AM_010 
-    private serialNoRows: Locator;
+    public emptyRecord: Locator;
+    public assignedBadge: Locator;
+    public availableBadge: Locator;
+    public totalBadge: Locator;
+    public card: Locator;
+    public cardHeader: Locator;
+    public serialNoRows: Locator;
     public innerAssetCount: number;
-    // TC_AM_011
-    private superOwnerDropdown: Locator;
-    // TC_AM_012
-    private ownerDropdown: Locator;
-    // TC_AM_013
-    private availabilityDropdown: Locator;
-    // Tc_AM_017
+    public superOwnerDropdown: Locator;
+    public ownerDropdown: Locator;
+    public availabilityDropdown: Locator;
     public superOwnerRandomOption: string;
     public ownerRandomOption: string;
     public availabilityRandomOption: string;
-    // TC_AM_020
-    private assetOverviewRedirect: Locator;
+    public assetOverviewRedirect: Locator;
+    public toast: Locator;
+    public manfRows: Locator
+    public modelRows: Locator
+    public serialnumberRows: Locator
+    public superOwnerRows: Locator
+    public ownerRows: Locator
+    public statusRows: Locator
+    public availablityRows: Locator
+
     static this: any;
 
     constructor(page: Page) {
@@ -76,71 +67,65 @@ export class OverView extends AssetManagementTab {
         this.ownerDropdown = page.locator("#ownerFilter")
         this.availabilityDropdown = page.locator("#availabilityFilter")
         this.assetOverviewRedirect = page.locator("div>span>a")
-        this.loader = new Loader(page)
-        this.alert = new Alert(page)
+        this.toast = page.locator(".Toastify__toast-body>div:nth-child(2)")
+        this.manfRows = page.locator(`tbody tr td:nth-child(2)`)
+        this.modelRows = page.locator(`tbody tr td:nth-child(3)`)
+        this.serialnumberRows = page.locator(`tbody tr td:nth-child(4)`)
+        this.superOwnerRows = page.locator(`tbody tr td:nth-child(5)`)
+        this.ownerRows = page.locator(`tbody tr td:nth-child(6)`)
+        this.statusRows = page.locator(`tbody tr td:nth-child(7)`)
+        this.availablityRows = page.locator(`tbody tr td:nth-child(8)`)
     }
 
-    async verifyAsset(): Promise<void> {
-        try {
-            await this.expandAssetManagementTab()
-            await this.overviewAsset.click()
-            console.log("Redirected towards Asset OverView page")
-        } catch (error) {
-            console.log('Unable to redirect towards Asset OverView page', error)
-        }
-    }
 
-    async verifyHeader(): Promise<string | null> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        await this.page.waitForTimeout(2000)
+    async navigateToAssetOverview() {
+        this.overviewAsset.click();
+    }
+    async getHeaderText(): Promise<string | null> {
+
         const headerText = await this.overviewHeader.textContent();
-        if (headerText?.trim() === "Asset Overview") {
-            console.log("Redirected towards :-", headerText);
-        } else {
-            console.warn("Unexpected header text found:", headerText);
-        }
+
         return headerText;
     }
-
     async verifyDefaultDropdown(): Promise<void> {
         await expect(this.overviewDropdown).toHaveText("All")
     }
+    // TO-DO
+    async getCardsCount(): Promise<number> {
+        await this.waitforLoaderToDisappear()
+        await this.page.waitForLoadState('networkidle');
 
-    async verifyViewCards(): Promise<number> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached()
+        await this.page.waitForTimeout(8000)
         const cards = await this.overviewCards.allTextContents()
-        console.log(cards)
+        console.debug(cards)
         this.cardsCount = await this.overviewCards.count()
-        console.log("Total Cards :- ", this.cardsCount)
+        console.debug("Total Cards :- ", this.cardsCount)
 
         let isMatched = true
         if (cards.length !== this.cardsCount) {
-            console.log(`Mismatch in number of cards: Expected ${this.cardsCount}, but got ${cards.length}`);
+            console.debug(`Mismatch in number of cards: Expected ${this.cardsCount}, but got ${cards.length}`);
             isMatched = false;
         }
         if (isMatched) {
-            console.log("All cards matched Successfully")
+            console.debug("All cards matched Successfully")
         } else {
-            console.log("Some cards title does not matched")
+            console.debug("Some cards title does not matched")
         }
         return this.cardsCount
     }
 
     // TC_AM_004
-    async verifyTotalAsset(): Promise<number> {
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached()
+    async getTotalAssetCount(): Promise<number> {
+
         const totalAssetTexts = await this.totalAsset.allTextContents()
         const totalAssetCount = totalAssetTexts.length > 0 ? parseInt(totalAssetTexts[0].replace(/\D/g, ''), 10) : 0;
         await this.page.waitForTimeout(1000)
-        console.log("TotalAsset :  ", totalAssetCount)
+        console.debug("TotalAsset :  ", totalAssetCount)
         let isAssetCountMatch = true
         if (totalAssetCount === 0) {
             console.warn("No assets found after filtering. This is expected behavior if no matching assets exist.");
         } else if (totalAssetCount === this.cardsCount) {
-            console.log("Count of (all cards and total assets) Match successfully");
+            console.debug("Count of (all cards and total assets) Match successfully");
             isAssetCountMatch = true;
         } else {
             console.error(`Mismatch: 'number of cards' is not equal to 'totalAssets': Expected ${this.cardsCount}, but got ${totalAssetCount}`);
@@ -148,394 +133,245 @@ export class OverView extends AssetManagementTab {
         return totalAssetCount
     }
 
-    // Random Selection from Dropdown
-    // TC_AM_005
-    async randomAssetTypeSelection(): Promise<string | null> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        console.log("Click on Asset Type Dropdown");
-        await this.assetTypeDropdown.waitFor({ state: "visible", timeout: 2000 });
+
+    async getFilterDropdownOption(): Promise<string[]> {
+        expect(this.assetTypeDropdown).toBeVisible();
+
         const options = await this.assetTypeDropdown.locator("option").allInnerTexts();
-        if (options.length === 0) {
-            console.error("No options available in the dropdown.");
-            return null;
-        }
         const validOptions = options.filter(option => option.trim() !== "");
-        if (validOptions.length === 0) {
-            console.error("No valid options found in the dropdown.");
-            return null;
-        }
-        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
-        console.log(`Randomly selected option: ${randomOption}`);
-        try {
-            await this.assetTypeDropdown.selectOption({ label: randomOption });
-            console.log(`Successfully selected: ${randomOption}`);
-        } catch (error) {
-            console.error(`Failed to select option: ${randomOption}`, error);
-            return null;
-        }
-        const selectedValue = (await this.assetTypeDropdown.inputValue()).trim();
-        console.log(`Selected value: ${selectedValue}`);
-        return randomOption;
+        return validOptions;
+    }
+    async selectFilterDropdownOption(optionText: string): Promise<void> {
+        // const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
+        await this.assetTypeDropdown.selectOption({ label: optionText });
+        console.debug(`Successfully selected: ${optionText}`);
+    }
+    async clickFilterButton(): Promise<void> {
+        await this.filterButton.click();
+        await this.waitforLoaderToDisappear();
+
+
+    }
+    async clickExportButton(): Promise<void> {
+        await this.exportButton.click();
+        await this.waitforLoaderToDisappear();
+
     }
 
-    // TC_AM_006
-    async verifyFilter(): Promise<number | void> {
-        console.log("Verifying Filter button functionality...");
-        await this.page.reload()
-        await expect(this.overviewDropdown).toHaveText("All");
-        await this.filterButton.click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
-        this.cardsCount = await this.overviewCards.count();
-        console.log("Data is filtered when no option is selected");
-        let totalAssetsAfterFilter = await this.verifyTotalAsset();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        this.randomOption = await this.randomAssetTypeSelection() || '';
-        if (!this.randomOption) {
-            console.warn("No valid option selected. Skipping filter verification.");
-            return;
-        }
-        console.log(`Randomly selected asset type: ${this.randomOption}`);
-        await this.filterButton.click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
-        await this.page.waitForTimeout(1000);
-        this.cardsCount = await this.overviewCards.count();
-        totalAssetsAfterFilter = await this.verifyTotalAsset();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        console.log("The data is filtered based on a randomly selected option.");
-        return totalAssetsAfterFilter
+
+    async selectAssetTypeDropdown(ddValue) {
+        await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 5000 });
+        await this.assetTypeDropdown.selectOption({ label: ddValue });
+        await this.filterButton.click()
+        await this.page.waitForLoadState('domcontentloaded')
     }
 
-    // TC_AM_007
-    async verifyExport(): Promise<void> {
-        console.log("Verifying Export functionality...");
-        this.randomOption = await this.randomAssetTypeSelection() || '';
-        if (!this.randomOption) {
-            console.warn("No valid option selected. Skipping export verification.");
-            return;
-        }
-        console.log(`Selected asset type: ${this.randomOption}`);
-        await this.filterButton.click();
-        await expect(this.loader.getThreeDotClass()).not.toBeAttached();
-        await this.page.waitForTimeout(1000);
-        this.cardsCount = await this.overviewCards.count();
-        const totalAssetsAfterFilter = await this.verifyTotalAsset();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        const noRecordText = "No Record Available!";
-        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
-        let emptyRecordText = "";
-        if (noRecordElement) {
-            emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
-        }
-        if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
-            console.log("Case 1: No records available after filtering.");
-            await this.exportButton.click();
-            await this.page.waitForTimeout(1500);
-            await expect(this.alert.getAlertElement()).toBeVisible();
-            const alertMessage = await this.alert.getAlertText();
-            console.log("Alert message appeared as expected:", alertMessage);
-            expect(alertMessage).toContain(noRecordText);
-            console.log(" Export should not trigger a file download.");
-        } else {
-            console.log(" Case 2: One or more assets found. Proceeding with export...");
-            try {
-                const [download] = await Promise.all([
-                    this.page.waitForEvent("download", { timeout: 5000 }),
-                    this.exportButton.click()
-                ]);
-                const downloadedFile = download.suggestedFilename();
-                console.log("Downloaded file:", downloadedFile);
-                if (!downloadedFile.endsWith(".xlsx")) {
-                    throw new Error(`Invalid file extension: ${downloadedFile}`);
-                }
-                const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
-                await download.saveAs(downloadPath);
-                if (fs.existsSync(downloadPath)) {
-                    console.log(`File successfully downloaded: ${downloadPath}`);
-                } else {
-                    throw new Error("Error: Downloaded file not found in expected location!");
-                }
-                expect(fs.existsSync(downloadPath)).toBeTruthy();
-            } catch (error) {
-                console.error("Error during file download:", error);
-            }
-        }
-    }
-
-    // TC_AM_008
-    async detailsAppearOnCard(): Promise<void> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
+    async verifyCardDetails(): Promise<void> {
         const expectedDetails = ['Assigned', 'Available', 'Total']
-        await this.page.waitForTimeout(500);
-        await this.page.reload();
-        await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 1000 });
-        await this.page.waitForTimeout(1000);
-        await this.assetTypeDropdown.selectOption({ value: "1" });
+
         const selectedValue = await this.assetTypeDropdown.inputValue();
-        console.log(`Selected asset type: ${selectedValue}`);
-        await this.filterButton.click();
+        console.debug(`Selected asset type: ${selectedValue}`);
         const details = [
             (await this.assignedBadge.innerText()).split(":")[0].trim(),
             (await this.availableBadge.innerText()).split(":")[0].trim(),
             (await this.totalBadge.innerText()).split(":")[0].trim()
         ]
-        console.log(details)
+        console.debug(details)
         expect(details).toEqual(expectedDetails)
     }
 
     // TC_AM_009
-    async openCard(): Promise<void> {
-        await this.expandAssetManagementTab()
-        await this.overviewAsset.click()
-        await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 5000 });
-        await this.assetTypeDropdown.selectOption({ value: "4" });
-        await this.filterButton.click()
-        await this.page.waitForTimeout(2000);
-        await this.card.click()
-        await this.page.waitForTimeout(5000);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
-        let header = await this.cardHeader.textContent()
-        if (header?.trim() === 'Desktop PC') {
-            console.log("Redirected towards :-", header)
-        } else {
-            console.log("Unexpected header text found")
-        }
+    async openCard(ddValue): Promise<void> {
+        await this.selectAssetTypeDropdown(ddValue);
+        await this.card.click();
+        await this.waitforLoaderToDisappear()
+        const header = await this.cardHeader.textContent();
+        const trimmedHeader = header?.trim();
+        expect(trimmedHeader).toBe('Desktop PC');
+        console.debug("Redirected towards:", trimmedHeader);
     }
 
     // TC_AM_010
     async countInnerAssets(): Promise<void> {
-        const serialNoTexts = await this.serialNoRows.allTextContents()
-        this.innerAssetCount = await this.serialNoRows.count()
-        console.log(this.innerAssetCount)
-        const totalAssetInsideCardTexts = await this.totalAsset.allTextContents()
+        const serialNoTexts = await this.serialNoRows.allTextContents();
+        this.innerAssetCount = await this.serialNoRows.count();
+        console.debug(`Inner asset count found: ${this.innerAssetCount}`);
+        const totalAssetInsideCardTexts = await this.totalAsset.allTextContents();
         const validNumbers = totalAssetInsideCardTexts
             .map(text => parseInt(text.replace(/\D/g, ''), 10))
             .filter(num => !isNaN(num));
         const totalAssetCountInsideCard = validNumbers.length > 0 ? validNumbers[0] : 0;
-        console.log("TotalAsset :  ", totalAssetCountInsideCard)
-        let isAssetCountMatchInsideCard = true
-        if (totalAssetCountInsideCard === 0) {
-            console.warn("No assets found after filtering. This is expected behavior if no matching assets exist.");
-        } else if (totalAssetCountInsideCard === this.innerAssetCount) {
-            console.log("");
-            isAssetCountMatchInsideCard = true;
-        } else {
-            console.error(`Mismatch: 'number of cards' is not equal to 'totalAssets': Expected ${this.innerAssetCount}, but got ${totalAssetCountInsideCard}`);
-        }
+        console.debug(`Total asset count inside card : ${totalAssetCountInsideCard}`);
+        expect(totalAssetCountInsideCard, "Total asset count should be greater than 0").toBeGreaterThan(0);
+        expect(this.innerAssetCount).toBe(totalAssetCountInsideCard);
     }
 
     // TC_AM_011
-    async selectRandomSuperOwner(): Promise<string | null> {
-        console.log("Click on Super Owner Dropdown");
+    async selectRandomSuperOwner(): Promise<string> {
         await this.superOwnerDropdown.waitFor({ state: "visible", timeout: 2000 });
-        let options = await this.superOwnerDropdown.locator("option").allInnerTexts();
-        if (options.length === 0) {
-            console.error("No options available in the dropdown.");
-            return null;
+        const optionCount = await this.superOwnerDropdown.locator('option').count();
+        expect(optionCount, "Dropdown should contain at least one option").toBeGreaterThan(0);
+        const validOptions: string[] = [];
+        for (let i = 0; i < optionCount; i++) {
+            const optionText = await this.superOwnerDropdown.locator('option').nth(i).innerText();
+            const trimmedText = optionText.replace(/\n/g, '');
+            if (trimmedText) validOptions.push(trimmedText);
         }
-        const validOptions = options.filter(option => option.trim() !== "");
-        if (validOptions.length === 0) {
-            console.error("No valid options found in the dropdown.");
-            return null;
-        }
-        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
-        console.log(`Randomly selected option: ${randomOption}`);
-        try {
-            await this.superOwnerDropdown.selectOption({ label: randomOption });
-            console.log(`Successfully selected: ${randomOption}`);
-        } catch (error) {
-            console.error(`Failed to select option: ${randomOption}`, error);
-            return null;
-        }
-        const selectedValue = (await this.superOwnerDropdown.inputValue()).trim();
-        console.log(`Selected value: ${selectedValue}`);
-        return selectedValue
+        expect(validOptions.length, "Dropdown should contain at least one non-empty option").toBeGreaterThan(0);
+        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)];
+        console.debug(`Randomly selected option: ${randomOption}`);
+        await this.superOwnerDropdown.selectOption({ label: randomOption });
+        console.debug(`Successfully selected: ${randomOption}`);
+        const selectedValue = await this.superOwnerDropdown.evaluate((select: HTMLSelectElement) => select.value);
+        console.debug(`Selected value (evaluate): ${selectedValue}`);
+        expect(selectedValue, "Selected dropdown value should not be empty").not.toBe("");
+        expect(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
+        return selectedValue;
     }
 
     // TC_AM_012
-    async selectRandomOwner(): Promise<string | null> {
-        console.log("Click on Owner Dropdown");
+    async selectRandomOwner(): Promise<string> {
         await this.ownerDropdown.waitFor({ state: "visible", timeout: 2000 });
-        const options = await this.ownerDropdown.locator("option").allInnerTexts();
-        if (options.length === 0) {
-            console.error("No options available in the dropdown.");
-            return null;
+        const optionCount = await this.ownerDropdown.locator('option').count();
+        expect(optionCount, "Owner dropdown should contain at least one option").toBeGreaterThan(0);
+        const validOptions: string[] = [];
+        for (let i = 0; i < optionCount; i++) {
+            const optionText = await this.ownerDropdown.locator('option').nth(i).innerText();
+            const trimmedText = optionText.replace(/\n/g, '');
+            if (trimmedText) validOptions.push(trimmedText);
         }
-        const validOptions = options.filter(option => option.trim() !== "");
-        if (validOptions.length === 0) {
-            console.error("No valid options found in the dropdown.");
-            return null;
-        }
-        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
-        console.log(`Randomly selected option: ${randomOption}`);
-        try {
-            await this.ownerDropdown.selectOption({ label: randomOption });
-            console.log(`Successfully selected: ${randomOption}`);
-        } catch (error) {
-            console.error(`Failed to select option: ${randomOption}`, error);
-            return null;
-        }
-        const selectedValue = (await this.ownerDropdown.inputValue()).trim();
-        console.log(`Selected value: ${selectedValue}`);
-        return selectedValue
+        expect(validOptions.length, "Owner dropdown should contain non-empty options").toBeGreaterThan(0);
+        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)];
+        console.debug(`Randomly selected Owner option: ${randomOption}`);
+        await this.ownerDropdown.selectOption({ label: randomOption });
+        console.debug(`Successfully selected: ${randomOption}`);
+        const selectedValue = await this.ownerDropdown.evaluate((select: HTMLSelectElement) => select.value);
+        console.debug(`Selected value: ${selectedValue}`);
+        expect(selectedValue, "Selected Owner value should not be empty").not.toBe("");
+        expect(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
+        return selectedValue;
     }
+
 
     // TC_AM_013
-    async selectRandomAvailability(): Promise<string | null> {
-        console.log("Click on Availability Dropdown");
-        await this.availabilityDropdown.waitFor({ state: "visible", timeout: 2000 });
-        const options = await this.availabilityDropdown.locator("option").allInnerTexts();
-        if (options.length === 0) {
-            console.error("No options available in the dropdown.");
-            return null;
+    async selectRandomAvailability(): Promise<string> {
+        await this.availabilityDropdown.waitFor({ state: "visible", timeout: 2000 })
+        const optionCount = await this.availabilityDropdown.locator('option').count();
+        expect(optionCount, "Availability dropdown should contain options").toBeGreaterThan(0);
+        const validOptions: string[] = [];
+        for (let i = 0; i < optionCount; i++) {
+            const optionText = await this.availabilityDropdown.locator('option').nth(i).innerText();
+            const trimmedText = optionText.replace(/\n/g, '');
+            if (trimmedText) validOptions.push(trimmedText);
         }
-        const validOptions = options.filter(option => option.trim() !== "");
-        if (validOptions.length === 0) {
-            console.error("No valid options found in the dropdown.");
-            return null;
-        }
-        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
-        console.log(`Randomly selected option: ${randomOption}`);
-        try {
-            await this.availabilityDropdown.selectOption({ label: randomOption });
-            console.log(`Successfully selected: ${randomOption}`);
-        } catch (error) {
-            console.error(`Failed to select option: ${randomOption}`, error);
-            return null;
-        }
-        const selectedValue = (await this.availabilityDropdown.inputValue()).trim();
-        console.log(`Selected value: ${selectedValue}`);
-        return selectedValue
+        expect(validOptions.length, "Availability dropdown should contain non-empty options").toBeGreaterThan(0);
+        const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)];
+        console.debug(`Randomly selected option: ${randomOption}`);
+        await this.availabilityDropdown.selectOption({ label: randomOption });
+        console.debug(`Successfully selected: ${randomOption}`);
+        const selectedValue = await this.availabilityDropdown.evaluate((select: HTMLSelectElement) => select.value);
+        console.debug(`Selected value: ${selectedValue}`)
+        expect(selectedValue, "Selected availability value should not be empty").not.toBe("");
+        expect(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
+        return selectedValue;
     }
 
-    // I merge 3 test script in one TC_AM_014 || TC_AM_015 || TC_AM_016
-    async checkOptionVisible(): Promise<void> {
-        console.log("Check All option is selected and In Owner dropdown All options are visible")
-        let superOwnerOptions = await this.superOwnerDropdown.locator("option").allTextContents();
-        let superOwnerCount = superOwnerOptions.length
-        console.log(superOwnerCount)
-        for (let x = 0; x < superOwnerCount; x++) {
-            console.log(await this.superOwnerDropdown.selectOption({ index: x }))
-            await this.page.waitForTimeout(500);
-            let ownerDropdownOptions = await this.ownerDropdown.allTextContents()
-            console.log("Option in OwnerDropdown", ownerDropdownOptions)
-            let ownerOptionCount = await this.ownerDropdown.count()
-            let visibleOwnerOptions: string[] = []
-            for (let i = 0; i < ownerOptionCount; ++i) {
-                let presentOwnerOption = await this.ownerDropdown.nth(i).innerText()
-                visibleOwnerOptions.push(presentOwnerOption.replace(/\n/g, "").trim())
-            }
-            console.log(visibleOwnerOptions)
-            expect(ownerDropdownOptions).toEqual(visibleOwnerOptions);
-        }
-    }
 
-    // I merge 2 test case in one TC_AM_017 & TC_AM_018
-    async cardFilter(): Promise<void> {
-        console.log("Collecting selected dropdown values...");
-        let superOwnerValue = await this.selectRandomSuperOwner();
-        let ownerValue = await this.selectRandomOwner();
-        let availabilityValue = await this.selectRandomAvailability();
-        let cardsData = {
-            superOwnerValue,
-            ownerValue,
-            availabilityValue
-        };
-        console.log("Selected Dropdown Values:", cardsData);
-        await this.filterButton.click()
-        await this.page.waitForTimeout(500);
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
-        await this.page.waitForTimeout(500);
-        const totalAssetsAfterFilter = await this.verifyTotalAsset();
-        console.log(`Total assets after filtering: ${totalAssetsAfterFilter}`);
-        const noRecordText = "No Record Available!";
-        const noRecordElement = await this.page.$(".Toastify__toast-body>div:nth-child(2)");
-        let emptyRecordText = "";
-        if (noRecordElement) {
-            emptyRecordText = (await noRecordElement.textContent())?.trim() || "";
-        }
-        if (emptyRecordText === noRecordText || totalAssetsAfterFilter === 0) {
-            console.log("Case 1: No records available after filtering.");
-            const downloadPromise = this.page.waitForEvent('download').catch(() => null);
-            await this.exportButton.click();
-            await this.page.waitForTimeout(1500);
-            try {
-                await expect(this.alert.getAlertElement()).toBeVisible();
-                const alertMessage = await this.alert.getAlertText();
-                console.log("Alert message appeared as expected:", alertMessage);
-                expect(alertMessage).toContain(noRecordText);
-                console.log(" Export did NOT trigger a file download. Everything is correct.");
-            } catch (error) {
-                console.warn("Alert did not appear, checking for file download...");
-                const download = await downloadPromise;
-                if (download) {
-                    console.log(" File was downloaded when no records were available!");
-                } else {
-                    console.log("Neither an alert appeared nor was a file downloaded.");
-                }
-            }
-            console.log("Running alternative test case after failed export.");
-        }
-        else {
-            console.log(" Case 2: One or more assets found. Proceeding with export...");
-            try {
-                const [download] = await Promise.all([
-                    this.page.waitForEvent("download", { timeout: 2000 }),
-                    this.exportButton.click()
-                ]);
-                const downloadedFile = download.suggestedFilename();
-                console.log("Downloaded file:", downloadedFile);
-                if (!downloadedFile.endsWith(".xlsx")) {
-                    throw new Error(`Invalid file extension: ${downloadedFile}`);
-                }
-                const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
-                await download.saveAs(downloadPath);
-                if (fs.existsSync(downloadPath)) {
-                    console.log(`File successfully downloaded: ${downloadPath}`);
-                } else {
-                    throw new Error("Error: Downloaded file not found in expected location!");
-                }
-                expect(fs.existsSync(downloadPath)).toBeTruthy();
-            } catch (error) {
-                console.error("Error during file download:", error);
-            }
-        }
-    }
 
-    // TC_AM_019
-    async verifySorting(): Promise<void> {
-        await this.page.reload()
-        await this.page.waitForTimeout(3000);
-        let beforeSorting = await this.page.locator('tr>td:nth-child(2)').allTextContents();
-        await this.page.locator(`tr>th:nth-child(2)`).click();
+
+    async verifyOwnerDropdownOptionsForSuperOwner(superOwnerLabel: string, expectedOwnerOptions: string[], exactMatch = true): Promise<void> {
+        await this.superOwnerDropdown.selectOption({ label: superOwnerLabel });
         await this.page.waitForTimeout(1000);
-        let afterSortingAsc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-        let isSortedAsc = true;
-        for (let i = 0; i < afterSortingAsc.length - 1; i++) {
-            if (Number(afterSortingAsc[i]) > Number(afterSortingAsc[i + 1])) {
-                isSortedAsc = false;
-                break;
+        const ownerOptionCount = await this.ownerDropdown.locator('option').count();
+        const trimmedOwnerOptions: string[] = [];
+
+        for (let i = 0; i < ownerOptionCount; i++) {
+            const optionText = await this.ownerDropdown.locator('option').nth(i).innerText();
+            trimmedOwnerOptions.push(optionText.replace(/\n/g, '').trim());
+        }
+
+        console.debug(`Owner options when Super Owner is '${superOwnerLabel}':`, trimmedOwnerOptions);
+
+        if (exactMatch) {
+            expect(trimmedOwnerOptions.sort()).toEqual(expectedOwnerOptions.sort());
+        } else {
+            for (const option of expectedOwnerOptions) {
+                expect(trimmedOwnerOptions).toContain(option);
             }
         }
-        expect(isSortedAsc).toBe(true);
-        await this.page.locator(`tr>th:nth-child(2)`).click();
-        await this.page.waitForTimeout(1000);
-        let afterSortingDesc = await this.page.locator(`tr>td:nth-child(2)`).allTextContents();
-        let isSortedDesc = true;
-        for (let i = 0; i < afterSortingDesc.length - 1; i++) {
-            if (Number(afterSortingDesc[i]) < Number(afterSortingDesc[i + 1])) {
-                isSortedDesc = false;
-                break;
-            }
-        }
-        expect(isSortedDesc).toBe(true);
     }
 
-    // TC_AM_020
-    async verifyRedirected(): Promise<void> {
-        await this.assetOverviewRedirect.click()
-        await this.page.waitForTimeout(1000)
-        await this.verifyHeader()
+    async selectOwnerDropDown(owner) {
+        await this.ownerDropdown.selectOption(owner)
     }
+    async selectSuperOwnerDropDown(superOwner) {
+        await this.superOwnerDropdown.selectOption(superOwner)
+    }
+    async selectAvailabilityDropDown(availability) {
+        await this.availabilityDropdown.selectOption(availability)
+    }
+
+
+    async filterAssetsByDropdownSelections(): Promise<number> {
+
+        console.debug("Collecting selected dropdown values...");
+        const superOwnerValue = await this.selectRandomSuperOwner();
+        expect(superOwnerValue, "Super Owner selection should not be empty").not.toBe("");
+        const ownerValue = await this.selectRandomOwner();
+        expect(ownerValue, "Owner selection should not be empty").not.toBe("");
+        const availabilityValue = await this.selectRandomAvailability();
+        expect(availabilityValue, "Availability selection should not be empty").not.toBe("");
+        const cardsData = { superOwnerValue, ownerValue, availabilityValue };
+        console.debug("Selected Dropdown Values:", cardsData);
+        await this.clickFilterButton()
+        const totalAssetsAfterFilter = await this.getTotalAssetCount();
+        console.debug(`Total assets after filtering: ${totalAssetsAfterFilter}`);
+        if (totalAssetsAfterFilter === 0) {
+            console.debug("No records found after applying filter.");
+            const emptyRecordText = (await this.emptyRecord?.textContent())?.trim() || "";
+            expect(emptyRecordText).toBe("No records available");
+        } else {
+            console.debug("Records found after applying filter.");
+            expect(totalAssetsAfterFilter).toBeGreaterThan(0);
+        }
+        return totalAssetsAfterFilter;
+    }
+    async getFilteredData(): Promise<number> {
+        // await this.page.pause()
+        await this.openCard("Desktop PC");
+        const superOwnerValue = await this.selectRandomSuperOwner();
+        expect(superOwnerValue, "Super Owner selection should not be empty").not.toBe("");
+        const ownerValue = await this.selectRandomOwner();
+        expect(ownerValue, "Owner selection should not be empty").not.toBe("");
+        const availabilityValue = await this.selectRandomAvailability();
+        expect(availabilityValue, "Availability selection should not be empty").not.toBe("");
+        await this.clickFilterButton()
+        const totalAssetsAfterFilter = await this.getTotalAssetCount();
+        console.debug(`Filtered asset count: ${totalAssetsAfterFilter}`);
+        return totalAssetsAfterFilter
+
+    }
+
+    async clickManfHeader() {
+        await this.page.locator(`tr>th:nth-child(2)`).click();
+    }
+    async clickModelHeader() {
+        await this.page.locator(`tr>th:nth-child(3)`).click();
+    }
+    async clickSerialNumberHeader() {
+        await this.page.locator(`tr>th:nth-child(4)`).click();
+    }
+    async clickSuperOwnerHeader() {
+        await this.page.locator(`tr>th:nth-child(5)`).click();
+    }
+    async clickOwnerHeader() {
+        await this.page.locator(`tr>th:nth-child(6)`).click();
+    }
+    async clickStatusHeader() {
+        await this.page.locator(`tr>th:nth-child(7)`).click();
+    }
+    async clickAvailablityHeader() {
+        await this.page.locator(`tr>th:nth-child(8)`).click();
+    }
+
 }

@@ -1,43 +1,39 @@
 import { test, expect } from '@playwright/test'
-import { AssetAllocation } from '../pages/Asset_Allocation'
-import { OverView } from '../pages/Asset_OverView'
-import { LoginPage } from '../pages/Loginpage';
-import { BasePage } from '../pages/Basepage';
-import { Login } from '../support/command';
-let allocation : AssetAllocation
+import { AssetAllocation } from '../pages/Asset_Allocation';
+import { LoginPage } from '../pages/LoginPage';
+import testData from '../testData/testData.json';
+import { AssetHelper } from '../utils/AssetHelpers';
+let allocation: AssetAllocation
 test.describe("Asset Allocation page", () => {
     test.beforeEach(async ({ page }) => {
-    
-
-        const loginPage = new LoginPage(page)
-        const basepage = new BasePage(page)
-
-        await basepage.open('url')
-        await Login.login(page, "SuperUser")
+        const loginObj = new LoginPage(page)
+        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         allocation = new AssetAllocation(page)
-
+        await AssetHelper.navigateToAllocationAsset(page, allocation.allocationAsset);
     });
-
-
-
     test("Rediected Towards Asset Allocation page", async ({ page }) => {
-        expect(await allocation.allocationPage())
-        // console.log("Redirected SucessFully ")
+        expect(await allocation.allocationPageHeader.isVisible()).toBeTruthy();
+        expect(await allocation.allocationAssignAsset.isVisible()).toBeTruthy();
+        expect(await allocation.searchBar.isVisible()).toBeTruthy();
+        await allocation.getTotalAssetCount()
+        await allocation.getColumnHeader()
     })
 
     test("Functionality of search Bar ", async ({ page }) => {
-        expect(await allocation.searchField())
+        await allocation.getBySearchdata(allocation.assetTypeName, "KeyWord" , "Asset Name")
     })
     test("Functionality of search Bar serial Number ", async ({ page }) => {
-        expect(await allocation.searchBySerialNumber())
+        await allocation.getBySearchdata(allocation.assetSerialNumber,"DELL004", "serial Number")
     })
 
     test("Functionality of search Bar Owner name ", async ({ page }) => {
-        expect(await allocation.searchByOwnerName())
+        await allocation.getBySearchdata(allocation.assetOwnerName,"Caelius", "Owner name")
     })
+
     test("Functionality of search Bar Employee name ", async ({ page }) => {
-        expect(await allocation.searchByEmployeeName())
+        await allocation.searchByEmployeeName()
     })
+
     // TC_AM_028
 
     // // Check Sorting
@@ -48,13 +44,13 @@ test.describe("Asset Allocation page", () => {
 
     // TC_AM_029
 
-    test("Pagination" , async ()=>{
-        expect(await allocation.pagination())
+    test("Pagination", async () => {
+        expect(await allocation.validatePagination())
         console.log("Pagination verified !!")
     })
 
 
-    test("Assign asset" , async ()=>{
+    test("Assign asset", async () => {
         expect(await allocation.assignAsset())
     })
 })

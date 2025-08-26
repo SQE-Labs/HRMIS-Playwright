@@ -1,55 +1,53 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
-import { AssetHelper } from "../helpers/AssetHelpers";
+import { AssetHelper } from "../utils/AssetHelpers";
 export class AssetAllocation extends BasePage {
-    private allocationAsset: Locator;
-    private allocationPageHeader: Locator;
-    private allocationAssignAsset: Locator;
-    private allocationRecord: Locator;
-    private nextButton: Locator;
-    private previousButton: Locator;
-    private disableNextButton: Locator;
-    private totalAssetAssigned: Locator;
-    private searchBar: Locator;
-    private itemsPerPage: Locator;
-    private itemsPerPageOption: Locator;
-    private columnHeader: Locator;
+    public allocationAsset: Locator;
+    public allocationPageHeader: Locator;
+    public allocationAssignAsset: Locator;
+    public allocationRecord: Locator;
+    public nextButton: Locator;
+    public previousButton: Locator;
+    public disableNextButton: Locator;
+    public totalAssetAssigned: Locator;
+    public searchBar: Locator;
+    public itemsPerPage: Locator;
+    public itemsPerPageOption: Locator;
+    public columnHeader: Locator;
     public colHeaders: string[];
-    private assetTypeName: Locator;
-    private assetSerialNumber: Locator;
-    private assetEmployeeName: Locator;
-    private assetOwnerName: Locator;
-    private assetInvalidData: Locator;
-    private allocationAssignAssetHeader: Locator;
-    private allocationSelectEmployee: Locator;
-    private allocationComment: Locator;
-    private allocationSelectEmployeeOption: Locator;
-    private allocationSelectAssetTypeOption: Locator;
-    private allocationSelectAssetType: Locator;
-    private submitButton: Locator;
-    private assetTypePopUp: Locator;
-    private popupSearchBar: Locator;
-    private popupTable: Locator;
-    private radioButton: Locator;
-    private crossButton: Locator;
-    private selectedAsset: Locator;
-    private pageCount: Locator;
-    private loader: Loader;
-    private employeeOption: Locator;
-    private assetTypeOption: Locator;
-    private assetTypeField: Locator;
-    private assetTypeRequiredField: Locator;
-    private assetListSelectedOption: Locator;
-    private employeeSelectedOption: Locator;
-    private assetRadioButton: Locator;
-    private assetCommentField: Locator;
-    private assetInputGroupTextarea: Locator;
-    private toastContainer: Locator;
-    private popupNoRecordsHeader: Locator;
-    private assetTableSerialNumber: Locator;
-    private assetTableRowSix: Locator;
-    private assetTypeDropdownSvg: Locator;
+    public assetTypeName: Locator;
+    public assetSerialNumber: Locator;
+    public assetEmployeeName: Locator;
+    public assetOwnerName: Locator;
+    public assetInvalidData: Locator;
+    public allocationAssignAssetHeader: Locator;
+    public allocationSelectEmployee: Locator;
+    public allocationComment: Locator;
+    public allocationSelectEmployeeOption: Locator;
+    public allocationSelectAssetTypeOption: Locator;
+    public allocationSelectAssetType: Locator;
+    public submitButton: Locator;
+    public assetTypePopUp: Locator;
+    public popupSearchBar: Locator;
+    public popupTable: Locator;
+    public radioButton: Locator;
+    public crossButton: Locator;
+    public selectedAsset: Locator;
+    public pageCount: Locator;
+    public employeeOption: Locator;
+    public assetTypeOption: Locator;
+    public assetTypeField: Locator;
+    public assetTypeRequiredField: Locator;
+    public assetListSelectedOption: Locator;
+    public employeeSelectedOption: Locator;
+    public assetRadioButton: Locator;
+    public assetCommentField: Locator;
+    public assetInputGroupTextarea: Locator;
+    public toastContainer: Locator;
+    public popupNoRecordsHeader: Locator;
+    public assetTableSerialNumber: Locator;
+    public assetTableRowSix: Locator;
+    public assetTypeDropdownSvg: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -113,52 +111,26 @@ export class AssetAllocation extends BasePage {
         this.submitButton = this.page.locator("button[type='submit']");
         this.crossButton = this.page.locator("//button[@type = 'button'][@aria-label = 'Close']");
         this.assetOwnerName = this.page.locator("tr>td:nth-child(4)");
-        this.loader = new Loader(page);
     }
-
-    // TC_AM_021 - TC_AM_022
-    async allocationPage() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
-        expect(await this.allocationPageHeader.isVisible()).toBeTruthy();
-        expect(await this.allocationAssignAsset.isVisible()).toBeTruthy();
-        await this.page.waitForTimeout(1000);
+    async getTotalAssetCount() {
         const totalAllocationAsset = await this.totalAssetAssigned.allTextContents();
         const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationAsset);
         console.log("TotalAsset :  ", totalAssetCount);
-        expect(await this.searchBar.isVisible()).toBeTruthy();
+    }
+    async getColumnHeader() {
         const colHeader = await this.columnHeader.allTextContents();
         await AssetHelper.verifyHeadersMatch(colHeader, this.colHeaders);
     }
 
-    async searchField() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
-        await this.searchBar.pressSequentially("Keyboard");
-        await this.page.waitForTimeout(1000);
-        const assetName = await this.assetTypeName.allTextContents();
-        console.log(assetName);
-        await AssetHelper.verifySearchResults(assetName, 'Keyboard', 'asset name');
-    }
-
-    async searchBySerialNumber() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
-        await this.searchBar.pressSequentially("DELL004");
-        await this.page.waitForTimeout(2000);
-        const serialNumber = await this.assetSerialNumber.allTextContents();
-        console.log(serialNumber);
-        await AssetHelper.verifySearchResults(serialNumber, 'DELL004', 'serial number');
-    }
-
-    async searchByOwnerName() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
-        await this.searchBar.pressSequentially("Caelius");
-        await this.page.waitForTimeout(3000);
-        const ownerName = await this.assetOwnerName.allTextContents();
-        console.log(ownerName);
-        await AssetHelper.verifySearchResults(ownerName, 'Caelius', 'owner name');
+    async getBySearchdata(TypeLocator: Locator, SearchBy, type) {
+        await this.searchBar.pressSequentially(SearchBy);
+        const name = await TypeLocator.allTextContents();
+        console.log(name);
+        await AssetHelper.verifySearchResults(name, SearchBy, type);
     }
 
     async searchByEmployeeName() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
+
         await this.searchBar.pressSequentially("Asset L1");
         await this.page.waitForTimeout(3000);
         const employeeName = await this.assetEmployeeName.allTextContents();
@@ -172,8 +144,11 @@ export class AssetAllocation extends BasePage {
         console.log(invalidData);
     }
 
+    async clickOnNextButton() {
+        await this.nextButton.click();
+    }
     async pagination() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
+
         const totalAllocationAsset = await this.totalAssetAssigned.allTextContents();
         const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationAsset);
         console.log("TotalAsset :  ", totalAssetCount);
@@ -186,7 +161,6 @@ export class AssetAllocation extends BasePage {
         console.log("Selected Value: ", selectedValue);
         console.log("Asset Name Count: ", assetNameCount);
         expect(selectedValue).toEqual(assetNameCount);
-        await this.nextButton.click();
         await this.page.waitForTimeout(1000);
         expect(await this.previousButton.isEnabled()).toBeTruthy();
         await this.previousButton.click();
@@ -209,12 +183,11 @@ export class AssetAllocation extends BasePage {
     }
 
     async assignAsset() {
-        await AssetHelper.navigateToAllocationAsset(this.page, this.allocationAsset, this.loader.getSpinLoader());
+
         expect(await this.allocationAssignAsset.textContent()).toEqual("Assign Asset");
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
-        await this.page.waitForTimeout(1000);
+        await this.waitforLoaderToDisappear();
         await this.allocationAssignAsset.click();
-        expect(this.loader.getSpinLoader()).not.toBeAttached();
+
         await this.allocationSelectEmployee.click();
         await this.employeeOption.click();
         await this.allocationComment.fill("Thank you !!");
@@ -228,7 +201,6 @@ export class AssetAllocation extends BasePage {
         const options = await this.allocationSelectAssetTypeOption.allTextContents();
         expect(options.length).toBeGreaterThan(0);
         await this.assetTypeOption.click();
-        this.loader.getSpinLoader().waitFor({ state: 'detached' });
         await expect(this.assetTypePopUp).toBeVisible();
         await expect(this.popupSearchBar).toBeVisible();
         await expect(this.popupTable).toBeVisible();
@@ -252,7 +224,8 @@ export class AssetAllocation extends BasePage {
         await this.page.waitForTimeout(1000);
         const optionToBeSelected = await this.assetTypeOption.textContent();
         await this.assetTypeOption.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitForDotsLoaderToDisappear()
+        await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForTimeout(1000);
         const serialNumbers2 = await this.page.locator("table tr td:nth-child(4)").allTextContents();
         const selectedSerialNumber = serialNumbers2[0];
@@ -270,7 +243,8 @@ export class AssetAllocation extends BasePage {
         await this.assetTypeDropdownSvg.click();
         await this.page.waitForTimeout(1000);
         await this.assetTypeOption.click();
-        await expect(this.loader.getSpinLoader()).not.toBeAttached();
+        await this.waitForDotsLoaderToDisappear()
+        await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForTimeout(1000);
         await this.popupSearchBar.pressSequentially(selectedSerialNumber);
         await this.assetRadioButton.click();

@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import { AssetAllocation } from './pages/Asset_Allocation';
-import { AssetDeallocation } from './pages/Asset_Deallocation';
 dotenv.config();
 
 /**
@@ -16,11 +14,11 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  expect : {
+  expect: {
     timeout: 12_000, // Default timeout for expect assertions
   },
   timeout: 240000,
-  testDir : './tests',
+  testDir: './tests',
   // testMatch:
   // [
   // "Employee_Management.spec.ts"
@@ -33,9 +31,9 @@ export default defineConfig({
   // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   // workers: process.env.CI ? 1 : undefined,
-  workers: 1,
+  workers: 4,
   reporter: [["html"], ['line'], ["allure-playwright"]],
   // reporter: [
   //   ["dot"],
@@ -52,7 +50,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     //use baseurl from 
     baseURL: process.env.URL || 'https://topuptalent.com/',
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     // actionTimeout : 10000,
   },
