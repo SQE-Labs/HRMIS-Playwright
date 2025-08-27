@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
 import { BasePage } from '../pages/Basepage';
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import testData from '../testData/testData.json';
 
 let assetOverview: OverView;

@@ -28,6 +28,7 @@ export class Employee_Management extends BasePage {
     public BasicInfoEditButton: Locator
     public BasicInfoFirstname: Locator
     public BasicInfoLastName: Locator
+    public BasicInfoMiddleName: Locator
     public UpdateButton: Locator
     public CloseButton: Locator
     public WorkAccordion: Locator
@@ -85,6 +86,7 @@ export class Employee_Management extends BasePage {
     public LeaveManagerPopupDropDown: Locator
     public LeaveManagerActionButton: Locator
     public Pop_Up_Header: Locator
+    public DepartmentCancelButton: Locator
     public NoButton: Locator
     public YesButton: Locator
     public AssignButton: Locator
@@ -175,6 +177,8 @@ export class Employee_Management extends BasePage {
         this.BasicInfoEditButton = page.locator("#heading1 + div i.fa-edit")
         this.BasicInfoFirstname = page.locator("div:nth-child(2)>div>div:nth-child(1)>input")
         this.BasicInfoLastName = page.locator("div:nth-child(2)>div>div:nth-child(2)>input")
+        this.BasicInfoMiddleName = page.locator('(//input[@name = "middleName"])[1]')
+
         this.UpdateButton = page.locator(".btn.btn-primary.btn-sm")
         this.CloseButton = page.locator(".btn.btn-secondary.btn-sm.ms-2")
         this.WorkAccordion = page.locator("#heading2")
@@ -215,6 +219,7 @@ export class Employee_Management extends BasePage {
             'First Name',
             'Last Name',
             'Employee Id',
+            'Employee Flag',
             'Middle Name',
             'Email'
         ]
@@ -265,8 +270,10 @@ export class Employee_Management extends BasePage {
         this.AssignManagerPopupDropdownOption = page.locator("#react-select-5-option-1")
         this.AssignManagerPopupSubmitbutton = page.locator("(//button[@class = 'theme-button'])[2]")
         this.ColoumnBody = [
+            'Employee Id',
             'Name',
-            'Assigned Manager',
+            'Department',
+            'Designation',
             'Action'
         ]
 
@@ -275,7 +282,7 @@ export class Employee_Management extends BasePage {
         this.PromotionHeader = page.locator(".page-heading")
         this.PromotionColoumn = page.locator("thead>tr>th")
         this.Dropdown = page.locator("#react-select-2-input")
-        this.DropdownOption = page.locator("#react-select-2-option-0")
+        this.DropdownOption = page.locator("#react-select-2-option-1")
         this.PromoteButton = page.locator(".btn.btn-secondary")
         this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
         this.PromotionPopUpLabel = page.locator("div>label")
@@ -324,7 +331,7 @@ export class Employee_Management extends BasePage {
 
         this.Approve_Label_Document_type_dropdown = page.locator("#react-select-2-input")
         this.Approve_Label_Employee_dropdown = page.locator("#react-select-3-input")
-        this.Approve_Label_Exiting_Document_type = page.locator("tr>td:nth-child(3)")
+        this.Approve_Label_Exiting_Document_type = page.locator("tr > td:nth-child(3):visible")
         this.Approve_Label_Exiting_Employee = page.locator("tr>td:nth-child(2)")
         this.Action_button = page.locator("(//button[@class = 'btn btn-secondary'])[1]")
         this.Action_Button_popup = page.locator("#staticBackdropLabel")
@@ -349,6 +356,8 @@ export class Employee_Management extends BasePage {
         this.leftoutcurrentDate = page.locator("//div[@aria-current='date']")
         this.leftOutCards = page.locator(".col-md-4.col-lg-3")
         this.selectEmployeeOption = page.locator("#react-select-2-option-2")
+
+        this.DepartmentCancelButton = page.locator(".cancel-modal")
     }
 
     async expandEmployeeManagementTab(): Promise<void> {
@@ -502,16 +511,16 @@ export class Employee_Management extends BasePage {
     }
 
     async getOriginalPeronalDetails() {
-        var OriginalaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
-        var OriginalPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
-        var OriginalpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
+        var OriginalaadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
+        var OriginalPanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
+        var OriginalpermanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
         return { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress }
     }
 
     async getUpdatedPerosnalDetails() {
-        var currentaadharNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[3]/div/div[2]/p').textContent()
-        var currentPanCardNumber = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[7]/div/div[2]/p').textContent()
-        var CurrentpermanentAddress = await this.page.locator('//*[@id="collapse3"]/div/div[2]/div[10]/div/div[2]/p').textContent()
+        var currentaadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
+        var currentPanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
+        var CurrentpermanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
         return { currentaadharNumber, currentPanCardNumber, CurrentpermanentAddress }
     }
 
@@ -575,7 +584,7 @@ export class Employee_Management extends BasePage {
         await this.AssignManagertab.click()
     }
 
-    async  getColumnCount() {
+    async getColumnCount() {
         var Coloumncount = await this.Coloumn.count()
         for (let i = 0; i < Coloumncount; i++) {
             var AssignColoumnData = this.Coloumn.nth(i);
@@ -587,17 +596,21 @@ export class Employee_Management extends BasePage {
     async clickOnActionButton() {
         await this.ManagerActionButton.click()
     }
-    async clickOnCrossButton() {
-        await this.CrossButton.click()
+    async clickOnCrossButton(Locator: Locator) {
+        await Locator.click()
 
     }
-    async clickOnCancelButton() {
-        await this.CancelButton.click()
+    async clickOnCancelButton(Locator: Locator) {
+        await Locator.click()
+        await this.waitforLoaderToDisappear()
 
     }
 
     async verifyCollapseIsHidden(value: number) {
         await expect(this.page.locator(`#collapse${value}`).last()).toBeHidden()
+    }
+    async verifyCollapseIsVisible(value: number) {
+        await expect(this.page.locator(`#collapse${value}`).last()).toBeVisible()
     }
     async selectionofAssignManager(value) {
         await this.page.locator(`#react-select-3-option-${value}`).click()
@@ -713,73 +726,6 @@ export class Employee_Management extends BasePage {
 
 
 
-
-  
-    
-   
-
-    async Document_upload_PopUp_Functionality() {
-        // TC_EM_093
-        await this.page.waitForTimeout(200)
-        await this.PopUP_Submit_button.click()
-        var ChooseFileField = await this.Choose_file
-
-        var tooltipMessage = await ChooseFileField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please select a file.')
-
-
-        // TC_EM_094
-
-        await this.page.waitForTimeout(7000)
-        // await this.page.locator(".btn-close").click()``
-        var fileInputSelector = "#file-input"
-        var filePath = 'C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Files\\screenshot.png'; // Specify the path to the file you want to upload
-        await this.page.setInputFiles(fileInputSelector, filePath);
-        await this.page.waitForTimeout(1000)
-        await this.PopUP_Submit_button.click()
-        await this.page.waitForTimeout(1000)
-        var commentField = await this.PopUp_comment
-
-        var tooltipMessage = await commentField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage)
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-
-        // TC_EM_95
-        await this.PopUp_comment.pressSequentially("Thank you !!")
-        await this.PopUP_Submit_button.click()
-
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
-    }
-
-    // async Document_upload_Eye_Icon(context: BrowserContext) {
-    //     // TC_EM_096
-
-    //     await this.Employee_Management.click();
-    //     await this.Document_upload_Tab.click();
-    //     await this.page.waitForTimeout(500);
-    //     await this.Document_upload_DropDown.click();
-    //     await this.page.locator("#react-select-2-option-0").click();
-    //     await this.page.waitForTimeout(1000);
-
-    //     // Click the EyeIcon and wait for a new page to open
-    //     const [newPage] = await Promise.all([
-    //         context.waitForEvent('page'),
-    //         this.EyeIcon.click(),  // Single click here inside Promise.all
-    //     ]);
-
-    //     // Wait for the new page to load completely
-    //     await newPage.waitForLoadState();
-
-    //     // Validate the URL contains or matches the expected
-    // }    
-
-
     async performance_Evaluation() {
         // TC_EM_097
 
@@ -800,316 +746,75 @@ export class Employee_Management extends BasePage {
     //     await this.page.locator("#react-select-2-option-1").click()
     // }
 
-    async Role_Management() {
-        // TC_EM_101
-        await this.Employee_Management.click();
+    async navigateToRoleManagement() {
         await this.Role_Managment.click()
-        expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        await this.page.waitForTimeout(500);
-
-        var header = await this.Role_Header.textContent()
-        expect(header).toEqual("Role Management")
-
+        await this.waitforLoaderToDisappear()
     }
 
-    async Role_Management_DropDown() {
-        // TC_EM_102
-        await this.Role_Management()
-        await this.Dropdown.click()
-        var optioncount = await this.page.locator(".css-10wo9uf-option").count()
-        for (let i = 0; i < optioncount; i++) {
-            let option = await this.page.locator(".css-10wo9uf-option").nth(i)
-            await expect(option).toBeVisible();
-            let text = await this.page.locator(".css-10wo9uf-option").nth(i).textContent()
-            console.log(text)
-        }
-
-        // TC_EM_103
-        await this.page.locator("#react-select-2-option-1").click()
-        await this.page.locator(".theme-button.ms-2 ").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-
-        let message = await this.page.locator(".badge.badge-success.fs-5").textContent()
-        console.log(message)
-        expect(message).toEqual(" The role has been successfully assigned to Autom Mation User .")
-    }
-
-    async approve_document() {
-        // TC_EM_104
-        await this.Employee_Management.click();
+    async navigaeToApproveDocument() {
         await this.Approve_Document.click()
-        await this.page.waitForTimeout(3000)
-        expect(this.Loader.getSpinLoader()).not.toBeAttached()
-        const noRecords = await this.No_record
-        if (await noRecords.isVisible()) {
-            console.log("Approval for Pending Documents is not available.");
-            return false;
-        } else {
-            var header = await this.Approve_Header.textContent()
-            expect(header).toEqual("Approve Document")
-            let labelcount = await this.Approve_Label.count()
-            for (let i = 0; i < labelcount; i++) {
-                let label = await this.Approve_Label.nth(i)
-                expect(label).toBeVisible()
-                let text = await this.Approve_Label.nth(i).textContent()
-                console.log(text)
-            }
-        }
+        await this.waitforLoaderToDisappear()
+        // TC_EM_103
     }
 
-    async Approve_Document_Document_type() {
-        // TC_EM_105
-        let isAvailable = await this.approve_document();
-        if (!isAvailable) return;
+    async getTextSetFromLocator(locator: Locator, startIndex = 0): Promise<Set<string>> {
+        const count = await locator.count();
+        const values = new Set<string>();
 
-        await this.page.waitForTimeout(2000);
-        const labelCount = await this.Approve_Label_Exiting_Document_type.count();
-        const uniqueTypes = new Set();
-
-        for (let i = 0; i < labelCount - 1; i++) {
-            const existingType = await this.Approve_Label_Exiting_Document_type.nth(i).textContent();
-            if (existingType) {
-                uniqueTypes.add(existingType.trim());
-            }
+        for (let i = startIndex; i < count; i++) {
+            const text = await locator.nth(i).textContent();
+            if (text) values.add(text.trim());
         }
 
-        console.log("Unique Approved Document Types:", [...uniqueTypes]);
-
-        await this.Approve_Label_Document_type_dropdown.click();
-        await this.page.waitForTimeout(2000);
-
-        const options = this.page.locator('[id^="react-select-2-option"]');
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set();
-        for (let i = 1; i < dropdownCount; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Unique Approved Document Types:", [...DropdownTypes]);
-
-        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort());
+        return values;
     }
 
-    async Approve_Document_Employee() {
-        // TC_EM_106
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.page.waitForTimeout(2000);
 
-        const labelCount = await this.Approve_Label_Exiting_Employee.count();
-        const uniqueTypes = new Set;
 
-        for (let i = 0; i < labelCount - 1; i++) {
-            const existingType = await this.Approve_Label_Exiting_Employee.nth(i).textContent();
-            if (existingType) {
-                uniqueTypes.add(existingType.trim());
+    async checkNoRecordsAndReturn(): Promise<boolean> {
+        const noRecords = await this.No_record;
+        let npRecordText = await noRecords.textContent();
+        return await noRecords.isVisible();
+    }
+    async getUniqueTextSetFromLocator(locator: Locator, start = 0, end?: number): Promise<Set<string>> {
+        const count = await locator.count();
+        const values = new Set<string>();
+        const loopEnd = end !== undefined ? Math.min(end, count) : count;
+
+        for (let i = start; i < loopEnd; i++) {
+            const text = await locator.nth(i).textContent();
+            if (text) {
+                values.add(text.trim());
             }
         }
 
-        console.log("Unique Approved Employee Types:", [...uniqueTypes]);
-        await this.Approve_Label_Employee_dropdown.click()
-        await this.page.waitForTimeout(2000)
-        const options = this.page.locator('[id^="react-select-3-option"]');
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set
-        for (let i = 1; i < dropdownCount; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Droopdown Employee Types:", [...DropdownTypes])
-
-        expect([...uniqueTypes].sort()).toEqual([...DropdownTypes].sort())
+        return values;
     }
 
-    async Approve_Document_Dropdown() {
-        // TC_EM_107
-
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Label_Document_type_dropdown.click()
-        await this.page.locator("#react-select-2-option-1").click()
-        await this.page.waitForTimeout(500)
-        let SelectedOption = await this.page.locator("(//div[@class = ' css-1dimb5e-singleValue'])[1]").textContent()
-        console.log(SelectedOption)
-
-        await this.page.waitForTimeout(1500)
-        const options = this.Approve_Label_Exiting_Document_type
-        await this.page.waitForTimeout(1500)
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set
-        for (let i = 0; i < dropdownCount - 1; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Droopdown Document type :- ", [...DropdownTypes])
-        expect([...DropdownTypes].sort()).toEqual([SelectedOption])
+    async selectDropdownOptionByIndex(index: number) {
+        await this.Approve_Label_Employee_dropdown.click();
+        await this.page.locator(`#react-select-3-option-${index}`).click();
     }
 
 
-    async Approve_Employee_Dropdown() {
-        // TC_EM_108
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Label_Employee_dropdown.click()
-        await this.page.locator("#react-select-3-option-2").click()
-        await this.page.waitForTimeout(500)
-        let SelectedOption = await this.page.locator("(//div[@class = ' css-1dimb5e-singleValue'])[2]").textContent()
-        console.log(SelectedOption)
-
-        await this.page.waitForTimeout(1500)
-        const options = this.Approve_Label_Exiting_Employee
-        await this.page.waitForTimeout(1500)
-        const dropdownCount = await options.count();
-        const DropdownTypes = new Set
-        for (let i = 0; i < dropdownCount - 1; i++) {
-            const dropdownItem = await options.nth(i).textContent();
-            if (dropdownItem) {
-                DropdownTypes.add(dropdownItem.trim());
-            }
-        }
-        console.log("Droopdown Document type :- ", [...DropdownTypes])
-        expect([...DropdownTypes].sort()).toEqual([SelectedOption])
+    async navigateToDepartments() {
+        // TC_EM_11;
+        await this.Departments.click()
+        await this.waitforLoaderToDisappear()
     }
 
-    async Approve_Document_Action_button() {
-        // TC_EM_109
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Action_button.click()
-        await this.page.waitForTimeout(1000)
-        await this.Action_Button_popup.isVisible()
-        let header = await this.Action_Button_popup.textContent()
-        console.log(header)
-        expect(header).toEqual('Verify Document')
-    }
-
-    async Action_button_popup_cancel() {
-        // TC_EM_110
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        await this.page.locator(".cancel-approve").click()
-        await this.page.waitForTimeout(1000)
-        expect(await this.Action_Button_popup.isHidden()).toBe(true)
-    }
-    async Action_button_popup_Cross_icon() {
-        // TC_EM_111
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        await this.page.locator(".btn-close").click()
-        await this.page.waitForTimeout(1000)
-        expect(await this.Action_Button_popup.isHidden()).toBe(true)
-    }
-
-    async Action_Button_Popup_Approved() {
-        // TC_EM_112
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        try {
-            const [download] = await Promise.all([
-                this.page.waitForEvent("download", { timeout: 5000 }), // Reduced timeout for efficiency
-                this.View_button.click()
-            ]);
-
-            const downloadedFile = download.suggestedFilename();
-            console.log("Downloaded file:", downloadedFile);
-
-            // Ensure the file has a .xlsx extension
-            if (!downloadedFile) {
-                throw new Error(`Invalid file extension: ${downloadedFile}`);
-            }
-
-            // Define file save path
-            const downloadPath = `C:\\Users\\SQE Labs\\Desktop\\HRMIS-Playwright\\Download\\${downloadedFile}`;
-            await download.saveAs(downloadPath);
-
-            // Verify the file exists
-            if (fs.existsSync(downloadPath)) {
-                console.log(`File successfully downloaded: ${downloadPath}`);
-            } else {
-                throw new Error("Error: Downloaded file not found in expected location!");
-            }
-
-            // Assertion to confirm successful XLSX file download
-            expect(fs.existsSync(downloadPath)).toBeTruthy();
-        } catch (error) {
-            console.error("Error during file download:", error);
-        }
-
-        // TC_EM_113
-        await this.page.waitForTimeout(2000)
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        let Select_action_Dropdown_field = await this.Select_action_dropdown
-
-        var tooltipMessage = await Select_action_Dropdown_field.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please select an item in the list.')
-        await this.page.waitForTimeout(500)
-        // TC_EM_114 -- TC_EM_115
-        await this.Select_action_dropdown.selectOption({ value: 'approved' })
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-    }
-
-    async Action_Button_Popup_Rejected() {
-        // TC_EM_116
-        const isAvailable = await this.approve_document();
-        if (!isAvailable) return;
-        await this.Approve_Document_Action_button()
-        await this.Select_action_dropdown.selectOption({ value: 'rejected' })
-        await this.page.waitForTimeout(1000)
-        await this.Reason_Section.isVisible()
-
-        // TC_EM_117
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        let Reason_Section_Dropdown_field = await this.Reason_Section
-        var tooltipMessage = await Reason_Section_Dropdown_field.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.page.waitForTimeout(1000)
-
-        // TC_EM_118
-        await this.Reason_Section.fill("Thank you !!")
-        await this.page.locator("//button[@class = 'theme-button ']").click()
-        console.log(await this.page.locator(".Toastify__toast-body").textContent())
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-    }
-    async Department() {
-        // TC_EM_119
-        await this.Employee_Management.click();
-        this.Departments.click()
-        await this.page.waitForTimeout(4000)
-        expect(await this.Departments_Header.isVisible())
-        let header = await this.Departments_Header.textContent()
-        expect(header).toEqual('Departments')
-
-    }
     async Department_No_of_records() {
-        // TC_EM_120
-        await this.Department()
-        await this.page.waitForTimeout(2000)
         let Name_count = await this.Department_name.count()
         await this.page.waitForTimeout(2000)
         console.log(Name_count)
         let total_name = await this.No_Of_records.allTextContents()
         let totalNameCount = total_name.length > 0 ? parseInt(total_name[0].replace(/\D/g, ''), 10) : 0;
-        await this.page.waitForTimeout(2000)
         console.log("TotalAsset :  ", totalNameCount)
+        return { Name_count, totalNameCount }
     }
-    async Departments_Search_Bar_Valid() {
+
+    async validateDepartmentSearchBarFunctionality() {
         // TC_EM_121
-        await this.Department()
-        await this.page.waitForTimeout(2000)
         let existingname = await this.Department_name.allTextContents();
         let Entered_Name = [existingname[0]]
         console.log("Extracted Existing names :", Entered_Name);
@@ -1125,118 +830,20 @@ export class Employee_Management extends BasePage {
             }
         }
         console.log("After Search Type :- ", [...AfterSearchTypes])
-        expect([...AfterSearchTypes].sort()).toEqual(Entered_Name)
+        return { AfterSearchTypes, Entered_Name }
     }
-    async Departments_Search_Bar_Invalid() {
+
+    async clickOnUpdateIcon() {
         // TC_EM_0122
-        await this.Department()
-        await this.page.waitForTimeout(2000)
-        await this.Departments_SearchBar.pressSequentially('utrewqerwq')
-        await this.page.waitForTimeout(1000)
-        await this.No_Record_avialable.isVisible()
-        let No_record = await this.No_Record_avialable.textContent()
-        console.log(No_record)
-        expect(No_record).toEqual("No Record Available")
-    }
-    async Departments_Update_Icon() {
-        // TC_EM_0123
-        await this.Department()
-        await this.page.waitForTimeout(2000)
         await this.updateIcon.click()
-        await this.page.waitForTimeout(2000)
-        expect(await this.Pop_Up_Header.isVisible())
-        let header = await this.Pop_Up_Header.textContent()
-        // console.log(header)
-        expect(header).toEqual("Update  Department")
-
+        await this.waitforLoaderToDisappear()
     }
-    async Departments_cancel_button() {
-        // TC_EM_0124
-        await this.Departments_Update_Icon()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".cancel-modal").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-    }
-    async Departments_Cross_Icon() {
-        // TC_EM_0125
-        await this.Departments_Update_Icon()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".btn-close").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-    }
-    async Departments_Pop_up_functionality() {
-        // TC_EM_0126
-        await this.Departments_Update_Icon()
-        await this.page.waitForTimeout(2000)
-        await this.PopUP_Submit_button.click()
-        let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
-        console.log(toast_message)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        expect(toast_message).toEqual('Department not updated. Please try again after some time')
 
-
-        // TC_EM_0127
-        await this.page.waitForTimeout(7000)
-        await this.Name_TextArea.clear()
-        await this.PopUP_Submit_button.click()
-        let NameField = await this.Name_TextArea
-        var tooltipMessage = await NameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.')
-
-        // TC_EM_0128
-        let Department_name = await AssetHelper.generateRandomString(6);
-        await this.Name_TextArea.pressSequentially(Department_name)
-        await this.PopUP_Submit_button.click()
-        toast_message = await this.page.locator(".Toastify__toast-body").textContent()
-        console.log(toast_message)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        expect(toast_message).toEqual('Department successfully updated!')
-    }
-    async Departments_Add_Department() {
-        // TC_EM_129
-        await this.Department()
-        await this.page.waitForTimeout(5000)
+    async clickOnAddDepartmentButton() {
         await this.AddDepartmentButton.click()
-        await expect(this.Pop_Up_Header).toBeVisible()
-    }
-    async Departments_Add_Department_cancel_button() {
-        // TC_EM_0130
-        await this.Departments_Add_Department()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".cancel-modal").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
-    }
-    async Departments_Add_Department_Cross_Icon() {
-        // TC_EM_0131
-        await this.Departments_Add_Department()
-        await this.page.waitForTimeout(2000)
-        await this.page.locator(".btn-close").click()
-        await expect(this.Pop_Up_Header).toBeHidden()
+        await this.waitforLoaderToDisappear()
     }
 
-    async Departments_Add_Department_functionality() {
-        // TC_EM_0132
-        await this.Departments_Add_Department()
-        await this.page.waitForTimeout(2000)
-        await this.PopUP_Submit_button.click()
-        var NameField = await this.Name_TextArea
-
-        var tooltipMessage = await NameField.evaluate(el => (el as HTMLInputElement).validationMessage);
-        console.log(tooltipMessage);
-
-        expect(tooltipMessage).toBe('Please fill out this field.')
-        await this.page.waitForTimeout(6000)
-
-        // TC_EM_0133
-        let Department_name = await AssetHelper.generateRandomString(6);
-        await this.Name_TextArea.pressSequentially(Department_name)
-        await this.PopUP_Submit_button.click()
-        let toast_message = await this.page.locator(".Toastify__toast-body").textContent()
-        console.log(toast_message)
-        expect(await this.page.locator(".Toastify__toast-body").isVisible())
-        expect(toast_message).toEqual("Department created successfully!")
-    }
 
 
 }

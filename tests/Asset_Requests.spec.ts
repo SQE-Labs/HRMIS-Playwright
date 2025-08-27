@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { LoginPage } from '../pages/Loginpage';
+import { LoginPage } from '../pages/LoginPage';
 import { BasePage } from '../pages/Basepage';
 import { AssetRequests } from '../pages/Asset_Request';
 import testData from '../testData/testData.json';

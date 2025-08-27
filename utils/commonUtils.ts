@@ -44,16 +44,38 @@ export class CommonUtils {
         let sortedElements;
         if (sortingType.toLowerCase().includes("asc")) {
 
-            sortedElements = [...elementsText].sort((a: string, b: any) => a.localeCompare(b));
-        }
-        else {
-            sortedElements = [...elementsText].sort((a: any, b: string) => b.localeCompare(a));
-        }
-        //console.log("sorted" + sortedElements)
+            let expectedSortedData = [...trimmedData];
 
-        expect(elementsText).toEqual(sortedElements)
+            const isDate = expectedSortedData.every(val => !isNaN(Date.parse(val)));
 
+            const isNumeric = expectedSortedData.every(val => {
+                const cleaned = val.replace(/,/g, ''); // Remove commas for numeric check
+                return !isNaN(Number(cleaned));
+            });
+
+            if (isNumeric) {
+                expectedSortedData.sort((a, b) => {
+                    const numA = Number(a.replace(/,/g, ''));
+                    const numB = Number(b.replace(/,/g, ''));
+                    return sortingType === 'asc' ? numA - numB : numB - numA;
+                });
+            } else if (isDate) {
+                expectedSortedData.sort((a, b) => {
+                    const dateA = new Date(a).getTime();
+                    const dateB = new Date(b).getTime();
+                    return sortingType === 'asc' ? dateA - dateB : dateB - dateA;
+                });
+            } else {
+                expectedSortedData.sort((a, b) =>
+                    sortingType === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
+                );
+            }
+
+            console.log(`Expected sorted data (${sortingType}):`, expectedSortedData);
+            expect(trimmedData).toEqual(expectedSortedData);
+        }
     }
+
     async generateRandomInteger(length: number) {
         const characters = '0123456789';
         let result = '';
@@ -81,6 +103,7 @@ export class CommonUtils {
         }
         return result;
     }
+
     async uploadAndVerifyFile(
         fileName: string,
         page: Page,
@@ -154,6 +177,5 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
 
 }

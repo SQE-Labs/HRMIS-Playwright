@@ -31,9 +31,9 @@ export default defineConfig({
   // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   // workers: process.env.CI ? 1 : undefined,
-  workers: 2,
+  workers: 4,
   reporter: [["html"], ['line'], ["allure-playwright"]],
   // reporter: [
   //   ["dot"],

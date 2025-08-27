@@ -122,15 +122,15 @@ export class AssetAllocation extends BasePage {
         await AssetHelper.verifyHeadersMatch(colHeader, this.colHeaders);
     }
 
-    async getBySearchdata(TypeLocator : Locator , SearchBy , type) {
+    async getBySearchdata(TypeLocator: Locator, SearchBy, type) {
         await this.searchBar.pressSequentially(SearchBy);
-        const name = await this.assetTypeName.allTextContents();
+        const name = await TypeLocator.allTextContents();
         console.log(name);
         await AssetHelper.verifySearchResults(name, SearchBy, type);
     }
-   
+
     async searchByEmployeeName() {
-    
+
         await this.searchBar.pressSequentially("Asset L1");
         await this.page.waitForTimeout(3000);
         const employeeName = await this.assetEmployeeName.allTextContents();
@@ -148,7 +148,7 @@ export class AssetAllocation extends BasePage {
         await this.nextButton.click();
     }
     async pagination() {
-      
+
         const totalAllocationAsset = await this.totalAssetAssigned.allTextContents();
         const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationAsset);
         console.log("TotalAsset :  ", totalAssetCount);
@@ -183,13 +183,9 @@ export class AssetAllocation extends BasePage {
     }
 
     async assignAsset() {
-      
+
         expect(await this.allocationAssignAsset.textContent()).toEqual("Assign Asset");
-        await this.waitForDotsLoaderToDisappear()
-        await this.waitForSpinnerLoaderToDisappear()
-        await this.waitForDotsLoaderToDisappear()
-        await this.waitForSpinnerLoaderToDisappear()
-        await this.page.waitForTimeout(1000);
+        await this.waitforLoaderToDisappear();
         await this.allocationAssignAsset.click();
 
         await this.allocationSelectEmployee.click();

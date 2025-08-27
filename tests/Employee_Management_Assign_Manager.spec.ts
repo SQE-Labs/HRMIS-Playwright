@@ -49,7 +49,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnActionButton()
-        await EmployeeDirectory.clickOnCrossButton()
+        await EmployeeDirectory.clickOnCrossButton(EmployeeDirectory.CrossButton)
         await expect(EmployeeDirectory.PopupHeader).toBeHidden()
 
     })
@@ -59,7 +59,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnActionButton()
-        await EmployeeDirectory.clickOnCancelButton()
+        await EmployeeDirectory.clickOnCancelButton(EmployeeDirectory.CancelButton)
         await expect(EmployeeDirectory.PopupHeader).toBeHidden()
 
     })

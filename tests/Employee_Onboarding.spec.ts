@@ -27,7 +27,7 @@ let suggestedNameTxt: string;
 
 
 
-test.describe.serial("'Employee Management module'", () => {
+test.describe.serial("'Employee Onboarding module'", () => {
     let Employee_emailID: string;
     let Emplpoyee_nameObj: string;
 
