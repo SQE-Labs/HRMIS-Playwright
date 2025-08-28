@@ -17,7 +17,7 @@ export default defineConfig({
   expect: {
     timeout: 12_000, // Default timeout for expect assertions
   },
-  timeout: 240000,
+  timeout: 30_000,
   testDir: './tests',
   // testMatch:
   // [
@@ -43,7 +43,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless: true,
+    headless: false, // to see the browser window
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
