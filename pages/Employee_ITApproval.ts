@@ -34,8 +34,6 @@ export class Employee_ITApproval extends BasePage {
         this.submitBttn = this.page.locator("//button[text()='Submit']")
     }
 
-
-
     async navigateToITApproval(): Promise<void> {
         await this.itApprovalTab.click();
     }
@@ -44,7 +42,6 @@ export class Employee_ITApproval extends BasePage {
     async fetchLastRecordView(record) {
 
         await this.itemsPerPageDropDown.selectOption(record);
-
 
         // Loop through pages till 'Next' is disabled
         while (true) {

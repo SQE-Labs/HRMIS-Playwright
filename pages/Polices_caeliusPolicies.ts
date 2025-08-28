@@ -3,7 +3,11 @@ import { BasePage } from './Basepage'
 import { Loader } from '../components/loaders'
 import { AssetHelper } from '../utils/AssetHelpers'
 
-
+export type AddPolicyFormData = {
+    title: string;
+    validFrom: string; // format: dd-mm-yyyy
+    description: string;
+};
 
 
 export class Polices_caeliusPolicies extends BasePage {
@@ -20,6 +24,8 @@ export class Polices_caeliusPolicies extends BasePage {
     public tableRows: Locator
     public policyEditBttn: Locator
     public viewLink: Locator
+
+
 
     constructor(page: Page) {
         super(page)
@@ -53,22 +59,6 @@ export class Polices_caeliusPolicies extends BasePage {
     async clickOnAddPolicyBttn() {
         await this.addPolicyBttn.click();
     }
-
-    async fillAddPolicyForm({
-        title,
-        validFrom,
-        description
-    }: {
-        title: string,
-        validFrom: string, // format: dd-mm-yyyy
-        description: string
-    }) {
-        await this.policyTileField.fill(title);
-        await this.policyValidFormField.fill(validFrom);
-        await this.descriptionField.fill(description);
-    }
-
-
     async clickOnSubmitBttn() {
         await this.submitBttn.click();
     }
@@ -85,5 +75,16 @@ export class Polices_caeliusPolicies extends BasePage {
         await this.viewLink.click();
         await this.page.waitForTimeout(2000);
     }
+
+    async fillAddPolicyForm({
+        title,
+        validFrom,
+        description,
+    }: AddPolicyFormData) {
+        await this.policyTileField.fill(title);
+        await this.policyValidFormField.fill(validFrom);
+        await this.descriptionField.fill(description);
+    }
+
 
 }

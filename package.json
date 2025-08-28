@@ -10,12 +10,12 @@
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
-    "@types/node": "^22.17.1",
+    "@types/node": "^22.18.0",
     "allure-commandline": "^2.33.0",
     "allure-playwright": "^3.2.1",
     "playwright": "^1.54.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@applitools/eyes-playwright": "^1.36.3",

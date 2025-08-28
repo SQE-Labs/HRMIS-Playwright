@@ -1,7 +1,6 @@
 import { Page, Locator, expect, BrowserContext } from '@playwright/test'
 import { BasePage } from './Basepage'
 import { Loader } from '../components/loaders'
-import fs from "fs";
 import { AssetHelper } from '../utils/AssetHelpers'
 
 
@@ -58,5 +57,5 @@ export class Employee_Onboarding extends BasePage {
         await this.employeeNameField.fill(name);
 
     }
-    
+
 }
