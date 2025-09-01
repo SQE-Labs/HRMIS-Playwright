@@ -122,48 +122,69 @@ test.describe("Asset Overview page", () => {
         test('Verify Sorting', async () => {
                 await assetOverview.openCard("Desktop PC")
 
+                const columnsToTest = [2, 3, 4, 5, 6, 7];
+
+                for (const columnIndex of columnsToTest) {
+                        console.log(`Testing Column ${columnIndex} - Ascending Sort`);
+                        await assetEnrollment.clickAssetTypeRequestOnRowHeader(columnIndex);
+
+                        // Wait to allow table sort/render to complete
+                        await page.waitForTimeout(2000);
+
+                        const ascData = await assetEnrollment.getRowdata(columnIndex);
+                        await assetEnrollment.verifyRowsSorting(ascData, "asc");
+
+                        console.log(`Testing Column ${columnIndex} - Descending Sort`);
+                        await assetEnrollment.clickAssetTypeRequestOnRowHeader(columnIndex);
+
+                        // Wait again for descending sort
+                        await page.waitForTimeout(2000);
+
+                        const descData = await assetEnrollment.getRowdata(columnIndex);
+                        await assetEnrollment.verifyRowsSorting(descData, "desc");
+                }
                 // Manufracture Header
-                await assetOverview.clickManfHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.manfRows)//checking asc sort
-                await assetOverview.clickManfHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.manfRows, "dsc")
+                // await assetOverview.clickManfHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.manfRows)//checking asc sort
+                // await assetOverview.clickManfHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.manfRows, "dsc")
 
-                // Model Header
-                await assetOverview.clickModelHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.modelRows)//checking asc sort
-                await assetOverview.clickModelHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.modelRows, "dsc")
+                // // Model Header
+                // await assetOverview.clickModelHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.modelRows)//checking asc sort
+                // await assetOverview.clickModelHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.modelRows, "dsc")
 
 
-                // Serial Header
-                await assetOverview.clickSerialNumberHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows)//checking asc sort
-                await assetOverview.clickSerialNumberHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows, "dsc")
+                // // Serial Header
+                // await assetOverview.clickSerialNumberHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows)//checking asc sort
+                // await assetOverview.clickSerialNumberHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows, "dsc")
 
-                // Super Owner Header
-                await assetOverview.clickSuperOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows)//checking asc sort
-                await assetOverview.clickSuperOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows, "dsc")
+                // // Super Owner Header
+                // await assetOverview.clickSuperOwnerHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows)//checking asc sort
+                // await assetOverview.clickSuperOwnerHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows, "dsc")
 
-                // Owner Header
-                await assetOverview.clickOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.ownerRows)//checking asc sort
-                await assetOverview.clickOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.ownerRows, "dsc")
+                // // Owner Header
+                // await assetOverview.clickOwnerHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.ownerRows)//checking asc sort
+                // await assetOverview.clickOwnerHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.ownerRows, "dsc")
 
-                // Status Header
-                await assetOverview.clickStatusHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.statusRows)//checking asc sort
-                await assetOverview.clickStatusHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.statusRows, "dsc")
+                // // Status Header
+                // await assetOverview.clickStatusHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.statusRows)//checking asc sort
+                // await assetOverview.clickStatusHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.statusRows, "dsc")
 
-                // Availablity Header
-                await assetOverview.clickAvailablityHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.availablityRows)//checking asc sort
-                await assetOverview.clickAvailablityHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.availablityRows, "dsc")
+                // // Availablity Header
+                // await assetOverview.clickAvailablityHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.availablityRows)//checking asc sort
+                // await assetOverview.clickAvailablityHeader()
+                // await assetOverview.verifyRowsSorting(assetOverview.availablityRows, "dsc")
 
         })
 

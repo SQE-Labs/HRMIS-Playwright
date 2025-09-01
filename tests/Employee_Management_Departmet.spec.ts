@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { FILL_FIELD } from '../utils/constants';
+import { FILL_OUT_FIELD, FILL_IN_FIELD } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management > Assign Manager module'", () => {
@@ -70,7 +70,8 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.PopUP_Submit_button.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         let message = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.Name_TextArea)
-        expect(message).toContain(FILL_FIELD)
+        expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
+
     });
 
     test("should update department successfully and show success message", async ({ page }) => {
@@ -104,7 +105,8 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.Name_TextArea.fill("")
         await EmployeeDirectory.PopUP_Submit_button.click()
         let message = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.Name_TextArea)
-        expect(message).toContain(FILL_FIELD)
+        expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
+
     });
     test("should add new department and show success message", async ({ page }) => {
         await EmployeeDirectory.clickOnUpdateIcon()

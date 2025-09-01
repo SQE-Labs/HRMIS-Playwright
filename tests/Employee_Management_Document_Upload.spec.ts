@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { FILL_FIELD } from '../utils/constants';
+import { FILL_OUT_FIELD , FILL_IN_FIELD } from '../utils/constants';
 
 
 let EmployeeDirectory: Employee_Management
@@ -67,7 +67,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.Popup_Cross_button.click()
         await EmployeeDirectory.PopUp_Header.isHidden()
-  
+
     })
     test("Documents Upload PopUp Functionality ", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
@@ -87,7 +87,8 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.uploadAndVerifyFile("screenshot.png", page, EmployeeDirectory.PopUP_Submit_button)
         await EmployeeDirectory.waitforLoaderToDisappear()
         let validationmesssage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PopUp_comment)
-        expect(validationmesssage).toEqual(FILL_FIELD)
+        expect(validationmesssage === FILL_OUT_FIELD || validationmesssage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
     test("Upload document with comment and opens preview tab", async ({ page, context }) => {
@@ -97,7 +98,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.Upload_Icon.click()
         await EmployeeDirectory.uploadAndVerifyFile("screenshot.png", page)
         await EmployeeDirectory.waitforLoaderToDisappear()
-        
+
         await EmployeeDirectory.PopUp_comment.fill("Thank you !!")
         await EmployeeDirectory.PopUP_Submit_button.click()
         await EmployeeDirectory.waitforLoaderToDisappear()

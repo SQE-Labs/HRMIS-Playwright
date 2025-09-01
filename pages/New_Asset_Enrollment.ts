@@ -210,6 +210,72 @@ export class AssetEnrollment extends AssetManagementTab {
     async clickOnPopUpCancelButton() {
         await this.popupCancelButton.click();
     }
+    async clickAssetTypeRequestOnRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr>th:nth-child(${columnIndex})`);
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickOnAprooveAssetRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr>th:nth-child(${columnIndex})`).last();
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
+
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
+    }
+
+    async getRowdata(columnIndex: number): Promise<string[]> {
+        // Wait for at least one cell in the desired column to appear
+        await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`);
+
+        const rows = await this.page.locator('tbody > tr');
+        const columnData: string[] = [];
+
+        const rowCount = await rows.count();
+
+        if (rowCount === 0) {
+            console.warn("No data rows found in <tbody>.");
+            return [];
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
+            await cell.waitFor({ state: 'visible' });
+            const text = await cell.textContent();
+            columnData.push((text ?? '').trim());
+        }
+
+        console.log(`Column ${columnIndex} data:`, columnData);
+        return columnData;
+    }
+
+    async getAprooveAssetRowdata(columnIndex: number): Promise<string[]> {
+        // Wait for at least one cell in the desired column to appear
+        // await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`)
+
+        const rows = await this.page.locator('tbody > tr');
+        const columnData: string[] = [];
+
+        const rowCount = await rows.count();
+
+        if (rowCount === 0) {
+            console.warn("No data rows found in <tbody>.");
+            return [];
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`).last();
+            await cell.waitFor({ state: 'visible' });
+            const text = await cell.textContent();
+            columnData.push((text ?? '').trim());
+        }
+
+        console.log(`Column ${columnIndex} data:`, columnData);
+        return columnData;
+    }
 
     async clickAssetTypeHeader() {
         await this.page.locator(`tr>th:nth-child(2)`).click();

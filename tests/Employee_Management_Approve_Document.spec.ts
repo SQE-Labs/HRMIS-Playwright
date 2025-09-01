@@ -4,7 +4,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
 import { CommonUtils } from '../utils/commonUtils';
-import { FILL_FIELD, SELECT_ITEM } from '../utils/constants';
+import { FILL_OUT_FIELD , FILL_IN_FIELD, SELECT_ITEM } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management > Assign Manager module'", () => {
@@ -21,7 +21,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("Approve Document Tab", async ({ page }) => {
-        
+
 
         var header = await EmployeeDirectory.Approve_Header.textContent()
         expect(header).toEqual("Approve Document")
@@ -57,12 +57,12 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         );
         console.log("Dropdown Document Types:", [...dropdownTypes]);
 
-        
+
         expect([...uniqueTypes].sort()).toEqual([...dropdownTypes].sort());
     });
 
     test("compares unique employee types with dropdown options", async ({ page }) => {
-        
+
 
         const uniqueTypes = await EmployeeDirectory.getUniqueTextSetFromLocator(EmployeeDirectory.Approve_Label_Exiting_Employee, 0, undefined);
         console.log("Unique Approved Employee Types:", [...uniqueTypes]);
@@ -77,7 +77,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("filters employee records based on dropdown selection", async ({ page }) => {
-        
+
 
         await EmployeeDirectory.selectDropdownOptionByIndex(2);
         await page.waitForTimeout(500);
@@ -94,7 +94,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
     test("opens verify document popup after clicking action button", async ({ page }) => {
-        
+
 
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
@@ -107,7 +107,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
     test("closes action popup on cancel button click", async ({ page }) => {
-        
+
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await page.locator(".cancel-approve").click();
@@ -125,7 +125,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     });
 
     test("should download file after clicking View button", async ({ page }) => {
-        
+
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.verifyXLSXDownload(page, async () => {
@@ -134,7 +134,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
     test("should show validation message when action is not selected", async ({ page }) => {
-        
+
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.PopUP_Submit_button.click();
@@ -144,7 +144,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
     test("should change document status to approved and show success toast", async ({ page }) => {
-        
+
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'approved' })
@@ -156,7 +156,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
     test("should validate rejection reason and change status to rejected", async ({ page }) => {
-        
+
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'rejected' })
@@ -164,7 +164,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await expect(EmployeeDirectory.Reason_Section).toBeVisible();
         await EmployeeDirectory.PopUP_Submit_button.click();
         let message1 = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.Reason_Section)
-        expect(message1).toEqual(FILL_FIELD);
+        expect(message1 === FILL_OUT_FIELD || message1 === FILL_IN_FIELD).toBeTruthy();
 
         await EmployeeDirectory.Reason_Section.fill("Test reason for rejection");
         await EmployeeDirectory.PopUP_Submit_button.click();

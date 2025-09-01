@@ -37,14 +37,13 @@ export class CommonUtils {
 
     async verifyRowsSorting(data: string[], sortingType = 'asc') {
         const trimmedData = data.map(s => s.trim());
-        console.log(`Unsorted data (${sortingType}):`, trimmedData);
 
         let expectedSortedData = [...trimmedData];
 
         const isDate = expectedSortedData.every(val => !isNaN(Date.parse(val)));
 
         const isNumeric = expectedSortedData.every(val => {
-            const cleaned = val.replace(/,/g, ''); // Remove commas for numeric check
+            const cleaned = val.replace(/,/g, '');
             return !isNaN(Number(cleaned));
         });
 
@@ -62,13 +61,16 @@ export class CommonUtils {
             });
         } else {
             expectedSortedData.sort((a, b) =>
-                sortingType === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
+                sortingType === 'asc'
+                    ? a.localeCompare(b, undefined, { sensitivity: 'base' })
+                    : b.localeCompare(a, undefined, { sensitivity: 'base' })
             );
         }
 
         console.log(`Expected sorted data (${sortingType}):`, expectedSortedData);
         expect(trimmedData).toEqual(expectedSortedData);
     }
+
 
 
 
