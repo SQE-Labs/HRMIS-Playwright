@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import * as path from 'path';
+import * as fs from 'fs';
 import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
@@ -52,6 +53,10 @@ test.describe.serial("'Caelius Polices'", () => {
     test("Update Policy", async ({ page, context, browser }) => {
 
         const lastRecod = await helper.fetchLastRecordView('40');
+        console.log(lastRecod);
+        console.log(randomTitle);
+
+
         await Polices_caeliusPolicy.clickOnLastEditBttn();
         const updatedTitle = randomTitle + "Update";
         await Polices_caeliusPolicy.fillTitle(updatedTitle);
@@ -71,8 +76,9 @@ test.describe.serial("'Caelius Polices'", () => {
         });
 
         expect(path.extname(downloadPath)).toBe('.pdf');
-    })
 
+
+    })
 
 
 });

@@ -1,7 +1,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect, Page, Download, Locator } from '@playwright/test';
+import { expect, Page, Download, Locator, Response } from '@playwright/test';
 
 export class CommonUtils {
 
@@ -177,5 +177,4 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-
 }

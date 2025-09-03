@@ -1,15 +1,13 @@
 import { test, expect } from '@playwright/test'
-import * as path from 'path';
 import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
-import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { DummyResume, actualSuccessMessage } from '../utils/constants';
-import { Polices_caeliusPolicies } from '../pages/Polices_caeliusPolicies';
+import { EXISTINGSERIALNUMBER_COLUMN } from '../utils/constants';
+import { SalaryManagement } from '../pages/SalaryManagement';
 import { CommonUtils } from '../utils/commonUtils';
 import { Helper } from '../utils/Helper';
 
-let Polices_caeliusPolicy: Polices_caeliusPolicies
+let salaryObj: SalaryManagement
 let utils: CommonUtils;
 let helper: Helper;
 
@@ -25,11 +23,19 @@ test.describe.serial("Salary Management", () => {
         utils = new CommonUtils;
         helper = new Helper(page);
 
-        Polices_caeliusPolicy = new Polices_caeliusPolicies(page)
-        await Polices_caeliusPolicy.expandTab();
-        await Polices_caeliusPolicy.naviagateToPolicyEditorPage();
+        salaryObj = new SalaryManagement(page)
+        await salaryObj.expandTab();
+        await salaryObj.navigateToUploadSalaryTab();
 
     });
 
-   
+    test("Upload Salary Slip successfully", async ({ page }) => {
+        await salaryObj.selectEmployeeType("REGULAR");
+        await utils.uploadAndVerifyFile(EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
+        await salaryObj.selectMonth("August");
+        await salaryObj.submitForm();
+        const successToast = await salaryObj.toastMessage();
+        await expect(successToast).toEqual("Successfully Uploaded!");
+    });
+
 });
