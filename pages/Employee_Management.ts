@@ -154,6 +154,7 @@ export class Employee_Management extends BasePage {
     public pageCount: Locator
     public leftOutCards: Locator
     public selectEmployeeOption: Locator
+    public No_Record: Locator
 
 
     constructor(page: Page) {
@@ -358,6 +359,8 @@ export class Employee_Management extends BasePage {
         this.selectEmployeeOption = page.locator("#react-select-2-option-2")
 
         this.DepartmentCancelButton = page.locator(".cancel-modal")
+        this.No_Record = page.locator("div>h4")
+
     }
 
     async expandEmployeeManagementTab(): Promise<void> {

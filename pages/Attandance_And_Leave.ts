@@ -52,7 +52,7 @@ export class AttendanceTab extends BasePage {
             console.error('Attendance & Leave tab did not expand', error)
         }
         await this.applyLeaveTab.click()
-        const header = await this.applyLeaveHeader.textContent()
+        const header = await this.applyLeaveHeader.last().textContent()
         expect(header).toEqual('Apply Leaves')
         await this.page.waitForTimeout(2000)
         const leaveDescriptions = this.totalLeaveBalanceLabels.map(label => label.replace(/\d+/g, '').trim())

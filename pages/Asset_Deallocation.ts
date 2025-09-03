@@ -43,7 +43,7 @@ export class AssetDeallocation extends BasePage {
         const assetManagementTab = new AssetManagementTab(this.page);
         await AssetHelper.navigateToDeallocationTab(this.deallocationSubtab, assetManagementTab);
 
-        expect(await this.deallocationHeader.isVisible()).toBeTruthy();
+        expect(await this.deallocationHeader.last().isVisible()).toBeTruthy();
         expect(await this.deallocationDropdown.isVisible()).toBeTruthy();
 
         await this.deallocationDropdown.click();

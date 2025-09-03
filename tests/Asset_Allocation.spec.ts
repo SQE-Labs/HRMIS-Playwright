@@ -45,7 +45,7 @@ test.describe("Asset Allocation page", () => {
     // TC_AM_029
 
     test("Pagination", async () => {
-        expect(await allocation.validatePagination())
+        expect(await allocation.pagination())
         console.log("Pagination verified !!")
     })
 

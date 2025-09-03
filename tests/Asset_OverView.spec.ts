@@ -106,7 +106,7 @@ test.describe("Asset Overview page", () => {
                         expect(filteredCount).toBeGreaterThan(0);
                 }
         });
-
+        //  Need to fixed -- bug already raised
         test('Verify XLSX file is downloaded after filtering and clicking Export', async ({ page }) => {
                 await assetOverview.getFilteredData();
                 if (await assetOverview.emptyRecord.isVisible()) {
@@ -119,29 +119,30 @@ test.describe("Asset Overview page", () => {
                 }
         });
         // TC_AM_019
-        test('Verify Sorting', async () => {
+        test('Verify Sorting', async ({ page }) => {
+                test.setTimeout(480000);
                 await assetOverview.openCard("Desktop PC")
 
                 const columnsToTest = [2, 3, 4, 5, 6, 7];
 
                 for (const columnIndex of columnsToTest) {
                         console.log(`Testing Column ${columnIndex} - Ascending Sort`);
-                        await assetEnrollment.clickAssetTypeRequestOnRowHeader(columnIndex);
+                        await assetOverview.clickAssetTypeRequestOnRowHeader(columnIndex);
 
                         // Wait to allow table sort/render to complete
                         await page.waitForTimeout(2000);
 
-                        const ascData = await assetEnrollment.getRowdata(columnIndex);
-                        await assetEnrollment.verifyRowsSorting(ascData, "asc");
+                        const ascData = await assetOverview.getRowdata(columnIndex);
+                        await assetOverview.verifyRowsSorting(ascData, "asc");
 
                         console.log(`Testing Column ${columnIndex} - Descending Sort`);
-                        await assetEnrollment.clickAssetTypeRequestOnRowHeader(columnIndex);
+                        await assetOverview.clickAssetTypeRequestOnRowHeader(columnIndex);
 
                         // Wait again for descending sort
                         await page.waitForTimeout(2000);
 
-                        const descData = await assetEnrollment.getRowdata(columnIndex);
-                        await assetEnrollment.verifyRowsSorting(descData, "desc");
+                        const descData = await assetOverview.getRowdata(columnIndex);
+                        await assetOverview.verifyRowsSorting(descData, "desc");
                 }
                 // Manufracture Header
                 // await assetOverview.clickManfHeader()

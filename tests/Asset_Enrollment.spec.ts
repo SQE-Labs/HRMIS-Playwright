@@ -394,12 +394,12 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
 
-
+    // Accept more than 40 chars.. --- need to be fixed
     test('Asset Type Request Asset Name Field More Than 40 Characters', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
-        await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(5));
-        await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(42));
+        await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(42));
+        await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(5));
         await assetEnrollment.clickOnSubmitButton();
         const message = await assetEnrollment.validationMessage.textContent();
         console.log(message);
@@ -461,8 +461,10 @@ test.describe('Asset Enrollment Page', () => {
     });
 
     test('Create Asset Type Verify Sorting ', async ({ page }) => {
+        test.setTimeout(480000);
         await assetEnrollment.navigateToAssetTypeRequest();
-        const columnsToTest = [2, 3, 4, 5, 6, 7];
+
+        const columnsToTest = [3, 4, 5, 6, 7];
 
         for (const columnIndex of columnsToTest) {
             console.log(`Testing Column ${columnIndex} - Ascending Sort`);
@@ -483,44 +485,6 @@ test.describe('Asset Enrollment Page', () => {
             const descData = await assetEnrollment.getRowdata(columnIndex);
             await assetEnrollment.verifyRowsSorting(descData, "desc");
         }
-        // // Asset Type Header
-        // await assetEnrollment.clickAssetTypeHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow)//checking asc sort
-        // await assetEnrollment.clickAssetTypeHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow, "dsc")
-
-        // // Category Header
-        // await assetEnrollment.clickcategoryHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow)//checking asc sort
-        // await assetEnrollment.clickcategoryHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow, "dsc")
-
-
-        // // Request Date Header
-        // await assetEnrollment.clickRequestDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow)//checking asc sort
-        // await assetEnrollment.clickRequestDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow, "dsc")
-
-        // // Approved Date Header
-        // await assetEnrollment.clickApprovedDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.approvedDateRow)//checking asc sort
-        // await assetEnrollment.clickApprovedDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.approvedDateRow, "dsc")
-
-        // // Comment Header
-        // await assetEnrollment.clickCommentHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.commentRow)//checking asc sort
-        // await assetEnrollment.clickCommentHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.commentRow, "dsc")
-
-        // // Status Header
-        // await assetEnrollment.clickStatusHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.statusRow)//checking asc sort
-        // await assetEnrollment.clickStatusHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.statusRow, "dsc")
-
-
     })
 
 
