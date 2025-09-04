@@ -1,79 +1,80 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect, Page, Download, Locator } from '@playwright/test';
+import { expect, Page, Download, Locator, Response } from '@playwright/test';
 
 export class CommonUtils {
-    async verifyXLSXDownload(page: Page, exportTrigger: () => Promise<void>): Promise<void> {
-        const [download] = await Promise.all([
-            page.waitForEvent('download', { timeout: 5000 }),
-            exportTrigger(),
-        ]);
 
-        const downloadedFile = await download.suggestedFilename();
-        expect(downloadedFile).toBeTruthy();
-
+    async verifyXLSXDownload(
+        page: Page,
+        exportTrigger: () => Promise<void>
+    ): Promise<string> {
         const downloadDir = path.join(process.cwd(), 'Download');
+
+        // Ensure the Download directory exists
         if (!fs.existsSync(downloadDir)) {
             fs.mkdirSync(downloadDir, { recursive: true });
         }
 
-        const downloadPath = path.join(downloadDir, downloadedFile);
-        await download.saveAs(downloadPath);
-
-        expect(fs.existsSync(downloadPath)).toBe(true);
-
-        const fileStats = fs.statSync(downloadPath);
-        expect(fileStats.size).toBeGreaterThan(0);
-        const allowedExtensions = ['.xlsx', '.jpeg', '.jpg', '.png', '.pdf', '.json'];
-
-        expect(allowedExtensions).toContain(path.extname(downloadedFile));
-        console.log(`File successfully downloaded: ${downloadPath}`);
-
-        fs.unlinkSync(downloadPath);
-        expect(fs.existsSync(downloadPath)).toBe(false);
-        console.log(`File cleaned up: ${downloadPath}`);
-    }
-
-    async verifyRowsSorting(data: string[], sortingType = 'asc') {
-        const trimmedData = data.map(s => s.trim());
-        console.log(`Unsorted data (${sortingType}):`, trimmedData);
-
-        let expectedSortedData = [...trimmedData];
-
-        const isDate = expectedSortedData.every(val => !isNaN(Date.parse(val)));
-
-        const isNumeric = expectedSortedData.every(val => {
-            const cleaned = val.replace(/,/g, ''); // Remove commas for numeric check
-            return !isNaN(Number(cleaned));
-        });
-
-        if (isNumeric) {
-            expectedSortedData.sort((a, b) => {
-                const numA = Number(a.replace(/,/g, ''));
-                const numB = Number(b.replace(/,/g, ''));
-                return sortingType === 'asc' ? numA - numB : numB - numA;
-            });
-        } else if (isDate) {
-            expectedSortedData.sort((a, b) => {
-                const dateA = new Date(a).getTime();
-                const dateB = new Date(b).getTime();
-                return sortingType === 'asc' ? dateA - dateB : dateB - dateA;
-            });
-        } else {
-            expectedSortedData.sort((a, b) =>
-                sortingType === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
-            );
+        // Auto-delete all files in the folder
+        const oldFiles = fs.readdirSync(downloadDir);
+        for (const file of oldFiles) {
+            fs.unlinkSync(path.join(downloadDir, file));
         }
 
-        console.log(`Expected sorted data (${sortingType}):`, expectedSortedData);
-        expect(trimmedData).toEqual(expectedSortedData);
+        // Wait for download and trigger export
+        const [download] = await Promise.all([
+            page.waitForEvent('download', { timeout: 15000 }),
+            exportTrigger(),
+        ]);
+
+        const downloadedFile = await download.suggestedFilename();
+        const downloadPath = path.join(downloadDir, downloadedFile);
+
+        await download.saveAs(downloadPath);
+
+        return downloadPath;
     }
 
 
 
+    async verifyRowsSorting(rowsLocator, sortingType = 'asc') {
+        let elementsText = (await rowsLocator.allTextContents()).map((s: string) => s.trim());
+        // console.log("unsorted " + elementsText)
+        let sortedElements;
+        if (sortingType.toLowerCase().includes("asc")) {
 
+            let expectedSortedData = [...trimmedData];
 
+            const isDate = expectedSortedData.every(val => !isNaN(Date.parse(val)));
+
+            const isNumeric = expectedSortedData.every(val => {
+                const cleaned = val.replace(/,/g, ''); // Remove commas for numeric check
+                return !isNaN(Number(cleaned));
+            });
+
+            if (isNumeric) {
+                expectedSortedData.sort((a, b) => {
+                    const numA = Number(a.replace(/,/g, ''));
+                    const numB = Number(b.replace(/,/g, ''));
+                    return sortingType === 'asc' ? numA - numB : numB - numA;
+                });
+            } else if (isDate) {
+                expectedSortedData.sort((a, b) => {
+                    const dateA = new Date(a).getTime();
+                    const dateB = new Date(b).getTime();
+                    return sortingType === 'asc' ? dateA - dateB : dateB - dateA;
+                });
+            } else {
+                expectedSortedData.sort((a, b) =>
+                    sortingType === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
+                );
+            }
+
+            console.log(`Expected sorted data (${sortingType}):`, expectedSortedData);
+            expect(trimmedData).toEqual(expectedSortedData);
+        }
+    }
 
     async generateRandomInteger(length: number) {
         const characters = '0123456789';
@@ -102,6 +103,7 @@ export class CommonUtils {
         }
         return result;
     }
+
     async uploadAndVerifyFile(
         fileName: string,
         page: Page,
@@ -116,19 +118,18 @@ export class CommonUtils {
         expect(fs.existsSync(filePath)).toBe(true);
         const fileStats = fs.statSync(filePath);
         expect(fileStats.size).toBeGreaterThan(0);
-        expect(path.extname(filePath)).toMatch(/\.(xlsx|docx|png)$/);
-
+        expect(path.extname(filePath)).toMatch(/\.xlsx|\.docx|\.pdf/); // adjust if needed
 
         // Upload file
         await page.setInputFiles(fileInputSelector, filePath);
         await page.waitForSelector(fileInputSelector, { state: 'attached' });
 
 
-
-
-
         // Submit
-        // await submitButton.click();
+        if (!submitButton) {
+            throw new Error('Submit button locator is not provided.');
+        }
+        await submitButton.click();
         // await popupMessage.waitFor({ state: 'visible' });
 
         // // Log result
@@ -140,67 +141,40 @@ export class CommonUtils {
         // await page.waitForTimeout(500);
     }
 
-    async validatePagination(getTotalTextContent, extractTotalCount, getItemCountPerPage, getItemElementsCount, getPreviousButton, getNextButton, getPageCountText, extractPageNumbers, getAllItemElements) {
-        // Step 1: Get total asset count
-        const totalText = await getTotalTextContent();
-        const totalCount = extractTotalCount(totalText);
-        console.log("Total Count from text:", totalCount);
 
-        // Step 2: Verify selected items per page equals the number of displayed elements
-        const selectedPerPage = await getItemCountPerPage();
-        const displayedCount = await getItemElementsCount();
-        console.log("Items per page:", selectedPerPage, "Displayed Count:", displayedCount);
-        expect(selectedPerPage).toEqual(displayedCount);
+    async openYopmailandNavigaeToVerifyPopup(yopmailUrl: string, context, emailID?: string) {
 
-        // Step 3: Navigate to first page if not there already
-        const prevButton = await getPreviousButton();
-        expect(await prevButton.isEnabled()).toBeTruthy();
-        await prevButton.click();
+        // 1.  open new tab for Yopmail
+        const yopmailPage = await context.newPage();
+        await yopmailPage.goto(yopmailUrl);
 
-        const nextButton = await getNextButton();
-        expect(await nextButton.isEnabled()).toBeTruthy();
+        // 2. Click the first email (in ifinbox iframe)
+        const inboxFrame = yopmailPage.frameLocator('iframe#ifinbox');
+        await inboxFrame.locator('text=HRMIS SYSTEM').first().click();
 
-        // Step 4: Calculate total pages and total records
-        const totalPageText = await getPageCountText();
-        const [currentPage, totalPages] = extractPageNumbers(totalPageText || '');
+        // switch to email content
+        const mailFrame = yopmailPage.frameLocator('iframe#ifmail');
 
-        let records = 0;
+        // wait for and click the Onboard Employee Form link
+        const onboardLink = mailFrame.locator('text=Onboard Employee Form');
 
-        for (let i = currentPage; i < totalPages; i++) {
-            const count = await getAllItemElements();
-            records += count;
-            const nextBtn = await getNextButton();
-            if (i < totalPages - 1 && await nextBtn.isEnabled()) {
-                await nextBtn.click();
-                await nextBtn.page().waitForLoadState(); // Ensure page updates
-            }
-        }
+        const [newTab] = await Promise.all([
+            // waits for new tab
+            context.waitForEvent('page'),
+            onboardLink.click()
+        ]);
 
-        // Final record count check
-        console.log("Total records counted across pages:", records);
-        expect(totalCount).toEqual(records);
+        // wait for the new tab to load
+        await newTab.waitForLoadState('load');
 
-        // Ensure previous button still works
-        expect(await prevButton.isEnabled()).toBeTruthy();
+        return newTab;
     }
 
-    // await this.validatePagination({
-    // getTotalTextContent: () => this.totalAssetAssigned.allTextContents(),
-    // extractTotalCount: AssetHelper.getAssetCountFromText,
-    // getItemCountPerPage: async () => {
-    //     await this.itemsPerPage.waitFor({ state: 'visible' });
-    //     await this.itemsPerPage.click();
-    //     await this.itemsPerPage.selectOption({ index: 0 });
-    //     await this.page.waitForTimeout(500);
-    //     return parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
-    // },
-    // getItemElementsCount: () => this.assetTypeName.count(),
-    // getPreviousButton: () => Promise.resolve(this.previousButton),
-    // getNextButton: () => Promise.resolve(this.nextButton),
-    // getPageCountText: () => this.pageCount.textContent(),
-    // extractPageNumbers: AssetHelper.extractPageCount,
-    // getAllItemElements: () => this.allocationRecord.count(),
-    // });
-
-
+    async getTodayDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 }

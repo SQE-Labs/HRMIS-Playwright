@@ -7,5 +7,16 @@
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
     "DefaultAvailablity": "Available",
-    "assetsCardCount": 16
+    "assetsCardCount": 16,
+    "Projects": {
+        "Project1": {
+            "name": "AutomationProject",
+            "deliveryLead": "Piyush Dogra",
+            "description": "Test project created via Playwright automation.",
+            "sowStart": "2025-09-01",
+            "sowEnd": "2025-09-30",
+            "actualStart": "09/01/2025",
+            "actualEnd": "09/25/2025"
+        }
+    }
 }

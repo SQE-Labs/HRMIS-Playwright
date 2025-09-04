@@ -16,7 +16,7 @@ test.describe("'Employee Management module'", () => {
         EmployeeDirectory = new Employee_Management(page)
         await EmployeeDirectory.expandEmployeeManagementTab()
         await EmployeeDirectory.naviagteToEmployeeDirectoryTab()
-        await EmployeeDirectory.waitforLoaderToDisappear()
+        // await EmployeeDirectory.waitforLoaderToDisappear()
 
     });
 
@@ -26,7 +26,6 @@ test.describe("'Employee Management module'", () => {
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
-
 
     test("Verify Search Functionality and Validate Employee Card Details and Count", async ({ page }) => {
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("Autom Mation User")

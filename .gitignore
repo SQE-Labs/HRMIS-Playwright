@@ -11,3 +11,8 @@ node_modules/
 .github/
 download/
 .env/
+.package-lock.json/
+.vscode/
+.idea/
+.DS_Store
+.package.json/
