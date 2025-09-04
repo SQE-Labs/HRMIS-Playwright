@@ -152,7 +152,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         expect(LeavePopupheader).toEqual("Are you sure you want to delete ?")
         await EmployeeDirectory.clickOnYesButton()
         let messgae = await EmployeeDirectory.toastMessage()
-        expect(messgae).toEqual("Leave Manager removed successfully")
+        expect(messgae).toEqual("Leave Manager removed successfully ")
         expect(EmployeeDirectory.noRecord(1)).toEqual("Leave manager not assigned")
     })
 

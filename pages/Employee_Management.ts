@@ -271,10 +271,9 @@ export class Employee_Management extends BasePage {
         this.AssignManagerPopupDropdownOption = page.locator("#react-select-5-option-1")
         this.AssignManagerPopupSubmitbutton = page.locator("(//button[@class = 'theme-button'])[2]")
         this.ColoumnBody = [
-            'Employee Id',
+           
             'Name',
-            'Department',
-            'Designation',
+            'Assigned Manager',
             'Action'
         ]
 

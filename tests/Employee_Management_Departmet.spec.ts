@@ -87,6 +87,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     test("should display Add department popup with correct header", async ({ page }) => {
         await EmployeeDirectory.clickOnUpdateIcon()
         await expect(EmployeeDirectory.Pop_Up_Header).toBeVisible()
+
     });
 
     test("should close update add department popup using cancel button", async ({ page }) => {

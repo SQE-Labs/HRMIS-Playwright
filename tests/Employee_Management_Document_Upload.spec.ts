@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { FILL_OUT_FIELD , FILL_IN_FIELD } from '../utils/constants';
+import { FILL_OUT_FIELD, FILL_IN_FIELD } from '../utils/constants';
 
 
 let EmployeeDirectory: Employee_Management
@@ -103,7 +103,8 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.PopUP_Submit_button.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         let message = await EmployeeDirectory.toastMessage()
-        expect(message).toContain("Uploaded")
+        expect(message).toContain("uploaded")
+        await EmployeeDirectory.Popup_Cross_button.click()
         await EmployeeDirectory.PopUp_Header.isHidden()
         const [newPage] = await Promise.all([
             context.waitForEvent('page'), // listens for new page (tab/window)
