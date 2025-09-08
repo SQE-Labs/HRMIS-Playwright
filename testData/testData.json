@@ -19,4 +19,19 @@
             "actualEnd": "09/25/2025"
         }
     }
+    ,
+    "VALID_XLSX_FILE": "ValidDocument.xlsx",
+    "UNSUPPORTED_FILE": "abc.docx",
+    "ASSET_TYPE_COLUMN_LEFT": "AssetType_Column.xlsx",
+    "MODEL_COLUMN": "Model_Column.xlsx",
+    "OWNER_COLUMN": "Owner_Column.xlsx",
+    "MANUFRACTURE_COLUMN": "Manufracture.xlsx",
+    "SERIALNUMBER_COLUMN": "SerialNumber.xlsx",
+    "WARRANTY_COLUMN": "Warranty.xlsx",
+    "PURCHASE_COLUMN": "PurchaseDate.xlsx",
+    "PROCESSOR_COLUMN": "Processor.xlsx",
+    "SUPEROWNER_COLUMN": "superOwner.xlsx",
+    "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
+    "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
+    "NOUNIT_COLUMN": "NoUnit.xlsx"
 }
