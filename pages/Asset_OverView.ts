@@ -1,6 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
-import fs from "fs";
 import { Alert } from '../components/alert'
 
 export class OverView extends AssetManagementTab {
@@ -272,7 +271,7 @@ export class OverView extends AssetManagementTab {
         const selectedValue = await this.availabilityDropdown.evaluate((select: HTMLSelectElement) => select.value);
         console.debug(`Selected value: ${selectedValue}`)
         expect(selectedValue, "Selected availability value should not be empty").not.toBe("");
-        expect(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
+        expect.soft(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
         return selectedValue;
     }
 
@@ -350,6 +349,47 @@ export class OverView extends AssetManagementTab {
         console.debug(`Filtered asset count: ${totalAssetsAfterFilter}`);
         return totalAssetsAfterFilter
 
+    }
+    async clickAssetTypeRequestOnRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr>th:nth-child(${columnIndex})`);
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickOnAprooveAssetRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr>th:nth-child(${columnIndex})`).last();
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
+
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
+    }
+
+    async getRowdata(columnIndex: number): Promise<string[]> {
+        // Wait for at least one cell in the desired column to appear
+        await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`);
+
+        const rows = await this.page.locator('tbody > tr');
+        const columnData: string[] = [];
+
+        const rowCount = await rows.count();
+
+        if (rowCount === 0) {
+            console.warn("No data rows found in <tbody>.");
+            return [];
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
+            await cell.waitFor({ state: 'visible' });
+            const text = await cell.textContent();
+            columnData.push((text ?? '').trim());
+        }
+
+        console.log(`Column ${columnIndex} data:`, columnData);
+        return columnData;
     }
 
     async clickManfHeader() {

@@ -74,7 +74,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     });
 
-    test("should update department successfully and show success message", async ({ page }) => {
+    test("should update department successfully and show success message @smoke", async ({ page }) => {
         await EmployeeDirectory.clickOnUpdateIcon()
         let Department_name = await EmployeeDirectory.generateRandomString(6);
         await EmployeeDirectory.Name_TextArea.fill(Department_name)
@@ -108,7 +108,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
 
     });
-    test("should add new department and show success message", async ({ page }) => {
+    test("should add new department and show success message @smoke", async ({ page }) => {
         await EmployeeDirectory.clickOnUpdateIcon()
         let Department_name = await EmployeeDirectory.generateRandomString(6);
         await EmployeeDirectory.Name_TextArea.fill(Department_name)

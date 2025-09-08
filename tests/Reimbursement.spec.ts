@@ -175,7 +175,7 @@ test.describe("My Reimbursement page", () => {
     });
 
 
-    test("should_submit_travel_expense_reimbursement_when_all_fields_are_valid", async ({ page }) => {
+    test("should_submit_travel_expense_reimbursement_when_all_fields_are_valid @smoke", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
 
@@ -218,7 +218,7 @@ test.describe("My Reimbursement page", () => {
 
     });
 
-    test("should reset all reimbursement form fields and hide conditional inputs", async ({ page }) => {
+    test("should reset all reimbursement form fields and hide conditional inputs @smoke", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
         let currentDate = await reimbursement.getCurrentDate();

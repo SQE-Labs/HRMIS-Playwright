@@ -35,20 +35,20 @@ test.describe("'Employee Management module'", () => {
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("Verify NoRecordMessage For Invalid Employee Search", async ({ page }) => {
+    test("Verify NoRecordMessage For Invalid Employee Search @smoke", async ({ page }) => {
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("978735")  //invalid Employee name
         let Norecord = await EmployeeDirectory.noRecord(0)
         expect(Norecord).toEqual("No Record Available")
     })
 
-    test("verify Employee Count Matches After Department Filter Applied", async ({ page }) => {
+    test("verify Employee Count Matches After Department Filter Applied @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("verify Employee Count After Selecting Status Filter", async ({ page }) => {
+    test("verify Employee Count After Selecting Status Filter @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
@@ -67,7 +67,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("verify Status Filter Results With Or Without Employees", async ({ page }) => {
+    test("verify Status Filter Results With Or Without Employees @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
@@ -81,7 +81,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("verify Employee Profile Name Matches Card Name ", async ({ page }) => {
+    test("verify Employee Profile Name Matches Card Name @smoke", async ({ page }) => {
         let employeecardName = await EmployeeDirectory.fechingEmployeeName()
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -487,7 +487,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("Navigating to the Employee Directory tab > Assigned Assets ", async ({ page }) => {
+    test("Navigating to the Employee Directory tab > Assigned Assets @smoke", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnAssignedAssets()
@@ -550,7 +550,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toEqual(SELECT_ITEM)
     })
 
-    test("should update employee access status to BLOCKED successfully ", async ({ page }) => {
+    test("should update employee access status to BLOCKED successfully @smoke", async ({ page }) => {
         let CardName = await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -573,7 +573,7 @@ test.describe("'Employee Management module'", () => {
         console.debug(CardsTitle);
         expect(CardsTitle).toContain(CardName);
     })
-    test("should update BLOCKED employee status to VERIFIED and confirm card appears in list", async ({ page }) => {
+    test("should update BLOCKED employee status to VERIFIED and confirm card appears in list @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let cardsCount = await EmployeeDirectory.Card.count()

@@ -5,20 +5,9 @@ export const FILL_IN_FIELD = "Please fill in this field.";
 export const AADHAAR_FIELD = "Please enter a 12-digit Aadhar card number"
 export const PANCARD_FIELD = "Please enter a 10-digit PAN card number"
 export const PASSPORT_FIELD = "Please enter a 12-digit Passport number"
-export const VALID_XLSX_FILE = "ValidDocument.xlsx"
-export const UNSUPPORTED_FILE = "abc.docx"
-export const ASSET_TYPE_COLUMN_LEFT = "AssetType_Column.xlsx"
-export const MODEL_COLUMN = "Model_Column.xlsx"
-export const OWNER_COLUMN = "Owner_Column.xlsx"
-export const MANUFRACTURE_COLUMN = "Manufracture.xlsx"
-export const SERIALNUMBER_COLUMN = "SerialNumber.xlsx"
-export const WARRANTY_COLUMN = "Warranty.xlsx"
-export const PURCHASE_COLUMN = "PurchaseDate.xlsx"
-export const PROCESSOR_COLUMN = "Processor.xlsx"
-export const SUPEROWNER_COLUMN = "superOwner.xlsx"
-export const EXISTINGSERIALNUMBER_COLUMN = "ExistingSerialNumber.xlsx"
-export const NONEXISTINGASSETTYPE_COLUMN = "NonExistingAssetType.xlsx"
-export const NOUNIT_COLUMN = "NoUnit.xlsx"
+
+
+
 export const DummyResume = "DummyResume.pdf"
 export const AadharNumber = "662223509284"
 export const panCardNumber = "BAJPC4350M"

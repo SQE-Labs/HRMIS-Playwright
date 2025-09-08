@@ -14,7 +14,7 @@ test.describe("Asset DeAllocation page", () => {
     test("Asset Deallocation page ", async ({ page }) => {
         await DeAllocation.deallocation()
     })
-    test("handles deallocation flow with or without available records", async ({ page }) => {
+    test("handles deallocation flow with or without available records @smoke ", async ({ page }) => {
         await DeAllocation.handleDeallocationFlow()
     })
 })

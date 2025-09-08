@@ -64,7 +64,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     })
 
-    test(" assign manager successfully when valid selection is made", async ({ page }) => {
+    test(" assign manager successfully when valid selection is made @smoke", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -130,7 +130,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await expect(EmployeeDirectory.Pop_Up_Header).toBeHidden()
     })
 
-    test("conditionally assign and delete leave manager, then verify removal ", async ({ page }) => {
+    test("conditionally assign and delete leave manager, then verify removal @smoke ", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.LeaveManagerPopupDropDown.click()

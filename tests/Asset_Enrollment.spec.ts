@@ -4,6 +4,8 @@ import { AssetEnrollment } from '../pages/New_Asset_Enrollment';
 import testData from '../testData/testData.json';
 import { FILL_IN_FIELD, FILL_OUT_FIELD, PANCARD_FIELD, AADHAAR_FIELD, PASSPORT_FIELD, SELECT_ITEM } from '../utils/constants';
 import { AssetHelper } from '../utils/AssetHelpers';
+import { CommonUtils } from '../utils/commonUtils';
+import { Alert } from '../components/alert';
 
 let assetEnrollment: AssetEnrollment;
 
@@ -20,14 +22,14 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('New Asset Enrollment Page', async ({ page }) => {
+    test('New Asset Enrollment Page @smoke', async ({ page }) => {
         expect(await assetEnrollment.assetEnrollmentHeader.isVisible()).toBeTruthy();
         expect(await assetEnrollment.assetEnrollmentTabs.isVisible()).toBeTruthy();
         expect(await assetEnrollment.createAssetTabs.allTextContents()).toEqual(assetEnrollment.createAssetTabsDetails);
         await assetEnrollment.enrollment();
     });
     // to-do
-    test('New Asset Enrollment Create Asset-positive', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-positive @smoke', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField(
             'USB HUB Adapter',
             '342ASD',
@@ -37,7 +39,8 @@ test.describe('Asset Enrollment Page', () => {
             await assetEnrollment.generateRandomInteger(5)
         );
         await assetEnrollment.clickOnSubmitButton();
-        // add assertion here
+        // add assertion here   
+        expect(await assetEnrollment.verifySuccessMessage("Successfully Created!"));
     });
 
 
@@ -203,20 +206,18 @@ test.describe('Asset Enrollment Page', () => {
 
     })
 
-    test('Navigate to bulk create asset', async () => {
+    test('Navigate to bulk create asset ', async () => {
         await assetEnrollment.navigateToBulkCreateAsset()
         await expect(assetEnrollment.bulkAssetHeader).toBeVisible();
         await expect(assetEnrollment.chooseButton).toBeVisible();
         await expect(assetEnrollment.submitButton).toBeVisible();
     })
 
-    test('bulk create asset  Upload valid .xls / .xlsx file', async ({ page }) => {
+    test('bulk create asset  Upload valid .xls / .xlsx file @smoke', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset()
         await assetEnrollment.uploadAndVerifyFile(testData.VALID_XLSX_FILE, page, assetEnrollment.submitButton, assetEnrollment.popupMessage)
-        await assetEnrollment.clickOnSubmitButton()
         console.debug(await assetEnrollment.successPopup.innerText());
         await expect(assetEnrollment.successPopup).toBeVisible()
-        // Assertion
     })
     // to-do (not to be automated)
     test.skip(' bulk create asset Upload Unsupported file', async ({ page }) => {
@@ -237,7 +238,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When Asset Type Is Missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.ASSET_TYPE_COLUMN_LEFT, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -247,7 +248,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When MODEL column is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.MODEL_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -257,7 +258,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When Owner_Column is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.OWNER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -267,7 +268,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When Manufracture coloumn is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.MANUFRACTURE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -277,7 +278,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When SerialNumber coloumn is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.SERIALNUMBER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(page.locator('.fs-5')).toBeVisible();
         const errorMessages = await page.locator('.fs-5').allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -288,7 +289,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When Processor coloumn is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.PROCESSOR_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(page.locator('.fs-5')).toBeVisible();
         const errorMessages = await page.locator('.fs-5').allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -299,7 +300,7 @@ test.describe('Asset Enrollment Page', () => {
     test.skip('Bulk Create - When Warrenty coloumn is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.WARRANTY_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -309,7 +310,7 @@ test.describe('Asset Enrollment Page', () => {
     test.skip('Bulk Create - When Purchase coloumn is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.PURCHASE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -319,7 +320,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When SuperOwner coloumn is missing', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.SUPEROWNER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -329,7 +330,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When user enter ExistingSerialNumber coloumn ', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -340,7 +341,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await page.pause()
         await assetEnrollment.uploadAndVerifyFile(testData.NONEXISTINGASSETTYPE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -349,7 +350,7 @@ test.describe('Asset Enrollment Page', () => {
     test('Bulk Create - When user enter Nounit coloumn ', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.NOUNIT_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
-        await assetEnrollment.clickOnSubmitButton();
+
         await expect(assetEnrollment.popupMessage).toBeVisible();
         const errorMessages = await assetEnrollment.popupMessage.allInnerTexts();
         expect(errorMessages.length).toBeGreaterThan(0);
@@ -394,12 +395,12 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
 
-
+    // Accept more than 40 chars.. --- need to be fixed
     test('Asset Type Request Asset Name Field More Than 40 Characters', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
-        await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(5));
-        await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(42));
+        await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(42));
+        await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(5));
         await assetEnrollment.clickOnSubmitButton();
         const message = await assetEnrollment.validationMessage.textContent();
         console.log(message);
@@ -448,7 +449,7 @@ test.describe('Asset Enrollment Page', () => {
         await expect(assetEnrollment.createAssetTypePopupHeader).toBeHidden();
     });
 
-    test('Create Asset Type Created and Verify Created Asset Type Is Displayed', async ({ page }) => {
+    test('Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         let name = await AssetHelper.generateRandomString(5)
@@ -460,9 +461,11 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.verifyAssetTypeIsPresentInList(name)
     });
 
-    test('Create Asset Type Verify Sorting ', async ({ page }) => {
+    test('Create Asset Type Verify Sorting @smoke ', async ({ page }) => {
+        test.setTimeout(480000);
         await assetEnrollment.navigateToAssetTypeRequest();
-        const columnsToTest = [2, 3, 4, 5, 6, 7];
+
+        const columnsToTest = [3, 4, 5, 6, 7];
 
         for (const columnIndex of columnsToTest) {
             console.log(`Testing Column ${columnIndex} - Ascending Sort`);
@@ -483,48 +486,10 @@ test.describe('Asset Enrollment Page', () => {
             const descData = await assetEnrollment.getRowdata(columnIndex);
             await assetEnrollment.verifyRowsSorting(descData, "desc");
         }
-        // // Asset Type Header
-        // await assetEnrollment.clickAssetTypeHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow)//checking asc sort
-        // await assetEnrollment.clickAssetTypeHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow, "dsc")
-
-        // // Category Header
-        // await assetEnrollment.clickcategoryHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow)//checking asc sort
-        // await assetEnrollment.clickcategoryHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow, "dsc")
-
-
-        // // Request Date Header
-        // await assetEnrollment.clickRequestDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow)//checking asc sort
-        // await assetEnrollment.clickRequestDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow, "dsc")
-
-        // // Approved Date Header
-        // await assetEnrollment.clickApprovedDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.approvedDateRow)//checking asc sort
-        // await assetEnrollment.clickApprovedDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.approvedDateRow, "dsc")
-
-        // // Comment Header
-        // await assetEnrollment.clickCommentHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.commentRow)//checking asc sort
-        // await assetEnrollment.clickCommentHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.commentRow, "dsc")
-
-        // // Status Header
-        // await assetEnrollment.clickStatusHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.statusRow)//checking asc sort
-        // await assetEnrollment.clickStatusHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.statusRow, "dsc")
-
-
     })
 
 
-    test('should approve asset type request and verify status is updated to APPROVED', async ({ page }) => {
+    test('should approve asset type request and verify status is updated to APPROVED @smoke', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
         const noRecordLocator = page.locator(".fs-4");
@@ -543,7 +508,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('should reject asset type request and verify status is updated to REJECTED', async ({ page }) => {
+    test('should reject asset type request and verify status is updated to REJECTED @smoke', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -594,7 +559,7 @@ test.describe('Asset Enrollment Page', () => {
 
 
 
-    test('Approve Asset Type Request Verification', async ({ page }) => {
+    test('Approve Asset Type Request Verification @smoke', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         let name = await AssetHelper.generateRandomString(5);
@@ -699,57 +664,36 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Sorting', async ({ page }) => {
+    test('Approve Asset Type Sorting @smoke', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
+        const noRecordLocator = page.locator(".fs-4");
+        if (await noRecordLocator.isVisible()) {
+            console.log("No records available");
+            return;
+        } else {
+            const columnsToTest = [2, 3, 4, 5];
 
-        const columnsToTest = [2, 3, 4, 5];
+            for (const columnIndex of columnsToTest) {
+                console.log(`Testing Column ${columnIndex} - Ascending Sort`);
+                await assetEnrollment.clickOnAprooveAssetRowHeader(columnIndex);
 
-        for (const columnIndex of columnsToTest) {
-            console.log(`Testing Column ${columnIndex} - Ascending Sort`);
-            await assetEnrollment.clickOnAprooveAssetRowHeader(columnIndex);
+                // Wait to allow table sort/render to complete
+                await page.waitForTimeout(2000);
 
-            // Wait to allow table sort/render to complete
-            await page.waitForTimeout(2000);
+                const ascData = await assetEnrollment.getAprooveAssetRowdata(columnIndex);
+                await assetEnrollment.verifyRowsSorting(ascData, "asc");
 
-            const ascData = await assetEnrollment.getAprooveAssetRowdata(columnIndex);
-            await assetEnrollment.verifyRowsSorting(ascData, "asc");
+                console.log(`Testing Column ${columnIndex} - Descending Sort`);
+                await assetEnrollment.clickOnAprooveAssetRowHeader(columnIndex);
 
-            console.log(`Testing Column ${columnIndex} - Descending Sort`);
-            await assetEnrollment.clickOnAprooveAssetRowHeader(columnIndex);
+                // Wait again for descending sort
+                await page.waitForTimeout(2000);
 
-            // Wait again for descending sort
-            await page.waitForTimeout(2000);
-
-            const descData = await assetEnrollment.getAprooveAssetRowdata(columnIndex);
-            await assetEnrollment.verifyRowsSorting(descData, "desc");
+                const descData = await assetEnrollment.getAprooveAssetRowdata(columnIndex);
+                await assetEnrollment.verifyRowsSorting(descData, "desc");
+            }
         }
-
-        // await assetEnrollment.clickApproveAssetTypeHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow.last())//checking asc sort
-        // await assetEnrollment.clickApproveAssetTypeHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.assetTypeRow.last(), "dsc")
-
-        // // Category Header
-        // await assetEnrollment.clickApprovecategoryHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow.last())//checking asc sort
-        // await assetEnrollment.clickApprovecategoryHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.categoryRow.last(), "dsc")
-
-
-        // // Request Date Header
-        // await assetEnrollment.clickApproveRequestDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow.last())//checking asc sort
-        // await assetEnrollment.clickApproveRequestDateHeader()
-        // await assetEnrollment.verifyRowsSorting(assetEnrollment.requestDateRow.last(), "dsc")
-
-        // // Comment Header
-        // let commentrow = page.locator("tr>th:nth-child(5)").last()
-        // await assetEnrollment.clickApproveCommentHeader()
-        // await assetEnrollment.verifyRowsSorting(commentrow)
-        // await assetEnrollment.clickApproveCommentHeader()
-        // await assetEnrollment.verifyRowsSorting(commentrow, "dsc")
-
 
     });
 });

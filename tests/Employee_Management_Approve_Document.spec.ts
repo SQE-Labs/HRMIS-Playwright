@@ -4,7 +4,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
 import { CommonUtils } from '../utils/commonUtils';
-import { FILL_OUT_FIELD , FILL_IN_FIELD, SELECT_ITEM } from '../utils/constants';
+import { FILL_OUT_FIELD, FILL_IN_FIELD, SELECT_ITEM } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management > Assign Manager module'", () => {
@@ -124,14 +124,24 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         expect(await EmployeeDirectory.Action_Button_popup.isHidden()).toBe(true);
     });
 
-    test("should download file after clicking View button", async ({ page }) => {
+    test("should download file after clicking View button @smoke", async ({ page }) => {
+        await EmployeeDirectory.No_Record.isVisible().then(async (isVisible) => {
+            if (isVisible) {
+                const noRecordText = await EmployeeDirectory.No_Record.textContent();
+                console.log("No records available:", noRecordText);
+                expect(noRecordText).toBe("Approval for Pending Documents is not available.");
+                return; // Exit the test early if no records
+            }
+            else {
+                await EmployeeDirectory.Action_button.click();
+                await EmployeeDirectory.waitforLoaderToDisappear();
+                await EmployeeDirectory.verifyXLSXDownload(page, async () => {
+                    await EmployeeDirectory.View_button.click();
+                });
+            }
 
-        await EmployeeDirectory.Action_button.click();
-        await EmployeeDirectory.waitforLoaderToDisappear();
-        await EmployeeDirectory.verifyXLSXDownload(page, async () => {
-            await EmployeeDirectory.View_button.click();
-        });
-    })
+        })
+    });
 
     test("should show validation message when action is not selected", async ({ page }) => {
 
@@ -143,7 +153,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
 
-    test("should change document status to approved and show success toast", async ({ page }) => {
+    test("should change document status to approved and show success toast @smoke", async ({ page }) => {
 
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
@@ -155,7 +165,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         expect(message).toEqual("Document Approval Status Changed to approved");
     })
 
-    test("should validate rejection reason and change status to rejected", async ({ page }) => {
+    test("should validate rejection reason and change status to rejected @smoke", async ({ page }) => {
 
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();

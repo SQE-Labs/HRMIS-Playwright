@@ -91,7 +91,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     })
 
-    test("Upload document with comment and opens preview tab", async ({ page, context }) => {
+    test("Upload document with comment and opens preview tab @smoke", async ({ page, context }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -116,6 +116,6 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await newPage.close();
         await EmployeeDirectory.waitforLoaderToDisappear()
     })
-
+    
 
 })

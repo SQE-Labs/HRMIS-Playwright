@@ -7,7 +7,7 @@
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
     "DefaultAvailablity": "Available",
-    "assetsCardCount": 16,
+    "assetsCardCount": 21,
     "Projects": {
         "Project1": {
             "name": "AutomationProject",

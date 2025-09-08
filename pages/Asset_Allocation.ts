@@ -1,6 +1,7 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { BasePage } from "./Basepage";
 import { AssetHelper } from "../utils/AssetHelpers";
+import { FILL_IN_FIELD, FILL_OUT_FIELD } from "../utils/constants";
 export class AssetAllocation extends BasePage {
     public allocationAsset: Locator;
     public allocationPageHeader: Locator;
@@ -80,7 +81,7 @@ export class AssetAllocation extends BasePage {
         this.assetTableRowSix = page.locator("tr:nth-child(1)>td:nth-child(6)");
         this.assetTypeDropdownSvg = page.locator("(//*[name()='svg'][@class='css-8mmkcg'])[1]");
         this.employeeOption = this.page.locator('#react-select-3-option-6');
-        this.assetTypeOption = this.page.locator("#react-select-2-option-9");
+        this.assetTypeOption = this.page.locator("#react-select-2-option-0");
         this.assetTypeField = this.page.locator('input[name="selectedAsset"]');
         this.assetTypeRequiredField = this.page.locator("input[class = 'css-1a0ro4n-requiredInput']");
         this.assetListSelectedOption = this.page.locator("div[id='asset_list'] div[class=' css-1dimb5e-singleValue']");
@@ -148,39 +149,57 @@ export class AssetAllocation extends BasePage {
         await this.nextButton.click();
     }
     async pagination() {
+        // Step 1: Get total asset count
+        const totalAllocationText = await this.totalAssetAssigned.allTextContents();
+        const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationText);
+        console.log("Total Asset Count:", totalAssetCount);
 
-        const totalAllocationAsset = await this.totalAssetAssigned.allTextContents();
-        const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationAsset);
-        console.log("TotalAsset :  ", totalAssetCount);
+        // Step 2: Set items per page to the first available option (index 0)
         await this.itemsPerPage.waitFor({ state: 'visible' });
         await this.itemsPerPage.click();
         await this.itemsPerPage.selectOption({ index: 0 });
         await this.page.waitForTimeout(500);
+
         const selectedValue = parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
         const assetNameCount = await this.assetTypeName.count();
-        console.log("Selected Value: ", selectedValue);
-        console.log("Asset Name Count: ", assetNameCount);
+
+        console.log("Items Per Page (Selected):", selectedValue);
+        console.log("Asset Name Count (Visible):", assetNameCount);
+
+        // Step 3: Validate initial pagination state
         expect(selectedValue).toEqual(assetNameCount);
+
+        // Step 4: Validate navigation buttons and go to the first page
+        await this.nextButton.click();
         await this.page.waitForTimeout(1000);
         expect(await this.previousButton.isEnabled()).toBeTruthy();
         await this.previousButton.click();
         await this.page.waitForTimeout(1000);
         expect(await this.nextButton.isEnabled()).toBeTruthy();
-        const totalRecordCount = await this.allocationRecord.count();
+
+        // Step 5: Get pagination counts
+        const totalRecordCount = await this.allocationRecord.count(); // Records per page
         const pageCountText = await this.pageCount.textContent();
-        const [currentPage, totalPageCount] = AssetHelper.extractPageCount(pageCountText || '');
-        const difference = totalPageCount - currentPage;
-        const pageTotalCount = totalRecordCount * difference;
-        for (let i = 0; i < difference; i++) {
+        const [currentPage, totalPages] = AssetHelper.extractPageCount(pageCountText || '');
+
+        console.log(`Current Page: ${currentPage}, Total Pages: ${totalPages}`);
+        const remainingPages = totalPages - currentPage;
+
+        // Step 6: Navigate through remaining pages
+        for (let i = 0; i < remainingPages; i++) {
             await this.nextButton.click();
+            await this.page.waitForTimeout(1000);
         }
-        await this.page.waitForTimeout(2000);
-        const lastRecordCount = await this.allocationRecord.count();
-        const totalRecords = pageTotalCount + lastRecordCount;
-        console.log(totalRecords);
+
+        // Step 7: Calculate total from last page
+        const lastPageRecordCount = await this.allocationRecord.count();
+        const totalRecords = (totalPages - 1) * totalRecordCount + lastPageRecordCount;
+
+        console.log("Calculated Total Records:", totalRecords);
         expect(totalAssetCount).toEqual(totalRecords);
         expect(await this.previousButton.isEnabled()).toBeTruthy();
     }
+
 
     async assignAsset() {
 
@@ -196,7 +215,7 @@ export class AssetAllocation extends BasePage {
         await this.page.waitForTimeout(500);
         const tooltipMessage = await this.assetTypeField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Tooltip message:', tooltipMessage);
-        expect(tooltipMessage).toBe('Please fill out this field.');
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
         await this.allocationSelectAssetType.click();
         const options = await this.allocationSelectAssetTypeOption.allTextContents();
         expect(options.length).toBeGreaterThan(0);
@@ -230,7 +249,7 @@ export class AssetAllocation extends BasePage {
         const serialNumbers2 = await this.page.locator("table tr td:nth-child(4)").allTextContents();
         const selectedSerialNumber = serialNumbers2[0];
         await this.popupSearchBar.pressSequentially(selectedSerialNumber);
-        await this.assetRadioButton.click();
+        await this.assetRadioButton.first().click();
         await this.page.waitForTimeout(2000);
         const selectedAssetData = await this.assetInputGroupTextarea.allTextContents();
         const extractedText = selectedAssetData.join(" ");
@@ -247,12 +266,13 @@ export class AssetAllocation extends BasePage {
         await this.waitForSpinnerLoaderToDisappear()
         await this.page.waitForTimeout(1000);
         await this.popupSearchBar.pressSequentially(selectedSerialNumber);
-        await this.assetRadioButton.click();
+        await this.assetRadioButton.first().click();
         await this.submitButton.click();
         await this.page.waitForTimeout(500);
         const tooltipMessage2 = await this.assetTypeRequiredField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Tooltip message:', tooltipMessage2);
-        expect(tooltipMessage2).toBe('Please fill out this field.');
+        expect(tooltipMessage2 === FILL_OUT_FIELD || tooltipMessage2 === FILL_IN_FIELD).toBeTruthy();
+
         await this.allocationSelectEmployee.click();
         await this.employeeOption.click();
         const selectedOption = await this.assetListSelectedOption.textContent();
@@ -261,7 +281,8 @@ export class AssetAllocation extends BasePage {
         await this.submitButton.click();
         const tooltipMessage3 = await this.assetCommentField.evaluate(el => (el as HTMLInputElement).validationMessage);
         console.log('Tooltip message:', tooltipMessage3);
-        expect(tooltipMessage3).toBe('Please fill out this field.');
+        expect(tooltipMessage3 === FILL_OUT_FIELD || tooltipMessage3 === FILL_IN_FIELD).toBeTruthy();
+
         await this.page.waitForTimeout(2000);
         await this.allocationComment.fill("Thank you !!");
         await expect(this.assetListSelectedOption).not.toBeEmpty();
