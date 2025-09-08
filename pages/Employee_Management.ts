@@ -154,6 +154,7 @@ export class Employee_Management extends BasePage {
     public pageCount: Locator
     public leftOutCards: Locator
     public selectEmployeeOption: Locator
+    public No_Record: Locator
 
 
     constructor(page: Page) {
@@ -270,10 +271,9 @@ export class Employee_Management extends BasePage {
         this.AssignManagerPopupDropdownOption = page.locator("#react-select-5-option-1")
         this.AssignManagerPopupSubmitbutton = page.locator("(//button[@class = 'theme-button'])[2]")
         this.ColoumnBody = [
-            'Employee Id',
+
             'Name',
-            'Department',
-            'Designation',
+            'Assigned Manager',
             'Action'
         ]
 
@@ -358,6 +358,8 @@ export class Employee_Management extends BasePage {
         this.selectEmployeeOption = page.locator("#react-select-2-option-2")
 
         this.DepartmentCancelButton = page.locator(".cancel-modal")
+        this.No_Record = page.locator("div>h4")
+
     }
 
     async expandEmployeeManagementTab(): Promise<void> {
@@ -844,15 +846,4 @@ export class Employee_Management extends BasePage {
         await this.waitforLoaderToDisappear()
     }
 
-
-
 }
-// export function await AssetHelper.generateRandomString(5)(length: any) {
-//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-//     let result = '';
-//     const charactersLength = characters.length;
-//     for (let i = 0; i < length; i++) {
-//         result += characters.charAt(Math.floor(Math.random() * charactersLength));
-//     }
-//     return result;
-// }

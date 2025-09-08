@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test'
 import { OverView } from '../pages/Asset_OverView'
 import { BasePage } from '../pages/Basepage';
@@ -48,7 +49,7 @@ test.describe("Asset Overview page", () => {
 
         });
 
-        test("Verify XLSX file is downloaded", async ({ page }) => {
+        test("Verify XLSX file is downloaded @smoke", async ({ page }) => {
 
                 let options = await assetOverview.getFilterDropdownOption();
                 expect(options.length).toBeGreaterThan(1);
@@ -73,7 +74,7 @@ test.describe("Asset Overview page", () => {
                 console.debug("Details are displayed on cards");
         });
 
-        test("Verify when clicking on any card, card opens up", async () => {
+        test("Verify when clicking on any card, card opens up @smoke", async () => {
                 // TC_AM_009
                 await assetOverview.openCard("Desktop PC");
                 await assetOverview.countInnerAssets();
@@ -106,8 +107,8 @@ test.describe("Asset Overview page", () => {
                         expect(filteredCount).toBeGreaterThan(0);
                 }
         });
-
-        test('Verify XLSX file is downloaded after filtering and clicking Export', async ({ page }) => {
+        //  Need to fixed -- bug already raised
+        test('Verify XLSX file is downloaded after filtering and clicking Export @smoke', async ({ page }) => {
                 await assetOverview.getFilteredData();
                 if (await assetOverview.emptyRecord.isVisible()) {
                         await assetOverview.clickExportButton();
@@ -119,55 +120,35 @@ test.describe("Asset Overview page", () => {
                 }
         });
         // TC_AM_019
-        test('Verify Sorting', async () => {
+        test('Verify Sorting', async ({ page }) => {
+                test.setTimeout(480000);
                 await assetOverview.openCard("Desktop PC")
 
-                // Manufracture Header
-                await assetOverview.clickManfHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.manfRows)//checking asc sort
-                await assetOverview.clickManfHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.manfRows, "dsc")
+                const columnsToTest = [2, 3, 4, 5, 6, 7];
 
-                // Model Header
-                await assetOverview.clickModelHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.modelRows)//checking asc sort
-                await assetOverview.clickModelHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.modelRows, "dsc")
+                for (const columnIndex of columnsToTest) {
+                        console.log(`Testing Column ${columnIndex} - Ascending Sort`);
+                        await assetOverview.clickAssetTypeRequestOnRowHeader(columnIndex);
 
+                        // Wait to allow table sort/render to complete
+                        await page.waitForTimeout(2000);
 
-                // Serial Header
-                await assetOverview.clickSerialNumberHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows)//checking asc sort
-                await assetOverview.clickSerialNumberHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.serialnumberRows, "dsc")
+                        const ascData = await assetOverview.getRowdata(columnIndex);
+                        await assetOverview.verifyRowsSorting(ascData, "asc");
 
-                // Super Owner Header
-                await assetOverview.clickSuperOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows)//checking asc sort
-                await assetOverview.clickSuperOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.superOwnerRows, "dsc")
+                        console.log(`Testing Column ${columnIndex} - Descending Sort`);
+                        await assetOverview.clickAssetTypeRequestOnRowHeader(columnIndex);
 
-                // Owner Header
-                await assetOverview.clickOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.ownerRows)//checking asc sort
-                await assetOverview.clickOwnerHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.ownerRows, "dsc")
+                        // Wait again for descending sort
+                        await page.waitForTimeout(2000);
 
-                // Status Header
-                await assetOverview.clickStatusHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.statusRows)//checking asc sort
-                await assetOverview.clickStatusHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.statusRows, "dsc")
-
-                // Availablity Header
-                await assetOverview.clickAvailablityHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.availablityRows)//checking asc sort
-                await assetOverview.clickAvailablityHeader()
-                await assetOverview.verifyRowsSorting(assetOverview.availablityRows, "dsc")
+                        const descData = await assetOverview.getRowdata(columnIndex);
+                        await assetOverview.verifyRowsSorting(descData, "desc");
+                }
 
         })
 
-        test("Verify Redirection from asset Overview header", async () => {
+        test("Verify Redirection from asset Overview header @smoke", async () => {
                 await assetOverview.openCard("Desktop PC")
                 await assetOverview.assetOverviewRedirect.click()
                 await assetOverview.waitforLoaderToDisappear()

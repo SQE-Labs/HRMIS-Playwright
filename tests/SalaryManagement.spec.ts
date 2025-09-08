@@ -29,7 +29,7 @@ test.describe.serial("Salary Management", () => {
 
     });
 
-    test("Upload Salary Slip successfully", async ({ page }) => {
+    test("Upload Salary Slip successfully @smoke", async ({ page }) => {
         await salaryObj.selectEmployeeType("REGULAR");
         await utils.uploadAndVerifyFile(EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
         await salaryObj.selectMonth("August");

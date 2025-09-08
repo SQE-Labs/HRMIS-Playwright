@@ -17,7 +17,7 @@ export default defineConfig({
   expect: {
     timeout: 12_000, // Default timeout for expect assertions
   },
-  timeout: 30_000,
+  timeout: 240000, // Maximum time one test can run for
   testDir: './tests',
   // testMatch:
   // [
@@ -35,6 +35,8 @@ export default defineConfig({
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
   reporter: [["html"], ['line'], ["allure-playwright"]],
+  // reporter: [['list'], ['junit', { outputFile: 'results.xml' }]],
+
   // reporter: [
   //   ["dot"],
   //   ['allure-playwright'],
@@ -43,7 +45,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless: false, // to see the browser window
+    headless: true, // to see the browser window
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 

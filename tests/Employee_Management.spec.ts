@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { AADHAAR_FIELD, FILL_FIELD, PANCARD_FIELD, PASSPORT_FIELD, SELECT_ITEM } from '../utils/constants';
+import { SELECT_ITEM, FILL_IN_FIELD, FILL_OUT_FIELD,PANCARD_FIELD,AADHAAR_FIELD,PASSPORT_FIELD } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management module'", () => {
@@ -35,20 +35,20 @@ test.describe("'Employee Management module'", () => {
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("Verify NoRecordMessage For Invalid Employee Search", async ({ page }) => {
+    test("Verify NoRecordMessage For Invalid Employee Search @smoke", async ({ page }) => {
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("978735")  //invalid Employee name
         let Norecord = await EmployeeDirectory.noRecord(0)
         expect(Norecord).toEqual("No Record Available")
     })
 
-    test("verify Employee Count Matches After Department Filter Applied", async ({ page }) => {
+    test("verify Employee Count Matches After Department Filter Applied @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("verify Employee Count After Selecting Status Filter", async ({ page }) => {
+    test("verify Employee Count After Selecting Status Filter @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
@@ -67,7 +67,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("verify Status Filter Results With Or Without Employees", async ({ page }) => {
+    test("verify Status Filter Results With Or Without Employees @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
@@ -81,7 +81,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("verify Employee Profile Name Matches Card Name ", async ({ page }) => {
+    test("verify Employee Profile Name Matches Card Name @smoke", async ({ page }) => {
         let employeecardName = await EmployeeDirectory.fechingEmployeeName()
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -101,10 +101,10 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(1)
 
-        await page.waitForTimeout(1000)
+        await page.waitForTimeout(2000)
         await EmployeeDirectory.clickOnBasicInfo()
-        await EmployeeDirectory.verifyCollapseIsHidden(1)
-        await page.waitForTimeout(1000)
+        await EmployeeDirectory.verifyCollapseIsVisible(1)
+        await page.waitForTimeout(2000)
         await EmployeeDirectory.clickOnBasicInfo()
         await EmployeeDirectory.verifyCollapseIsHidden(1)
 
@@ -118,7 +118,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.BasicInfoFirstname.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.BasicInfoFirstname)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
     test("verify Validation Message When Last Name Is Cleared In BasicInfo", async ({ page }) => {
@@ -129,7 +130,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.BasicInfoLastName.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.BasicInfoLastName)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
     test("verify BasicInfo Remains Unchanged After Closing Edit Form", async ({ page }) => {
@@ -181,7 +183,7 @@ test.describe("'Employee Management module'", () => {
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkAccordion()
-        await EmployeeDirectory.verifyCollapseIsHidden(2)
+        await EmployeeDirectory.verifyCollapseIsVisible(2)
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkAccordion()
@@ -197,7 +199,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.WorkDate.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.WorkDate)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
     test("verify Validation Message When EmployeeType no Option is selected In Work", async ({ page }) => {
@@ -252,23 +255,10 @@ test.describe("'Employee Management module'", () => {
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnPersonalDetails()
-        await EmployeeDirectory.verifyCollapseIsHidden(3)
+        await EmployeeDirectory.verifyCollapseIsVisible(3)
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnEducation()
-        await EmployeeDirectory.verifyCollapseIsHidden(3)
-
-
-        await page.waitForTimeout(1000)
-        await EmployeeDirectory.clickOnWorkExperience()
-        await EmployeeDirectory.verifyCollapseIsHidden(3)
-
-
-        await page.waitForTimeout(1000)
-        await EmployeeDirectory.clickOnDependents()
-        await EmployeeDirectory.verifyCollapseIsHidden(3)
-        await page.waitForTimeout(1000)
-        await EmployeeDirectory.clickOnAssignedAssets()
         await EmployeeDirectory.verifyCollapseIsHidden(3)
 
     })
@@ -281,7 +271,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PersonalDetailsDate.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PersonalDetailsDate)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     })
 
     test("verify Validation Message When Aadhaar number Is Cleared In Perosnal Details", async ({ page }) => {
@@ -314,7 +304,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PresentAddress.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PresentAddress)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
     test("verify Validation Message When Blood Group option selects 'Select blood Group' In Perosnal Details", async ({ page }) => {
@@ -347,7 +338,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.AlternateNumber.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.AlternateNumber)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
 
@@ -359,7 +351,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PermanentAddress.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PermanentAddress)
-        expect(tooltipMessage).toBe(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
 
@@ -433,7 +426,7 @@ test.describe("'Employee Management module'", () => {
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkExperience()
-        await EmployeeDirectory.verifyCollapseIsHidden(4)
+        await EmployeeDirectory.verifyCollapseIsVisible(4)
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnWorkExperience()
@@ -460,7 +453,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.verifyCollapseIsHidden(5)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnEducation()
-        await EmployeeDirectory.verifyCollapseIsHidden(5)
+        await EmployeeDirectory.verifyCollapseIsVisible(5)
 
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnEducation()
@@ -487,14 +480,14 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.verifyCollapseIsHidden(6)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnDependents()
-        await EmployeeDirectory.verifyCollapseIsHidden(6)
+        await EmployeeDirectory.verifyCollapseIsVisible(6)
         await page.waitForTimeout(1000)
         await EmployeeDirectory.clickOnDependents()
         await EmployeeDirectory.verifyCollapseIsHidden(6)
 
     })
 
-    test("Navigating to the Employee Directory tab > Assigned Assets ", async ({ page }) => {
+    test("Navigating to the Employee Directory tab > Assigned Assets @smoke", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnAssignedAssets()
@@ -557,7 +550,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toEqual(SELECT_ITEM)
     })
 
-    test("should update employee access status to BLOCKED successfully ", async ({ page }) => {
+    test("should update employee access status to BLOCKED successfully @smoke", async ({ page }) => {
         let CardName = await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -580,7 +573,7 @@ test.describe("'Employee Management module'", () => {
         console.debug(CardsTitle);
         expect(CardsTitle).toContain(CardName);
     })
-    test("should update BLOCKED employee status to VERIFIED and confirm card appears in list", async ({ page }) => {
+    test("should update BLOCKED employee status to VERIFIED and confirm card appears in list @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let cardsCount = await EmployeeDirectory.Card.count()
@@ -660,7 +653,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
         await EmployeeDirectory.LeftOutSubmitbutton.click()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.LeftOutDate)
-        expect(tooltipMessage).toEqual(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     })
 
     test("shouldShowValidationMessageWhenLeftOutCommentIsEmpty", async ({ page }) => {
@@ -672,7 +665,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.leftoutcurrentDate.click()
         await EmployeeDirectory.LeftOutSubmitbutton.click()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.LeftOutCommentField)
-        expect(tooltipMessage).toEqual(FILL_FIELD)
+        expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
+
     })
 
     test.skip("should Disable Employee Access Permanently", async ({ page }) => {

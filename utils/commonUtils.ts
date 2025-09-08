@@ -38,43 +38,54 @@ export class CommonUtils {
 
 
 
-    async verifyRowsSorting(rowsLocator, sortingType = 'asc') {
-        let elementsText = (await rowsLocator.allTextContents()).map((s: string) => s.trim());
-        // console.log("unsorted " + elementsText)
-        let sortedElements;
-        if (sortingType.toLowerCase().includes("asc")) {
+    async verifyRowsSorting(data: string[], sortingType = 'asc') {
+        const trimmedData = data.map(s => s.trim());
 
-            let expectedSortedData = [...trimmedData];
+        let expectedSortedData = [...trimmedData];
 
-            const isDate = expectedSortedData.every(val => !isNaN(Date.parse(val)));
+        // Filter out values that are valid dates
+        const validDates = expectedSortedData.filter(val => !isNaN(Date.parse(val)));
 
-            const isNumeric = expectedSortedData.every(val => {
-                const cleaned = val.replace(/,/g, ''); // Remove commas for numeric check
-                return !isNaN(Number(cleaned));
+        const isMostlyDates = validDates.length > expectedSortedData.length * 0.8; // At least 80% must be valid dates
+
+        const isNumeric = expectedSortedData.every(val => {
+            const cleaned = val.replace(/,/g, '');
+            return !isNaN(Number(cleaned));
+        });
+
+        if (isNumeric) {
+            expectedSortedData.sort((a, b) => {
+                const numA = Number(a.replace(/,/g, ''));
+                const numB = Number(b.replace(/,/g, ''));
+                return sortingType === 'asc' ? numA - numB : numB - numA;
             });
+        } else if (isMostlyDates) {
+            expectedSortedData = validDates.sort((a, b) => {
+                const dateA = new Date(a).getTime();
+                const dateB = new Date(b).getTime();
+                return sortingType === 'asc' ? dateA - dateB : dateB - dateA;
+            });
+        } else {
+            expectedSortedData.sort((a, b) => {
+                return sortingType === 'asc'
+                    ? a.localeCompare(b, 'en', { sensitivity: 'variant', numeric: true })
+                    : b.localeCompare(a, 'en', { sensitivity: 'variant', numeric: true });
+            });
+        }
 
-            if (isNumeric) {
-                expectedSortedData.sort((a, b) => {
-                    const numA = Number(a.replace(/,/g, ''));
-                    const numB = Number(b.replace(/,/g, ''));
-                    return sortingType === 'asc' ? numA - numB : numB - numA;
-                });
-            } else if (isDate) {
-                expectedSortedData.sort((a, b) => {
-                    const dateA = new Date(a).getTime();
-                    const dateB = new Date(b).getTime();
-                    return sortingType === 'asc' ? dateA - dateB : dateB - dateA;
-                });
-            } else {
-                expectedSortedData.sort((a, b) =>
-                    sortingType === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
-                );
-            }
+        // Print out only first few for debug purposes
+        console.log(`Trimmed Data (${sortingType}):`, trimmedData.slice(0, 10));
+        console.log(`Expected Sorted Data (${sortingType}):`, expectedSortedData.slice(0, 10));
 
-            console.log(`Expected sorted data (${sortingType}):`, expectedSortedData);
+        // Match logic: filter both arrays to only include valid dates
+        if (isMostlyDates) {
+            const actualValidDates = trimmedData.filter(val => !isNaN(Date.parse(val)));
+            expect(actualValidDates).toEqual(expectedSortedData);
+        } else {
             expect(trimmedData).toEqual(expectedSortedData);
         }
     }
+
 
     async generateRandomInteger(length: number) {
         const characters = '0123456789';

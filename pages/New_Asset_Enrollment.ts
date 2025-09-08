@@ -1,3 +1,4 @@
+
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 
@@ -210,6 +211,72 @@ export class AssetEnrollment extends AssetManagementTab {
     async clickOnPopUpCancelButton() {
         await this.popupCancelButton.click();
     }
+    async clickAssetTypeRequestOnRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr>th:nth-child(${columnIndex})`);
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
+    }
+
+    async clickOnAprooveAssetRowHeader(columnIndex: number) {
+        const headerIcon = this.page.locator(`tr>th:nth-child(${columnIndex})`).last();
+        await headerIcon.waitFor({ state: 'visible' });
+        await headerIcon.click();
+
+        // Add a short wait to allow sorting animation/data update
+        await this.page.waitForTimeout(2000);
+    }
+
+    async getRowdata(columnIndex: number): Promise<string[]> {
+        // Wait for at least one cell in the desired column to appear
+        await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`);
+
+        const rows = await this.page.locator('tbody > tr');
+        const columnData: string[] = [];
+
+        const rowCount = await rows.count();
+
+        if (rowCount === 0) {
+            console.warn("No data rows found in <tbody>.");
+            return [];
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
+            await cell.waitFor({ state: 'visible' });
+            const text = await cell.textContent();
+            columnData.push((text ?? '').trim());
+        }
+
+        console.log(`Column ${columnIndex} data:`, columnData);
+        return columnData;
+    }
+
+    async getAprooveAssetRowdata(columnIndex: number): Promise<string[]> {
+        // Wait for at least one cell in the desired column to appear
+        // await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`)
+
+        const rows = await this.page.locator('tbody > tr');
+        const columnData: string[] = [];
+
+        const rowCount = await rows.count();
+
+        if (rowCount === 0) {
+            console.warn("No data rows found in <tbody>.");
+            return [];
+        }
+
+        for (let i = 0; i < rowCount; i++) {
+            const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`).last();
+            await cell.waitFor({ state: 'visible' });
+            const text = await cell.textContent();
+            columnData.push((text ?? '').trim());
+        }
+
+        console.log(`Column ${columnIndex} data:`, columnData);
+        return columnData;
+    }
 
     async clickAssetTypeHeader() {
         await this.page.locator(`tr>th:nth-child(2)`).click();
@@ -410,30 +477,76 @@ export class AssetEnrollment extends AssetManagementTab {
         }
     }
 
+    // async getCurrentDate() {
+    //     const currentDate = new Date().toLocaleDateString('en-US', {
+    //         year: 'numeric',
+    //         month: 'long',
+    //         day: '2-digit'
+    //     });
+    //     return currentDate
+
+    // }
     async getCurrentDate() {
-        const currentDate = new Date().toLocaleDateString('en-US', {
+        const date = new Date();
+
+        const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: 'long',
-            day: '2-digit'
-        });
-        return currentDate
+            day: '2-digit'  // This might not work consistently across all environments
+        };
 
+        // Manually pad the day if needed
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = date.toLocaleString('en-US', { month: 'long' });
+        const year = date.getFullYear();
+
+        return `${month} ${day}, ${year}`; // e.g., "September 03, 2025"
     }
 
+
+    //     async getAssetCreationDateByName(name) {
+    //         // TC_AM_146
+    //         const count = await this.assetTypeName.count();
+    //         let found = false;
+    //         let assetCreateDate;
+    //         for (let i = 0; i <= count; i++) {
+    //             const assetText = await this.assetTypeName.nth(i).textContent();
+    //             if (assetText?.trim() === name) {
+    //                 assetCreateDate = await this.page.locator(`((//table[contains(@class, 'resume')])[2]//tr[${i + 1}])/td[4]`).textContent();
+    //                 console.log('AssetCreateDate : - ', assetCreateDate);
+    //                 found = true;
+    //                 break;
+    //             }
+    //         }
+    //         return assetCreateDate
+    //     }
     async getAssetCreationDateByName(name) {
-        // TC_AM_146
         const count = await this.assetTypeName.count();
-        let found = false;
         let assetCreateDate;
-        for (let i = 0; i <= count; i++) {
+
+        for (let i = 0; i < count; i++) {
             const assetText = await this.assetTypeName.nth(i).textContent();
             if (assetText?.trim() === name) {
-                assetCreateDate = await this.page.locator(`((//table[contains(@class, 'resume')])[2]//tr[${i + 1}])/td[4]`).textContent();
-                console.log('AssetCreateDate : - ', assetCreateDate);
-                found = true;
+                const rawDate = await this.page.locator(`((//table[contains(@class, 'resume')])[2]//tr[${i + 1}])/td[4]`).textContent();
+
+                if (rawDate) {
+                    // Normalize the date string (e.g., from "September 3, 2025" to "September 03, 2025")
+                    const parsedDate = new Date(rawDate.trim());
+
+                    const month = parsedDate.toLocaleString('en-US', { month: 'long' });
+                    const day = parsedDate.getDate().toString().padStart(2, '0');
+                    const year = parsedDate.getFullYear();
+
+                    assetCreateDate = `${month} ${day}, ${year}`; // e.g., "September 03, 2025"
+                    console.log('Formatted AssetCreateDate : - ', assetCreateDate);
+                }
+
                 break;
             }
         }
-        return assetCreateDate
+
+        return assetCreateDate;
     }
+
+
 }

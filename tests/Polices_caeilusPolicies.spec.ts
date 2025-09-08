@@ -32,7 +32,7 @@ test.describe.serial("'Caelius Polices'", () => {
 
     });
 
-    test("Create a new policy with file upload and verify success message", async ({ page, context, browser }) => {
+    test("Create a new policy with file upload and verify success message @smoke", async ({ page, context, browser }) => {
 
         await Polices_caeliusPolicy.clickOnAddPolicyBttn();
         const date = await Polices_caeliusPolicy.getTodayDate();
@@ -50,7 +50,7 @@ test.describe.serial("'Caelius Polices'", () => {
 
     })
 
-    test("Update Policy", async ({ page, context, browser }) => {
+    test("Update Policy @smoke", async ({ page, context, browser }) => {
 
         const lastRecod = await helper.fetchLastRecordView('40');
         console.log(lastRecod);
@@ -67,7 +67,7 @@ test.describe.serial("'Caelius Polices'", () => {
 
     })
 
-    test("Download the Policy. ", async ({ page, context, browser }) => {
+    test("Download the Policy.  @smoke", async ({ page, context, browser }) => {
 
         await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
         await helper.fetchLastRecordView('40');

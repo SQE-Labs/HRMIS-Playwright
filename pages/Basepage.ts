@@ -67,4 +67,9 @@ export class BasePage extends CommonUtils {
     console.debug(message)
     return message
   }
+  async verifySuccessMessage(expectedMessage: string) {
+    const message = await this.toastMessage();
+    expect(message?.trim()).toBe(expectedMessage);
+    console.log(`Success message verified: ${expectedMessage}`);
+  }
 }

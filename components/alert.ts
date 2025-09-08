@@ -38,4 +38,5 @@ export class Alert extends BasePage {
         console.debug(message)
         return message
     }
+
 }
