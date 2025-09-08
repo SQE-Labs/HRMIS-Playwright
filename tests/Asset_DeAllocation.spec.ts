@@ -9,6 +9,8 @@ test.describe("Asset DeAllocation page", () => {
         const loginObj = new LoginPage(page)
         await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         DeAllocation = new AssetDeallocation(page)
+        console.log(">> Starting test case : " + test.info().title);
+
     })
 
     test("Asset Deallocation page ", async ({ page }) => {

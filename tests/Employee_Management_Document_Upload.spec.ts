@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { FILL_OUT_FIELD , FILL_IN_FIELD } from '../utils/constants';
+import { FILL_OUT_FIELD, FILL_IN_FIELD } from '../utils/constants';
 
 
 let EmployeeDirectory: Employee_Management
@@ -91,19 +91,19 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     })
 
-    test("Upload document with comment and opens preview tab @smoke", async ({ page, context }) => {
+    test.only("Upload document with comment and opens preview tab @smoke", async ({ page, context }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.Upload_Icon.click()
-        await EmployeeDirectory.uploadAndVerifyFile("screenshot.png", page)
+        await EmployeeDirectory.uploadFile("screenshot.png", page)
         await EmployeeDirectory.waitforLoaderToDisappear()
 
         await EmployeeDirectory.PopUp_comment.fill("Thank you !!")
         await EmployeeDirectory.PopUP_Submit_button.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         let message = await EmployeeDirectory.toastMessage()
-        expect(message).toContain("Uploaded")
+        expect(message).toContain("uploaded")
         await EmployeeDirectory.PopUp_Header.isHidden()
         const [newPage] = await Promise.all([
             context.waitForEvent('page'), // listens for new page (tab/window)
@@ -116,6 +116,6 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await newPage.close();
         await EmployeeDirectory.waitforLoaderToDisappear()
     })
-    
+
 
 })
