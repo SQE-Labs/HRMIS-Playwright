@@ -209,4 +209,6 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    
+
 }

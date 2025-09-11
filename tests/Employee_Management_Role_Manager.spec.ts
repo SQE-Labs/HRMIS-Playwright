@@ -5,7 +5,7 @@ import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
 
 let EmployeeDirectory: Employee_Management
-test.describe("'Employee Management > Assign Manager module'", () => {
+test.describe("'Employee Management > Role Management module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)

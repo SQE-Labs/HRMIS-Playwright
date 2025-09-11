@@ -7,7 +7,7 @@ import { asyncWrapProviders } from 'async_hooks';
 
 
 let EmployeeDirectory: Employee_Management
-test.describe("'Employee Management module'", () => {
+test.describe("'Employee Management module >  Promotion'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
