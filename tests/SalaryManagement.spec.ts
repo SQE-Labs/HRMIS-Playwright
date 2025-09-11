@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test'
 import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import testData from '../testData/testData.json';
-import { EXISTINGSERIALNUMBER_COLUMN } from '../utils/constants';
 import { SalaryManagement } from '../pages/SalaryManagement';
 import { CommonUtils } from '../utils/commonUtils';
 import { Helper } from '../utils/Helper';
@@ -31,7 +30,7 @@ test.describe.serial("Salary Management", () => {
 
     test("Upload Salary Slip successfully @smoke", async ({ page }) => {
         await salaryObj.selectEmployeeType("REGULAR");
-        await utils.uploadAndVerifyFile(EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
+        await utils.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
         await salaryObj.selectMonth("August");
         await salaryObj.submitForm();
         const successToast = await salaryObj.toastMessage();

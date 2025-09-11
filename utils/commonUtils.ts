@@ -115,6 +115,27 @@ export class CommonUtils {
         return result;
     }
 
+    async uploadFile(
+        fileName: string,
+        page: Page,
+
+    ) {
+        let fileInputSelector = "//input[@type = 'file']"
+        // Construct full cross-platform file path
+        const filePath = path.resolve(__dirname, '..', 'files', fileName);
+
+        // Validate file before uploading
+        expect(fs.existsSync(filePath)).toBe(true);
+        const fileStats = fs.statSync(filePath);
+        expect(fileStats.size).toBeGreaterThan(0);
+        expect(path.extname(filePath)).toMatch(/\.(xlsx|docx|pdf|png)$/); // adjust if needed
+
+        // Upload file
+        await page.setInputFiles(fileInputSelector, filePath);
+        await page.waitForSelector(fileInputSelector, { state: 'attached' });
+
+    }
+
     async uploadAndVerifyFile(
         fileName: string,
         page: Page,
@@ -129,7 +150,7 @@ export class CommonUtils {
         expect(fs.existsSync(filePath)).toBe(true);
         const fileStats = fs.statSync(filePath);
         expect(fileStats.size).toBeGreaterThan(0);
-        expect(path.extname(filePath)).toMatch(/\.xlsx|\.docx|\.pdf/); // adjust if needed
+        expect(path.extname(filePath)).toMatch(/\.(xlsx|docx|pdf|png)$/); // adjust if needed
 
         // Upload file
         await page.setInputFiles(fileInputSelector, filePath);
@@ -188,4 +209,6 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    
+
 }

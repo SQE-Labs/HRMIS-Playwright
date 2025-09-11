@@ -3,7 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { SELECT_ITEM, FILL_IN_FIELD, FILL_OUT_FIELD,PANCARD_FIELD,AADHAAR_FIELD,PASSPORT_FIELD } from '../utils/constants';
+import { SELECT_ITEM, FILL_IN_FIELD, FILL_OUT_FIELD, PANCARD_FIELD, AADHAAR_FIELD, PASSPORT_FIELD } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 test.describe("'Employee Management module'", () => {
@@ -36,6 +36,7 @@ test.describe("'Employee Management module'", () => {
     })
 
     test("Verify NoRecordMessage For Invalid Employee Search @smoke", async ({ page }) => {
+        await EmployeeDirectory.waitForDotsLoaderToDisappear();
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("978735")  //invalid Employee name
         let Norecord = await EmployeeDirectory.noRecord(0)
         expect(Norecord).toEqual("No Record Available")

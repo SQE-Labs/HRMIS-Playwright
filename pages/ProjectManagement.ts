@@ -27,10 +27,10 @@ export class ProjectManagement extends BasePage {
         this.projectNameInput = page.locator("input[name='projectName']");
         this.deliveryLeadDropdown = page.locator("select"); // refine if multiple selects exist
         this.projectDescriptionInput = page.locator("textarea");
-        this.sowStartDateInput = page.locator("input[id='sowStartDate']");
-        this.sowEndDateInput = page.locator("input[id='sowEndDate']");
-        this.actualStartDateInput = page.locator("input[placeholder='Start Date']").nth(1);
-        this.actualEndDateInput = page.locator("input[placeholder='End Date']").nth(1);
+        this.sowStartDateInput = page.locator("(//input[@type='text'])[2]");
+        this.sowEndDateInput = page.locator("(//input[@type='text'])[3]");
+        this.actualStartDateInput = page.locator("(//input[@type='text'])[4]");
+        this.actualEndDateInput = page.locator("(//input[@type='text'])[5]");
     }
 
     async expandTab(): Promise<void> {
@@ -56,10 +56,14 @@ export class ProjectManagement extends BasePage {
     }): Promise<void> {
         await this.projectNameInput.fill(projectData.name);
         await this.deliveryLeadDropdown.selectOption({ label: projectData.deliveryLead });
-        await this.projectDescriptionInput.fill(projectData.description);
-
         await this.sowStartDateInput.fill(projectData.sowStart);
         await this.sowEndDateInput.fill(projectData.sowEnd);
+        await this.projectDescriptionInput.fill(projectData.description);
+        await this.projectDescriptionInput.click(); // To trigger any onBlur events
+
+
+
         await this.submitBtn.click();
     }
+
 }

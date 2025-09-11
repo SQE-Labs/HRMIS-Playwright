@@ -19,6 +19,9 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.navigateToNewAssetEnrollmet();
         await assetEnrollment.waitforLoaderToDisappear()
         await page.waitForTimeout(3000);
+        console.log(">> Starting test case : " + test.info().title);
+
+
 
     });
 
@@ -664,7 +667,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Sorting @smoke', async ({ page }) => {
+    test('Approve Asset Type Sorting ', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
         const noRecordLocator = page.locator(".fs-4");

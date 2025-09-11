@@ -11,6 +11,7 @@ test.describe("Asset Allocation page", () => {
         
         allocation = new AssetAllocation(page)
         await AssetHelper.navigateToAllocationAsset(page, allocation.allocationAsset);
+        console.log(">> Starting test case : " + test.info().title);
     });
     test("Rediected Towards Asset Allocation page", async ({ page }) => {
         expect(await allocation.allocationPageHeader.isVisible()).toBeTruthy();

@@ -3,12 +3,13 @@ import { BasePage } from '../pages/Basepage';
 import { LoginPage } from '../pages/LoginPage';
 import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
-import { FILL_OUT_FIELD , FILL_IN_FIELD } from '../utils/constants';
+import { FILL_OUT_FIELD, FILL_IN_FIELD } from '../utils/constants';
+
 
 
 let EmployeeDirectory: Employee_Management
 
-test.describe("'Employee Management > Assign Manager module'", () => {
+test.describe("'Employee Management > Document Upload module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
@@ -92,11 +93,12 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
     test("Upload document with comment and opens preview tab @smoke", async ({ page, context }) => {
+        
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.Upload_Icon.click()
-        await EmployeeDirectory.uploadAndVerifyFile("screenshot.png", page)
+        await EmployeeDirectory.uploadFile("screenshot.png", page)
         await EmployeeDirectory.waitforLoaderToDisappear()
 
         await EmployeeDirectory.PopUp_comment.fill("Thank you !!")
@@ -105,17 +107,21 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         let message = await EmployeeDirectory.toastMessage()
         expect(message).toContain("Uploaded")
         await EmployeeDirectory.PopUp_Header.isHidden()
-        const [newPage] = await Promise.all([
-            context.waitForEvent('page'), // listens for new page (tab/window)
-            EmployeeDirectory.EyeIcon.click()          // triggers opening the new page
-        ]);
-
-        await newPage.waitForLoadState('load');
-        const newPageUrl = newPage.url();
-        expect(newPageUrl).toContain("screenshot.png");
-        await newPage.close();
-        await EmployeeDirectory.waitforLoaderToDisappear()
+        
+        await EmployeeDirectory.clickOnEyeButton()
+        await expect(EmployeeDirectory.popup).toBeVisible()
+        await expect(EmployeeDirectory.closePopupButton).toBeVisible()
+        await expect(EmployeeDirectory.maximizeButton).toBeVisible()
+        await expect(EmployeeDirectory.downloadButton).toBeVisible()
+        await EmployeeDirectory.checkuploadeMaximizeButton()
+        await EmployeeDirectory.checkuploademinimizeButton()
+        await EmployeeDirectory.verifyXLSXDownload(page, async () => {
+            await EmployeeDirectory.clickOnDownloadButton();
+        })
+        // Close the popup
+        await EmployeeDirectory.clickOnclosePopup();
+        await expect(EmployeeDirectory.popup).toBeHidden();
     })
-    
+
 
 })

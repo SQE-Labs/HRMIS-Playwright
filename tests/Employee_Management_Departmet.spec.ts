@@ -6,7 +6,7 @@ import testData from '../testData/testData.json';
 import { FILL_OUT_FIELD, FILL_IN_FIELD } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
-test.describe("'Employee Management > Assign Manager module'", () => {
+test.describe("'Employee Management > Department module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)

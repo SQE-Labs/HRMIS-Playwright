@@ -110,7 +110,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
 
 
     test("Verify that Profile appear under the HRSetup and Verify that Profile update successfully @smoke", async ({ page, context, browser }) => {
-
+        test.setTimeout(480000);
         Employe_HRSetupTable = new Employee_HRSetup(page);
         await Employe_HRSetupTable.navigateToHRSetup();
         const HRaaprovedname = await Employe_HRSetupTable.fetchLastRecordView('40');

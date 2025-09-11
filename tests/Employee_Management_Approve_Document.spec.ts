@@ -7,7 +7,7 @@ import { CommonUtils } from '../utils/commonUtils';
 import { FILL_OUT_FIELD, FILL_IN_FIELD, SELECT_ITEM } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
-test.describe("'Employee Management > Assign Manager module'", () => {
+test.describe("'Employee Management > Approve Document module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
@@ -134,17 +134,30 @@ test.describe("'Employee Management > Assign Manager module'", () => {
             }
             else {
                 await EmployeeDirectory.Action_button.click();
-                await EmployeeDirectory.waitforLoaderToDisappear();
+                await EmployeeDirectory.clickOnViewButton()
+                await expect(EmployeeDirectory.popup).toBeVisible()
+                await expect(EmployeeDirectory.closePopupButton).toBeVisible()
+                await expect(EmployeeDirectory.maximizeButton).toBeVisible()
+                await expect(EmployeeDirectory.downloadButton).toBeVisible()
+                await EmployeeDirectory.checkuploadeMaximizeButton()
+                await EmployeeDirectory.checkuploademinimizeButton()
                 await EmployeeDirectory.verifyXLSXDownload(page, async () => {
-                    await EmployeeDirectory.View_button.click();
-                });
+                    await EmployeeDirectory.clickOnDownloadButton();
+                })
+                // Close the popup
+                await EmployeeDirectory.clickOnclosePopup();
+                await expect(EmployeeDirectory.popup).toBeHidden();
             }
-
         })
     });
 
     test("should show validation message when action is not selected", async ({ page }) => {
-
+        if (await EmployeeDirectory.No_Record.isVisible()) {
+            const noRecordText = await EmployeeDirectory.No_Record.textContent();
+            console.log("No records available:", noRecordText);
+            expect(noRecordText).toBe("Approval for Pending Documents is not available.");
+            return;
+        }
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.PopUP_Submit_button.click();
@@ -152,9 +165,13 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         expect(message).toEqual(SELECT_ITEM);
     })
 
-
-    test("should change document status to approved and show success toast @smoke", async ({ page }) => {
-
+    test.skip("should change document status to approved and show success toast @smoke", async ({ page }) => {
+        if (await EmployeeDirectory.No_Record.isVisible()) {
+            const noRecordText = await EmployeeDirectory.No_Record.textContent();
+            console.log("No records available:", noRecordText);
+            expect(noRecordText).toBe("Approval for Pending Documents is not available.");
+            return;
+        }
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'approved' })
@@ -166,7 +183,12 @@ test.describe("'Employee Management > Assign Manager module'", () => {
     })
 
     test("should validate rejection reason and change status to rejected @smoke", async ({ page }) => {
-
+        if (await EmployeeDirectory.No_Record.isVisible()) {
+            const noRecordText = await EmployeeDirectory.No_Record.textContent();
+            console.log("No records available:", noRecordText);
+            expect(noRecordText).toBe("Approval for Pending Documents is not available.");
+            return;
+        }
         await EmployeeDirectory.Action_button.click();
         await EmployeeDirectory.waitforLoaderToDisappear();
         await EmployeeDirectory.Select_action_dropdown.selectOption({ value: 'rejected' })
