@@ -12,6 +12,18 @@ export class AssetRequests extends AssetManagementTab {
     public reason: Locator
     public submitButton: Locator
     public resetButton: Locator;
+    public comment: Locator;
+    public popupSearchBar: Locator;
+    public assetItTab: Locator;
+    public assetL1Tab: Locator;
+    public assetL2Tab: Locator;
+    public assetTableSerialNumber: Locator;
+    public assetRadioButton: Locator;
+    public nextButton: Locator;
+    public previousButton: Locator; 
+    public assetStoreTab: Locator;
+
+
 
     constructor(page: Page) {
         super(page);
@@ -25,14 +37,35 @@ export class AssetRequests extends AssetManagementTab {
         this.reason = page.locator('div>textarea');
         this.submitButton = page.locator('//button[@type = "submit"]');
         this.resetButton = page.locator('button.btn.btn-secondary');
+        this.comment = page.locator('textarea[name = "comment"]');
+        this.assetItTab = page.locator("//a[text() ='Approve Asset Request (IT)']");
+        this.nextButton = page.locator("//a[text()='Next']");
+        this.previousButton = page.locator("//a[text()='Previous']");
+        this.assetL1Tab = page.locator("//a[text() ='Approve Asset Request (L1)']");
+        this.assetRadioButton = page.locator("div>input[type='radio']");
+        this.popupSearchBar = this.page.getByPlaceholder("Search By Serial Number");
+        this.assetL2Tab = page.locator("//a[text() ='Approve Asset Request (L2)']");
+        this.assetTableSerialNumber = this.page.locator("tbody>tr>td:nth-child(4)");
+        this.assetStoreTab = page.locator("//a[text() ='Asset Delivery (Store)']");
+
     }
 
     async navigateToAssetRequestTab() {
         await this.assetRequestTab.click();
     }
+    async navigateToAssetl1ApprovalTab() {
+        await this.assetL1Tab.click();
+    }
+    async navigateToAssetl2ApprovalTab() {
+        await this.assetL2Tab.click();
+    }
+    async navigateToAssetItApprovalTab() {
+        await this.assetItTab.click();
+    }
+    async navigateToAssetStoreTab() {
+        await this.assetStoreTab.click();
+    }
 
-    
-    
     async verifyNoAssetRequestRecord() {
         // TC_AM_148
         const totalRequest = await this.totalAssetRequest.allTextContents();
@@ -48,8 +81,29 @@ export class AssetRequests extends AssetManagementTab {
     }
     async createAssetRequest() {
         // TC_AM_149
-     
-    
         await expect(this.card).toBeVisible();
     }
+    async clickOnSubmitButton() {
+        await this.submitButton.click();
+    }
+
+    async searchRequestByComment(comment: string) {
+        const commentLocator = this.page.locator(`//td[contains(text(), '${comment}' )]/../td[6]/a`);
+        await expect(commentLocator).toBeVisible();
+    }
+
+    async clickOnCommentLocator(comment: string) {
+        const commentLocator = this.page.locator(`//td[contains(text(), '${comment}' )]/../td[6]/a`);
+        await commentLocator.click();
+    }
+    async selectApproveOrRejectRequest(action: string) {
+        const actionButton = this.page.locator('#action');
+        await actionButton.selectOption({ value: action });
+    }
+
+    async verifySuccessMessage(message: string) {
+        const successMessage = this.page.locator(`//div[contains(text(), '${message}')]`);
+        await expect(successMessage).toBeVisible();
+    }
+
 }

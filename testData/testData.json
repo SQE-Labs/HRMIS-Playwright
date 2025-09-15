@@ -3,6 +3,18 @@
         "UserEmail": "vishal.thakur@caeliusconsulting.com",
         "UserPassword": "Test@123"
     },
+    "L1": {
+        "UserEmail": "asset-l1@caeliusconsulting.com"
+    },
+    "L2": {
+        "UserEmail": "asset-l2@caeliusconsulting.com"
+    },
+    "IT": {
+        "UserEmail": "asset-l3@caeliusconsulting.com"
+    },
+    "STORE": {
+        "UserEmail": "asset-store@caeliusconsulting.com"
+    },
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",

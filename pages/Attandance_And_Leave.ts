@@ -9,7 +9,6 @@ export class AttendanceTab extends BasePage {
     private totalLeaveBalanceLabels: string[]
     private applyLeaveButton: Locator
     private popUpHeader: Locator
-    private loader: Loader
     private privilegeLeaveBadge: Locator
     private dateInput: Locator
     private reasonOfLeaveInput: Locator
@@ -40,7 +39,7 @@ export class AttendanceTab extends BasePage {
         this.submitButton = page.locator('//*[@id="staticBackdropApplyLeave"]/div/div/form/div[3]/button[1]')
         this.yesButton = page.locator('//*[@id="staticBackdropConfirm"]/div/div/div[2]/button[1]')
         this.noButton = page.locator('//*[@id="staticBackdropConfirm"]/div/div/div[2]/button[2]')
-        this.loader = new Loader(page)
+
     }
 
     // Example method (rename and refactor your logic into methods as needed)
