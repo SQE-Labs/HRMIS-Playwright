@@ -10,6 +10,7 @@ export class BasePage extends CommonUtils {
   readonly threeDotclass: Locator
   readonly toast: Locator
   readonly popUp: Locator
+  readonly logoutButton: Locator
 
   // Adjust the selector based on your 
 
@@ -23,6 +24,7 @@ export class BasePage extends CommonUtils {
     this.threeDotclass = page.locator(".centered-loader")
     this.toast = page.getByRole('alert')
     this.popUp = page.locator('.Toastify__toast-body')
+    this.logoutButton = page.locator(".log-out")
   }
 
   async open(url: string): Promise<void> {
@@ -71,5 +73,13 @@ export class BasePage extends CommonUtils {
     const message = await this.toastMessage();
     expect(message?.trim()).toBe(expectedMessage);
     console.log(`Success message verified: ${expectedMessage}`);
+  }
+
+  async logout() {
+    await this.page.evaluate(() => window.scrollTo(0, 0));
+    await this.page.waitForSelector('.log-out', { state: 'visible' })
+    await this.logoutButton.click()
+    await this.page.waitForLoadState('networkidle');
+    console.log("User logged out successfully");
   }
 }

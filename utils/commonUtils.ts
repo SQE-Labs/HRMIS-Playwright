@@ -21,7 +21,6 @@ export class CommonUtils {
         for (const file of oldFiles) {
             fs.unlinkSync(path.join(downloadDir, file));
         }
-
         // Wait for download and trigger export
         const [download] = await Promise.all([
             page.waitForEvent('download', { timeout: 15000 }),
