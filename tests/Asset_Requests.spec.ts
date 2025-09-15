@@ -56,7 +56,7 @@ test.describe("Asset Rrequests page", () => {
 })
 
 
-test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
+test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
     let assetrequest: AssetRequests
     let loginPage: LoginPage
     let comment: string
@@ -65,7 +65,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
         loginPage = new LoginPage(page)
     })
 
-    test("Asset Request page Create Asset Request - L1 Approval", async ({ page }) => {
+    test("Asset Request page Create Asset Request - L1 Approval @smoke", async ({ page }) => {
         comment = await assetrequest.generateRandomString(10);
 
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
@@ -85,7 +85,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
         }
         await assetrequest.logout();
     })
-    test("Asset Request page L1 Approve the Request", async ({ page }) => {
+    test("Asset Request page L1 Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -103,7 +103,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
         }
         await assetrequest.logout();
     })
-    test("Asset Request page L2 Approve the Request", async ({ page }) => {
+    test("Asset Request page L2 Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.L2.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -122,7 +122,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
         }
         await assetrequest.logout();
     })
-    test("Asset Request page IT Approve the Request", async ({ page }) => {
+    test("Asset Request page IT Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.IT.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -150,7 +150,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
         }
         await assetrequest.logout();
     })
-    test("Asset Request page Store Approve the Request", async ({ page }) => {
+    test("Asset Request page Store Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.STORE.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -170,7 +170,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store", async () => {
         await assetrequest.logout();
     })
 
-    test("Check Asset is Delivered to Employee", async ({ page }) => {
+    test("Check Asset is Delivered to Employee @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
