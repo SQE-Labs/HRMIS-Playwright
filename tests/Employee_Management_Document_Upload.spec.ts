@@ -114,6 +114,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         expect(newPageUrl).toContain("screenshot.png");
         await newPage.close();
         await EmployeeDirectory.waitforLoaderToDisappear()
+
     })
 
 
