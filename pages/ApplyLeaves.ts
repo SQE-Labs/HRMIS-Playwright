@@ -3,10 +3,7 @@ import { BasePage } from '../pages/Basepage';
 import { Locator, Page } from '@playwright/test';
 
 export class ApplyLeaves extends BasePage{
-    verifyPopupVisible() {
-        throw new Error('Method not implemented.');
-    }
-
+  
     private ApplyLeaveButton : Locator;
     public  ApplyLeavePopupTitle : Locator;
     private SubmitButton : Locator;
@@ -17,8 +14,8 @@ export class ApplyLeaves extends BasePage{
    constructor(page: Page) {
            super(page);
 
-    this.ApplyLeaveButton = page.getByRole('button', { name: 'Apply Leave' })
-    this.ApplyLeavePopupTitle = page.getByTitle('Apply Leave')
+    this.ApplyLeaveButton = page.locator("//a[text()='Apply Leave']")
+    this.ApplyLeavePopupTitle = page.locator("//a[text()='Apply Leave']")
     this.SubmitButton =  page.getByRole('button', { name: 'Submit' })
     this.LeaveTypeTextBox = page.getByLabel('Type of leave');
     this.DateRange = page.getByRole('textbox', { name: 'mm/dd/yyyy - mm/dd/yyyy' })

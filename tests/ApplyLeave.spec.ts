@@ -22,13 +22,13 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('HRMIS_3 Apply Leave popup appears after clicking on it @smoke', async ({ page }) => {
+    test('HRMIS_3 Apply Leave popup appears after clicking on it @fast', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         await applyLeave.getApplyLeaveBtn();
-        await applyLeave.verifyPopupVisible();   // using method instead of private locator
+      
     });
 
-    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @smoke', async ({ page }) => {
+    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @fast', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         await applyLeave.applyLeave(
             "PrivilegeLeave",

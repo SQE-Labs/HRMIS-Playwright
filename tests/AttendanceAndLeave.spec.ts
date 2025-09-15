@@ -23,7 +23,7 @@ test.describe('Attendance and Leave tests', () => {
 
     });
     
-      test(' HRMIS_1 Attendance& Leave accordion expands and displays correct sub-tabs @smoke', async ({ page }) => {
+      test(' HRMIS_1 Attendance& Leave accordion expands and displays correct sub-tabs @fast', async ({ page }) => {
           console.debug('Expanding Attendance&Leave Tab...');
           await attendanceLeaveTab.expandAttendanceAndLeaveTab();
 
@@ -31,7 +31,7 @@ test.describe('Attendance and Leave tests', () => {
            expect(await attendanceLeaveTab.verifySubTabs(subTabsTitles)).toBeTruthy();
     });
 
-    test(' HRMIS_2 User navigates to Apply Leave subtab after clicking on it @smoke', async ({page})=>{
+    test(' HRMIS_2 User navigates to Apply Leave subtab after clicking on it @fast', async ({page})=>{
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         await expect(page.getByRole('heading', { name: 'Apply Leaves' })).toBeVisible();
 
