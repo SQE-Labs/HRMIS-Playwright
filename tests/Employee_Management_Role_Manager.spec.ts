@@ -5,7 +5,7 @@ import { Employee_Management } from '../pages/Employee_Management';
 import testData from '../testData/testData.json';
 
 let EmployeeDirectory: Employee_Management
-test.describe("'Employee Management > Assign Manager module'", () => {
+test.describe("'Employee Management > Role Management module'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
@@ -17,11 +17,11 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.navigateToRoleManagement()
         await EmployeeDirectory.waitforLoaderToDisappear()
     });
-    test("Role Management subtab ", async ({ page }) => {
+    test("Role Management subtab @smoke", async ({ page }) => {
         var header = await EmployeeDirectory.Role_Header.textContent()
         expect(header).toEqual("Role Management")
     })
-    test("Role Management Dropdown ", async ({ page }) => {
+    test("Role Management Dropdown @smoke", async ({ page }) => {
 
         await EmployeeDirectory.Dropdown.click()
         var optioncount = await page.locator(".css-10wo9uf-option").count()

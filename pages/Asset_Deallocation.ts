@@ -3,6 +3,7 @@ import { AssetManagementTab } from "./Asset_Management_Tab";
 import { Loader } from "../components/loaders";
 import { BasePage } from "./Basepage";
 import { AssetHelper } from "../utils/AssetHelpers";
+import { FILL_IN_FIELD, FILL_OUT_FIELD } from "../utils/constants";
 
 export class AssetDeallocation extends BasePage {
     private deallocationSubtab: Locator;
@@ -94,7 +95,8 @@ export class AssetDeallocation extends BasePage {
         const repairCostField = this.page.locator("//input[@type = 'tel']");
         const tooltipMessage2 = await AssetHelper.getValidationMessage(repairCostField);
         // console.debug("Tooltip message:", tooltipMessage2);
-        expect(tooltipMessage2).toBe("Please fill out this field.");
+        expect(tooltipMessage2 === FILL_OUT_FIELD || tooltipMessage2 === FILL_IN_FIELD).toBeTruthy();
+       ;
 
         // TC_AM_053
         await repairCostField.fill("150");
@@ -104,7 +106,8 @@ export class AssetDeallocation extends BasePage {
         const commentField = this.page.locator("#comment");
         const tooltipMessage3 = await AssetHelper.getValidationMessage(commentField);
         // console.debug("Tooltip message:", tooltipMessage3);
-        expect(tooltipMessage3).toBe("Please fill out this field.");
+        expect(tooltipMessage3 === FILL_OUT_FIELD || tooltipMessage3 === FILL_IN_FIELD).toBeTruthy();
+
 
         // TC_AM_055
         await AssetHelper.fillAndSubmitField(commentField, "received", this.submitButton);

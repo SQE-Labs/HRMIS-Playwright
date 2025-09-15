@@ -3,7 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import testData from '../testData/testData.json';
 import { Reimbursement } from '../pages/Reimbursement';
 import { BasePage } from '../pages/Basepage';
-import { FILL_FIELD, SELECT_ITEM } from '../utils/constants';
+import { FILL_OUT_FIELD , FILL_IN_FIELD, SELECT_ITEM } from '../utils/constants';
 
 
 let reimbursement: Reimbursement;
@@ -53,7 +53,6 @@ test.describe("My Reimbursement page", () => {
 
     //  To-do:
     test("TC_MR_006 Sorting", async ({ page }) => {
-        await page.pause();
 
         const columnsToTest = [1, 2, 3, 4, 5, 6]; // Assuming 1-based column indices
 
@@ -107,30 +106,30 @@ test.describe("My Reimbursement page", () => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Sumbit_button.click();
         let message = await reimbursement.getValidationMessage(reimbursement.Reimbursement_Type);
-        expect(message).toEqual(SELECT_ITEM);
+        expect(message === SELECT_ITEM).toBeTruthy();
 
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
         await reimbursement.Sumbit_button.click();
         let message1 = await reimbursement.getValidationMessage(reimbursement.Invoice_Date);
-        expect(message).toEqual(SELECT_ITEM);
+        expect(message1 === FILL_OUT_FIELD || message1 === FILL_IN_FIELD).toBeTruthy();
 
         let currentDate = await reimbursement.getCurrentDate();
         await reimbursement.Invoice_Date.fill(currentDate);
         await reimbursement.Sumbit_button.click();
         let message2 = await reimbursement.getValidationMessage(reimbursement.Invoice_Number);
-        expect(message2).toEqual(FILL_FIELD);
+        expect(message2 === FILL_OUT_FIELD || message2 === FILL_IN_FIELD).toBeTruthy();
 
         let SerialNumber = await reimbursement.generateRandomString(6);
         await reimbursement.Invoice_Number.fill(SerialNumber);
         await reimbursement.Sumbit_button.click();
         let message3 = await reimbursement.getValidationMessage(reimbursement.From_Date);
-        expect(message3).toEqual(FILL_FIELD);
+        expect(message3 === FILL_OUT_FIELD || message3 === FILL_IN_FIELD).toBeTruthy();
 
         currentDate = await reimbursement.getCurrentDate(1);
         await reimbursement.From_Date.fill(currentDate);
         await reimbursement.Sumbit_button.click();
         let message4 = await reimbursement.getValidationMessage(reimbursement.To_Date);
-        expect(message2).toEqual(FILL_FIELD);
+        expect(message4 === FILL_OUT_FIELD || message4 === FILL_IN_FIELD).toBeTruthy();
 
         await reimbursement.To_Date.fill(currentDate);
         await reimbursement.Sumbit_button.click();
@@ -140,13 +139,13 @@ test.describe("My Reimbursement page", () => {
         await reimbursement.Receipt.setInputFiles("./files/screenshot.png");
         await reimbursement.Sumbit_button.click();
         let message6 = await reimbursement.getValidationMessage(reimbursement.From);
-        expect(message6).toEqual(FILL_FIELD);
+        expect(message6 === FILL_OUT_FIELD || message6 === FILL_IN_FIELD).toBeTruthy();
 
         let text = await reimbursement.generateRandomString(8);
         await reimbursement.From.fill(text);
         await reimbursement.Sumbit_button.click();
         let message7 = await reimbursement.getValidationMessage(reimbursement.To);
-        expect(message7).toEqual(FILL_FIELD);
+        expect(message7 === FILL_OUT_FIELD || message7 === FILL_IN_FIELD).toBeTruthy();
 
         text = await reimbursement.generateRandomString(8);
         await reimbursement.To.fill(text);
@@ -154,29 +153,29 @@ test.describe("My Reimbursement page", () => {
         let message8 = await reimbursement.getValidationMessage(reimbursement.vechileType);
         expect(message8).toEqual(SELECT_ITEM);
 
-
         await reimbursement.vechileType.selectOption("Two Wheeler");
         await reimbursement.Sumbit_button.click();
         let message9 = await reimbursement.getValidationMessage(reimbursement.distance);
-        expect(message9).toEqual(FILL_FIELD);
+        expect(message9 === FILL_OUT_FIELD || message9 === FILL_IN_FIELD).toBeTruthy();
 
         let distance = await reimbursement.generateRandomInteger(4);
         await reimbursement.distance.fill(distance);
         await reimbursement.Sumbit_button.click();
         let message10 = await reimbursement.getValidationMessage(reimbursement.Amount);
-        expect(message10).toEqual(FILL_FIELD);
+        expect(message10 === FILL_OUT_FIELD || message10 === FILL_IN_FIELD).toBeTruthy();
 
         let amount = await reimbursement.generateRandomInteger(4);
         await reimbursement.Amount.fill(amount);
         await reimbursement.Sumbit_button.click();
         let message11 = await reimbursement.getValidationMessage(reimbursement.Comment_Field);
-        expect(message11).toEqual(FILL_FIELD);
+        expect(message11 === FILL_OUT_FIELD || message11 === FILL_IN_FIELD).toBeTruthy();
+
 
 
     });
 
 
-    test("should_submit_travel_expense_reimbursement_when_all_fields_are_valid", async ({ page }) => {
+    test("should_submit_travel_expense_reimbursement_when_all_fields_are_valid @smoke", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
 
@@ -219,7 +218,7 @@ test.describe("My Reimbursement page", () => {
 
     });
 
-    test("should reset all reimbursement form fields and hide conditional inputs", async ({ page }) => {
+    test("should reset all reimbursement form fields and hide conditional inputs @smoke", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
         let currentDate = await reimbursement.getCurrentDate();
@@ -293,7 +292,8 @@ test.describe("My Reimbursement page", () => {
         await reimbursement.withdrawal();
         await reimbursement.Sumbit_button.click();
         let message = await reimbursement.getValidationMessage(reimbursement.Comment_Field);
-        expect(message).toEqual(FILL_FIELD);
+        expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
+
     });
     test("TC_MR_011 Withdraw View Link Functionality", async ({ page }) => {
         await reimbursement.withdrawal();

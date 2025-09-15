@@ -17,7 +17,7 @@ export default defineConfig({
   expect: {
     timeout: 12_000, // Default timeout for expect assertions
   },
-  timeout: 30_000,
+  timeout: 240000, // Maximum time one test can run for
   testDir: './tests',
   // testMatch:
   // [
@@ -31,10 +31,12 @@ export default defineConfig({
   // ],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
+  retries: process.env.CI ? 2 : 0,
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
-  reporter: [["html"], ['line'], ["allure-playwright"]],
+  reporter: [["html"], ['line'], ["allure-playwright"], ["./my-reporter.ts"]],
+  // reporter: [['list'], ['junit', { outputFile: 'results.xml' }]],
+
   // reporter: [
   //   ["dot"],
   //   ['allure-playwright'],

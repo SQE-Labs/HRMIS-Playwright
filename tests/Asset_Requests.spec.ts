@@ -31,9 +31,24 @@ test.describe("Asset Rrequests page", () => {
         }
 
     })
-    test("Create_Asset_Request", async ({ page }) => {
+    test("Create Asset Request - Successful Submission @smoke", async ({ page }) => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
+        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.reason.fill(await assetrequest.generateRandomString(10));
+        await assetrequest.submitButton.click()
+        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+    })
+
+    test("Create Asset Request - Reset Button Clears Fields @smoke", async ({ page }) => {
+        await assetrequest.clickOnAssetRequestButton()
+        await assetrequest.waitforLoaderToDisappear()
+        await expect(assetrequest.card).toBeVisible();
+        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.reason.fill(await assetrequest.generateRandomString(10));
+        await assetrequest.resetButton.click()
+        expect(await assetrequest.assetType.inputValue()).toBe("");
+        expect(await assetrequest.reason.inputValue()).toBe("");
     })
 })

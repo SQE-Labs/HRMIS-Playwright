@@ -29,7 +29,7 @@ test.describe.serial("Project Management", () => {
 
 
     let projectName;
-    test("Create a new project successfully", async ({ page }) => {
+    test("Create a new project successfully @smoke", async ({ page }) => {
 
         await ProjectManagementObj.clickCreateProject()
         // Read data from JSON file ...
@@ -48,7 +48,7 @@ test.describe.serial("Project Management", () => {
 
 
 
-    test("Filter project report by project name", async ({ page }) => {
+    test("Filter project report by project name @smoke", async ({ page }) => {
 
         projectReportObj = new ProjectReport(page)
         await projectReportObj.navigateToProjectReport();
@@ -58,7 +58,7 @@ test.describe.serial("Project Management", () => {
     })
 
 
-    test("Download Project Report file", async ({ page }) => {
+    test("Download Project Report file @smoke", async ({ page }) => {
         // Download and save locally
         projectReportObj = new ProjectReport(page)
         await projectReportObj.navigateToProjectReport();

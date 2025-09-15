@@ -8,8 +8,10 @@ test.describe("Asset Allocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page)
         await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        
         allocation = new AssetAllocation(page)
         await AssetHelper.navigateToAllocationAsset(page, allocation.allocationAsset);
+        console.log(">> Starting test case : " + test.info().title);
     });
     test("Rediected Towards Asset Allocation page", async ({ page }) => {
         expect(await allocation.allocationPageHeader.isVisible()).toBeTruthy();
@@ -30,7 +32,7 @@ test.describe("Asset Allocation page", () => {
         await allocation.getBySearchdata(allocation.assetOwnerName,"Caelius", "Owner name")
     })
 
-    test("Functionality of search Bar Employee name ", async ({ page }) => {
+    test("Functionality of search Bar Employee name @smoke", async ({ page }) => {
         await allocation.searchByEmployeeName()
     })
 
@@ -44,13 +46,13 @@ test.describe("Asset Allocation page", () => {
 
     // TC_AM_029
 
-    test("Pagination", async () => {
-        expect(await allocation.validatePagination())
+    test("Pagination @smoke", async () => {
+        expect(await allocation.pagination())
         console.log("Pagination verified !!")
     })
 
 
-    test("Assign asset", async () => {
+    test("Assign asset  @smoke", async () => {
         expect(await allocation.assignAsset())
     })
 })

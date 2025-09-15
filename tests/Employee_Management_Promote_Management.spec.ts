@@ -7,7 +7,7 @@ import { asyncWrapProviders } from 'async_hooks';
 
 
 let EmployeeDirectory: Employee_Management
-test.describe("'Employee Management module'", () => {
+test.describe("'Employee Management module >  Promotion'", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
@@ -66,7 +66,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("close  Employee popup using cancel button", async ({ page }) => {
+    test("close  Employee popup using cancel button @smoke", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
@@ -77,7 +77,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.getDesignationoptionCount()
     })
 
-    test("promote employee by selecting department and designation, then verify success message", async ({ page }) => {
+    test("promote employee by selecting department and designation, then verify success message @smoke", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()

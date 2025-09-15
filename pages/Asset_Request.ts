@@ -8,6 +8,10 @@ export class AssetRequests extends AssetManagementTab {
     public column: Locator;
     public assetRequestButton: Locator;
     public card: Locator;
+    public assetType: Locator
+    public reason: Locator
+    public submitButton: Locator
+    public resetButton: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -17,6 +21,10 @@ export class AssetRequests extends AssetManagementTab {
         this.column = page.locator("(//thead//tr)[1]");
         this.assetRequestButton = page.locator('//a[@class="export theme-button"][text() = "Asset Request"]');
         this.card = page.locator('.card');
+        this.assetType = page.locator('#asset_list');
+        this.reason = page.locator('div>textarea');
+        this.submitButton = page.locator('//button[@type = "submit"]');
+        this.resetButton = page.locator('button.btn.btn-secondary');
     }
 
     async navigateToAssetRequestTab() {

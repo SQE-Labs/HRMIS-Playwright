@@ -84,6 +84,7 @@ export class Employee_Management extends BasePage {
     public PopupSubmitButton: Locator
     public CancelButton: Locator
     public LeaveManagerPopupDropDown: Locator
+    public LeaveManagerDropDown: Locator
     public LeaveManagerActionButton: Locator
     public Pop_Up_Header: Locator
     public DepartmentCancelButton: Locator
@@ -154,6 +155,14 @@ export class Employee_Management extends BasePage {
     public pageCount: Locator
     public leftOutCards: Locator
     public selectEmployeeOption: Locator
+    public No_Record: Locator
+
+    public eyebutton: Locator;
+    public viewbutton: Locator;
+    public popup: Locator;
+    public closePopupButton: Locator;
+    public maximizeButton: Locator;
+    public downloadButton: Locator;
 
 
     constructor(page: Page) {
@@ -255,9 +264,10 @@ export class Employee_Management extends BasePage {
         this.PopupHeader = page.locator("(//div[@class = 'modal-header'])[1]")
         this.CrossButton = page.locator("(//button[@class = 'btn-close'])[1]")
         this.PopupDropDown = page.locator("#react-select-3-input")
+        this.LeaveManagerPopupDropDown = page.locator("react-select-5-input")
         this.PopupSubmitButton = page.locator("(//button[@class = 'theme-button'])[1]")
         this.CancelButton = page.locator("(//button[@type = 'button'])[4]")
-        this.LeaveManagerPopupDropDown = page.locator("#react-select-4-input")
+        this.LeaveManagerDropDown = page.locator("#react-select-4-input")
         this.LeaveManagerActionButton = page.locator(".btn.btn-danger")
         this.Pop_Up_Header = page.locator("div>div>div>div>h5")
         this.NoButton = page.locator(".theme-button.bg-grey.mx-3.w-35.cancel-modal-Manager-delete")
@@ -270,10 +280,9 @@ export class Employee_Management extends BasePage {
         this.AssignManagerPopupDropdownOption = page.locator("#react-select-5-option-1")
         this.AssignManagerPopupSubmitbutton = page.locator("(//button[@class = 'theme-button'])[2]")
         this.ColoumnBody = [
-            'Employee Id',
+
             'Name',
-            'Department',
-            'Designation',
+            'Assigned Manager',
             'Action'
         ]
 
@@ -282,7 +291,7 @@ export class Employee_Management extends BasePage {
         this.PromotionHeader = page.locator(".page-heading")
         this.PromotionColoumn = page.locator("thead>tr>th")
         this.Dropdown = page.locator("#react-select-2-input")
-        this.DropdownOption = page.locator("#react-select-2-option-1")
+        this.DropdownOption = page.locator("#react-select-2-option-5")
         this.PromoteButton = page.locator(".btn.btn-secondary")
         this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
         this.PromotionPopUpLabel = page.locator("div>label")
@@ -302,7 +311,7 @@ export class Employee_Management extends BasePage {
         this.Document_upload_Tab = page.locator("//a[text()='Document Upload']")
         this.Document_upload_Header = page.locator("div>h1")
         this.Document_Upload_Column = page.locator("thead>tr>th")
-        this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[2]")
+        this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[1]")
         this.PopUp_Header = page.locator(".modal-header")
         this.Popup_Cross_button = page.locator(".btn-close.close-class")
         this.Popup_Cancel_button = page.locator(".cancel-promote")
@@ -358,6 +367,14 @@ export class Employee_Management extends BasePage {
         this.selectEmployeeOption = page.locator("#react-select-2-option-2")
 
         this.DepartmentCancelButton = page.locator(".cancel-modal")
+        this.No_Record = page.locator("div>h4")
+        this.eyebutton = page.locator(".fa.fa-eye");
+        this.viewbutton = page.locator("//a[text()='View']");
+        this.popup = page.locator("(//div[@class='modal-content'])[2]");
+        this.closePopupButton = page.locator("(//div[@class='modal-content'])[2]//button[@class='btn-close']");
+        this.maximizeButton = page.locator("(//button[@class='btn modal-header-btn'])[1]");
+        this.downloadButton = page.locator("(//button[@class='btn modal-header-btn'])[2]");
+
     }
 
     async expandEmployeeManagementTab(): Promise<void> {
@@ -413,7 +430,7 @@ export class Employee_Management extends BasePage {
         await locator.selectOption({ label: Option });
     }
 
-    async noRecord(value) {
+    async noRecord(value = 0) {
         var Norecord = await this.Record_notfound.nth(value).textContent()
         console.debug(Norecord)
         return Norecord
@@ -618,6 +635,11 @@ export class Employee_Management extends BasePage {
     }
     async selectionOfLeaveManager(value) {
         await this.page.locator(`#react-select-4-option-${value}`).click()
+
+    }
+
+    async selectionOfAssignLeaveManager(value) {
+        await this.page.locator(`#react-select-5-option-${value}`).click()
 
     }
     async clickOnAssignManagerSubTabLeaveManager() {
@@ -844,15 +866,58 @@ export class Employee_Management extends BasePage {
         await this.waitforLoaderToDisappear()
     }
 
+    async clickOnEyeButton(): Promise<void> {
+        await this.eyebutton.first().click();
+    }
+    async clickOnViewButton(): Promise<void> {
+        await this.viewbutton.click();
+    }
 
+    async verifyPopup(): Promise<void> {
+        await expect(this.popup).toBeVisible();
+    }
+
+    async clickOnclosePopup(): Promise<void> {
+        await this.closePopupButton.click();
+        await expect(this.popup).toBeHidden();
+    }
+
+    async clickOnMaximizePopup(): Promise<void> {
+        await this.maximizeButton.click();
+    }
+
+    async clickOnDownloadButton(): Promise<void> {
+        await this.downloadButton.click();
+    }
+
+    async checkuploadeMaximizeButton() {
+        const image = this.page.locator('img[src^="blob:"]');
+        await expect(image).toBeVisible();
+        const originalBox = await image.boundingBox();
+        expect(originalBox).not.toBeNull();
+
+        await this.clickOnMaximizePopup();
+        await this.page.waitForTimeout(500);
+        const newBox = await image.boundingBox();
+        expect(newBox).not.toBeNull();
+        // Assert that the image has increased in size
+        expect(newBox!.width).toBeGreaterThan(originalBox!.width);
+        expect(newBox!.height).toBeGreaterThan(originalBox!.height);
+    }
+
+    async checkuploademinimizeButton() {
+        const image = this.page.locator('img[src^="blob:"]');
+        await expect(image).toBeVisible();
+        const originalBox = await image.boundingBox();
+        expect(originalBox).not.toBeNull();
+
+        await this.clickOnMaximizePopup();
+        await this.page.waitForTimeout(500);
+        const newBox = await image.boundingBox();
+        expect(newBox).not.toBeNull();
+        // Assert that the image has increased in size
+        expect(newBox!.width).toBeLessThan(originalBox!.width);
+        expect(newBox!.height).toBeLessThan(originalBox!.height);
+    }
 
 }
-// export function await AssetHelper.generateRandomString(5)(length: any) {
-//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-//     let result = '';
-//     const charactersLength = characters.length;
-//     for (let i = 0; i < length; i++) {
-//         result += characters.charAt(Math.floor(Math.random() * charactersLength));
-//     }
-//     return result;
-// }

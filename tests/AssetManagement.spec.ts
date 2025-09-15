@@ -14,7 +14,10 @@ test.describe('Asset Management tests', () => {
         'Asset De-allocation',
         'Asset Request',
         'New Asset Enrollment',
-        'Approve Asset Request',
+        'Approve Asset Request (L1)',
+        'Approve Asset Request (L2)',
+        'Approve Asset Request (IT)',
+        'Asset Delivery (Store)',
         'RTO Management'
     ];
     test.beforeEach(async ({ page }) => {
@@ -27,7 +30,7 @@ test.describe('Asset Management tests', () => {
 
     });
 
-    test('Asset Management accordion expands and displays correct sub-tabs', async ({ page }) => {
+    test('Asset Management accordion expands and displays correct sub-tabs @smoke', async ({ page }) => {
 
         console.debug('Expanding Asset Management Tab...');
         await assetManagementTab.expandAssetManagementTab();
@@ -40,9 +43,9 @@ test.describe('Asset Management tests', () => {
     test('Asset Management accordion collapses and hides sub-tabs', async ({ page }) => {
 
         console.debug('Collapsing Asset Management Tab...');
-        await assetManagementTab.collapseAssetManagementTab();
+        await assetManagementTab.collapseAttendanceLeaveTab();
 
         console.debug('Checking if tab is collapsed...');
-        // expect(await assetManagementTab.verifySubTabs(subTabsTitles)).toBe((false));
+        // expect(await attendance.verifySubTabs(subTabsTitles)).toBe((false));
     });
 });
