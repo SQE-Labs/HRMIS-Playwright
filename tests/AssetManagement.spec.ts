@@ -43,9 +43,9 @@ test.describe('Asset Management tests', () => {
     test('Asset Management accordion collapses and hides sub-tabs', async ({ page }) => {
 
         console.debug('Collapsing Asset Management Tab...');
-        await assetManagementTab.collapseAssetManagementTab();
+        await assetManagementTab.collapseAttendanceLeaveTab();
 
         console.debug('Checking if tab is collapsed...');
-        // expect(await assetManagementTab.verifySubTabs(subTabsTitles)).toBe((false));
+        // expect(await attendance.verifySubTabs(subTabsTitles)).toBe((false));
     });
 });

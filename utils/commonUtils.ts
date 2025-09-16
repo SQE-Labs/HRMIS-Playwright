@@ -4,7 +4,7 @@ import * as path from 'path';
 import { expect, Page, Download, Locator, Response } from '@playwright/test';
 
 export class CommonUtils {
-
+    
     async verifyXLSXDownload(
         page: Page,
         exportTrigger: () => Promise<void>

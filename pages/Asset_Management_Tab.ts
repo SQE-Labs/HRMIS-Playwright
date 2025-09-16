@@ -38,7 +38,7 @@ export class AssetManagementTab extends BasePage {
     return true;
   }
 
-  async collapseAssetManagementTab(): Promise<void> {
+  async collapseAttendanceLeaveTab(): Promise<void> {
     await AssetHelper.collapseIfExpanded(this.assetManagement);
   }
 
