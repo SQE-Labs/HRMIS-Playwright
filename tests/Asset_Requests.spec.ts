@@ -186,7 +186,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetDeallocation();
         await assetrequest.waitforLoaderToDisappear();
-        await assetrequest.selectEmployeeForDeallocation("Vishal   Kumar");
+        await assetrequest.selectEmployeeForDeallocation(testData.EMPLOYEE_NAME);
         await assetrequest.deallocateAsset(enterSerialNumber);
         expect(await assetrequest.verifySuccessMessage("Successfully deallocated!"));
         await assetrequest.logout();
