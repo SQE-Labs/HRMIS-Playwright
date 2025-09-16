@@ -4,6 +4,7 @@ import { BasePage } from '../pages/Basepage';
 import testData from '../testData/testData.json';
 import { ApplyLeaves } from '../pages/ApplyLeaves';
 import { AttendanceLeaveTab } from '../pages/Attendance&Leaves';
+import * as constants from '../utils/constants';
 
 let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
@@ -35,8 +36,12 @@ test.describe("Apply leaves page", () => {
             "PrivilegeLeave",
             "Family function"
         );
+        
+        // expect(applyLeave.toastMessage()).toEqual(constants.expectedSuccessMessageForApplyLeave);
+        await applyLeave.verifySuccessMessage(constants.expectedSuccessMessageForApplyLeave);
     });
-    test.only('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply', async ({ page }) => {
+
+    test('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         // 1. Check if Withdraw link is visible
         const isWithdrawVisible = await applyLeave.isWithdrawVisible();
@@ -66,7 +71,7 @@ test.describe("Apply leaves page", () => {
         //Clicking on submit button
         await applyLeave.getSubmitButton();
         // verifying the message
-        await applyLeave.getWithdrawSuccessMessage();
+        expect(applyLeave.toastMessage()).toEqual(constants.expectedSuccessMessageForWithdrawLeave);
 
     });
 });

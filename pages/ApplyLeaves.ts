@@ -15,6 +15,8 @@ export class ApplyLeaves extends BasePage {
   public WithdrawPopupTitle: Locator;
   private WithdrawReasonField: Locator;
   private WithdrawSuccessMessage: Locator;
+  private YesButtonOfApplyLeave: Locator;
+  private privilegeLeaveOption: Locator;
 
 
   constructor(page: Page) {
@@ -31,6 +33,8 @@ export class ApplyLeaves extends BasePage {
     this.WithdrawPopupTitle = page.getByText('Withdraw Leave Request');
     this.WithdrawReasonField = page.getByRole('textbox')
     this.WithdrawSuccessMessage = page.getByText('Leave Withdrawn Successfully')
+    this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] ")
+    this.privilegeLeaveOption = page.getByLabel('PrivilegeLeave');
   }
 
   async pickCurrentDate() {
@@ -53,91 +57,85 @@ export class ApplyLeaves extends BasePage {
     await this.LeaveTypeTextBox.selectOption(type);
   }
 
-  // async selectDateRange(startDate: string, endDate: string) {
-  //   const range = `${startDate} - ${endDate}`;
-  //   await this.DateRange.fill(range);
-  // }
-  // await applyLeave.selectDateRange("09/15/2025", "09/20/2025");
-
   async enterReasonOfLeave(reason: string) {
     await this.ReasonOfLeaveBox.fill(reason);
   }
 
   // Apply for Leave ****************
+
   async applyLeave(leaveType: string, reason: string) {
+    const privilegeCount = await this.privilegeLeaveOption.count();
+
     // 1. Open Apply Leave Popup
     await this.ApplyLeaveButton.click();
 
     // 2. Select leave type (dynamic)
     await this.LeaveTypeTextBox.selectOption(leaveType);
 
-    // 3. Select date range
+    // 3. Check for privilege leave option and select if present
+    if (privilegeCount === 0) {
+      await this.YesButtonOfApplyLeave.waitFor({ state: 'visible', timeout: 5000 });
+      await this.YesButtonOfApplyLeave.click();
+    }
 
+    // 4. Select date range
     await this.dateRange();
+
+    // 5. Enter reason for leave
     await this.ReasonOfLeaveBox.fill(reason);
 
-    // 4. Enter reason for leave
-
-    // 5. Submit form
+    // 6. Submit form
     await this.SubmitButton.click();
     await this.page.waitForLoadState();
   }
+
   // *****************
 
 
 
 
-async dateRange() {
-  const currentDate = new Date();
+  async dateRange() {
+    const currentDate = new Date();
 
-  // Format today's date as MM/DD/YYYY
-  const todayDate = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate
-    .getDate()
-    .toString()
-    .padStart(2, '0')}/${currentDate.getFullYear()}`;
+    // Format today's date as MM/DD/YYYY
+    const todayDate = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate
+      .getDate()
+      .toString()
+      .padStart(2, '0')}/${currentDate.getFullYear()}`;
 
-  // Set the max number of days to add (you can change this value)
-  const maxDays = 10;
-  const randomDays = Math.floor(Math.random() * maxDays) + 1;
+    // Set the max number of days to add (you can change this value)
+    const maxDays = 10;
+    const randomDays = Math.floor(Math.random() * maxDays) + 1;
 
-  const futureDate = new Date(currentDate); // Clone the current date
-  futureDate.setDate(currentDate.getDate() + randomDays);
+    const futureDate = new Date(currentDate); // Clone the current date
+    futureDate.setDate(currentDate.getDate() + randomDays);
 
-  // Format the future date as MM/DD/YYYY
-  const futureDateString = `${(futureDate.getMonth() + 1).toString().padStart(2, '0')}/${futureDate
-    .getDate()
-    .toString()
-    .padStart(2, '0')}/${futureDate.getFullYear()}`;
+    // Format the future date as MM/DD/YYYY
+    const futureDateString = `${(futureDate.getMonth() + 1).toString().padStart(2, '0')}/${futureDate
+      .getDate()
+      .toString()
+      .padStart(2, '0')}/${futureDate.getFullYear()}`;
 
-  // Use or return the dates to avoid unused variable warnings
-  await this.DateRange.click()
-  await this.DateRange.fill(`${todayDate}`);
-  await this.DateRange.fill(`${futureDateString}`);
-  console.log(`Selected date range: ${todayDate} - ${futureDateString}`);
-}
+    // Use or return the dates to avoid unused variable warnings
+    await this.DateRange.click()
+    await this.DateRange.fill(`${todayDate}`);
+    await this.DateRange.fill(`${futureDateString}`);
+    console.log(`Selected date range: ${todayDate} - ${futureDateString}`);
 
-  async verifySuccessMessage() {
-  await expect(this.SuccessMessage).toBeVisible();
-  const successMessage = await this.SuccessMessage.textContent();
-  await expect(successMessage).toBe('Leave Applied Successfully! Wait for Approval.');
 
-}
+  }
   async getWithDrawLink() {
-  this.WithdrawLink.click();
-}
+    this.WithdrawLink.click();
+  }
 
   async fillWithDrawReason(reason: string) {
-  this.WithdrawReasonField.fill(reason)
-}
-  async getWithdrawSuccessMessage() {
-  await expect(this.WithdrawSuccessMessage).toBeVisible();
-  const messageText = await this.WithdrawSuccessMessage.textContent();
-  await expect(messageText).toBe('Leave Withdrawn Successfully')
-}
+    this.WithdrawReasonField.fill(reason)
+  }
 
-  async isWithdrawVisible(): Promise < boolean > {
-  return await this.WithdrawLink.isVisible();
-}
+
+  async isWithdrawVisible(): Promise<boolean> {
+    return await this.WithdrawLink.isVisible();
+  }
 
 
 
