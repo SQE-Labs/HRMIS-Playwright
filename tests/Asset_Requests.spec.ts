@@ -60,6 +60,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
     let assetrequest: AssetRequests
     let loginPage: LoginPage
     let comment: string
+    let enterSerialNumber: string
     test.beforeEach(async ({ page }) => {
         assetrequest = new AssetRequests(page)
         loginPage = new LoginPage(page)
@@ -137,9 +138,8 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
             await page.getByText("Choose Asset for ").click();
             await assetrequest.waitforLoaderToDisappear()
             // Select the first available serial number
-            const serialNumbers = await assetrequest.assetTableSerialNumber.allTextContents();
-            const enterSerialNumber = serialNumbers.length > 0 ? serialNumbers[0] : "";
-            expect(serialNumbers.includes(enterSerialNumber)).toBeTruthy();
+            enterSerialNumber = await assetrequest.getExistingSerialNumber();
+            await page.waitForTimeout(2000);
             await assetrequest.popupSearchBar.pressSequentially(enterSerialNumber);
             await assetrequest.assetRadioButton.first().click();
             await page.waitForTimeout(1000);
@@ -149,6 +149,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
             expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
         }
         await assetrequest.logout();
+
     })
     test("Asset Request page Store Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.STORE.UserEmail, testData.SuperUser.UserPassword);
@@ -159,8 +160,8 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
         if (totalRequestCount > 0) {
             expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
+            await assetrequest.searchRequestByReason(comment)
+            await assetrequest.clickOnReasonViewLocator(comment)
             await assetrequest.selectApproveOrRejectRequest("APPROVED")
             await assetrequest.comment.fill(comment)
             await assetrequest.clickOnSubmitButton()
@@ -175,43 +176,47 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear();
+        let status = await assetrequest.getStatusUpdate(comment);
+        expect(status).toBe("Delivered");
+        await assetrequest.logout();
+    });
 
+    test("Asset Deallocation - Return Asset Flow @smoke", async ({ page }) => {
+        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await assetrequest.expandAssetManagementTab();
+        await assetrequest.navigateToAssetDeallocation();
+        await assetrequest.waitforLoaderToDisappear();
+        await assetrequest.selectEmployeeForDeallocation("Vishal   Kumar");
+        await assetrequest.deallocateAsset(enterSerialNumber);
+        expect(await assetrequest.verifySuccessMessage("Successfully deallocated!"));
+        await assetrequest.logout();
+    })
+
+    test("RTO Management - Asset Request Return Flow @smoke", async ({ page }) => {
+        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await assetrequest.expandAssetManagementTab();
+        await assetrequest.navigateToRtoManagementTab();
+        await assetrequest.waitforLoaderToDisappear();
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord();
-
         if (totalRequestCount > 0) {
             expect(await assetrequest.column.isVisible()).toBeTruthy();
-
-            let found = false;
-            let statusText = "";
-
-            while (true) {
-                // Try to find the row with the comment
-                const commentLocator = page.locator(`//td[contains(text(), '${comment}')]`);
-                const commentCount = await commentLocator.count();
-              
-                if (commentCount > 0) {
-                    // Found the comment on current page
-                    const statusLocator = page.locator(`//td[contains(text(), '${comment}')]/../td[5]`);
-                    statusText = (await statusLocator.textContent())?.trim() || '';
-                    found = true;
-                    break;
-                }
-
-                const isDisabled = await assetrequest.nextButton.getAttribute("disabled");
-
-                if (isDisabled !== null) {
-                    break; // No more pages
-                }
-
-                // Go to next page
-                await assetrequest.nextButton.click();
-                await assetrequest.waitforLoaderToDisappear(); // in case there's a loader
-            }
-
-            expect(found).toBeTruthy(); // Fail if not found at all
-            expect(statusText).toBe("Delivered");
+            await assetrequest.seacrhRequestBySerialNumber(enterSerialNumber);
+            await assetrequest.clickOnSerialNumberLocator(enterSerialNumber);
+            await assetrequest.selectStatus("RETURNED");
+            await assetrequest.enterTodaysDateInCalendar();
+            await assetrequest.dockerNumber.fill(await assetrequest.generateRandomString(5));
+            await assetrequest.uploadFile("screenshot.png", page)
+            await assetrequest.comment.fill(comment);
+            await assetrequest.clickOnSubmitButton();
+            await assetrequest.waitforLoaderToDisappear();
+            expect(await assetrequest.verifySuccessMessage("Asset return request accepted"));
+            await assetrequest.clickOnReturnRequestButton();
+            let status = await assetrequest.getStatusUpdate(enterSerialNumber, 10);
+            expect(status).toBe("RETURNED");
         }
-    });
+
+        await assetrequest.logout();
+    })
 
 
 })
