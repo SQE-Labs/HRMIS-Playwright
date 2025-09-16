@@ -22,20 +22,52 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('HRMIS_3 Apply Leave popup appears after clicking on it @fast', async ({ page }) => {
+    test('HRMIS_3 Apply Leave popup appears after clicking on it @apply', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         await applyLeave.getApplyLeaveBtn();
-      
+
     });
 
-    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @fast', async ({ page }) => {
+    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @apply', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+
         await applyLeave.applyLeave(
             "PrivilegeLeave",
-            "09/15/2025",
-            "09/20/2025",
             "Family function"
         );
+    });
+    test.only('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply', async ({ page }) => {
+        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+        // 1. Check if Withdraw link is visible
+        const isWithdrawVisible = await applyLeave.isWithdrawVisible();
+
+        if (!isWithdrawVisible) {
+            // 2. If not visible, apply a leave first
+            await applyLeave.applyLeave(
+                "PrivilegeLeave",
+                "Family function"
+            );
+            // Wait for leave to appear and Withdraw link to be visible
+            await page.waitForTimeout(1000); // optional small wait
+
+
+            // 3. Click the Withdraw link
+            await applyLeave.getWithDrawLink();
+        }
+        // Clicking on Withdraw link
+        await applyLeave.getWithDrawLink();
+
+
+        // verify the title 
+        await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
+        // Entering Reason
+        await applyLeave.fillWithDrawReason('Cancel the Plan');
+
+        //Clicking on submit button
+        await applyLeave.getSubmitButton();
+        // verifying the message
+        await applyLeave.getWithdrawSuccessMessage();
 
     });
 });
+
