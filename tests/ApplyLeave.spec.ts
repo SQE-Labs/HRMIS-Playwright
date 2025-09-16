@@ -23,13 +23,13 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('HRMIS_3 Apply Leave popup appears after clicking on it @apply', async ({ page }) => {
+    test('HRMIS_3 Apply Leave popup appears after clicking on it @apply @smoke', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         await applyLeave.getApplyLeaveBtn();
 
     });
 
-    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @apply', async ({ page }) => {
+    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @apply @smoke', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
         await applyLeave.applyLeave(
@@ -41,7 +41,7 @@ test.describe("Apply leaves page", () => {
         await applyLeave.verifySuccessMessage(constants.expectedSuccessMessageForApplyLeave);
     });
 
-    test('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply', async ({ page }) => {
+    test('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply @smoke', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         // 1. Check if Withdraw link is visible
         const isWithdrawVisible = await applyLeave.isWithdrawVisible();
@@ -75,4 +75,3 @@ test.describe("Apply leaves page", () => {
 
     });
 });
-
