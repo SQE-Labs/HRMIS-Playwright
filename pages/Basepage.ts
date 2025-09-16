@@ -63,6 +63,7 @@ export class BasePage extends CommonUtils {
   //   console.debug(message)
   //   return message
   // }
+  
   async toastMessage() {
     await this.page.waitForSelector('.Toastify__toast-body')
     let message = await this.popUp.textContent()

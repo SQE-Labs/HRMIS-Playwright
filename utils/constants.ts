@@ -28,5 +28,8 @@ export const expectedSuccessMessageITApproval = "User Email has been successfull
 export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created "
 export const actualSuccessMessage = "Success";
 
+export const expectedSuccessMessageForWithdrawLeave = "Leave Withdrawn Successfully"
+export const expectedSuccessMessageForApplyLeave = "Leave Applied Successfully! Wait for Approval."
+
 
 
