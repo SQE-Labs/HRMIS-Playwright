@@ -115,7 +115,7 @@ export class OverView extends AssetManagementTab {
 
     // TC_AM_004
     async getTotalAssetCount(): Promise<number> {
-
+        await this.waitforLoaderToDisappear()
         const totalAssetTexts = await this.totalAsset.allTextContents()
         const totalAssetCount = totalAssetTexts.length > 0 ? parseInt(totalAssetTexts[0].replace(/\D/g, ''), 10) : 0;
         await this.page.waitForTimeout(1000)
@@ -228,6 +228,20 @@ export class OverView extends AssetManagementTab {
         return selectedValue;
     }
 
+
+    async selectSuperOwner(SuperOwner: string): Promise<string> {
+        await this.superOwnerDropdown.waitFor({ state: "visible", timeout: 2000 });
+
+        await this.superOwnerDropdown.selectOption({ label: SuperOwner });
+        console.debug(`Successfully selected: ${SuperOwner}`);
+        const selectedValue = await this.superOwnerDropdown.evaluate((select: HTMLSelectElement) => select.value);
+        console.debug(`Selected value (evaluate): ${selectedValue}`);
+        expect(selectedValue, "Selected dropdown value should not be empty").not.toBe("");
+        expect(selectedValue.toLowerCase()).toBe(SuperOwner.toLowerCase());
+        return selectedValue;
+    }
+
+
     // TC_AM_012
     async selectRandomOwner(): Promise<string> {
         await this.ownerDropdown.waitFor({ state: "visible", timeout: 2000 });
@@ -248,6 +262,17 @@ export class OverView extends AssetManagementTab {
         console.debug(`Selected value: ${selectedValue}`);
         expect(selectedValue, "Selected Owner value should not be empty").not.toBe("");
         expect(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
+        return selectedValue;
+    }
+
+    async selectOwner(Owner: string): Promise<string> {
+        await this.ownerDropdown.waitFor({ state: "visible", timeout: 2000 });
+        await this.ownerDropdown.selectOption({ label: Owner });
+        console.debug(`Successfully selected: ${Owner}`);
+        const selectedValue = await this.ownerDropdown.evaluate((select: HTMLSelectElement) => select.value);
+        console.debug(`Selected value: ${selectedValue}`);
+        expect(selectedValue, "Selected Owner value should not be empty").not.toBe("");
+        expect(selectedValue.toLowerCase()).toBe(Owner.toLowerCase());
         return selectedValue;
     }
 
@@ -272,6 +297,19 @@ export class OverView extends AssetManagementTab {
         console.debug(`Selected value: ${selectedValue}`)
         expect(selectedValue, "Selected availability value should not be empty").not.toBe("");
         expect.soft(selectedValue.toLowerCase()).toBe(randomOption.toLowerCase());
+        return selectedValue;
+    }
+
+    async selectAvailability(Option: string): Promise<string> {
+        await this.availabilityDropdown.waitFor({ state: "visible", timeout: 2000 })
+
+        console.debug(`Randomly selected option: ${Option}`);
+        await this.availabilityDropdown.selectOption({ label: Option });
+        console.debug(`Successfully selected: ${Option}`);
+        const selectedValue = await this.availabilityDropdown.evaluate((select: HTMLSelectElement) => select.value);
+        console.debug(`Selected value: ${selectedValue}`)
+        expect(selectedValue, "Selected availability value should not be empty").not.toBe("");
+        expect.soft(selectedValue.toLowerCase()).toBe(Option.toLowerCase());
         return selectedValue;
     }
 
@@ -314,15 +352,16 @@ export class OverView extends AssetManagementTab {
     async filterAssetsByDropdownSelections(): Promise<number> {
 
         console.debug("Collecting selected dropdown values...");
-        const superOwnerValue = await this.selectRandomSuperOwner();
+        const superOwnerValue = await this.selectSuperOwner("CAELIUS_OWNED");
         expect(superOwnerValue, "Super Owner selection should not be empty").not.toBe("");
-        const ownerValue = await this.selectRandomOwner();
+        const ownerValue = await this.selectOwner("Consultant");
         expect(ownerValue, "Owner selection should not be empty").not.toBe("");
-        const availabilityValue = await this.selectRandomAvailability();
+        const availabilityValue = await this.selectAvailability("Assigned");
         expect(availabilityValue, "Availability selection should not be empty").not.toBe("");
         const cardsData = { superOwnerValue, ownerValue, availabilityValue };
-        console.debug("Selected Dropdown Values:", cardsData);
         await this.clickFilterButton()
+        await this.page.waitForTimeout(3000)
+        console.debug("Selected Dropdown Values:", cardsData);
         const totalAssetsAfterFilter = await this.getTotalAssetCount();
         console.debug(`Total assets after filtering: ${totalAssetsAfterFilter}`);
         if (totalAssetsAfterFilter === 0) {
@@ -342,7 +381,7 @@ export class OverView extends AssetManagementTab {
         expect(superOwnerValue, "Super Owner selection should not be empty").not.toBe("");
         const ownerValue = await this.selectRandomOwner();
         expect(ownerValue, "Owner selection should not be empty").not.toBe("");
-        const availabilityValue = await this.selectRandomAvailability();
+        const availabilityValue = await this.selectAvailability("Assigned");
         expect(availabilityValue, "Availability selection should not be empty").not.toBe("");
         await this.clickFilterButton()
         const totalAssetsAfterFilter = await this.getTotalAssetCount();
