@@ -1,7 +1,6 @@
 pipeline {
   agent any
 
-
   stages {
     stage('Install Dependencies') {
       steps {
@@ -26,37 +25,33 @@ pipeline {
         }
       }
     }
-
-    
   }
+
   post {
     always {
       emailext (
-          subject: "HRMIS Test Suite - Build #${BUILD_NUMBER} - ${BUILD_STATUS}",
-          body: """
-            <html>
-              <body style="font-family: Arial, sans-serif;">
-                <h2>HRMIS Test Suite - Build #${BUILD_NUMBER}</h2>
-                <p><b>Status:</b> ${BUILD_STATUS}</p>
-                <p><b>Branch:</b> origin/main</p>
-                <h3>Test Summary</h3>
-                <ul>
-                  <li>✅ Passed: ${PASSED}</li>
-                  <li>❌ Failed: ${FAILED}</li>
-                  <li>⚪ Skipped: ${SKIPPED}</li>
-                </ul>
-                <p><b>Report:</b> <a href="${BUILD_URL}artifact/playwright-report/index.html">View HTML Report</a></p>
-                <br>
-                <p style="font-size:12px;color:gray;">This is an automated Jenkins notification.</p>
-              </body>
-            </html>
-          """,
-          to: "sandeep.kaur@sqelabs.com"
-        )
-      }
-  }
-  post {
-    always {
+        subject: "HRMIS Test Suite - Build #${BUILD_NUMBER} - ${BUILD_STATUS}",
+        body: """
+          <html>
+            <body style="font-family: Arial, sans-serif;">
+              <h2>HRMIS Test Suite - Build #${BUILD_NUMBER}</h2>
+              <p><b>Status:</b> ${BUILD_STATUS}</p>
+              <p><b>Branch:</b> origin/main</p>
+              <h3>Test Summary</h3>
+              <ul>
+                <li>✅ Passed: ${PASSED}</li>
+                <li>❌ Failed: ${FAILED}</li>
+                <li>⚪ Skipped: ${SKIPPED}</li>
+              </ul>
+              <p><b>Report:</b> <a href="${BUILD_URL}artifact/playwright-report/index.html">View HTML Report</a></p>
+              <br>
+              <p style="font-size:12px;color:gray;">This is an automated Jenkins notification.</p>
+            </body>
+          </html>
+        """,
+        to: "sandeep.kaur@sqelabs.com"
+      )
+
       archiveArtifacts artifacts: 'playwright-report/**', fingerprint: true
     }
   }
