@@ -452,7 +452,7 @@ test.describe('Asset Enrollment Page', () => {
         await expect(assetEnrollment.createAssetTypePopupHeader).toBeHidden();
     });
 
-    test('Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke', async ({ page }) => {
+    test.only('Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         let name = await AssetHelper.generateRandomString(5)
