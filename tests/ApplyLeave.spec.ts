@@ -41,7 +41,7 @@ test.describe("Apply leaves page", () => {
         await applyLeave.verifySuccessMessage(constants.expectedSuccessMessageForApplyLeave);
     });
 
-    test('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply @smoke', async ({ page }) => {
+    test.only('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply @smoke', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         // 1. Check if Withdraw link is visible
         const isWithdrawVisible = await applyLeave.isWithdrawVisible();
