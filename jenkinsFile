@@ -27,9 +27,11 @@ pipeline {
       }
     }
 
-    stage('Send Email') {
-      steps {
-        emailext (
+    
+  }
+  post {
+    always {
+      emailext (
           subject: "HRMIS Test Suite - Build #${BUILD_NUMBER} - ${BUILD_STATUS}",
           body: """
             <html>
@@ -49,12 +51,10 @@ pipeline {
               </body>
             </html>
           """,
-          to: "team@example.com"
+          to: "sandeep.kaur@sqelabs.com"
         )
       }
-    }
   }
-
   post {
     always {
       archiveArtifacts artifacts: 'playwright-report/**', fingerprint: true
