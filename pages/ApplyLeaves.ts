@@ -29,7 +29,7 @@ export class ApplyLeaves extends BasePage {
     this.DateRange = page.getByPlaceholder('mm/dd/yyyy - mm/dd/yyyy')
     this.ReasonOfLeaveBox = page.getByRole('textbox', { name: 'Reason of Leave *' })
     this.SuccessMessage = page.locator("//div[@role='alert']")
-    this.WithdrawLink = page.locator('a', { hasText: 'Withdraw' });
+    this.WithdrawLink = this.page.locator("(//a[text()='Withdraw'])[1]");
     this.WithdrawPopupTitle = page.getByText('Withdraw Leave Request');
     this.WithdrawReasonField = page.getByRole('textbox')
     this.WithdrawSuccessMessage = page.getByText('Leave Withdrawn Successfully')
@@ -64,35 +64,36 @@ export class ApplyLeaves extends BasePage {
   // Apply for Leave ****************
 
   async applyLeave(leaveType: string, reason: string) {
-    const privilegeCount = await this.privilegeLeaveOption.count();
+  const privilegeCount = await this.privilegeLeaveOption.count();
 
-    // 1. Open Apply Leave Popup
-    await this.ApplyLeaveButton.click();
+  // 1. Open Apply Leave Popup
+  await this.ApplyLeaveButton.click();
 
-    // 2. Select leave type (dynamic)
-    await this.LeaveTypeTextBox.selectOption(leaveType);
+  // 2. Select leave type (dynamic)
+  await this.LeaveTypeTextBox.selectOption(leaveType);
 
-    // 3. Check for privilege leave option and select if present
-    if (privilegeCount === 0) {
+  // 3. If privilege leave option is not present, click Yes button only if visible
+  if (privilegeCount === 0) {
+    if (await this.YesButtonOfApplyLeave.isVisible()) {
       await this.YesButtonOfApplyLeave.waitFor({ state: 'visible', timeout: 5000 });
       await this.YesButtonOfApplyLeave.click();
+    } else {
+      console.log('Yes button not visible, skipping click.');
     }
-
-    // 4. Select date range
-    await this.dateRange();
-
-    // 5. Enter reason for leave
-    await this.ReasonOfLeaveBox.fill(reason);
-
-    // 6. Submit form
-    await this.SubmitButton.click();
-    await this.page.waitForLoadState();
   }
 
+  // 4. Select date range
+  await this.dateRange();
+
+  // 5. Enter reason for leave
+  await this.ReasonOfLeaveBox.fill(reason);
+
+  // 6. Submit form
+  await this.SubmitButton.click();
+  await this.page.waitForLoadState();
+}
+
   // *****************
-
-
-
 
   async dateRange() {
     const currentDate = new Date();
@@ -125,11 +126,10 @@ export class ApplyLeaves extends BasePage {
 
   }
   async getWithDrawLink() {
-    this.WithdrawLink.click();
+    await this.WithdrawLink.click();
   }
-
   async fillWithDrawReason(reason: string) {
-    this.WithdrawReasonField.fill(reason)
+    await this.WithdrawReasonField.fill(reason)
   }
 
 

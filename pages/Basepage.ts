@@ -68,6 +68,7 @@ export class BasePage extends CommonUtils {
     await this.page.waitForSelector('.Toastify__toast-body')
     let message = await this.popUp.textContent()
     console.debug(message)
+    await expect(this.page.locator(".Toastify__toast-body")).toBeHidden()
     return message
   }
   async verifySuccessMessage(expectedMessage: string) {
@@ -83,4 +84,6 @@ export class BasePage extends CommonUtils {
     await this.page.waitForLoadState('networkidle');
     console.log("User logged out successfully");
   }
+
+
 }

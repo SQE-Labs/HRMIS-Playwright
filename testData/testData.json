@@ -45,5 +45,6 @@
     "SUPEROWNER_COLUMN": "superOwner.xlsx",
     "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
     "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
-    "NOUNIT_COLUMN": "NoUnit.xlsx"
+    "NOUNIT_COLUMN": "NoUnit.xlsx",
+    "LEAVE_EMP_NAME":"elon mask"
 }
