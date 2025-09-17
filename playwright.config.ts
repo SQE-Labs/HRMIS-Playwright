@@ -34,7 +34,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
-  reporter: [["html"], ['line'], ["allure-playwright"], ["./my-reporter.ts"]],
+  reporter: [["html"], ['line'], ["allure-playwright"], ["./my-reporter.ts"], ['json', { outputFile: 'playwright-report/results.json' }]],
   // reporter: [['list'], ['junit', { outputFile: 'results.xml' }]],
 
   // reporter: [
@@ -45,7 +45,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless: true, // to see the browser window
+    headless: false, // to see the browser window
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
