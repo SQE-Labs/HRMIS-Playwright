@@ -9,7 +9,7 @@ export class MyTeamLeavePage extends BasePage {
     private searchBox: Locator;
     public statusDropdown: Locator;
     employeeColumn: any;
-
+    
 
     constructor(page: Page) {
         super(page);
@@ -19,8 +19,8 @@ export class MyTeamLeavePage extends BasePage {
     }
 
     get employeeRows() {
-    return this.page.locator("//table/tbody/tr");
-}
+        return this.page.locator("//table/tbody/tr");
+    }
 
 
     async verifyDefaultValueOfStatusDropdown() {
@@ -37,29 +37,23 @@ export class MyTeamLeavePage extends BasePage {
         this.waitForSpinnerLoaderToDisappear
     }
 
-   async searchEmployee(employeeName: string) {
-    await this.searchBox.fill(employeeName);
-    await this.searchBox.focus();
-    await this.page.keyboard.press('Enter');
-     // Wait for loader to disappear if exists
-    await this.waitforLoaderToDisappear();
+    async searchEmployee(employeeName: string) {
+        await this.searchBox.fill(employeeName);
+        // await this.searchBox.focus();
+        // await this.page.keyboard.press('Enter');
+        // Wait for loader to disappear if exists
 
-    // Wait until at least one row appears
-    await this.employeeRows.first().waitFor({ state: 'visible' });
+        await this.waitforLoaderToDisappear();
 
-}
+        // Wait until at least one row appears
+        // await this.employeeRows.first().waitFor({ state: 'visible' });
+
+    }
 
     async getEmployeeNames(): Promise<string[]> {
         const employeeColumn = this.page.locator("//table//tbody/tr/td[2]")
         return await employeeColumn.allTextContents();
     }
-    async getAllSearchResults(): Promise<string[]> {
-        const employees = this.page.locator("//table/tbody/tr");
-        return await employees.allTextContents();
-    }
 
 
 }
-
-
-

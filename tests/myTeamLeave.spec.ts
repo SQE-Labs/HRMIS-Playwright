@@ -29,17 +29,21 @@ test.describe("My Team Leave Page", () => {
         expect(await myTeamLeave.isSearchBoxVisible()).toBeTruthy();
 
         // Select any leave status
+    
         await myTeamLeave.selectLeaveStatus(constants.APPROVED_STATUS);
-     
+        await myTeamLeave.waitforLoaderToDisappear();
+
         // verify the leave status dropdown value
         await myTeamLeave.selectLeaveStatus(constants.APPROVED_STATUS);
 
         const selectedValue = await myTeamLeave.statusDropdown.inputValue();
         expect(selectedValue).toBe(constants.APPROVED_STATUS);
-          await myTeamLeave.waitforLoaderToDisappear();
-    
+        await myTeamLeave.waitforLoaderToDisappear();
+   
         // Entering partial value in the search employee name field
         await myTeamLeave.searchEmployee(testData.LEAVE_EMP_NAME);
+        await myTeamLeave.waitforLoaderToDisappear();
+        
 
         // Wait for search results to appear
         await myTeamLeave.employeeRows.first().waitFor({ state: 'visible' });
@@ -48,9 +52,14 @@ test.describe("My Team Leave Page", () => {
         const employees = await myTeamLeave.getEmployeeNames();
         console.log("Search results:", employees);
 
-        await myTeamLeave.employeeRows.first().waitFor({ state: 'visible' });
-        await page.waitForLoadState('domcontentloaded'); 
-
+        // Verify that each employee name contains the search term (case-insensitive)
+        for (let name of employees) {
+    if (name) {
+        expect(name.trim().toLowerCase()).toContain(
+            testData.LEAVE_EMP_NAME.toLowerCase()
+        );
+    }
+}
 
 
     });

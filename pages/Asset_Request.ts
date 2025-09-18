@@ -237,7 +237,6 @@ async getStatusUpdate(comment: string, value = 5) {
         return statusText;
     }
 
-    return ""; // No records case
 }
 
 }
