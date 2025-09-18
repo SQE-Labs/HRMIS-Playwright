@@ -23,7 +23,7 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
     
-    test('HRMIS_3, HRMIS_11, HRMIS_13, HRMIS_14, HRMIS_16, HRMIS_17, HRMIS_18, HRMIS_20 ApplyLeave and Withdraw Leave - End to End flow @smoke', async ({ page }) => {
+    test('HRMIS_3, HRMIS_11, HRMIS_13, HRMIS_14, HRMIS_16, HRMIS_17, HRMIS_18, HRMIS_20 ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
         // Apply Leave

@@ -15,8 +15,9 @@
     "STORE": {
         "UserEmail": "asset-store@caeliusconsulting.com"
     },
-    "Delivery Manager": {
-        "UserEmail": "emp2@caeliusconsulting.com",
+    "DeliveryManager": {
+        "UserEmail": "emp2@caeliusconsulting.com"
+    },
 
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
