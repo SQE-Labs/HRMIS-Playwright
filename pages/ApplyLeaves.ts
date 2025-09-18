@@ -28,8 +28,8 @@ export class ApplyLeaves extends BasePage {
     this.LeaveTypeTextBox = page.getByLabel('Type of leave');
     this.DateRange = page.getByPlaceholder('mm/dd/yyyy - mm/dd/yyyy')
     this.ReasonOfLeaveBox = page.getByRole('textbox', { name: 'Reason of Leave *' })
-    this.SuccessMessage = page.locator("//div[@role='alert']")
-    this.WithdrawLink = this.page.locator("(//a[text()='Withdraw'])[1]");
+    this.SuccessMessage = page.getByText('Leave Applied Successfully! Wait for Approval.')
+    this.WithdrawLink = this.page.getByText('Withdraw')
     this.WithdrawPopupTitle = page.getByText('Withdraw Leave Request');
     this.WithdrawReasonField = page.getByRole('textbox')
     this.WithdrawSuccessMessage = page.getByText('Leave Withdrawn Successfully')
@@ -126,7 +126,7 @@ export class ApplyLeaves extends BasePage {
 
   }
   async getWithDrawLink() {
-    await this.WithdrawLink.click();
+    await this.WithdrawLink.first().click();
   }
   async fillWithDrawReason(reason: string) {
     await this.WithdrawReasonField.fill(reason)
