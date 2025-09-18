@@ -491,6 +491,7 @@ test.describe("'Employee Management module'", () => {
     test("Navigating to the Employee Directory tab > Assigned Assets @smoke", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
+        await EmployeeDirectory.AssignedAssets.isEnabled()
         await EmployeeDirectory.clickOnAssignedAssets()
         await EmployeeDirectory.waitforLoaderToDisappear()
         expect(EmployeeDirectory.refreshbutton).toBeVisible()

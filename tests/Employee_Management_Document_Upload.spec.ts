@@ -122,6 +122,4 @@ test.describe("'Employee Management > Document Upload module'", () => {
         await EmployeeDirectory.clickOnclosePopup();
         await expect(EmployeeDirectory.popup).toBeHidden();
     })
-
-
 })

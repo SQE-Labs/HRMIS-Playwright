@@ -165,7 +165,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
         expect(message).toEqual(SELECT_ITEM);
     })
 
-    test.skip("should change document status to approved and show success toast @smoke", async ({ page }) => {
+    test("should change document status to approved and show success toast @smoke", async ({ page }) => {
         if (await EmployeeDirectory.No_Record.isVisible()) {
             const noRecordText = await EmployeeDirectory.No_Record.textContent();
             console.log("No records available:", noRecordText);
