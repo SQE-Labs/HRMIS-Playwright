@@ -21,7 +21,7 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("HRMIS_2,HRMIS_4 Validate My Team Leave Page UI Elements @smoke @eti", async ({
+  test("HRMIS_2,HRMIS_4 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
     page,
   }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page); 
@@ -32,6 +32,7 @@ test.describe("My Team Leave Page", () => {
 
     // verify the default select by emplyoee name field
     expect(await myTeamLeave.isSearchBoxVisible()).toBeTruthy();
+    await myTeamLeave.waitforLoaderToDisappear();
 
     // Select any leave status
 
@@ -43,6 +44,7 @@ test.describe("My Team Leave Page", () => {
 
     const selectedValue = await myTeamLeave.statusDropdown.inputValue();
     expect(selectedValue).toBe(constants.APPROVED_STATUS);
+    await myTeamLeave.waitForDotsLoaderToDisappear
     await myTeamLeave.waitforLoaderToDisappear();
 
     // Entering partial value in the search employee name field

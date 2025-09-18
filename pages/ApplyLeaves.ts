@@ -98,13 +98,13 @@ export class ApplyLeaves extends BasePage {
   async dateRange() {
   const currentDate = new Date();
 
-  // Random offset for start date (0-5 days ahead of today)
-  const startOffset = Math.floor(Math.random() * 5);  
+  // Random offset for start date (0-3 days ahead of today)
+  const startOffset = Math.floor(Math.random() * 3);  
   const startDate = new Date(currentDate);
   startDate.setDate(currentDate.getDate() + startOffset);
 
-  // Random duration for leave (1–10 days)
-  const duration = Math.floor(Math.random() * 10) + 1;  
+  // Random duration for leave (1–5 days)
+  const duration = Math.floor(Math.random() * 5) + 1;  
   const endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + duration);
 
