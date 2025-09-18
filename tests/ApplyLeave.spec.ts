@@ -23,45 +23,21 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('HRMIS_3 Apply Leave popup appears after clicking on it @apply @smoke', async ({ page }) => {
-        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-        await applyLeave.getApplyLeaveBtn();
-
-    });
-
-    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @apply @smoke', async ({ page }) => {
+    test('HRMIS_3, HRMIS_11, HRMIS_13, HRMIS_14, HRMIS_16, HRMIS_17, HRMIS_18, HRMIS_20 ApplyLeave and Withdraw Leave - End to End flow @smoke', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
+        // Apply Leave
         await applyLeave.applyLeave(
             "PrivilegeLeave",
             "Family function"
         );
-        
-        // expect(applyLeave.toastMessage()).toEqual(constants.expectedSuccessMessageForApplyLeave);
-        await applyLeave.verifySuccessMessage(constants.expectedSuccessMessageForApplyLeave);
-    });
+        await applyLeave.verifySuccessMessage(constants.APPLY_LEAVE_SUCCESSMESSAGE);
 
-    test('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply @smoke', async ({ page }) => {
-        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-        // 1. Check if Withdraw link is visible
-        const isWithdrawVisible = await applyLeave.isWithdrawVisible();
+        // Wait for success message to disappear before next action
+        await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
 
-        if (!isWithdrawVisible) {
-            // 2. If not visible, apply a leave first
-            await applyLeave.applyLeave(
-                "PrivilegeLeave",
-                "Family function"
-            );
-            // Wait for leave to appear and Withdraw link to be visible
-            await page.waitForTimeout(1000); // optional small wait
-
-
-            // 3. Click the Withdraw link
-            await applyLeave.getWithDrawLink();
-        }
-        // Clicking on Withdraw link
+        // Now click on Withdraw link
         await applyLeave.getWithDrawLink();
-
 
         // verify the title 
         await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
@@ -70,8 +46,11 @@ test.describe("Apply leaves page", () => {
 
         //Clicking on submit button
         await applyLeave.getSubmitButton();
-        // verifying the message
-        expect(applyLeave.toastMessage()).toEqual(constants.expectedSuccessMessageForWithdrawLeave);
 
+        // verifying the message
+        const message = await applyLeave.toastMessage();
+        expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     });
+
+
 });

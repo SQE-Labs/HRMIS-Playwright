@@ -29,7 +29,7 @@ export default defineConfig({
   //  "tests/AssetManagement.spec.ts",
   //  "LoginPage.spec.ts"
   // ],
-  fullyParallel: false,
+  fullyParallel: true,
   retries: process.env.CI ? 0 : 0,
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
@@ -44,7 +44,7 @@ export default defineConfig({
   //   }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless: false, // to see the browser window
+    headless: true, // to see the browser window
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
