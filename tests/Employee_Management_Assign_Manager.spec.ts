@@ -130,7 +130,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await expect(EmployeeDirectory.Pop_Up_Header).toBeHidden()
     })
     // Locators are changed while execution
-    test.fixme("conditionally assign and delete leave manager, then verify removal @smoke ", async ({ page }) => {
+    test("conditionally assign and delete leave manager, then verify removal @smoke ", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.LeaveManagerDropDown.click()
@@ -143,9 +143,9 @@ test.describe("'Employee Management > Assign Manager module'", () => {
             await EmployeeDirectory.AssignButton.click()
             await EmployeeDirectory.waitforLoaderToDisappear()
             await EmployeeDirectory.LeaveManagerPopupDropDown.click()
-            await EmployeeDirectory.selectionOfLeaveManager(22)
+            await EmployeeDirectory.selectionOfAssignLeaveManager(22)
             await EmployeeDirectory.waitforLoaderToDisappear()
-            await EmployeeDirectory.PopupSubmitButton.click()
+            await EmployeeDirectory.AssignManagerubmitButton.click()
             let message = await EmployeeDirectory.toastMessage()
             expect(message).toEqual("Successfully Assigned!")
         }
@@ -155,7 +155,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.clickOnYesButton()
         let messgae = await EmployeeDirectory.toastMessage()
         expect(messgae).toEqual("Leave Manager removed successfully ")
+        await EmployeeDirectory.waitforLoaderToDisappear()
         expect(EmployeeDirectory.noRecord(1)).toEqual("Leave manager not assigned")
     })
-
 })

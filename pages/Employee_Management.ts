@@ -163,6 +163,7 @@ export class Employee_Management extends BasePage {
     public closePopupButton: Locator;
     public maximizeButton: Locator;
     public downloadButton: Locator;
+    public AssignManagerubmitButton: Locator
     public statusRow: Locator;
 
 
@@ -170,7 +171,7 @@ export class Employee_Management extends BasePage {
         super(page)
         this.Employee_Management = page.locator("//a[text()='Employee Management']")
         this.Employee_Directory_tab = page.locator("//a[text()='Employee Directory']")
-       // this.Employee_Directory_tab_Header = page.locator(".d-flex")
+        // this.Employee_Directory_tab_Header = page.locator(".d-flex")
         this.Employee_Directory_tab_Header = page.locator("//h1[text()='Employee Directory']")
         this.Employee_Directory_Cards = page.locator(".col-md-4.col-lg-3")
         this.TotalEmployeecount = page.locator(".total")
@@ -266,8 +267,10 @@ export class Employee_Management extends BasePage {
         this.PopupHeader = page.locator("(//div[@class = 'modal-header'])[1]")
         this.CrossButton = page.locator("(//button[@class = 'btn-close'])[1]")
         this.PopupDropDown = page.locator("#react-select-3-input")
-        this.LeaveManagerPopupDropDown = page.locator("react-select-5-input")
+        this.LeaveManagerPopupDropDown = page.locator("#react-select-5-input")
         this.PopupSubmitButton = page.locator("(//button[@class = 'theme-button'])[1]")
+        this.AssignManagerubmitButton = page.locator("(//button[@class = 'theme-button'])[2]")
+
         this.CancelButton = page.locator("(//button[@type = 'button'])[4]")
         this.LeaveManagerDropDown = page.locator("#react-select-4-input")
         this.LeaveManagerActionButton = page.locator(".btn.btn-danger")

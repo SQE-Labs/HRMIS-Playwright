@@ -10,7 +10,7 @@ import { MyTeamLeavePage } from '../pages/myTeamLeave';
 let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
 let myTeamLeave: any;
- 
+
 
 test.describe("Apply leaves page", () => {
     test.beforeEach(async ({ page }, testInfo) => {
@@ -25,7 +25,7 @@ test.describe("Apply leaves page", () => {
 
         console.log(">> Starting test case : " + testInfo.title);
     });
-    
+
     test('HRMIS_3, HRMIS_12, HRMIS_17, HRMIS_18, HRMIS_22  ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
@@ -39,10 +39,10 @@ test.describe("Apply leaves page", () => {
         // Wait for success message to disappear before next action
         await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
 
-          // Now click on Withdraw link
-          await applyLeave.getWithDrawLink();
+        // Now click on Withdraw link
+        await applyLeave.getWithDrawLink();
 
-             // verify the title 
+        // verify the title 
         await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
         // Entering Reason
         await applyLeave.fillWithDrawReason('Cancel the Plan');
@@ -51,38 +51,38 @@ test.describe("Apply leaves page", () => {
         await applyLeave.getSubmitButton();
 
         // verifying the message
-      const message = await applyLeave.toastMessage();
-      expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
-});
+        const message = await applyLeave.toastMessage();
+        expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
+    });
 
-test('HRMIS_13, HRMIS_14, HRMIS_16 Verify that user is able to apply leave with 0 privilege balance @smoke @eti', async ({ page }) => {
-    const loginObj = new LoginPage(page);
-     myTeamLeave = new MyTeamLeavePage(page);
-    //logging out from super user
-    await attendanceLeaveTab.logout();
-    await page.waitForLoadState();
+    test('HRMIS_13, HRMIS_14, HRMIS_16 Verify that user is able to apply leave with 0 privilege balance @smoke @eti', async ({ page }) => {
+        const loginObj = new LoginPage(page);
+        myTeamLeave = new MyTeamLeavePage(page);
+        //logging out from super user
+        await attendanceLeaveTab.logout();
+        await page.waitForLoadState();
 
-    await loginObj.validLogin(
-      testData["DeliveryManager"].UserEmail,
-      testData.SuperUser.UserPassword
-    );
-    await applyLeave.waitForDotsLoaderToDisappear()
+        await loginObj.validLogin(
+            testData["DeliveryManager"].UserEmail,
+            testData.SuperUser.UserPassword
+        );
+        await applyLeave.waitForDotsLoaderToDisappear()
         await applyLeave.waitForSpinnerLoaderToDisappear()
         await page.waitForLoadState('networkidle');
 
         await myTeamLeave.clickOnCrossIcon();
 
-    // Navigate to Apply Leave page
-    await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+        // Navigate to Apply Leave page
+        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
-    // Apply Leave  
-    await applyLeave.applyLeave(
-      "PrivilegeLeave",
-      "Emergency leave"
-    );
+        // Apply Leave  
+        await applyLeave.applyLeave(
+            "PrivilegeLeave",
+            "Emergency leave"
+        );
 
 
-});
+    });
 });
 
 
