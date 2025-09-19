@@ -65,17 +65,20 @@ export class BasePage extends CommonUtils {
   // }
   
   async toastMessage() {
-    await this.page.waitForSelector('.Toastify__toast-body')
+    await this.page.waitForSelector('.Toastify__toast-body', {state : 'visible'})
     let message = await this.popUp.textContent()
     console.debug(message)
     await expect(this.page.locator(".Toastify__toast-body")).toBeHidden()
     return message
   }
+
   async verifySuccessMessage(expectedMessage: string) {
     const message = await this.toastMessage();
     expect(message?.trim()).toBe(expectedMessage);
     console.log(`Success message verified: ${expectedMessage}`);
   }
+
+
 
   async logout() {
     await this.page.evaluate(() => window.scrollTo(0, 0));
