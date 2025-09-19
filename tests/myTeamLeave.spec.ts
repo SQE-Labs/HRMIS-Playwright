@@ -89,28 +89,9 @@ test.describe("My Team Leave Page", () => {
 
     await myTeamLeave.clickOnCrossIcon();
 
-    await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
-    await myTeamLeave.waitforLoaderToDisappear();
-
-    // clicking on view button of the first row
-    await myTeamLeave.clickOnViewLink();
-    await myTeamLeave.LeaveApprovePopupTitle.waitFor({ state: "visible" });
-
-    // Verify that the popup title is correct
-    expect(await myTeamLeave.LeaveApprovePopupTitle.isVisible()).toBeTruthy();
-
-    // Select leave action
-    await myTeamLeave.selectLeaveAction(constants.APPROVE_ACTION);
-
-    // Enter reason
-    await myTeamLeave.enterReason(constants.APPROVED_STATUS);
-
-    // Click on submit button
-    await myTeamLeave.clickOnSubmitButton();
-    await myTeamLeave.waitforLoaderToDisappear();
-
-    // Verify success message
-    expect(await myTeamLeave.approveSuccessMessage.textContent()).toBe(
+    await myTeamLeave.applyForApproval(
+      constants.APPROVE_ACTION,
+      constants.APPROVED_STATUS,
       constants.APPROVE_LEAVE_SUCCESSMESSAGE
     );
   });

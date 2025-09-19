@@ -2,6 +2,7 @@ import { LoginPage } from "../pages/LoginPage";
 import { BasePage } from "../pages/Basepage";
 import { expect, Locator, Page } from "@playwright/test";
 import * as constants from "../utils/constants";
+import { AttendanceLeaveTab } from "./Attendance&Leaves";
 
 export class MyTeamLeavePage extends BasePage {
   public pageTitle: Locator;
@@ -15,6 +16,11 @@ export class MyTeamLeavePage extends BasePage {
   private reasonField: Locator;
   private submitButton: Locator;
   public approveSuccessMessage: Locator;
+  public employeeRows: Locator;
+  public employeeColumn1: Locator
+  
+
+  attendanceLeaveTab = new AttendanceLeaveTab(this.page);
 
   // Locators
 
@@ -27,14 +33,12 @@ export class MyTeamLeavePage extends BasePage {
     // //h5[text()='Pending Document to Upload']/following-sibling::button
     this.viewLink = page.locator("//td//a[text()='View'][1]");
     this.LeaveApprovePopupTitle = page.getByText("Leave Approval");
-    this.leaveActionField = page.locator('#leaveAction');
-    this.reasonField = page.locator("//label[text()='Reason']/following::textarea");
+    this.leaveActionField = page.locator("#leaveAction");
+    this.reasonField = page.locator("//label[text()='Reason']/following::textarea" );
     this.submitButton = page.getByRole("button", { name: "Submit" });
     this.approveSuccessMessage = page.getByText("Successfully updated.");
-  }
-
-  get employeeRows() {
-    return this.page.locator("//table/tbody/tr");
+    this.employeeRows = page.locator("//table/tbody/tr");
+    this.employeeColumn = page.locator("//table//tbody/tr/td[2]");
   }
 
   async verifyDefaultValueOfStatusDropdown() {
@@ -53,16 +57,11 @@ export class MyTeamLeavePage extends BasePage {
 
   async searchEmployee(employeeName: string) {
     await this.searchBox.fill(employeeName);
-    // await this.searchBox.focus();
-    // await this.page.keyboard.press('Enter');
-    // Wait for loader to disappear if exists
-
     await this.waitforLoaderToDisappear();
   }
 
   async getEmployeeNames(): Promise<string[]> {
-    const employeeColumn = this.page.locator("//table//tbody/tr/td[2]");
-    return await employeeColumn.allTextContents();
+    return await this.employeeColumn.allTextContents();
   }
 
   async clickOnCrossIcon() {
@@ -84,5 +83,35 @@ export class MyTeamLeavePage extends BasePage {
   async clickOnViewLink() {
     await this.viewLink.first().click();
     await this.waitforLoaderToDisappear();
+  }
+
+  async applyForApproval(
+    action: string,
+    reason: string,
+    successMessage: string
+  ) {
+    // Navigate to My Team Leave tab
+    await this.attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
+    await this.waitforLoaderToDisappear();
+
+    // Click on view button of the first row
+    await this.clickOnViewLink();
+    await this.LeaveApprovePopupTitle.waitFor({ state: "visible" });
+
+    // Verify popup is visible
+    expect(await this.LeaveApprovePopupTitle.isVisible()).toBeTruthy();
+
+    // Select leave action (Approve/Reject/etc.)
+    await this.selectLeaveAction(action);
+
+    // Enter reason
+    await this.enterReason(reason);
+
+    // Click on submit
+    await this.clickOnSubmitButton();
+    await this.waitforLoaderToDisappear();
+
+    // Verify success message
+    expect(await this.approveSuccessMessage.textContent()).toBe(successMessage);
   }
 }
