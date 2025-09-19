@@ -21,7 +21,7 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("HRMIS_2,HRMIS_4 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
+  test("HRMIS_23, HRMIS_24 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
     page,
   }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page); 

@@ -97,7 +97,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.Upload_Icon.click()
+        await EmployeeDirectory.clickUploadIfNotApproved('Approved')
         await EmployeeDirectory.uploadFile("screenshot.png", page)
         await EmployeeDirectory.waitforLoaderToDisappear()
 

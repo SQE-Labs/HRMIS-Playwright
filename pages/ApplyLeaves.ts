@@ -17,6 +17,7 @@ export class ApplyLeaves extends BasePage {
   private WithdrawSuccessMessage: Locator;
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
+  private duplicateLeaveToastMessage: Locator;
 
 
   constructor(page: Page) {
@@ -35,6 +36,7 @@ export class ApplyLeaves extends BasePage {
     this.WithdrawSuccessMessage = page.getByText('Leave Withdrawn Successfully')
     this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] ")
     this.privilegeLeaveOption = page.getByLabel('PrivilegeLeave');
+    this.duplicateLeaveToastMessage = page.getByText('Duplicate leave request !');
   }
 
   async pickCurrentDate() {
@@ -91,6 +93,26 @@ export class ApplyLeaves extends BasePage {
   // 6. Submit form
   await this.SubmitButton.click();
   await this.page.waitForLoadState();
+
+  // 7. Check for duplicate leave toast
+const isDuplicate = await this.duplicateLeaveToastMessage
+  .waitFor({ state: 'visible', timeout: 3000 })
+  .then(() => true)
+  .catch(() => false);
+
+if (isDuplicate) {
+  console.log("Duplicate leave detected. Retrying with new dates....");
+
+  // Reselect new date range
+  await this.dateRange();
+
+  // Resubmit
+  await this.SubmitButton.click();
+}
+
+  // 8. Wait for load after final submission
+  await this.page.waitForLoadState();
+  
 }
 
   // *****************
