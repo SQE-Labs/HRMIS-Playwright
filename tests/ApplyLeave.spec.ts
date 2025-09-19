@@ -5,9 +5,12 @@ import testData from '../testData/testData.json';
 import { ApplyLeaves } from '../pages/ApplyLeaves';
 import { AttendanceLeaveTab } from '../pages/Attendance&Leaves';
 import * as constants from '../utils/constants';
+import { MyTeamLeavePage } from '../pages/myTeamLeave';
 
 let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
+let myTeamLeave: any;
+ 
 
 test.describe("Apply leaves page", () => {
     test.beforeEach(async ({ page }, testInfo) => {
@@ -22,56 +25,64 @@ test.describe("Apply leaves page", () => {
 
         console.log(">> Starting test case : " + testInfo.title);
     });
-
-    test('HRMIS_3 Apply Leave popup appears after clicking on it @apply @smoke', async ({ page }) => {
-        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-        await applyLeave.getApplyLeaveBtn();
-
-    });
-
-    test('HRMIS_11 Verify success message appears after submitting the Apply button popup with all mandatory fields filled. @apply @smoke', async ({ page }) => {
+    
+    test('HRMIS_3, HRMIS_12, HRMIS_17, HRMIS_18, HRMIS_22  ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
+        // Apply Leave
         await applyLeave.applyLeave(
             "PrivilegeLeave",
             "Family function"
         );
-        
-        // expect(applyLeave.toastMessage()).toEqual(constants.expectedSuccessMessageForApplyLeave);
-        await applyLeave.verifySuccessMessage(constants.expectedSuccessMessageForApplyLeave);
-    });
+        await applyLeave.verifySuccessMessage(constants.APPLY_LEAVE_SUCCESSMESSAGE);
 
-    test('HRMIS_18 Verify that Withdraw Leave Request pop up opens up, after clicking Withdraw link, on Apply Leaves page. @apply @smoke', async ({ page }) => {
-        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-        // 1. Check if Withdraw link is visible
-        const isWithdrawVisible = await applyLeave.isWithdrawVisible();
+        // Wait for success message to disappear before next action
+        await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
 
-        if (!isWithdrawVisible) {
-            // 2. If not visible, apply a leave first
-            await applyLeave.applyLeave(
-                "PrivilegeLeave",
-                "Family function"
-            );
-            // Wait for leave to appear and Withdraw link to be visible
-            await page.waitForTimeout(1000); // optional small wait
+          // Now click on Withdraw link
+          await applyLeave.getWithDrawLink();
 
-
-            // 3. Click the Withdraw link
-            await applyLeave.getWithDrawLink();
-        }
-        // Clicking on Withdraw link
-        await applyLeave.getWithDrawLink();
-
-
-        // verify the title 
+             // verify the title 
         await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
         // Entering Reason
         await applyLeave.fillWithDrawReason('Cancel the Plan');
 
         //Clicking on submit button
         await applyLeave.getSubmitButton();
-        // verifying the message
-        expect(applyLeave.toastMessage()).toEqual(constants.expectedSuccessMessageForWithdrawLeave);
 
-    });
+        // verifying the message
+      const message = await applyLeave.toastMessage();
+      expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
 });
+
+test('HRMIS_13, HRMIS_14, HRMIS_16 Verify that user is able to apply leave with 0 privilege balance @smoke @eti', async ({ page }) => {
+    const loginObj = new LoginPage(page);
+     myTeamLeave = new MyTeamLeavePage(page);
+    //logging out from super user
+    await attendanceLeaveTab.logout();
+    await page.waitForLoadState();
+
+    await loginObj.validLogin(
+      testData["DeliveryManager"].UserEmail,
+      testData.SuperUser.UserPassword
+    );
+    await applyLeave.waitForDotsLoaderToDisappear()
+        await applyLeave.waitForSpinnerLoaderToDisappear()
+        await page.waitForLoadState('networkidle');
+
+        await myTeamLeave.clickOnCrossIcon();
+
+    // Navigate to Apply Leave page
+    await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+
+    // Apply Leave  
+    await applyLeave.applyLeave(
+      "PrivilegeLeave",
+      "Emergency leave"
+    );
+
+
+});
+});
+
+

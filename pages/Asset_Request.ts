@@ -192,43 +192,51 @@ export class AssetRequests extends AssetManagementTab {
         await this.returnrequestButton.click();
         await this.waitforLoaderToDisappear();
     }
+async getStatusUpdate(comment: string, value = 5) {
+    let totalRequestCount = await this.verifyNoAssetRequestRecord();
 
-    async getStatusUpdate(comment: string , value = 5) {
-        let totalRequestCount = await this.verifyNoAssetRequestRecord();
+    if (totalRequestCount > 0) {
+        expect(await this.column.isVisible()).toBeTruthy();
 
-        if (totalRequestCount > 0) {
-            expect(await this.column.isVisible()).toBeTruthy();
+        let found = false;
+        let statusText = "";
 
-            let found = false;
-            let statusText = "";
+        while (true) {
+            // Debug: print all first-column values
+            const allComments = await this.page.locator("//table//td[1]").allTextContents();
+            console.log("Comments on this page:", allComments);
 
-            while (true) {
-                // Try to find the row with the comment
-                const commentLocator = this.page.locator(`//td[contains(text(), '${comment}')]`);
-                const commentCount = await commentLocator.count();
+            // Try to find the row with the comment
+            const commentLocator = this.page.locator(`//td[contains(normalize-space(), "${comment}")]`);
+            const commentCount = await commentLocator.count();
 
-                if (commentCount > 0) {
-                    // Found the comment on current page
-                    const statusLocator = this.page.locator(`//td[contains(text(), '${comment}')]/../td[${value}]`);
-                    statusText = (await statusLocator.textContent())?.trim() || '';
-                    found = true;
-                    break;
-                }
-
-                const isDisabled = await this.nextButton.getAttribute("disabled");
-
-                if (isDisabled !== null) {
-                    break;
-                }
-
-                // Go to next page
-                await this.nextButton.click();
-                await this.waitforLoaderToDisappear();
+            if (commentCount > 0) {
+                // Found the comment on current page
+                const statusLocator = this.page.locator(
+                    `//td[contains(normalize-space(), "${comment}")]/../td[${value}]`
+                );
+                statusText = (await statusLocator.textContent())?.trim() || "";
+                found = true;
+                break;
             }
 
-            expect(found).toBeTruthy();
-            return statusText
+            // Check if Next is disabled
+            const isDisabled = await this.nextButton.getAttribute("disabled");
+            if (isDisabled !== null) {
+                console.log("Next button disabled, reached last page.");
+                break;
+            }
+
+            // Go to next page
+            await this.nextButton.scrollIntoViewIfNeeded();
+            await this.nextButton.click();
+            await this.waitforLoaderToDisappear();
         }
+
+        expect(found).toBeTruthy(); // Fail early if comment not found
+        return statusText;
     }
+
+}
 
 }

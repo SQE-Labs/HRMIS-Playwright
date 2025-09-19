@@ -15,6 +15,10 @@
     "STORE": {
         "UserEmail": "asset-store@caeliusconsulting.com"
     },
+    "DeliveryManager": {
+        "UserEmail": "emp2@caeliusconsulting.com"
+    },
+
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
@@ -45,5 +49,6 @@
     "SUPEROWNER_COLUMN": "superOwner.xlsx",
     "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
     "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
-    "NOUNIT_COLUMN": "NoUnit.xlsx"
+    "NOUNIT_COLUMN": "NoUnit.xlsx",
+    "LEAVE_EMP_NAME":"Ishita Test Sharma"
 }

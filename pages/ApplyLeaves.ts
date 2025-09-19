@@ -17,6 +17,7 @@ export class ApplyLeaves extends BasePage {
   private WithdrawSuccessMessage: Locator;
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
+  private duplicateLeaveToastMessage: Locator;
 
 
   constructor(page: Page) {
@@ -28,13 +29,14 @@ export class ApplyLeaves extends BasePage {
     this.LeaveTypeTextBox = page.getByLabel('Type of leave');
     this.DateRange = page.getByPlaceholder('mm/dd/yyyy - mm/dd/yyyy')
     this.ReasonOfLeaveBox = page.getByRole('textbox', { name: 'Reason of Leave *' })
-    this.SuccessMessage = page.locator("//div[@role='alert']")
-    this.WithdrawLink = page.locator('a', { hasText: 'Withdraw' });
+    this.SuccessMessage = page.getByText('Leave Applied Successfully! Wait for Approval.')
+    this.WithdrawLink = this.page.getByText('Withdraw')
     this.WithdrawPopupTitle = page.getByText('Withdraw Leave Request');
     this.WithdrawReasonField = page.getByRole('textbox')
     this.WithdrawSuccessMessage = page.getByText('Leave Withdrawn Successfully')
     this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] ")
     this.privilegeLeaveOption = page.getByLabel('PrivilegeLeave');
+    this.duplicateLeaveToastMessage = page.getByText('Duplicate leave request !');
   }
 
   async pickCurrentDate() {
@@ -64,72 +66,93 @@ export class ApplyLeaves extends BasePage {
   // Apply for Leave ****************
 
   async applyLeave(leaveType: string, reason: string) {
-    const privilegeCount = await this.privilegeLeaveOption.count();
+  const privilegeCount = await this.privilegeLeaveOption.count();
 
-    // 1. Open Apply Leave Popup
-    await this.ApplyLeaveButton.click();
+  // 1. Open Apply Leave Popup
+  await this.ApplyLeaveButton.click();
 
-    // 2. Select leave type (dynamic)
-    await this.LeaveTypeTextBox.selectOption(leaveType);
+  // 2. Select leave type (dynamic)
+  await this.LeaveTypeTextBox.selectOption(leaveType);
 
-    // 3. Check for privilege leave option and select if present
-    if (privilegeCount === 0) {
+  // 3. If privilege leave option is not present, click Yes button only if visible
+  if (privilegeCount === 0) {
+    if (await this.YesButtonOfApplyLeave.isVisible()) {
       await this.YesButtonOfApplyLeave.waitFor({ state: 'visible', timeout: 5000 });
       await this.YesButtonOfApplyLeave.click();
+    } else {
+      console.log('Yes button not visible, skipping click.');
     }
-
-    // 4. Select date range
-    await this.dateRange();
-
-    // 5. Enter reason for leave
-    await this.ReasonOfLeaveBox.fill(reason);
-
-    // 6. Submit form
-    await this.SubmitButton.click();
-    await this.page.waitForLoadState();
   }
+
+  // 4. Select date range
+  await this.dateRange();
+
+  // 5. Enter reason for leave
+  await this.ReasonOfLeaveBox.fill(reason);
+
+  // 6. Submit form
+  await this.SubmitButton.click();
+  await this.page.waitForLoadState();
+
+  // 7. Check for duplicate leave toast
+const isDuplicate = await this.duplicateLeaveToastMessage
+  .waitFor({ state: 'visible', timeout: 3000 })
+  .then(() => true)
+  .catch(() => false);
+
+if (isDuplicate) {
+  console.log("Duplicate leave detected. Retrying with new dates....");
+
+  // Reselect new date range
+  await this.dateRange();
+
+  // Resubmit
+  await this.SubmitButton.click();
+}
+
+  // 8. Wait for load after final submission
+  await this.page.waitForLoadState();
+  
+}
 
   // *****************
 
-
-
-
   async dateRange() {
-    const currentDate = new Date();
+  const currentDate = new Date();
 
-    // Format today's date as MM/DD/YYYY
-    const todayDate = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate
+  // Random offset for start date (0-3 days ahead of today)
+  const startOffset = Math.floor(Math.random() * 3);  
+  const startDate = new Date(currentDate);
+  startDate.setDate(currentDate.getDate() + startOffset);
+
+  // Random duration for leave (1–5 days)
+  const duration = Math.floor(Math.random() * 5) + 1;  
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + duration);
+
+  // Format as MM/DD/YYYY
+  const formatDate = (d: Date) =>
+    `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
       .getDate()
       .toString()
-      .padStart(2, '0')}/${currentDate.getFullYear()}`;
+      .padStart(2, "0")}/${d.getFullYear()}`;
 
-    // Set the max number of days to add (you can change this value)
-    const maxDays = 10;
-    const randomDays = Math.floor(Math.random() * maxDays) + 1;
+  const startDateString = formatDate(startDate);
+  const endDateString = formatDate(endDate);
 
-    const futureDate = new Date(currentDate); // Clone the current date
-    futureDate.setDate(currentDate.getDate() + randomDays);
+  // Fill in the date range
+  await this.DateRange.click();
+  await this.DateRange.fill(startDateString);
+  await this.DateRange.fill(endDateString);
 
-    // Format the future date as MM/DD/YYYY
-    const futureDateString = `${(futureDate.getMonth() + 1).toString().padStart(2, '0')}/${futureDate
-      .getDate()
-      .toString()
-      .padStart(2, '0')}/${futureDate.getFullYear()}`;
+  console.log(`Selected date range: ${startDateString} - ${endDateString}`);
+}
 
-    // Use or return the dates to avoid unused variable warnings
-    await this.DateRange.click()
-    await this.DateRange.fill(`${todayDate}`);
-    await this.DateRange.fill(`${futureDateString}`);
-    console.log(`Selected date range: ${todayDate} - ${futureDateString}`);
-
-
-  }
   async getWithDrawLink() {
-    this.WithdrawLink.click();
+    await this.WithdrawLink.first().click();
   }
-
   async fillWithDrawReason(reason: string) {
-    this.WithdrawReasonField.fill(reason)
+    await this.WithdrawReasonField.fill(reason)
   }
 
 

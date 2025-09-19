@@ -163,13 +163,15 @@ export class Employee_Management extends BasePage {
     public closePopupButton: Locator;
     public maximizeButton: Locator;
     public downloadButton: Locator;
+    public statusRow: Locator;
 
 
     constructor(page: Page) {
         super(page)
         this.Employee_Management = page.locator("//a[text()='Employee Management']")
         this.Employee_Directory_tab = page.locator("//a[text()='Employee Directory']")
-        this.Employee_Directory_tab_Header = page.locator(".d-flex")
+       // this.Employee_Directory_tab_Header = page.locator(".d-flex")
+        this.Employee_Directory_tab_Header = page.locator("//h1[text()='Employee Directory']")
         this.Employee_Directory_Cards = page.locator(".col-md-4.col-lg-3")
         this.TotalEmployeecount = page.locator(".total")
         this.Employee_Directory_Searchbar = page.locator("//input[@name = 'search']")
@@ -312,6 +314,7 @@ export class Employee_Management extends BasePage {
         this.Document_upload_Header = page.locator("div>h1")
         this.Document_Upload_Column = page.locator("thead>tr>th")
         this.Upload_Icon = page.locator("(//i[@class = 'fa fa-upload'])[1]")
+        this.statusRow = page.locator("tbody>tr>td:nth-child(4)")
         this.PopUp_Header = page.locator(".modal-header")
         this.Popup_Cross_button = page.locator(".btn-close.close-class")
         this.Popup_Cancel_button = page.locator(".cancel-promote")
@@ -919,5 +922,21 @@ export class Employee_Management extends BasePage {
         expect(newBox!.width).toBeLessThan(originalBox!.width);
         expect(newBox!.height).toBeLessThan(originalBox!.height);
     }
+
+
+    async clickUploadIfNotApproved(targetStatus: string) {
+    const statuses = await this.statusRow.allInnerTexts(); // get all status texts
+
+    let index = 0;
+    for (const status of statuses) {
+        if (status.trim() !== targetStatus) {
+            // Click the corresponding upload icon for this row
+            await this.page.locator(`(//i[@class='fa fa-upload'])[${index + 1}]`).click();
+            return; // stop after first click
+        }
+        index++;
+    }
+}
+
 
 }
