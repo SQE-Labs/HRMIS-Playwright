@@ -5,9 +5,12 @@ import testData from '../testData/testData.json';
 import { ApplyLeaves } from '../pages/ApplyLeaves';
 import { AttendanceLeaveTab } from '../pages/Attendance&Leaves';
 import * as constants from '../utils/constants';
+import { MyTeamLeavePage } from '../pages/myTeamLeave';
 
 let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
+let myTeamLeave: any;
+
 
 test.describe("Apply leaves page", () => {
     test.beforeEach(async ({ page }, testInfo) => {
@@ -23,7 +26,7 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('HRMIS_3, HRMIS_11, HRMIS_13, HRMIS_14, HRMIS_16, HRMIS_17, HRMIS_18, HRMIS_20 ApplyLeave and Withdraw Leave - End to End flow @smoke', async ({ page }) => {
+    test('HRMIS_3, HRMIS_12, HRMIS_17, HRMIS_18, HRMIS_22  ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
 
         // Apply Leave
@@ -52,5 +55,34 @@ test.describe("Apply leaves page", () => {
         expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     });
 
+    test('HRMIS_13, HRMIS_14, HRMIS_16 Verify that user is able to apply leave with 0 privilege balance @smoke @eti', async ({ page }) => {
+        const loginObj = new LoginPage(page);
+        myTeamLeave = new MyTeamLeavePage(page);
+        //logging out from super user
+        await attendanceLeaveTab.logout();
+        await page.waitForLoadState();
 
+        await loginObj.validLogin(
+            testData["DeliveryManager"].UserEmail,
+            testData.SuperUser.UserPassword
+        );
+        await applyLeave.waitForDotsLoaderToDisappear()
+        await applyLeave.waitForSpinnerLoaderToDisappear()
+        await page.waitForLoadState('networkidle');
+
+        await myTeamLeave.clickOnCrossIcon();
+
+        // Navigate to Apply Leave page
+        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+
+        // Apply Leave  
+        await applyLeave.applyLeave(
+            "PrivilegeLeave",
+            "Emergency leave"
+        );
+
+
+    });
 });
+
+

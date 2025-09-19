@@ -15,9 +15,10 @@
     "STORE": {
         "UserEmail": "asset-store@caeliusconsulting.com"
     },
-    "Delivery Manager": {
+    "DeliveryManager": {
         "UserEmail": "emp2@caeliusconsulting.com"
     },
+
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
@@ -49,5 +50,5 @@
     "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
     "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
     "NOUNIT_COLUMN": "NoUnit.xlsx",
-    "LEAVE_EMP_NAME": "elon mask"
+    "LEAVE_EMP_NAME":"Ishita Test Sharma"
 }

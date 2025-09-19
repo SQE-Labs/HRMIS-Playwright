@@ -34,5 +34,10 @@ export const APPLY_LEAVE_SUCCESSMESSAGE = "Leave Applied Successfully! Wait for 
 export const PENDING_STATUS = "PENDING";
 export const APPROVED_STATUS = "APPROVED";
 
+export  const APPROVE_ACTION= "Approve"
+export  const REJECT_ACTION= "Reject"
+
+export const APPROVE_LEAVE_SUCCESSMESSAGE = "Successfully updated."
+
 
 
