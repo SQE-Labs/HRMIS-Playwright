@@ -75,6 +75,8 @@ test.describe("My Team Leave Page", () => {
     const applyLeave = new ApplyLeaves(page);
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
 
+    applyLeave.withdrawExistingLeave();
+
     // Apply Leave
     await applyLeave.applyLeave("PrivilegeLeave", "For vacation");
 
@@ -87,7 +89,7 @@ test.describe("My Team Leave Page", () => {
       testData.SuperUser.UserPassword
     );
 
-    await myTeamLeave.clickOnCrossIcon();
+    // await myTeamLeave.clickOnCrossIcon();
 
     await myTeamLeave.applyForApproval(
       constants.APPROVE_ACTION,
