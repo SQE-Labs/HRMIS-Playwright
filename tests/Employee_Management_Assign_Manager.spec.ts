@@ -129,7 +129,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.clickOnNOButton()
         await expect(EmployeeDirectory.Pop_Up_Header).toBeHidden()
     })
-    // Locators are changed while execution
+
     test("conditionally assign and delete leave manager, then verify removal @smoke ", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()

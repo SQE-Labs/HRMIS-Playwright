@@ -380,8 +380,11 @@ export class Employee_Management extends BasePage {
         this.closePopupButton = page.locator("(//div[@class='modal-content'])[2]//button[@class='btn-close']");
         this.maximizeButton = page.locator("(//button[@class='btn modal-header-btn'])[1]");
         this.downloadButton = page.locator("(//button[@class='btn modal-header-btn'])[2]");
+        
 
     }
+    
+    
 
     async expandEmployeeManagementTab(): Promise<void> {
         await AssetHelper.expandIfCollapsed(this.Employee_Management);
@@ -672,6 +675,7 @@ export class Employee_Management extends BasePage {
         await this.YesButton.click()
 
     }
+    
 
     // async Assign_Leave_Manager() {
 

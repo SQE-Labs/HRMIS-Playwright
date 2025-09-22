@@ -26,18 +26,29 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
+    test('a Removing the withdrawn leave if exists', async ({ page }) => {
+        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+        await applyLeave.withdrawExistingLeave(); 
+    });
+    
+
     test('HRMIS_3, HRMIS_12, HRMIS_17, HRMIS_18, HRMIS_22  ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+        await applyLeave.waitForDotsLoaderToDisappear()
 
+        await applyLeave.withdrawExistingLeave(); 
+    
         // Apply Leave
         await applyLeave.applyLeave(
             "PrivilegeLeave",
             "Family function"
         );
-        await applyLeave.verifySuccessMessage(constants.APPLY_LEAVE_SUCCESSMESSAGE);
+        // Verifying the success message
+        const successMessage = await applyLeave.SuccessMessage.innerText();
+        expect(successMessage).toContain(constants.APPLY_LEAVE_SUCCESSMESSAGE);
 
         // Wait for success message to disappear before next action
-        await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
+        await applyLeave.SuccessMessage.waitFor({ state: 'hidden', timeout: 5000 });
 
         // Now click on Withdraw link
         await applyLeave.getWithDrawLink();
@@ -51,7 +62,7 @@ test.describe("Apply leaves page", () => {
         await applyLeave.getSubmitButton();
 
         // verifying the message
-        const message = await applyLeave.toastMessage();
+        const message = await applyLeave.WithdrawSuccessMessage.innerText();
         expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     });
 
@@ -70,16 +81,32 @@ test.describe("Apply leaves page", () => {
         await applyLeave.waitForSpinnerLoaderToDisappear()
         await page.waitForLoadState('networkidle');
 
-        await myTeamLeave.clickOnCrossIcon();
-
         // Navigate to Apply Leave page
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+
+        await applyLeave.withdrawExistingLeave(); 
 
         // Apply Leave  
         await applyLeave.applyLeave(
             "PrivilegeLeave",
             "Emergency leave"
         );
+
+          // Now click on Withdraw link
+        await applyLeave.getWithDrawLink();
+
+        // verify the title 
+        await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
+        // Entering Reason
+        await applyLeave.fillWithDrawReason('Cancel the Plan');
+
+        //Clicking on submit button
+        await applyLeave.getSubmitButton();
+
+         // verifying the message
+        const message = await applyLeave.toastMessage();
+        expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
+
 
 
     });

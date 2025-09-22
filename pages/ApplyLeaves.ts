@@ -1,59 +1,74 @@
-import { LoginPage } from '../pages/LoginPage';
-import { BasePage } from '../pages/Basepage';
-import { expect, Locator, Page } from '@playwright/test';
+import { LoginPage } from "../pages/LoginPage";
+import { BasePage } from "../pages/Basepage";
+import { expect, Locator, Page } from "@playwright/test";
+import * as constants from '../utils/constants';
 
 export class ApplyLeaves extends BasePage {
-
   private ApplyLeaveButton: Locator;
   public ApplyLeavePopupTitle: Locator;
   private SubmitButton: Locator;
   private LeaveTypeTextBox: Locator;
   private DateRange: Locator;
   private ReasonOfLeaveBox: Locator;
-  private SuccessMessage: Locator;
+  public  SuccessMessage: Locator;
   private WithdrawLink: Locator;
   public WithdrawPopupTitle: Locator;
   private WithdrawReasonField: Locator;
-  private WithdrawSuccessMessage: Locator;
+  public  WithdrawSuccessMessage: Locator;
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
   private duplicateLeaveToastMessage: Locator;
-
+  public allWithdrawLink: Locator;
+  private closeButton: Locator;
 
   constructor(page: Page) {
     super(page);
 
-    this.ApplyLeaveButton = page.locator("//a[text()='Apply Leave']")
-    this.ApplyLeavePopupTitle = page.locator("//a[text()='Apply Leave']")
-    this.SubmitButton = page.getByRole('button', { name: 'Submit' })
-    this.LeaveTypeTextBox = page.getByLabel('Type of leave');
-    this.DateRange = page.getByPlaceholder('mm/dd/yyyy - mm/dd/yyyy')
-    this.ReasonOfLeaveBox = page.getByRole('textbox', { name: 'Reason of Leave *' })
-    this.SuccessMessage = page.getByText('Leave Applied Successfully! Wait for Approval.')
-    this.WithdrawLink = this.page.getByText('Withdraw')
-    this.WithdrawPopupTitle = page.getByText('Withdraw Leave Request');
-    this.WithdrawReasonField = page.getByRole('textbox')
-    this.WithdrawSuccessMessage = page.getByText('Leave Withdrawn Successfully')
-    this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] ")
-    this.privilegeLeaveOption = page.getByLabel('PrivilegeLeave');
-    this.duplicateLeaveToastMessage = page.getByText('Duplicate leave request !');
+    this.ApplyLeaveButton = page.locator("//a[text()='Apply Leave']");
+    this.ApplyLeavePopupTitle = page.locator("//a[text()='Apply Leave']");
+    this.SubmitButton = page.getByRole("button", { name: "Submit" });
+    this.LeaveTypeTextBox = page.getByLabel("Type of leave");
+    this.DateRange = page.getByPlaceholder("mm/dd/yyyy - mm/dd/yyyy");
+    this.ReasonOfLeaveBox = page.getByRole("textbox", {
+      name: "Reason of Leave *",
+    });
+    this.SuccessMessage = page.getByText(
+      "Leave Applied Successfully! Wait for Approval."
+    );
+    this.WithdrawLink = this.page.getByText("Withdraw");
+    this.WithdrawPopupTitle = page.getByText("Withdraw Leave Request");
+    this.WithdrawReasonField = page.getByRole("textbox");
+    this.WithdrawSuccessMessage = page.getByText(
+      "Leave Withdrawn Successfully"
+    );
+    this.YesButtonOfApplyLeave = page.locator(
+      "//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] "
+    );
+    this.privilegeLeaveOption = page.getByLabel("PrivilegeLeave");
+    this.duplicateLeaveToastMessage = page.getByText(
+      "Duplicate leave request !"
+    );
+    this.allWithdrawLink = this.page.locator("//tr//a[text()='Withdraw']");
+    this.closeButton = this.page.locator("button.close");
   }
 
   async pickCurrentDate() {
-    const currentDate = new Date()
-    const todayDate = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate
+    const currentDate = new Date();
+    const todayDate = `${(currentDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${currentDate
       .getDate()
       .toString()
-      .padStart(2, '0')}/${currentDate.getFullYear()}`
-    return todayDate
+      .padStart(2, "0")}/${currentDate.getFullYear()}`;
+    return todayDate;
   }
 
   async getApplyLeaveBtn() {
-    this.ApplyLeaveButton.click()
+    this.ApplyLeaveButton.click();
   }
 
   async getSubmitButton() {
-    this.SubmitButton.click()
+    this.SubmitButton.click();
   }
   async selectLeaveType(type: string) {
     await this.LeaveTypeTextBox.selectOption(type);
@@ -66,102 +81,125 @@ export class ApplyLeaves extends BasePage {
   // Apply for Leave ****************
 
   async applyLeave(leaveType: string, reason: string) {
-  const privilegeCount = await this.privilegeLeaveOption.count();
+    const privilegeCount = await this.privilegeLeaveOption.count();
 
-  // 1. Open Apply Leave Popup
-  await this.ApplyLeaveButton.click();
+    // 1. Open Apply Leave Popup
+    await this.ApplyLeaveButton.click();
 
-  // 2. Select leave type (dynamic)
-  await this.LeaveTypeTextBox.selectOption(leaveType);
+    // 2. Select leave type (dynamic)
+    await this.LeaveTypeTextBox.selectOption(leaveType);
 
-  // 3. If privilege leave option is not present, click Yes button only if visible
-  if (privilegeCount === 0) {
-    if (await this.YesButtonOfApplyLeave.isVisible()) {
-      await this.YesButtonOfApplyLeave.waitFor({ state: 'visible', timeout: 5000 });
-      await this.YesButtonOfApplyLeave.click();
-    } else {
-      console.log('Yes button not visible, skipping click.');
+    // 3. If privilege leave option is not present, click Yes button only if visible
+    if (privilegeCount === 0) {
+      if (await this.YesButtonOfApplyLeave.isVisible()) {
+        await this.YesButtonOfApplyLeave.waitFor({
+          state: "visible",
+          timeout: 5000,
+        });
+        await this.YesButtonOfApplyLeave.click();
+      } else {
+        console.log("Yes button not visible, skipping click.");
+      }
     }
+
+    // 4. Select date range
+    await this.dateRange();
+
+    // 5. Enter reason for leave
+    await this.ReasonOfLeaveBox.fill(reason);
+
+    // 6. Submit form
+    await this.SubmitButton.click();
+    await this.page.waitForLoadState();
+
+    // 7. Check for duplicate leave toast
+    const isDuplicate = await this.duplicateLeaveToastMessage
+      .waitFor({ state: "visible", timeout: 6000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (isDuplicate) {
+      console.log("Duplicate leave detected. Retrying with new dates....");
+        await expect(this.duplicateLeaveToastMessage).toBeHidden();
+        
+      // Reselect new date range
+      await this.dateRange();
+
+      // Resubmit
+      await this.SubmitButton.click();
+    }
+
+    // 8. Wait for load after final submission
+    await this.page.waitForLoadState();;
   }
-
-  // 4. Select date range
-  await this.dateRange();
-
-  // 5. Enter reason for leave
-  await this.ReasonOfLeaveBox.fill(reason);
-
-  // 6. Submit form
-  await this.SubmitButton.click();
-  await this.page.waitForLoadState();
-
-  // 7. Check for duplicate leave toast
-const isDuplicate = await this.duplicateLeaveToastMessage
-  .waitFor({ state: 'visible', timeout: 3000 })
-  .then(() => true)
-  .catch(() => false);
-
-if (isDuplicate) {
-  console.log("Duplicate leave detected. Retrying with new dates....");
-
-  // Reselect new date range
-  await this.dateRange();
-
-  // Resubmit
-  await this.SubmitButton.click();
-}
-
-  // 8. Wait for load after final submission
-  await this.page.waitForLoadState();
-  
-}
 
   // *****************
 
   async dateRange() {
-  const currentDate = new Date();
+    const currentDate = new Date();
 
-  // Random offset for start date (0-3 days ahead of today)
-  const startOffset = Math.floor(Math.random() * 3);  
-  const startDate = new Date(currentDate);
-  startDate.setDate(currentDate.getDate() + startOffset);
+    // Random offset for start date (0-3 days ahead of today)
+    const startOffset = Math.floor(Math.random() * 3);
+    const startDate = new Date(currentDate);
+    startDate.setDate(currentDate.getDate() + startOffset);
 
-  // Random duration for leave (1–5 days)
-  const duration = Math.floor(Math.random() * 5) + 1;  
-  const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + duration);
+    // Random duration for leave (1–5 days)
+    const duration = Math.floor(Math.random() * 5) + 1;
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + duration);
 
-  // Format as MM/DD/YYYY
-  const formatDate = (d: Date) =>
-    `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
-      .getDate()
-      .toString()
-      .padStart(2, "0")}/${d.getFullYear()}`;
+    // Format as MM/DD/YYYY
+    const formatDate = (d: Date) =>
+      `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
+        .getDate()
+        .toString()
+        .padStart(2, "0")}/${d.getFullYear()}`;
 
-  const startDateString = formatDate(startDate);
-  const endDateString = formatDate(endDate);
+    const startDateString = formatDate(startDate);
+    const endDateString = formatDate(endDate);
 
-  // Fill in the date range
-  await this.DateRange.click();
-  await this.DateRange.fill(startDateString);
-  await this.DateRange.fill(endDateString);
+    // Fill in the date range
+    await this.DateRange.click();
+    await this.DateRange.fill(startDateString);
+    await this.DateRange.fill(endDateString);
 
-  console.log(`Selected date range: ${startDateString} - ${endDateString}`);
-}
-
+    console.log(`Selected date range: ${startDateString} - ${endDateString}`);
+  }
   async getWithDrawLink() {
     await this.WithdrawLink.first().click();
   }
   async fillWithDrawReason(reason: string) {
-    await this.WithdrawReasonField.fill(reason)
+    await this.WithdrawReasonField.fill(reason);
   }
-
 
   async isWithdrawVisible(): Promise<boolean> {
     return await this.WithdrawLink.isVisible();
   }
 
+  async withdrawExistingLeave(withdrawReason: string = "Updating leave") {
+    let withdrawLinksCount = await this.allWithdrawLink.count();
 
+    while (withdrawLinksCount > 0) {
+      console.log(
+        `Found ${withdrawLinksCount} existing leave(s). Withdrawing the first one...`
+      );
 
+      // Click the first withdraw link
+      await this.allWithdrawLink.first().click();
+
+      // Fill the withdrawal reason
+      await this.fillWithDrawReason(withdrawReason);
+
+      // Submit the withdrawal
+      await this.SubmitButton.click();
+
+      // Wait for page to update
+      await this.page.waitForTimeout(1000);
+
+      // Recalculate the number of remaining withdraw links
+      withdrawLinksCount = await this.allWithdrawLink.count();
+    }
+
+    console.log("No more existing leaves to withdraw.");
+  }
 }
-
-
