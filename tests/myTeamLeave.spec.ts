@@ -75,6 +75,8 @@ test.describe("My Team Leave Page", () => {
     const applyLeave = new ApplyLeaves(page);
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
 
+    applyLeave.withdrawExistingLeave();
+
     // Apply Leave
     await applyLeave.applyLeave("PrivilegeLeave", "For vacation");
 

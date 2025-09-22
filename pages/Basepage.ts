@@ -88,5 +88,4 @@ export class BasePage extends CommonUtils {
     console.log("User logged out successfully");
   }
 
-
 }
