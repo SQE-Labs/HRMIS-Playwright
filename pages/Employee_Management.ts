@@ -167,6 +167,10 @@ export class Employee_Management extends BasePage {
     public statusRow: Locator;
 
 
+    public designations: Locator
+    public submitBtn: Locator
+
+
     constructor(page: Page) {
         super(page)
         this.Employee_Management = page.locator("//a[text()='Employee Management']")
@@ -380,11 +384,14 @@ export class Employee_Management extends BasePage {
         this.closePopupButton = page.locator("(//div[@class='modal-content'])[2]//button[@class='btn-close']");
         this.maximizeButton = page.locator("(//button[@class='btn modal-header-btn'])[1]");
         this.downloadButton = page.locator("(//button[@class='btn modal-header-btn'])[2]");
-        
+        this.designations = page.locator("//a[text()='Designations']")
+        this.submitBtn = page.locator('//button[type() = "Submit"]')
+
+
 
     }
-    
-    
+
+
 
     async expandEmployeeManagementTab(): Promise<void> {
         await AssetHelper.expandIfCollapsed(this.Employee_Management);
@@ -629,7 +636,6 @@ export class Employee_Management extends BasePage {
     async clickOnCancelButton(Locator: Locator) {
         await Locator.click()
         await this.waitforLoaderToDisappear()
-
     }
 
     async verifyCollapseIsHidden(value: number) {
@@ -675,7 +681,7 @@ export class Employee_Management extends BasePage {
         await this.YesButton.click()
 
     }
-    
+
 
     // async Assign_Leave_Manager() {
 
@@ -932,18 +938,40 @@ export class Employee_Management extends BasePage {
 
 
     async clickUploadIfNotApproved(targetStatus: string) {
-    const statuses = await this.statusRow.allInnerTexts(); // get all status texts
+        const statuses = await this.statusRow.allInnerTexts(); // get all status texts
 
-    let index = 0;
-    for (const status of statuses) {
-        if (status.trim() !== targetStatus) {
-            // Click the corresponding upload icon for this row
-            await this.page.locator(`(//i[@class='fa fa-upload'])[${index + 1}]`).click();
-            return; // stop after first click
+        let index = 0;
+        for (const status of statuses) {
+            if (status.trim() !== targetStatus) {
+                // Click the corresponding upload icon for this row
+                await this.page.locator(`(//i[@class='fa fa-upload'])[${index + 1}]`).click();
+                return; // stop after first click
+            }
+            index++;
         }
-        index++;
     }
-}
+
+    async navigateToDesignations() {
+        await this.designations.click()
+    }
+
+    async clickOnAddDesignation() {
+        await this.page.getByText("+ Add Designation").click()
+    }
+    async fillNameField(Name: string) {
+        await this.page.getByPlaceholder("Enter Designation Name").fill(Name)
+    }
+
+
+    async selectDesignationDropdownOptionByIndex(index: number) {
+        await this.page.locator(`#react-select-2-option-${index}`).click();
+    }
+    async selectDepartment(value: number) {
+        let dropdownLocator = this.page.locator("#react-select-2-input")
+        await expect(dropdownLocator).toBeVisible()
+        await dropdownLocator.click()
+        await this.selectDesignationDropdownOptionByIndex(value)
+    }
 
 
 }
