@@ -96,7 +96,7 @@ export class ApplyLeaves extends BasePage {
 
   // 7. Check for duplicate leave toast
 const isDuplicate = await this.duplicateLeaveToastMessage
-  .waitFor({ state: 'visible', timeout: 3000 })
+  .waitFor({ state: 'visible', timeout: 4000 })
   .then(() => true)
   .catch(() => false);
 
