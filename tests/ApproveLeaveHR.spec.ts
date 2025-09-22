@@ -32,6 +32,7 @@ test.describe("Approve Leave HR module ", () => {
 
     test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
          await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+         await applyLeave.withdrawExistingLeave(); 
 
         // Apply Leave
         await applyLeave.applyLeave(
@@ -48,7 +49,7 @@ test.describe("Approve Leave HR module ", () => {
       testData.SuperUser.UserPassword
     );
 
-    await myTeamLeave.clickOnCrossIcon();
+    // await myTeamLeave.clickOnCrossIcon();
     await myTeamLeave.waitforLoaderToDisappear();
 
     // Navigate to My Team Leave tab and apply for approval from delivery manager

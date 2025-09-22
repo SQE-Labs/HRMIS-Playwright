@@ -26,9 +26,17 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
+    test('1 Withdraw existing leave if any, then Apply Leave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
+         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+            // Withdraw existing leave if any
+         await applyLeave.withdrawExistingLeave();
+         await page.waitForTimeout(2000)
+    });
+
+
     test('HRMIS_3, HRMIS_12, HRMIS_17, HRMIS_18, HRMIS_22  ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-
+          await applyLeave.withdrawExistingLeave(); 
         // Apply Leave
         await applyLeave.applyLeave(
             "PrivilegeLeave",
@@ -70,16 +78,28 @@ test.describe("Apply leaves page", () => {
         await applyLeave.waitForSpinnerLoaderToDisappear()
         await page.waitForLoadState('networkidle');
 
-        await myTeamLeave.clickOnCrossIcon();
-
         // Navigate to Apply Leave page
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+
+        await applyLeave.withdrawExistingLeave(); 
 
         // Apply Leave  
         await applyLeave.applyLeave(
             "PrivilegeLeave",
             "Emergency leave"
         );
+
+          // Now click on Withdraw link
+        await applyLeave.getWithDrawLink();
+
+        // verify the title 
+        await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
+        // Entering Reason
+        await applyLeave.fillWithDrawReason('Cancel the Plan');
+
+        //Clicking on submit button
+        await applyLeave.getSubmitButton();
+
 
 
     });

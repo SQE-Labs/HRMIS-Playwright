@@ -87,7 +87,7 @@ test.describe("My Team Leave Page", () => {
       testData.SuperUser.UserPassword
     );
 
-    await myTeamLeave.clickOnCrossIcon();
+    // await myTeamLeave.clickOnCrossIcon();
 
     await myTeamLeave.applyForApproval(
       constants.APPROVE_ACTION,

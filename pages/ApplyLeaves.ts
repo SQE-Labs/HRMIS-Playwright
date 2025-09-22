@@ -18,6 +18,7 @@ export class ApplyLeaves extends BasePage {
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
   private duplicateLeaveToastMessage: Locator;
+  public allWithdrawLink: Locator;
 
 
   constructor(page: Page) {
@@ -37,6 +38,7 @@ export class ApplyLeaves extends BasePage {
     this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] ")
     this.privilegeLeaveOption = page.getByLabel('PrivilegeLeave');
     this.duplicateLeaveToastMessage = page.getByText('Duplicate leave request !');
+    this.allWithdrawLink = this.page.locator("//tr//a[text()='Withdraw']");
   }
 
   async pickCurrentDate() {
@@ -67,7 +69,7 @@ export class ApplyLeaves extends BasePage {
 
   async applyLeave(leaveType: string, reason: string) {
   const privilegeCount = await this.privilegeLeaveOption.count();
-
+  
   // 1. Open Apply Leave Popup
   await this.ApplyLeaveButton.click();
 
@@ -108,6 +110,7 @@ if (isDuplicate) {
 
   // Resubmit
   await this.SubmitButton.click();
+  
 }
 
   // 8. Wait for load after final submission
@@ -155,12 +158,34 @@ if (isDuplicate) {
     await this.WithdrawReasonField.fill(reason)
   }
 
-
   async isWithdrawVisible(): Promise<boolean> {
     return await this.WithdrawLink.isVisible();
   }
 
+ async withdrawExistingLeave(withdrawReason: string = "Updating leave") {
+    let withdrawLinksCount = await this.allWithdrawLink.count();
 
+    while (withdrawLinksCount > 0) {
+        console.log(`Found ${withdrawLinksCount} existing leave(s). Withdrawing the first one...`);
+
+        // Click the first withdraw link
+        await this.allWithdrawLink.first().click();
+
+        // Fill the withdrawal reason
+        await this.fillWithDrawReason(withdrawReason);
+
+        // Submit the withdrawal
+        await this.SubmitButton.click();
+
+        // Wait for page to update
+        await this.page.waitForTimeout(1000);
+
+        // Recalculate the number of remaining withdraw links
+        withdrawLinksCount = await this.allWithdrawLink.count();
+    }
+
+    console.log("No more existing leaves to withdraw.");
+}
 
 }
 
