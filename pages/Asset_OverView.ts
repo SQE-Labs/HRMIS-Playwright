@@ -377,9 +377,9 @@ export class OverView extends AssetManagementTab {
     async getFilteredData(): Promise<number> {
         // await this.page.pause()
         await this.openCard("Desktop PC");
-        const superOwnerValue = await this.selectRandomSuperOwner();
+        const superOwnerValue = await this.selectSuperOwner("CAELIUS_OWNED");
         expect(superOwnerValue, "Super Owner selection should not be empty").not.toBe("");
-        const ownerValue = await this.selectRandomOwner();
+        const ownerValue = await this.selectOwner("Consultant");
         expect(ownerValue, "Owner selection should not be empty").not.toBe("");
         const availabilityValue = await this.selectAvailability("Assigned");
         expect(availabilityValue, "Availability selection should not be empty").not.toBe("");
