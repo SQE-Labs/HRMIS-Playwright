@@ -973,5 +973,7 @@ export class Employee_Management extends BasePage {
         await this.selectDesignationDropdownOptionByIndex(value)
     }
 
-
+    async clickOnEditIcon(Name: string) {
+        await this.page.locator(`//td[contains(text(), '${Name}' )]/../td[5]/a`).click()
+    }
 }

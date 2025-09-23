@@ -29,7 +29,7 @@ export default defineConfig({
   //  "tests/AssetManagement.spec.ts",
   //  "LoginPage.spec.ts"
   // ],
-  fullyParallel: true,
+  fullyParallel: false,
   retries: process.env.CI ? 0 : 0,
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
