@@ -4,11 +4,11 @@ import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
 import { MyTeamLeavePage } from "../pages/myTeamLeave";
-import { ApplyLeaves } from "../pages/ApplyLeaves"; 
+import { ApplyLeaves } from "../pages/ApplyLeaves";
 import { ApproveLeaveHR } from "../pages/ApproveLeaveHR";
 
 let loginObj: LoginPage;
-let approveLeaveHR: ApproveLeaveHR;
+// let approveLeaveHR: ApproveLeaveHR;
 let attendanceLeaveTab: AttendanceLeaveTab;
 let applyLeave: ApplyLeaves;
 let myTeamLeave: MyTeamLeavePage;
@@ -21,26 +21,26 @@ test.describe("Approve Leave HR module ", () => {
       testData.SuperUser.UserPassword
     );
     // creating object for Approve Leave HR page
-    approveLeaveHR = new ApproveLeaveHR(page);
-     attendanceLeaveTab = new AttendanceLeaveTab(page);
-     applyLeave = new ApplyLeaves(page);
-     myTeamLeave = new MyTeamLeavePage(page);
+    // approveLeaveHR = new ApproveLeaveHR(page);
+    attendanceLeaveTab = new AttendanceLeaveTab(page);
+    applyLeave = new ApplyLeaves(page);
+    myTeamLeave = new MyTeamLeavePage(page);
 
 
     console.log(">> Starting test case : " + testInfo.title);
-    });
+  });
 
-    test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
-         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-         await applyLeave.withdrawExistingLeave(); 
+  test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
+    await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+    await applyLeave.withdrawExistingLeave();
 
-        // Apply Leave
-        await applyLeave.applyLeave(
-            "PrivilegeLeave",
-            "Family function"
-        );
+    // Apply Leave
+    await applyLeave.applyLeave(
+      "PrivilegeLeave",
+      "Family function"
+    );
 
-        //logging out from super user
+    //logging out from super user
     await attendanceLeaveTab.logout();
 
     // Logging in as Delivery Manager
@@ -54,13 +54,13 @@ test.describe("Approve Leave HR module ", () => {
 
     // Navigate to My Team Leave tab and apply for approval from delivery manager
 
-     await myTeamLeave.applyForApproval(
-          constants.APPROVE_ACTION,
-          constants.APPROVED_STATUS,
-          constants.APPROVE_LEAVE_SUCCESSMESSAGE
-        );
+    await myTeamLeave.applyForApproval(
+      constants.APPROVE_ACTION,
+      constants.APPROVED_STATUS,
+      constants.APPROVE_LEAVE_SUCCESSMESSAGE
+    );
 
-        await myTeamLeave.waitforLoaderToDisappear();
+    await myTeamLeave.waitforLoaderToDisappear();
 
     //logging out from Delivery Manager
     await attendanceLeaveTab.logout();
@@ -75,22 +75,23 @@ test.describe("Approve Leave HR module ", () => {
     // Navigate to Approve Leave HR tab
     await attendanceLeaveTab.navigateToAttendanceTab('Approve Leave (HR)');
 
-  // // Clicking on view button of the leave to final approve from HR
-  //   await approveLeaveHR.clickOnViewButton();
-
-
-});
-});
-    
-
-
-     
-      
-
-
-
-
-
-
+// Clicking on view button of the leave to final approve from HR
+    // await approveLeaveHR.clickOnViewButton();
 
     
+
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
