@@ -21,51 +21,38 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("HRMIS_23, HRMIS_24 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
-    page,
-  }) => {
-    const attendanceLeaveTab = new AttendanceLeaveTab(page); 
+  test("HRMIS_23, HRMIS_24 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({page,}) => {
+    const attendanceLeaveTab = new AttendanceLeaveTab(page);
     await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
 
-    // verify the default status of dropdown
+       // Verify default value of status dropdown
     await myTeamLeave.verifyDefaultValueOfStatusDropdown();
 
-    // verify the default select by emplyoee name field
+    // Verify the search box is visible
     expect(await myTeamLeave.isSearchBoxVisible()).toBeTruthy();
     await myTeamLeave.waitforLoaderToDisappear();
 
-    // Select any leave status
+    // for Approve status
+    await myTeamLeave.verifyTheEmployeeNamesInTheList(
+      constants.APPROVED_STATUS,
+      testData.LEAVE_EMP_NAME
+    );
+    await myTeamLeave.waitforLoaderToDisappear();
+    await page.waitForTimeout(2000);
 
-    await myTeamLeave.selectLeaveStatus(constants.APPROVED_STATUS);
+    // for Reject status
+    await myTeamLeave.verifyTheEmployeeNamesInTheList(
+    constants.REJECTED_STATUS,
+    testData.LEAVE_EMP_NAME
+);
     await myTeamLeave.waitforLoaderToDisappear();
 
-    // verify the leave status dropdown value
-    await myTeamLeave.selectLeaveStatus(constants.APPROVED_STATUS);
+    // for Pending status
+    await myTeamLeave.verifyTheEmployeeNamesInTheList(
+      constants.PENDING_STATUS,
+      testData.LEAVE_EMP_NAME
+    );
 
-    const selectedValue = await myTeamLeave.statusDropdown.inputValue();
-    expect(selectedValue).toBe(constants.APPROVED_STATUS);
-    await myTeamLeave.waitForDotsLoaderToDisappear
-    await myTeamLeave.waitforLoaderToDisappear();
-
-    // Entering partial value in the search employee name field
-    await myTeamLeave.searchEmployee(testData.LEAVE_EMP_NAME);
-    await myTeamLeave.waitforLoaderToDisappear();
-
-    // Wait for search results to appear
-    await myTeamLeave.employeeRows.first().waitFor({ state: "visible" });
-
-    // Now get all employee names
-    const employees = await myTeamLeave.getEmployeeNames();
-    console.log("Search results:", employees);
-
-    // Verify that each employee name contains the search term (case-insensitive)
-    for (let name of employees) {
-      if (name) {
-        expect(name.trim().toLowerCase()).toContain(
-          testData.LEAVE_EMP_NAME.toLowerCase()
-        );
-      }
-    }
   });
 
   test(" HRMIS_4, HRMIS_8 HRMIS_3 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled. @smoke @eti", async ({

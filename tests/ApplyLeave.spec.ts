@@ -87,6 +87,7 @@ test.describe("Apply leaves page", () => {
 
         // Navigate to Apply Leave page
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+        
 
         await applyLeave.withdrawExistingLeave(); 
 
@@ -102,7 +103,7 @@ test.describe("Apply leaves page", () => {
         expect(message1).toContain(constants.APPLY_LEAVE_SUCCESSMESSAGE);
 
         // Wait for success message to disappear before next action
-        await applyLeave.SuccessMessage.waitFor({ state: 'hidden', timeout: 5000 });
+        await applyLeave.SuccessMessage.waitFor({ state: 'hidden', timeout: 8000 });
 
         // Now click on Withdraw link
         await applyLeave.getWithDrawLink();

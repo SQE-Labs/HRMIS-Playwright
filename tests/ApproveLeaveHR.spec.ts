@@ -12,6 +12,7 @@ let loginObj: LoginPage;
 let attendanceLeaveTab: AttendanceLeaveTab;
 let applyLeave: ApplyLeaves;
 let myTeamLeave: MyTeamLeavePage;
+let approveLeaveHR: ApproveLeaveHR;
 
 test.describe("Approve Leave HR module ", () => {
   test.beforeEach(async ({ page }, testInfo) => {
@@ -25,22 +26,19 @@ test.describe("Approve Leave HR module ", () => {
     attendanceLeaveTab = new AttendanceLeaveTab(page);
     applyLeave = new ApplyLeaves(page);
     myTeamLeave = new MyTeamLeavePage(page);
-
+    approveLeaveHR = new ApproveLeaveHR(page);
 
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-    test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
-         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-          await applyLeave.waitForDotsLoaderToDisappear()
+  test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke", async ({ page }) => {
+    await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
+    await applyLeave.waitForDotsLoaderToDisappear();
 
-         await applyLeave.withdrawExistingLeave(); 
+    await applyLeave.withdrawExistingLeave();
 
     // Apply Leave
-    await applyLeave.applyLeave(
-      "PrivilegeLeave",
-      "Family function"
-    );
+    await applyLeave.applyLeave("PrivilegeLeave", "Family function");
 
     //logging out from super user
     await attendanceLeaveTab.logout();
@@ -62,37 +60,51 @@ test.describe("Approve Leave HR module ", () => {
       constants.APPROVE_LEAVE_SUCCESSMESSAGE
     );
 
-    await myTeamLeave.waitforLoaderToDisappear();
-
     //logging out from Delivery Manager
     await attendanceLeaveTab.logout();
 
     // Logging in as Super User
-    loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,
       testData.SuperUser.UserPassword
     );
 
     // Navigate to Approve Leave HR tab
-    await attendanceLeaveTab.navigateToAttendanceTab('Approve Leave (HR)');
+    await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
 
-   // Clicking on view button of the leave to final approve from HR
-      await approveLeaveHR.clickViewLeaveLink();
+    // Approve Leave as HR
+    await approveLeaveHR.HRAppoveLeaveAction(
+      constants.APPROVE_ACTION,
+      constants.APPROVED_STATUS,
+      constants.APPROVE_LEAVE_SUCCESSMESSAGE
+    );
+  });
+  // failed while searching with firstname with last name #known bug
+  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @eti", async ({
+    page,
+  }) => {
+    // Navigate to My Team Leave tab
+    await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
+    await approveLeaveHR.waitforLoaderToDisappear();
+
+    // Verify search box is visible
+    expect(await myTeamLeave.isSearchBoxVisible()).toBeTruthy();
+
+    // Verify default value of status dropdown
+    await myTeamLeave.verifyDefaultValueOfStatusDropdown();
+
+    // Verify the search box is visible
+    expect(await myTeamLeave.isSearchBoxVisible()).toBeTruthy();
+    await myTeamLeave.waitforLoaderToDisappear();
+
+    // for Approve status and enter full name
+    await myTeamLeave.verifyTheEmployeeNamesInTheList(
+      constants.APPROVED_STATUS,
+      testData.LEAVE_EMP_NAME3
+    );
+    
 
 
+    
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

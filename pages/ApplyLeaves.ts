@@ -1,7 +1,7 @@
 import { LoginPage } from "../pages/LoginPage";
 import { BasePage } from "../pages/Basepage";
 import { expect, Locator, Page } from "@playwright/test";
-import * as constants from '../utils/constants';
+import * as constants from "../utils/constants";
 
 export class ApplyLeaves extends BasePage {
   private ApplyLeaveButton: Locator;
@@ -10,17 +10,17 @@ export class ApplyLeaves extends BasePage {
   private LeaveTypeTextBox: Locator;
   private DateRange: Locator;
   private ReasonOfLeaveBox: Locator;
-  public  SuccessMessage: Locator;
+  public SuccessMessage: Locator;
   private WithdrawLink: Locator;
   public WithdrawPopupTitle: Locator;
   private WithdrawReasonField: Locator;
-  public  WithdrawSuccessMessage: Locator;
+  public WithdrawSuccessMessage: Locator;
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
   private duplicateLeaveToastMessage: Locator;
   public allWithdrawLink: Locator;
   private closeButton: Locator;
-     leaveCounter = 0;
+  leaveCounter = 0;
 
   constructor(page: Page) {
     super(page);
@@ -112,61 +112,7 @@ export class ApplyLeaves extends BasePage {
     // 6. Submit form
     await this.SubmitButton.click();
     await this.page.waitForLoadState();
-
-    // 7. Check for duplicate leave toast
-    const isDuplicate = await this.duplicateLeaveToastMessage
-      .waitFor({ state: "visible", timeout: 6000 })
-      .then(() => true)
-      .catch(() => false);
-
-    if (isDuplicate) {
-      console.log("Duplicate leave detected. Retrying with new dates....");
-        await expect(this.duplicateLeaveToastMessage).toBeHidden();
-        
-      // Reselect new date range
-      await this.dateRange();
-
-      // Resubmit
-      await this.SubmitButton.click();
-    }
-
-    // 8. Wait for load after final submission
-    await this.page.waitForLoadState();;
   }
-
-  // *****************
-
-  // async dateRange() {
-  //   const currentDate = new Date();
-
-  //   // Random offset for start date (0-4 days ahead of today)
-  //   const startOffset = Math.floor(Math.random() * 4);
-  //   const startDate = new Date(currentDate);
-  //   startDate.setDate(currentDate.getDate() + startOffset);
-
-  //   // Random duration for leave (1–5 days)
-  //   const duration = Math.floor(Math.random() * 5) + 1;
-  //   const endDate = new Date(startDate);
-  //   endDate.setDate(startDate.getDate() + duration);
-
-  //   // Format as MM/DD/YYYY
-  //   const formatDate = (d: Date) =>
-  //     `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
-  //       .getDate()
-  //       .toString()
-  //       .padStart(2, "0")}/${d.getFullYear()}`;
-
-  //   const startDateString = formatDate(startDate);
-  //   const endDateString = formatDate(endDate);
-
-  //   // Fill in the date range
-  //   await this.DateRange.click();
-  //   await this.DateRange.fill(startDateString);
-  //   await this.DateRange.fill(endDateString);
-
-  //   console.log(`Selected date range: ${startDateString} - ${endDateString}`);
-  // }
-
 
   async getWithDrawLink() {
     await this.WithdrawLink.first().click();
@@ -205,38 +151,61 @@ export class ApplyLeaves extends BasePage {
 
     console.log("No more existing leaves to withdraw.");
   }
-  async dateRange() {
-    const currentDate = new Date();
+  async dateRange(maxRetries: number = 5) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      // 1. Calculate unique start & end dates
+      const currentDate = new Date();
+      const monthOffset = Math.floor(this.leaveCounter / 28);
+      const dayOffset = (this.leaveCounter % 28) + 1;
+      const startDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + monthOffset,
+        dayOffset
+      );
 
-    // Use counter + random offset to ensure unique start date
-    const startOffset = Math.floor(Math.random() * 4) + this.leaveCounter;
-    const startDate = new Date(currentDate);
-    startDate.setDate(currentDate.getDate() + startOffset);
+      const duration = Math.floor(Math.random() * 5) + 1; // leave length
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + duration);
 
-    // Random leave duration (1–5 days)
-    const duration = Math.floor(Math.random() * 5) + 1;
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + duration);
-
-    // Format as MM/DD/YYYY
-    const formatDate = (d: Date) =>
+      const formatDate = (d: Date) =>
         `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
-            .getDate()
-            .toString()
-            .padStart(2, "0")}/${d.getFullYear()}`;
+          .getDate()
+          .toString()
+          .padStart(2, "0")}/${d.getFullYear()}`;
 
-    const startDateString = formatDate(startDate);
-    const endDateString = formatDate(endDate);
+      const startDateString = formatDate(startDate);
+      const endDateString = formatDate(endDate);
 
-    // Fill in the date range in the UI
-    await this.DateRange.click();
-    await this.DateRange.fill(startDateString);
-    await this.DateRange.fill(endDateString);
+      // 2. Fill into UI
+      await this.DateRange.click();
+      await this.DateRange.fill(startDateString);
+      await this.DateRange.fill(endDateString);
 
-    console.log(`Selected date range: ${startDateString} - ${endDateString}`);
+      console.log(
+        `Attempt ${attempt + 1}: Selected ${startDateString} - ${endDateString}`
+      );
 
-    // Increment the counter for the next test
-    this.leaveCounter++;
-}
+      // 3. Small wait so UI can react (toast might appear)
+      await this.page.waitForTimeout(1000);
 
+      // 4. Check if duplicate toast appeared
+      const isDuplicate = await this.duplicateLeaveToastMessage
+        .waitFor({ state: "visible", timeout: 3000 })
+        .then(() => true)
+        .catch(() => false);
+
+      // 5. If no duplicate → success
+      if (!isDuplicate) {
+        this.leaveCounter++;
+        return;
+      }
+
+      // 6. If duplicate → log + retry with new dates
+      console.warn("Duplicate date found. Retrying with next counter...");
+      this.leaveCounter++;
+    }
+
+    // 7. If all retries failed → throw error
+    throw new Error("Could not find a unique date range after retries.");
+  }
 }

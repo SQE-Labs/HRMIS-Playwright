@@ -3,6 +3,7 @@ import { BasePage } from "../pages/Basepage";
 import { expect, Locator, Page } from "@playwright/test";
 import * as constants from "../utils/constants";
 import { AttendanceLeaveTab } from "./Attendance&Leaves";
+import testData from "../testData/testData.json";
 
 export class MyTeamLeavePage extends BasePage {
   public pageTitle: Locator;
@@ -17,7 +18,7 @@ export class MyTeamLeavePage extends BasePage {
   private submitButton: Locator;
   public approveSuccessMessage: Locator;
   public employeeRows: Locator;
-  public employeeColumn1: Locator
+  // public employeeColumn1: Locator
   
 
   attendanceLeaveTab = new AttendanceLeaveTab(this.page);
@@ -114,4 +115,38 @@ export class MyTeamLeavePage extends BasePage {
     // Verify success message
     expect(await this.approveSuccessMessage.textContent()).toBe(successMessage);
   }
+  // ....................
+
+    async verifyTheEmployeeNamesInTheList(leaveStatus: string, employeeName: string) {
+    // Select the leave status
+    await this.selectLeaveStatus(leaveStatus);
+    await this.waitforLoaderToDisappear();
+
+    // Verify the leave status dropdown value
+    const selectedValue = await this.statusDropdown.inputValue();
+    expect(selectedValue).toBe(leaveStatus);
+
+    await this.waitForDotsLoaderToDisappear();
+    await this.waitforLoaderToDisappear();
+
+    // Enter partial employee name in search box
+    await this.searchEmployee(employeeName);
+    await this.waitforLoaderToDisappear();
+
+    // Wait for search results to appear
+    await this.employeeRows.first().waitFor({ state: "visible" });
+
+    // Get all employee names in the list
+    const employees = await this.getEmployeeNames();
+    console.log("Search results:", employees);
+
+    // Verify each employee name contains the search term (case-insensitive)
+    for (let name of employees) {
+      if (name) {
+        expect(name.trim().toLowerCase()).toContain(employeeName.toLowerCase());
+      }
+    }
 }
+
+}
+
