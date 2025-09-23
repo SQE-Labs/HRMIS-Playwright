@@ -74,7 +74,7 @@ test.describe("Asset Overview page", () => {
                 console.debug("Details are displayed on cards");
         });
 
-        test.only("Verify when clicking on any card, card opens up @smoke", async () => {
+        test("Verify when clicking on any card, card opens up @smoke", async () => {
                 // TC_AM_009
                 await assetOverview.openCard("Desktop PC");
                 await assetOverview.countInnerAssets();
@@ -148,7 +148,7 @@ test.describe("Asset Overview page", () => {
 
         })
 
-        test.only("Verify Redirection from asset Overview header @smoke", async () => {
+        test("Verify Redirection from asset Overview header @smoke", async () => {
                 await assetOverview.openCard("Desktop PC")
                 await assetOverview.assetOverviewRedirect.click()
                 await assetOverview.waitforLoaderToDisappear()

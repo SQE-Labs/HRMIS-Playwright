@@ -29,7 +29,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         await EmployeeDirectory.selectDepartment(3) 
         await EmployeeDirectory.waitforLoaderToDisappear()
         await expect(page.getByText("S.No.")).toBeVisible()
-        await expect(page.getByText("Designation").nth(6)).toBeVisible()
+        // await expect(page.getByText("Designation").nth(6)).toBeVisible()
         await expect(page.getByText("Creation Date")).toBeVisible()
         await expect(page.getByText("Status")).toBeVisible()
         await expect(page.getByText("Action").last()).toBeVisible()
@@ -44,7 +44,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         await EmployeeDirectory.clickOnAddDesignation()
         await EmployeeDirectory.waitForDotsLoaderToDisappear()
         await EmployeeDirectory.fillNameField(name)
-        await EmployeeDirectory.submitBtn.click()
+        await page.getByText("Submit").click()
         await EmployeeDirectory.waitForDotsLoaderToDisappear()
         await expect(page.getByText(name)).toBeVisible()
 

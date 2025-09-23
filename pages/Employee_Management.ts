@@ -385,7 +385,7 @@ export class Employee_Management extends BasePage {
         this.maximizeButton = page.locator("(//button[@class='btn modal-header-btn'])[1]");
         this.downloadButton = page.locator("(//button[@class='btn modal-header-btn'])[2]");
         this.designations = page.locator("//a[text()='Designations']")
-        this.submitBtn = page.locator('//button[type() = "Submit"]')
+        this.submitBtn = page.locator('//button[type= "Submit"]')
 
 
 
