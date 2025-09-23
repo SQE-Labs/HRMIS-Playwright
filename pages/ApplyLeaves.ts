@@ -20,6 +20,7 @@ export class ApplyLeaves extends BasePage {
   private duplicateLeaveToastMessage: Locator;
   public allWithdrawLink: Locator;
   private closeButton: Locator;
+     leaveCounter = 0;
 
   constructor(page: Page) {
     super(page);
@@ -135,36 +136,38 @@ export class ApplyLeaves extends BasePage {
 
   // *****************
 
-  async dateRange() {
-    const currentDate = new Date();
+  // async dateRange() {
+  //   const currentDate = new Date();
 
-    // Random offset for start date (0-3 days ahead of today)
-    const startOffset = Math.floor(Math.random() * 3);
-    const startDate = new Date(currentDate);
-    startDate.setDate(currentDate.getDate() + startOffset);
+  //   // Random offset for start date (0-4 days ahead of today)
+  //   const startOffset = Math.floor(Math.random() * 4);
+  //   const startDate = new Date(currentDate);
+  //   startDate.setDate(currentDate.getDate() + startOffset);
 
-    // Random duration for leave (1–5 days)
-    const duration = Math.floor(Math.random() * 5) + 1;
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + duration);
+  //   // Random duration for leave (1–5 days)
+  //   const duration = Math.floor(Math.random() * 5) + 1;
+  //   const endDate = new Date(startDate);
+  //   endDate.setDate(startDate.getDate() + duration);
 
-    // Format as MM/DD/YYYY
-    const formatDate = (d: Date) =>
-      `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
-        .getDate()
-        .toString()
-        .padStart(2, "0")}/${d.getFullYear()}`;
+  //   // Format as MM/DD/YYYY
+  //   const formatDate = (d: Date) =>
+  //     `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
+  //       .getDate()
+  //       .toString()
+  //       .padStart(2, "0")}/${d.getFullYear()}`;
 
-    const startDateString = formatDate(startDate);
-    const endDateString = formatDate(endDate);
+  //   const startDateString = formatDate(startDate);
+  //   const endDateString = formatDate(endDate);
 
-    // Fill in the date range
-    await this.DateRange.click();
-    await this.DateRange.fill(startDateString);
-    await this.DateRange.fill(endDateString);
+  //   // Fill in the date range
+  //   await this.DateRange.click();
+  //   await this.DateRange.fill(startDateString);
+  //   await this.DateRange.fill(endDateString);
 
-    console.log(`Selected date range: ${startDateString} - ${endDateString}`);
-  }
+  //   console.log(`Selected date range: ${startDateString} - ${endDateString}`);
+  // }
+
+
   async getWithDrawLink() {
     await this.WithdrawLink.first().click();
   }
@@ -202,4 +205,38 @@ export class ApplyLeaves extends BasePage {
 
     console.log("No more existing leaves to withdraw.");
   }
+  async dateRange() {
+    const currentDate = new Date();
+
+    // Use counter + random offset to ensure unique start date
+    const startOffset = Math.floor(Math.random() * 4) + this.leaveCounter;
+    const startDate = new Date(currentDate);
+    startDate.setDate(currentDate.getDate() + startOffset);
+
+    // Random leave duration (1–5 days)
+    const duration = Math.floor(Math.random() * 5) + 1;
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + duration);
+
+    // Format as MM/DD/YYYY
+    const formatDate = (d: Date) =>
+        `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
+            .getDate()
+            .toString()
+            .padStart(2, "0")}/${d.getFullYear()}`;
+
+    const startDateString = formatDate(startDate);
+    const endDateString = formatDate(endDate);
+
+    // Fill in the date range in the UI
+    await this.DateRange.click();
+    await this.DateRange.fill(startDateString);
+    await this.DateRange.fill(endDateString);
+
+    console.log(`Selected date range: ${startDateString} - ${endDateString}`);
+
+    // Increment the counter for the next test
+    this.leaveCounter++;
+}
+
 }

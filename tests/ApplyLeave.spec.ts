@@ -12,6 +12,8 @@ let attendanceLeaveTab: AttendanceLeaveTab;
 let myTeamLeave: any;
 
 
+
+
 test.describe("Apply leaves page", () => {
     test.beforeEach(async ({ page }, testInfo) => {
         const loginObj = new LoginPage(page);
@@ -44,8 +46,9 @@ test.describe("Apply leaves page", () => {
             "Family function"
         );
         // Verifying the success message
-        const successMessage = await applyLeave.SuccessMessage.innerText();
-        expect(successMessage).toContain(constants.APPLY_LEAVE_SUCCESSMESSAGE);
+        const message1 = await applyLeave.toastMessage();
+        console.log("Success message: " + message1);
+        expect(message1).toContain(constants.APPLY_LEAVE_SUCCESSMESSAGE);
 
         // Wait for success message to disappear before next action
         await applyLeave.SuccessMessage.waitFor({ state: 'hidden', timeout: 5000 });
@@ -62,7 +65,8 @@ test.describe("Apply leaves page", () => {
         await applyLeave.getSubmitButton();
 
         // verifying the message
-        const message = await applyLeave.WithdrawSuccessMessage.innerText();
+        const message = await applyLeave.toastMessage();
+        console.log("Withdraw message: " + message);
         expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     });
 
@@ -91,8 +95,16 @@ test.describe("Apply leaves page", () => {
             "PrivilegeLeave",
             "Emergency leave"
         );
+        
+          // Verifying the success message
+        const message1 = await applyLeave.toastMessage();
+        console.log("Success message: " + message1);
+        expect(message1).toContain(constants.APPLY_LEAVE_SUCCESSMESSAGE);
 
-          // Now click on Withdraw link
+        // Wait for success message to disappear before next action
+        await applyLeave.SuccessMessage.waitFor({ state: 'hidden', timeout: 5000 });
+
+        // Now click on Withdraw link
         await applyLeave.getWithDrawLink();
 
         // verify the title 
@@ -103,11 +115,10 @@ test.describe("Apply leaves page", () => {
         //Clicking on submit button
         await applyLeave.getSubmitButton();
 
-         // verifying the message
+        // verifying the message
         const message = await applyLeave.toastMessage();
+        console.log("Withdraw message: " + message);
         expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
-
-
 
     });
 });

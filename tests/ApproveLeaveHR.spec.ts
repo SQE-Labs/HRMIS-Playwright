@@ -32,6 +32,8 @@ test.describe("Approve Leave HR module ", () => {
 
     test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
          await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+          await applyLeave.waitForDotsLoaderToDisappear()
+
          await applyLeave.withdrawExistingLeave(); 
 
         // Apply Leave
@@ -75,8 +77,8 @@ test.describe("Approve Leave HR module ", () => {
     // Navigate to Approve Leave HR tab
     await attendanceLeaveTab.navigateToAttendanceTab('Approve Leave (HR)');
 
-  // // Clicking on view button of the leave to final approve from HR
-  //   await approveLeaveHR.clickOnViewButton();
+   // Clicking on view button of the leave to final approve from HR
+      await approveLeaveHR.clickViewLeaveLink();
 
 
 });
