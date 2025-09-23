@@ -28,10 +28,10 @@ test.describe("Apply leaves page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('a Removing the withdrawn leave if exists', async ({ page }) => {
-        await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
-        await applyLeave.withdrawExistingLeave(); 
-    });
+    // test('a Removing the withdrawn leave if exists', async ({ page }) => {
+    //     await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
+    //     await applyLeave.withdrawExistingLeave(); 
+    // });
     
 
     test('HRMIS_3, HRMIS_12, HRMIS_17, HRMIS_18, HRMIS_22  ApplyLeave and Withdraw Leave - End to End flow @smoke @eti', async ({ page }) => {

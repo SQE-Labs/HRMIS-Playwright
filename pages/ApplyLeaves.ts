@@ -151,61 +151,74 @@ export class ApplyLeaves extends BasePage {
 
     console.log("No more existing leaves to withdraw.");
   }
-  async dateRange(maxRetries: number = 5) {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      // 1. Calculate unique start & end dates
-      const currentDate = new Date();
-      const monthOffset = Math.floor(this.leaveCounter / 28);
-      const dayOffset = (this.leaveCounter % 28) + 1;
-      const startDate = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + monthOffset,
-        dayOffset
-      );
+async dateRange(maxRetries: number = 5) {
+  let lastStartDay: number | null = null;
+  let lastEndDay: number | null = null;
 
-      const duration = Math.floor(Math.random() * 5) + 1; // leave length
-      const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + duration);
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    // 1. Open date picker
+    await this.DateRange.click();
 
-      const formatDate = (d: Date) =>
-        `${(d.getMonth() + 1).toString().padStart(2, "0")}/${d
-          .getDate()
-          .toString()
-          .padStart(2, "0")}/${d.getFullYear()}`;
-
-      const startDateString = formatDate(startDate);
-      const endDateString = formatDate(endDate);
-
-      // 2. Fill into UI
-      await this.DateRange.click();
-      await this.DateRange.fill(startDateString);
-      await this.DateRange.fill(endDateString);
-
-      console.log(
-        `Attempt ${attempt + 1}: Selected ${startDateString} - ${endDateString}`
-      );
-
-      // 3. Small wait so UI can react (toast might appear)
-      await this.page.waitForTimeout(1000);
-
-      // 4. Check if duplicate toast appeared
-      const isDuplicate = await this.duplicateLeaveToastMessage
-        .waitFor({ state: "visible", timeout: 3000 })
-        .then(() => true)
-        .catch(() => false);
-
-      // 5. If no duplicate → success
-      if (!isDuplicate) {
-        this.leaveCounter++;
-        return;
-      }
-
-      // 6. If duplicate → log + retry with new dates
-      console.warn("Duplicate date found. Retrying with next counter...");
-      this.leaveCounter++;
+    // If not the first attempt → move to next month for fresh dates
+    if (attempt > 0) {
+      await this.page.locator(".react-datepicker__navigation--next").click();
     }
 
-    // 7. If all retries failed → throw error
-    throw new Error("Could not find a unique date range after retries.");
+    // 2. Select start day
+    let startDay: number;
+    if (lastStartDay === null) {
+      // first time → pick random 1–20
+      startDay = Math.floor(Math.random() * 20) + 1;
+    } else {
+      // next attempt → shift forward by 1 day
+      startDay = lastStartDay + 1;
+    }
+
+    // 3. Select end day (always after start)
+    let endDay: number;
+    if (lastEndDay === null) {
+      endDay = startDay + Math.floor(Math.random() * 5) + 1;
+    } else {
+      endDay = startDay + 1; // ensure unique and sequential
+    }
+
+    // Save for next iteration
+    lastStartDay = startDay;
+    lastEndDay = endDay;
+
+    // 4. Click start & end days
+    await this.page
+      .locator(`.react-datepicker__day--0${startDay.toString().padStart(2, "0")}`)
+      .first()
+      .click();
+
+    await this.page
+      .locator(`.react-datepicker__day--0${endDay.toString().padStart(2, "0")}`)
+      .last()
+      .click();
+
+    console.log(`Attempt ${attempt + 1}: Selected ${startDay} → ${endDay}`);
+
+    // 5. Wait for UI
+    await this.page.waitForTimeout(1000);
+
+    // 6. Check duplicate toast
+    const isDuplicate = await this.duplicateLeaveToastMessage
+      .waitFor({ state: "visible", timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (!isDuplicate) {
+      console.log("✅ Unique date range selected");
+      return;
+    }
+
+    console.warn("⚠️ Duplicate date found. Retrying with sequential next date...");
   }
+
+  // 7. All retries failed
+  throw new Error("Could not find a unique date range after retries.");
+}
+
+
 }

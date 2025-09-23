@@ -31,7 +31,7 @@ test.describe("Approve Leave HR module ", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke", async ({ page }) => {
+  test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
     await applyLeave.waitForDotsLoaderToDisappear();
 
@@ -80,9 +80,7 @@ test.describe("Approve Leave HR module ", () => {
     );
   });
   // failed while searching with firstname with last name #known bug
-  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @eti", async ({
-    page,
-  }) => {
+  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @eti", async ({page, }) => {
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
     await approveLeaveHR.waitforLoaderToDisappear();
@@ -102,9 +100,6 @@ test.describe("Approve Leave HR module ", () => {
       constants.APPROVED_STATUS,
       testData.LEAVE_EMP_NAME3
     );
-    
-
-
     
   });
 });
