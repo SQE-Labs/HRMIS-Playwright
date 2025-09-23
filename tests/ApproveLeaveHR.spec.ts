@@ -75,9 +75,10 @@ test.describe("Approve Leave HR module ", () => {
     // Navigate to Approve Leave HR tab
     await attendanceLeaveTab.navigateToAttendanceTab('Approve Leave (HR)');
 
-    // Clicking on view button of the leave to final approve from HR
+// Clicking on view button of the leave to final approve from HR
     // await approveLeaveHR.clickOnViewButton();
 
+    
 
   });
 });
