@@ -123,7 +123,7 @@ export class AssetAllocation extends BasePage {
         await AssetHelper.verifyHeadersMatch(colHeader, this.colHeaders);
     }
 
-    async getBySearchdata(TypeLocator: Locator, SearchBy, type) {
+    async getBySearchdata(TypeLocator: Locator, SearchBy: string, type: string) {
         await this.searchBar.pressSequentially(SearchBy);
         const name = await TypeLocator.allTextContents();
         console.log(name);

@@ -41,5 +41,8 @@ export  const REJECT_ACTION= "Reject"
 
 export const APPROVE_LEAVE_SUCCESSMESSAGE = "Successfully updated."
 
+export const DESIGNATION_SUCESSMESSSAGE = "Designation created successfully"
+export const DESIGNATION_UPDATE_SUCESSMESSSAGE = "Designation updated successfully"
+
 
 
