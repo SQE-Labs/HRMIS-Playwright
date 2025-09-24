@@ -155,6 +155,7 @@ export class AssetRequests extends AssetManagementTab {
     async verifySuccessMessage(message: string) {
         const successMessage = this.page.locator(`//div[contains(text(), '${message}')]`);
         await expect(successMessage).toBeVisible();
+        await expect(successMessage).toBeHidden({ timeout: 9000 });
     }
 
     async getExistingSerialNumber() {

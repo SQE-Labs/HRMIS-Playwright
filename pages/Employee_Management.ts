@@ -171,6 +171,7 @@ export class Employee_Management extends BasePage {
     public submitBtn: Locator
 
 
+
     constructor(page: Page) {
         super(page)
         this.Employee_Management = page.locator("//a[text()='Employee Management']")
@@ -387,6 +388,8 @@ export class Employee_Management extends BasePage {
         this.designations = page.locator("//a[text()='Designations']")
         this.submitBtn = page.locator('//button[type= "Submit"]')
 
+        this.refreshbutton
+
 
 
     }
@@ -472,7 +475,7 @@ export class Employee_Management extends BasePage {
         await this.BasicInfo.click()
     }
 
-    async getAccordionBodycountAndText(Locator: Locator, dropdownLocator) {
+    async getAccordionBodycountAndText(Locator: Locator, dropdownLocator : string[]) {
         const AccordionBodycount = await Locator.count();
         for (let i = 0; i < AccordionBodycount; i++) {
             const AccordionBodydata = Locator.nth(i);
@@ -644,16 +647,16 @@ export class Employee_Management extends BasePage {
     async verifyCollapseIsVisible(value: number) {
         await expect(this.page.locator(`#collapse${value}`).last()).toBeVisible()
     }
-    async selectionofAssignManager(value) {
+    async selectionofAssignManager(value : any) {
         await this.page.locator(`#react-select-3-option-${value}`).click()
 
     }
-    async selectionOfLeaveManager(value) {
+    async selectionOfLeaveManager(value : any) {
         await this.page.locator(`#react-select-4-option-${value}`).click()
 
     }
 
-    async selectionOfAssignLeaveManager(value) {
+    async selectionOfAssignLeaveManager(value :  any) {
         await this.page.locator(`#react-select-5-option-${value}`).click()
 
     }

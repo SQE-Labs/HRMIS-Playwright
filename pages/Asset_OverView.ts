@@ -13,7 +13,7 @@ export class OverView extends AssetManagementTab {
     public filterButton: Locator;
     public randomOption: string;
     public exportButton: Locator;
-    public alert: Alert;
+    // public alert: Alert;
     public totalAssetsAfterFilter: number;
     public emptyRecord: Locator;
     public assignedBadge: Locator;
@@ -26,9 +26,9 @@ export class OverView extends AssetManagementTab {
     public superOwnerDropdown: Locator;
     public ownerDropdown: Locator;
     public availabilityDropdown: Locator;
-    public superOwnerRandomOption: string;
-    public ownerRandomOption: string;
-    public availabilityRandomOption: string;
+    // public superOwnerRandomOption: string;
+    // public ownerRandomOption: string;
+    // public availabilityRandomOption: string;
     public assetOverviewRedirect: Locator;
     public toast: Locator;
     public manfRows: Locator
@@ -158,7 +158,7 @@ export class OverView extends AssetManagementTab {
     }
 
 
-    async selectAssetTypeDropdown(ddValue) {
+    async selectAssetTypeDropdown(ddValue :  string) {
         await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 5000 });
         await this.assetTypeDropdown.selectOption({ label: ddValue });
         await this.filterButton.click()
@@ -180,7 +180,7 @@ export class OverView extends AssetManagementTab {
     }
 
     // TC_AM_009
-    async openCard(ddValue): Promise<void> {
+    async openCard(ddValue : string): Promise<void> {
         await this.selectAssetTypeDropdown(ddValue);
         await this.card.click();
         await this.waitforLoaderToDisappear()
@@ -338,13 +338,13 @@ export class OverView extends AssetManagementTab {
         }
     }
 
-    async selectOwnerDropDown(owner) {
+    async selectOwnerDropDown(owner: string) {
         await this.ownerDropdown.selectOption(owner)
     }
-    async selectSuperOwnerDropDown(superOwner) {
+    async selectSuperOwnerDropDown(superOwner : string) {
         await this.superOwnerDropdown.selectOption(superOwner)
     }
-    async selectAvailabilityDropDown(availability) {
+    async selectAvailabilityDropDown(availability : string) {
         await this.availabilityDropdown.selectOption(availability)
     }
 

@@ -5,7 +5,7 @@ import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
 import { MyTeamLeavePage } from "../pages/myTeamLeave";
 import { ApplyLeaves } from "../pages/ApplyLeaves";
-import { ApproveLeaveHR } from "../pages/ApproveLeaveHR";
+
 
 let loginObj: LoginPage;
 // let approveLeaveHR: ApproveLeaveHR;

@@ -25,14 +25,13 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.assetType.selectOption({ value: "4" });
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
         expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
         await assetrequest.logout();
     })
     test("Asset Request page L1 Approve the Request @smoke", async ({ page }) => {
@@ -42,15 +41,16 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.navigateToAssetl1ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
     })
     test("Asset Request page L2 Approve the Request @smoke", async ({ page }) => {
@@ -60,16 +60,16 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.navigateToAssetl2ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
 
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
     })
     test("Asset Request page IT Approve the Request @smoke", async ({ page }) => {
@@ -79,24 +79,24 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.navigateToAssetItApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await page.getByText("Choose Asset for ").click();
-            await assetrequest.waitforLoaderToDisappear()
-            // Select the first available serial number
-            enterSerialNumber = await assetrequest.getExistingSerialNumber();
-            await page.waitForTimeout(2000);
-            await assetrequest.popupSearchBar.pressSequentially(enterSerialNumber);
-            await assetrequest.assetRadioButton.first().click();
-            await page.waitForTimeout(1000);
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            await assetrequest.waitforLoaderToDisappear()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await page.getByText("Choose Asset for ").click();
+        await assetrequest.waitforLoaderToDisappear()
+        // Select the first available serial number
+        enterSerialNumber = await assetrequest.getExistingSerialNumber();
+        await page.waitForTimeout(2000);
+        await assetrequest.popupSearchBar.pressSequentially(enterSerialNumber);
+        await assetrequest.assetRadioButton.first().click();
+        await page.waitForTimeout(1000);
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        await assetrequest.waitforLoaderToDisappear()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
     })
@@ -107,16 +107,17 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.navigateToAssetStoreTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByReason(comment)
-            await assetrequest.clickOnReasonViewLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            await assetrequest.waitforLoaderToDisappear()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByReason(comment)
+        await assetrequest.clickOnReasonViewLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        await assetrequest.waitforLoaderToDisappear()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
     })
 
@@ -147,22 +148,22 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.navigateToRtoManagementTab();
         await assetrequest.waitforLoaderToDisappear();
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord();
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.seacrhRequestBySerialNumber(enterSerialNumber);
-            await assetrequest.clickOnSerialNumberLocator(enterSerialNumber);
-            await assetrequest.selectStatus("RETURNED");
-            await assetrequest.enterTodaysDateInCalendar();
-            await assetrequest.dockerNumber.fill(await assetrequest.generateRandomString(5));
-            await assetrequest.uploadFile("screenshot.png", page)
-            await assetrequest.comment.fill(comment);
-            await assetrequest.clickOnSubmitButton();
-            await assetrequest.waitforLoaderToDisappear();
-            expect(await assetrequest.verifySuccessMessage("Asset return request accepted"));
-            await assetrequest.clickOnReturnRequestButton();
-            let status = await assetrequest.getStatusUpdate(enterSerialNumber, 10);
-            expect(status).toBe("RETURNED");
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.seacrhRequestBySerialNumber(enterSerialNumber);
+        await assetrequest.clickOnSerialNumberLocator(enterSerialNumber);
+        await assetrequest.selectStatus("RETURNED");
+        await assetrequest.enterTodaysDateInCalendar();
+        await assetrequest.dockerNumber.fill(await assetrequest.generateRandomString(5));
+        await assetrequest.uploadFile("screenshot.png", page)
+        await assetrequest.comment.fill(comment);
+        await assetrequest.clickOnSubmitButton();
+        await assetrequest.waitforLoaderToDisappear();
+        expect(await assetrequest.verifySuccessMessage("Asset return request accepted"));
+        await assetrequest.clickOnReturnRequestButton();
+        let status = await assetrequest.getStatusUpdate(enterSerialNumber, 10);
+        expect(status).toBe("RETURNED");
 
         await assetrequest.logout();
     })
@@ -188,7 +189,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.assetType.selectOption({ value: "4" });
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
         expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
@@ -201,15 +202,14 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl1ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("REJECTED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
-        }
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("REJECTED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
+
         await assetrequest.logout();
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
@@ -230,7 +230,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.assetType.selectOption({ value: "4" });
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
         expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
@@ -243,15 +243,16 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl1ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
         // Reject L2
@@ -261,16 +262,17 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl2ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount1 = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount1 > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
+        expect(totalRequestCount).toBeGreaterThan(0)
 
-            await assetrequest.selectApproveOrRejectRequest("REJECTED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
-        }
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+
+        await assetrequest.selectApproveOrRejectRequest("REJECTED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
+
         await assetrequest.logout();
 
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
@@ -305,15 +307,16 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl1ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
         // Approve l2
@@ -323,15 +326,16 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl2ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount1 = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount1 > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
         // Reject IT
@@ -341,15 +345,16 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetItApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount2 = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount2 > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("REJECTED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
-        }
+        expect(totalRequestCount2).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("REJECTED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
+
         await assetrequest.logout();
 
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
@@ -372,7 +377,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.assetType.selectOption({ value: "4" });
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
         expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
@@ -385,15 +390,16 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl1ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
         // Approve l2
@@ -403,15 +409,16 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetl2ApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount1 = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount1 > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount1).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
 
@@ -422,24 +429,24 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetItApprovalTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount2 = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount2 > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByComment(comment)
-            await assetrequest.clickOnCommentLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("APPROVED")
-            await page.getByText("Choose Asset for ").click();
-            await assetrequest.waitforLoaderToDisappear()
-            // Select the first available serial number
-            enterSerialNumber = await assetrequest.getExistingSerialNumber();
-            await page.waitForTimeout(2000);
-            await assetrequest.popupSearchBar.pressSequentially(enterSerialNumber);
-            await assetrequest.assetRadioButton.first().click();
-            await page.waitForTimeout(1000);
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            await assetrequest.waitforLoaderToDisappear()
-            expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
-        }
+        expect(totalRequestCount2).toBeGreaterThan(0)
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByComment(comment)
+        await assetrequest.clickOnCommentLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("APPROVED")
+        await page.getByText("Choose Asset for ").click();
+        await assetrequest.waitforLoaderToDisappear()
+        // Select the first available serial number
+        enterSerialNumber = await assetrequest.getExistingSerialNumber();
+        await page.waitForTimeout(2000);
+        await assetrequest.popupSearchBar.pressSequentially(enterSerialNumber);
+        await assetrequest.assetRadioButton.first().click();
+        await page.waitForTimeout(1000);
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        await assetrequest.waitforLoaderToDisappear()
+        expect(await assetrequest.verifySuccessMessage("Successfully Approved"))
+
         await assetrequest.logout();
 
         // Reject Store
@@ -449,16 +456,17 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke", async () =>
         await assetrequest.navigateToAssetStoreTab();
         await assetrequest.waitforLoaderToDisappear()
         let totalRequestCount4 = await assetrequest.verifyNoAssetRequestRecord()
-        if (totalRequestCount4 > 0) {
-            expect(await assetrequest.column.isVisible()).toBeTruthy();
-            await assetrequest.searchRequestByReason(comment)
-            await assetrequest.clickOnReasonViewLocator(comment)
-            await assetrequest.selectApproveOrRejectRequest("REJECTED")
-            await assetrequest.comment.fill(comment)
-            await assetrequest.clickOnSubmitButton()
-            await assetrequest.waitforLoaderToDisappear()
-            expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
-        }
+        expect(totalRequestCount4).toBeGreaterThan(0)
+
+        expect(await assetrequest.column.isVisible()).toBeTruthy();
+        await assetrequest.searchRequestByReason(comment)
+        await assetrequest.clickOnReasonViewLocator(comment)
+        await assetrequest.selectApproveOrRejectRequest("REJECTED")
+        await assetrequest.comment.fill(comment)
+        await assetrequest.clickOnSubmitButton()
+        await assetrequest.waitforLoaderToDisappear()
+        expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
+
         await assetrequest.logout();
 
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
