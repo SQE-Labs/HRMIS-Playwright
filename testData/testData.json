@@ -49,9 +49,8 @@
     "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
     "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
     "NOUNIT_COLUMN": "NoUnit.xlsx",
-    "LEAVE_EMP_NAME":"Elon Mask",
+    "LEAVE_EMP_NAME": "Elon Mask",
     "LEAVE_EMP_NAME2":"Ishita Test Sharma",
     "LEAVE_EMP_NAME3":"Vishal thakur"
-
 
 }

@@ -160,14 +160,15 @@ export class ApplyLeaves extends BasePage {
           // await nextArrow.click();
         
         // Pick random start and end days in month
-        if (attempt == 3) {
-          const startDay = "09/20/2025"
-          const endDay = "09/24/2025";
-        }
-        else {
+        // if (attempt == 3) 
+        //   const startDay = "09/20/2025"
+        //   const endDay = "09/24/2025";
+        
+      
           const startDay = Math.floor(Math.random() * 28) + 1;
           const endDay = startDay + Math.floor(Math.random() * (29 - startDay)); // Avoid SAME day
-        }
+        
+
       // Click start and end day in picker
       const startLocator = this.page.locator(
         `.react-datepicker__month .react-datepicker__day--0${String(startDay).padStart(2, "0")}`
