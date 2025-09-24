@@ -73,14 +73,15 @@ test.describe("Approve Leave HR module ", () => {
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
 
     // Approve Leave as HR
-    await approveLeaveHR.HRAppoveLeaveAction(
+    await approveLeaveHR.appoveLeaveActionHR(
       constants.APPROVE_ACTION,
       constants.APPROVED_STATUS,
       constants.APPROVE_LEAVE_SUCCESSMESSAGE
     );
   });
+
   // failed while searching with firstname with last name #known bug
-  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @eti", async ({page, }) => {
+  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke ", async ({page, }) => {
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
     await approveLeaveHR.waitforLoaderToDisappear();

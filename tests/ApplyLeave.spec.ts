@@ -38,7 +38,7 @@ test.describe("Apply leaves page", () => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         await applyLeave.waitForDotsLoaderToDisappear()
 
-        await applyLeave.withdrawExistingLeave(); 
+        await applyLeave.withdrawExistingLeave();
     
         // Apply Leave
         await applyLeave.applyLeave(
@@ -89,7 +89,7 @@ test.describe("Apply leaves page", () => {
         await attendanceLeaveTab.navigateToAttendanceTab('Apply Leaves');
         
 
-        await applyLeave.withdrawExistingLeave(); 
+        await applyLeave.withdrawExistingLeave();
 
         // Apply Leave  
         await applyLeave.applyLeave(
@@ -97,7 +97,7 @@ test.describe("Apply leaves page", () => {
             "Emergency leave"
         );
         
-          // Verifying the success message
+        // Verifying the success message
         const message1 = await applyLeave.toastMessage();
         console.log("Success message: " + message1);
         expect(message1).toContain(constants.APPLY_LEAVE_SUCCESSMESSAGE);

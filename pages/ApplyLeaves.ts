@@ -20,6 +20,8 @@ export class ApplyLeaves extends BasePage {
   private duplicateLeaveToastMessage: Locator;
   public allWithdrawLink: Locator;
   private closeButton: Locator;
+  private fromDate: Locator;
+  private ToDate: Locator;
   leaveCounter = 0;
 
   constructor(page: Page) {
@@ -51,6 +53,8 @@ export class ApplyLeaves extends BasePage {
     );
     this.allWithdrawLink = this.page.locator("//tr//a[text()='Withdraw']");
     this.closeButton = this.page.locator("button.close");
+    this.fromDate = page.locator("//table[@class='resume custom']//tr/td[2]");
+    this.ToDate = page.locator("//table[@class='resume custom']//tr/td[3]");
   }
 
   async pickCurrentDate() {
@@ -58,9 +62,9 @@ export class ApplyLeaves extends BasePage {
     const todayDate = `${(currentDate.getMonth() + 1)
       .toString()
       .padStart(2, "0")}/${currentDate
-      .getDate()
-      .toString()
-      .padStart(2, "0")}/${currentDate.getFullYear()}`;
+        .getDate()
+        .toString()
+        .padStart(2, "0")}/${currentDate.getFullYear()}`;
     return todayDate;
   }
 
@@ -98,8 +102,6 @@ export class ApplyLeaves extends BasePage {
           timeout: 5000,
         });
         await this.YesButtonOfApplyLeave.click();
-      } else {
-        console.log("Yes button not visible, skipping click.");
       }
     }
 
@@ -129,9 +131,7 @@ export class ApplyLeaves extends BasePage {
     let withdrawLinksCount = await this.allWithdrawLink.count();
 
     while (withdrawLinksCount > 0) {
-      console.log(
-        `Found ${withdrawLinksCount} existing leave(s). Withdrawing the first one...`
-      );
+      console.debug(`Found ${withdrawLinksCount} existing leave(s). Withdrawing the first one...`);
 
       // Click the first withdraw link
       await this.allWithdrawLink.first().click();
@@ -142,83 +142,57 @@ export class ApplyLeaves extends BasePage {
       // Submit the withdrawal
       await this.SubmitButton.click();
 
-      // Wait for page to update
-      await this.page.waitForTimeout(1000);
-
       // Recalculate the number of remaining withdraw links
       withdrawLinksCount = await this.allWithdrawLink.count();
+      
     }
 
-    console.log("No more existing leaves to withdraw.");
-  }
-async dateRange(maxRetries: number = 5) {
-  let lastStartDay: number | null = null;
-  let lastEndDay: number | null = null;
-
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    // 1. Open date picker
-    await this.DateRange.click();
-
-    // If not the first attempt → move to next month for fresh dates
-    if (attempt > 0) {
-      await this.page.locator(".react-datepicker__navigation--next").click();
-    }
-
-    // 2. Select start day
-    let startDay: number;
-    if (lastStartDay === null) {
-      // first time → pick random 1–20
-      startDay = Math.floor(Math.random() * 20) + 1;
-    } else {
-      // next attempt → shift forward by 1 day
-      startDay = lastStartDay + 1;
-    }
-
-    // 3. Select end day (always after start)
-    let endDay: number;
-    if (lastEndDay === null) {
-      endDay = startDay + Math.floor(Math.random() * 5) + 1;
-    } else {
-      endDay = startDay + 1; // ensure unique and sequential
-    }
-
-    // Save for next iteration
-    lastStartDay = startDay;
-    lastEndDay = endDay;
-
-    // 4. Click start & end days
-    await this.page
-      .locator(`.react-datepicker__day--0${startDay.toString().padStart(2, "0")}`)
-      .first()
-      .click();
-
-    await this.page
-      .locator(`.react-datepicker__day--0${endDay.toString().padStart(2, "0")}`)
-      .last()
-      .click();
-
-    console.log(`Attempt ${attempt + 1}: Selected ${startDay} → ${endDay}`);
-
-    // 5. Wait for UI
-    await this.page.waitForTimeout(1000);
-
-    // 6. Check duplicate toast
-    const isDuplicate = await this.duplicateLeaveToastMessage
-      .waitFor({ state: "visible", timeout: 3000 })
-      .then(() => true)
-      .catch(() => false);
-
-    if (!isDuplicate) {
-      console.log("✅ Unique date range selected");
-      return;
-    }
-
-    console.warn("⚠️ Duplicate date found. Retrying with sequential next date...");
+    console.debug("No more existing leaves to withdraw.");
   }
 
-  // 7. All retries failed
-  throw new Error("Could not find a unique date range after retries.");
-}
+  async dateRange(attempt: number = 3) {
+      console.log(`--- Attempt ${attempt + 1} ---`);
+      await this.DateRange.click();
+      // Move to next month if retrying
+      while(attempt > 0) {
+        const nextArrow = this.page.locator(".react-datepicker__navigation--next");
+        //await  nextArrow.isVisible() && await nextArrow.isEnabled())
+          // await nextArrow.click();
+        
+        // Pick random start and end days in month
+        if (attempt == 3) {
+          const startDay = "09/20/2025"
+          const endDay = "09/24/2025";
+        }
+        else {
+          const startDay = Math.floor(Math.random() * 28) + 1;
+          const endDay = startDay + Math.floor(Math.random() * (29 - startDay)); // Avoid SAME day
+        }
+      // Click start and end day in picker
+      const startLocator = this.page.locator(
+        `.react-datepicker__month .react-datepicker__day--0${String(startDay).padStart(2, "0")}`
+      );
+      await startLocator.first().click();
 
+      const endLocator = this.page.locator(
+        `.react-datepicker__month .react-datepicker__day--0${String(endDay).padStart(2, "0")}`
+      );
+      await endLocator.last().click();
 
-}
+      console.log(`Picked range: ${startDay} → ${endDay}`);
+
+      // Duplicate error message check
+      const duplicateFound = await this.duplicateLeaveToastMessage
+        .waitFor({ state: "visible", timeout: 5000 })
+        .then(() => true)
+        .catch(() => false);
+
+      if (!duplicateFound) {
+        //
+        console.log("Date range accepted.");
+        break;
+      }
+        attempt--;
+        console.log("Duplicate date range found, retrying...");
+    }
+  }}

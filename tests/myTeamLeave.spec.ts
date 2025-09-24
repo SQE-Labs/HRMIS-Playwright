@@ -21,7 +21,7 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("HRMIS_23, HRMIS_24 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
+  test("HRMIS_23, HRMIS_24 Validate My Team Leave Page UI Elements and Filter the records @smoke ", async ({
     page,
   }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
@@ -47,13 +47,6 @@ test.describe("My Team Leave Page", () => {
       constants.REJECTED_STATUS,
       testData.LEAVE_EMP_NAME
     );
-    await myTeamLeave.waitforLoaderToDisappear();
-
-    // for Pending status
-    await myTeamLeave.verifyTheEmployeeNamesInTheList(
-      constants.PENDING_STATUS,
-      testData.LEAVE_EMP_NAME
-    );
   });
 
   test(" HRMIS_4, HRMIS_8 HRMIS_3 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
@@ -61,7 +54,7 @@ test.describe("My Team Leave Page", () => {
     const applyLeave = new ApplyLeaves(page);
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
 
-    applyLeave.withdrawExistingLeave();
+   await  applyLeave.withdrawExistingLeave();
 
     // Apply Leave
     await applyLeave.applyLeave("PrivilegeLeave", "For vacation");

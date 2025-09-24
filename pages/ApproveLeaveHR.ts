@@ -27,7 +27,7 @@ async selectLeaveAction(type: string) {
     this.waitForSpinnerLoaderToDisappear;
 }
 
-async HRAppoveLeaveAction(
+async appoveLeaveActionHR(
     action: string,
     reason: string,
     successMessage: string
