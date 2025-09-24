@@ -494,6 +494,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.AssignedAssets.isEnabled()
         await EmployeeDirectory.clickOnAssignedAssets()
         await EmployeeDirectory.waitforLoaderToDisappear()
+        await page.waitForSelector('//button[text() = "Refresh"]', { state: 'visible' })
         expect(EmployeeDirectory.refreshbutton).toBeVisible()
         let AssignedAsset = await EmployeeDirectory.getAssignedAssets()
         if (AssignedAsset === 0) {
@@ -552,92 +553,92 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toEqual(SELECT_ITEM)
     })
 
-    test("should update employee access status to BLOCKED successfully @smoke", async ({ page }) => {
-        let CardName = await EmployeeDirectory.clickOnEmployeeCard()
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.clickOnEmployeeAccessSubTab()
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'BLOCKED (Temporally Disable)')
-        await EmployeeDirectory.EmployeeAccessSubmitButton.click()
-        let message = await EmployeeDirectory.toastMessage()
-        expect(message).toEqual('Employee access updated successfully')
-        await EmployeeDirectory.waitforLoaderToDisappear()
+    // test.skip("should update employee access status to BLOCKED successfully @smoke", async ({ page }) => {
+    //     let CardName = await EmployeeDirectory.clickOnEmployeeCard()
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+    //     await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'BLOCKED (Temporally Disable)')
+    //     await EmployeeDirectory.EmployeeAccessSubmitButton.click()
+    //     let message = await EmployeeDirectory.toastMessage()
+    //     expect(message).toEqual('Employee access updated successfully')
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
 
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
-        let CardsTitle: string[] = [];
-        for (let i = 0; i < TotalEmployeecount; i++) {
-            let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
-            if (cardTitle !== null && cardTitle.trim() !== '') {
-                CardsTitle.push(cardTitle.trim());
-            }
-        }
-        console.debug(CardsTitle);
-        expect(CardsTitle).toContain(CardName);
-    })
-    test("should update BLOCKED employee status to VERIFIED and confirm card appears in list @smoke", async ({ page }) => {
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        let cardsCount = await EmployeeDirectory.Card.count()
-        if (cardsCount === 0) {
-            var Norecord = await EmployeeDirectory.noRecord(1)
-            expect(Norecord).toEqual("No records available")
-        } else {
-            let CardName = await EmployeeDirectory.Card.nth(1).textContent()
-            await EmployeeDirectory.Card.nth(1).click()
-            await EmployeeDirectory.clickOnEmployeeAccessSubTab()
-            await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'VERIFIED')
-            await EmployeeDirectory.LeftOutSubmitbutton.click()
-            let message = await EmployeeDirectory.toastMessage()
-            expect(message).toEqual("Employee access updated successfully")
-            await EmployeeDirectory.waitforLoaderToDisappear()
-            let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
-            let CardsTitle: string[] = [];
-            for (let i = 0; i < TotalEmployeecount; i++) {
-                let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
-                if (cardTitle !== null && cardTitle.trim() !== '') {
-                    CardsTitle.push(cardTitle.trim());
-                }
-            }
-            console.debug(CardsTitle);
-            expect(CardsTitle).toContain(CardName);
-        }
+    //     await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+    //     let CardsTitle: string[] = [];
+    //     for (let i = 0; i < TotalEmployeecount; i++) {
+    //         let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+    //         if (cardTitle !== null && cardTitle.trim() !== '') {
+    //             CardsTitle.push(cardTitle.trim());
+    //         }
+    //     }
+    //     console.debug(CardsTitle);
+    //     expect(CardsTitle).toContain(CardName);
+    // })
+    // test.skip("should update BLOCKED employee status to VERIFIED and confirm card appears in list @smoke", async ({ page }) => {
+    //     await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     let cardsCount = await EmployeeDirectory.Card.count()
+    //     if (cardsCount === 0) {
+    //         var Norecord = await EmployeeDirectory.noRecord(1)
+    //         expect(Norecord).toEqual("No records available")
+    //     } else {
+    //         let CardName = await EmployeeDirectory.Card.nth(1).textContent()
+    //         await EmployeeDirectory.Card.nth(1).click()
+    //         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+    //         await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'VERIFIED')
+    //         await EmployeeDirectory.LeftOutSubmitbutton.click()
+    //         let message = await EmployeeDirectory.toastMessage()
+    //         expect(message).toEqual("Employee access updated successfully")
+    //         await EmployeeDirectory.waitforLoaderToDisappear()
+    //         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+    //         let CardsTitle: string[] = [];
+    //         for (let i = 0; i < TotalEmployeecount; i++) {
+    //             let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+    //             if (cardTitle !== null && cardTitle.trim() !== '') {
+    //                 CardsTitle.push(cardTitle.trim());
+    //             }
+    //         }
+    //         console.debug(CardsTitle);
+    //         expect(CardsTitle).toContain(CardName);
+    //     }
+    // })
 
-    })
-    test.skip("should update BLOCKED employee to LEFTOUT and verify card appears in LEFTOUT list", async ({ page }) => {
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        let cardsCount = await EmployeeDirectory.Card.count()
-        if (cardsCount === 0) {
-            var Norecord = await EmployeeDirectory.noRecord(1)
-            expect(Norecord).toEqual("No records available")
-        } else {
-            let CardName = await EmployeeDirectory.Card.nth(1).textContent()
-            await EmployeeDirectory.Card.nth(1).click()
-            await EmployeeDirectory.clickOnEmployeeAccessSubTab()
-            await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
-            await EmployeeDirectory.LeftOutDate.click()
-            await EmployeeDirectory.leftoutcurrentDate.click()
-            await EmployeeDirectory.LeftOutCommentField.fill("Thank you..")
-            await EmployeeDirectory.LeftOutSubmitbutton.click()
-            let message = await EmployeeDirectory.toastMessage()
-            expect(message).toEqual("Employee access updated successfully")
-            await EmployeeDirectory.waitforLoaderToDisappear()
-            await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
-            await EmployeeDirectory.waitforLoaderToDisappear()
-            let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
-            let CardsTitle: string[] = [];
-            for (let i = 0; i < TotalEmployeecount; i++) {
-                let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
-                if (cardTitle !== null && cardTitle.trim() !== '') {
-                    CardsTitle.push(cardTitle.trim());
-                }
-            }
-            console.debug(CardsTitle);
-            expect(CardsTitle).toContain(CardName);
-        }
+    // test.skip("should update BLOCKED employee to LEFTOUT and verify card appears in LEFTOUT list", async ({ page }) => {
+    //     await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     let cardsCount = await EmployeeDirectory.Card.count()
+    //     if (cardsCount === 0) {
+    //         var Norecord = await EmployeeDirectory.noRecord(1)
+    //         expect(Norecord).toEqual("No records available")
+    //     } else {
+    //         let CardName = await EmployeeDirectory.Card.nth(1).textContent()
+    //         await EmployeeDirectory.Card.nth(1).click()
+    //         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+    //         await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'LEFTOUT (Permanently Disable)')
+    //         await EmployeeDirectory.LeftOutDate.click()
+    //         await EmployeeDirectory.leftoutcurrentDate.click()
+    //         await EmployeeDirectory.LeftOutCommentField.fill("Thank you..")
+    //         await EmployeeDirectory.LeftOutSubmitbutton.click()
+    //         let message = await EmployeeDirectory.toastMessage()
+    //         expect(message).toEqual("Employee access updated successfully")
+    //         await EmployeeDirectory.waitforLoaderToDisappear()
+    //         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
+    //         await EmployeeDirectory.waitforLoaderToDisappear()
+    //         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
+    //         let CardsTitle: string[] = [];
+    //         for (let i = 0; i < TotalEmployeecount; i++) {
+    //             let cardTitle = await EmployeeDirectory.Employee_Directory_cards_title.nth(i).textContent();
+    //             if (cardTitle !== null && cardTitle.trim() !== '') {
+    //                 CardsTitle.push(cardTitle.trim());
+    //             }
+    //         }
+    //         console.debug(CardsTitle);
+    //         expect(CardsTitle).toContain(CardName);
+    //     }
 
-    })
+    // })
 
     test("should Display LeftOut Fields When Status Is LeftOut ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()

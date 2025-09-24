@@ -32,6 +32,8 @@ export class AssetRequests extends AssetManagementTab {
     public deallocationDropdown: Locator;
     public repaircost: Locator;
     public returnrequestButton: Locator;
+    public itemsPerPage: Locator;
+    public itemsPerPageOption: Locator;
 
 
 
@@ -66,6 +68,8 @@ export class AssetRequests extends AssetManagementTab {
         this.deallocationDropdown = page.locator(".col-md-6");
         this.repaircost = page.locator("//input[@type = 'tel']");
         this.returnrequestButton = page.locator("//a[@class='export theme-button'][text() = 'Returned Asset']");
+        this.itemsPerPage = page.locator("#itemsPerPage");
+        this.itemsPerPageOption = page.locator("#itemsPerPage>option");
 
 
 
@@ -151,6 +155,7 @@ export class AssetRequests extends AssetManagementTab {
     async verifySuccessMessage(message: string) {
         const successMessage = this.page.locator(`//div[contains(text(), '${message}')]`);
         await expect(successMessage).toBeVisible();
+        await expect(successMessage).toBeHidden({ timeout: 9000 });
     }
 
     async getExistingSerialNumber() {
@@ -192,51 +197,61 @@ export class AssetRequests extends AssetManagementTab {
         await this.returnrequestButton.click();
         await this.waitforLoaderToDisappear();
     }
-async getStatusUpdate(comment: string, value = 5) {
-    let totalRequestCount = await this.verifyNoAssetRequestRecord();
+    //work around used as search is not working
+    async getStatusUpdate(comment: string, value = 5) {
+        let totalRequestCount = await this.verifyNoAssetRequestRecord();
 
-    if (totalRequestCount > 0) {
-        expect(await this.column.isVisible()).toBeTruthy();
+        if (totalRequestCount > 0) {
+            expect(await this.column.isVisible()).toBeTruthy();
+            await this.itemsPerPage.waitFor({ state: 'visible' });
+            await this.itemsPerPage.click();
+            await this.itemsPerPage.selectOption({ value: "40" });
+            await this.page.waitForTimeout(500);
 
-        let found = false;
-        let statusText = "";
+            const selectedValue = parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
+            const assetNameCount = await this.page.locator("//table//td[1]").count();
 
-        while (true) {
-            // Debug: print all first-column values
-            const allComments = await this.page.locator("//table//td[1]").allTextContents();
-            console.log("Comments on this page:", allComments);
+            let found = false;
+            let statusText = "";
 
-            // Try to find the row with the comment
-            const commentLocator = this.page.locator(`//td[contains(normalize-space(), "${comment}")]`);
-            const commentCount = await commentLocator.count();
+            while (true) {
+                // Debug: print all first-column values
+                const allComments = await this.page.locator("//table//td[1]").allTextContents();
+                // console.log("Comments on this page:", allComments);
 
-            if (commentCount > 0) {
-                // Found the comment on current page
-                const statusLocator = this.page.locator(
-                    `//td[contains(normalize-space(), "${comment}")]/../td[${value}]`
-                );
-                statusText = (await statusLocator.textContent())?.trim() || "";
-                found = true;
-                break;
+                // Try to find the row with the comment
+                const commentLocator = this.page.locator(`//td[contains(normalize-space(), "${comment}")]`);
+                const commentCount = await commentLocator.count();
+
+                if (commentCount > 0) {
+                    // Found the comment on current page
+                    const statusLocator = this.page.locator(
+                        `//td[contains(normalize-space(), "${comment}")]/../td[${value}]`
+                    );
+                    statusText = (await statusLocator.textContent())?.trim() || "";
+                    found = true;
+                    break;
+                }
+
+                // Check if Next is disabled
+                const isDisabled = await this.nextButton.getAttribute("disabled");
+                if (isDisabled !== null) {
+                    console.log("Next button disabled, reached last page.");
+                    break;
+                }
+
+                // Go to next page
+                await this.nextButton.scrollIntoViewIfNeeded();
+                await this.nextButton.click();
+                await this.waitforLoaderToDisappear();
             }
 
-            // Check if Next is disabled
-            const isDisabled = await this.nextButton.getAttribute("disabled");
-            if (isDisabled !== null) {
-                console.log("Next button disabled, reached last page.");
-                break;
-            }
-
-            // Go to next page
-            await this.nextButton.scrollIntoViewIfNeeded();
-            await this.nextButton.click();
-            await this.waitforLoaderToDisappear();
+            expect(found).toBeTruthy(); // Fail early if comment not found
+            return statusText;
         }
 
-        expect(found).toBeTruthy(); // Fail early if comment not found
-        return statusText;
-    }
 
-}
+
+    }
 
 }

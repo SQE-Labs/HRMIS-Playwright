@@ -130,7 +130,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await expect(EmployeeDirectory.Pop_Up_Header).toBeHidden()
     })
 
-    test("conditionally assign and delete leave manager, then verify removal @smoke ", async ({ page }) => {
+    test("conditionally assign and delete leave manager, then verify removal @smoke @bug ", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.LeaveManagerDropDown.click()
