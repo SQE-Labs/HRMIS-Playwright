@@ -126,7 +126,7 @@ export class ApplyLeaves extends BasePage {
     }
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      await this.dateRange(attempt);
+      await this.selectDateRange(attempt);
       await this.ReasonOfLeaveBox.fill(reason);
       await this.SubmitButton.click();
       await this.page.waitForLoadState("networkidle");
@@ -152,7 +152,7 @@ export class ApplyLeaves extends BasePage {
 
       if (duplicateAppeared) {
         console.log(
-          `❌ Attempt ${attempt}: Duplicate leave found, waiting for toast to disappear and retrying...`
+          ` Attempt ${attempt}: Duplicate leave found, waiting for toast to disappear and retrying...`
         );
         await this.duplicateLeaveToastMessage.waitFor({
           state: "hidden",
@@ -199,7 +199,7 @@ export class ApplyLeaves extends BasePage {
     console.debug("No more existing leaves to withdraw.");
   }
 
-  async dateRange(attempt: number = 1): Promise<void> {
+  async selectDateRange(attempt: number = 1): Promise<void> {
     await this.DateRange.click();
 
     const getDayLocator = (day: number) =>
