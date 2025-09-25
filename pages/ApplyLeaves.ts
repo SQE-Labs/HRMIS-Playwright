@@ -18,6 +18,8 @@ export class ApplyLeaves extends BasePage {
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
   private duplicateLeaveToastMessage: Locator;
+  private toastCloseButton: Locator;
+  private closeIconButton: Locator; // Locator for datepicker clear cross button
   public allWithdrawLink: Locator;
   private closeButton: Locator;
   private fromDate: Locator;
@@ -45,11 +47,17 @@ export class ApplyLeaves extends BasePage {
       "Leave Withdrawn Successfully"
     );
     this.YesButtonOfApplyLeave = page.locator(
-      "//div[contains(@class,'modal-full-height')]/div//button[text()='Yes'] "
+      "//div[contains(@class,'modal-full-height')]/div//button[text()='Yes']"
     );
     this.privilegeLeaveOption = page.getByLabel("PrivilegeLeave");
-    this.duplicateLeaveToastMessage = page.getByText(
-      "Duplicate leave request !"
+    this.duplicateLeaveToastMessage = page.locator(
+      "//div[text()='Duplicate leave request !']"
+    );
+    this.toastCloseButton = page.locator(
+      'button.Toastify__close-button[aria-label="close"]'
+    );
+    this.closeIconButton = page.locator(
+      'button.react-datepicker__close-icon[aria-label="Close"]'
     );
     this.allWithdrawLink = this.page.locator("//tr//a[text()='Withdraw']");
     this.closeButton = this.page.locator("button.close");
@@ -59,22 +67,22 @@ export class ApplyLeaves extends BasePage {
 
   async pickCurrentDate() {
     const currentDate = new Date();
-    const todayDate = `${(currentDate.getMonth() + 1)
+    return `${(currentDate.getMonth() + 1)
       .toString()
       .padStart(2, "0")}/${currentDate
-        .getDate()
-        .toString()
-        .padStart(2, "0")}/${currentDate.getFullYear()}`;
-    return todayDate;
+      .getDate()
+      .toString()
+      .padStart(2, "0")}/${currentDate.getFullYear()}`;
   }
 
   async getApplyLeaveBtn() {
-    this.ApplyLeaveButton.click();
+    await this.ApplyLeaveButton.click();
   }
 
   async getSubmitButton() {
-    this.SubmitButton.click();
+    await this.SubmitButton.click();
   }
+
   async selectLeaveType(type: string) {
     await this.LeaveTypeTextBox.selectOption(type);
   }
@@ -83,42 +91,86 @@ export class ApplyLeaves extends BasePage {
     await this.ReasonOfLeaveBox.fill(reason);
   }
 
-  // Apply for Leave ****************
-
-  async applyLeave(leaveType: string, reason: string) {
-    const privilegeCount = await this.privilegeLeaveOption.count();
-
-    // 1. Open Apply Leave Popup
-    await this.ApplyLeaveButton.click();
-
-    // 2. Select leave type (dynamic)
-    await this.LeaveTypeTextBox.selectOption(leaveType);
-
-    // 3. If privilege leave option is not present, click Yes button only if visible
-    if (privilegeCount === 0) {
-      if (await this.YesButtonOfApplyLeave.isVisible()) {
-        await this.YesButtonOfApplyLeave.waitFor({
-          state: "visible",
-          timeout: 5000,
-        });
-        await this.YesButtonOfApplyLeave.click();
-      }
+  // Clear existing date range by clicking the cross button and reopening the date picker
+  async clearDateRange() {
+    try {
+      await this.closeIconButton.waitFor({ state: "visible", timeout: 5000 });
+      await this.closeIconButton.click({ force: true });
+      await this.DateRange.waitFor({ state: "visible", timeout: 3000 });
+      await this.DateRange.click();
+    } catch (error) {
+      await this.page.evaluate(() => {
+        const btn = document.querySelector(
+          'button.react-datepicker__close-icon[aria-label="Close"]'
+        ) as HTMLElement | null;
+        if (btn) btn.click();
+      });
+      await this.DateRange.click();
     }
-
-    // 4. Select date range
-    await this.dateRange();
-
-    // 5. Enter reason for leave
-    await this.ReasonOfLeaveBox.fill(reason);
-
-    // 6. Submit form
-    await this.SubmitButton.click();
-    await this.page.waitForLoadState();
   }
 
+  // Apply leave with retry, waiting for duplicate toast to disappear automatically
+  async applyLeave(leaveType: string, reason: string, maxRetries: number = 3) {
+    const privilegeCount = await this.privilegeLeaveOption.count();
+
+    await this.ApplyLeaveButton.click();
+    await this.LeaveTypeTextBox.selectOption(leaveType);
+
+    if (
+      privilegeCount === 0 &&
+      (await this.YesButtonOfApplyLeave.isVisible({ timeout: 3000 }).catch(
+        () => false
+      ))
+    ) {
+      await this.YesButtonOfApplyLeave.click();
+    }
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      await this.dateRange(attempt);
+      await this.ReasonOfLeaveBox.fill(reason);
+      await this.SubmitButton.click();
+      await this.page.waitForLoadState("networkidle");
+
+      // Wait for either success or duplicate toast to appear
+      const successAppeared = await this.SuccessMessage.waitFor({
+        state: "visible",
+        timeout: 5000,
+      })
+        .then(() => true)
+        .catch(() => false);
+      const duplicateAppeared = await this.duplicateLeaveToastMessage
+        .waitFor({ state: "visible", timeout: 5000 })
+        .then(() => true)
+        .catch(() => false);
+
+      if (successAppeared) {
+        // Wait for success toast to disappear before exiting
+        await this.SuccessMessage.waitFor({ state: "hidden", timeout: 10000 });
+        console.log(" Leave applied successfully!");
+        break;
+      }
+
+      if (duplicateAppeared) {
+        console.log(
+          `❌ Attempt ${attempt}: Duplicate leave found, waiting for toast to disappear and retrying...`
+        );
+        await this.duplicateLeaveToastMessage.waitFor({
+          state: "hidden",
+          timeout: 10000,
+        });
+        await this.clearDateRange();
+        continue;
+      }
+
+      throw new Error(
+        "Neither success nor duplicate message detected, unknown UI state."
+      );
+    }
+  }
   async getWithDrawLink() {
     await this.WithdrawLink.first().click();
   }
+
   async fillWithDrawReason(reason: string) {
     await this.WithdrawReasonField.fill(reason);
   }
@@ -131,69 +183,60 @@ export class ApplyLeaves extends BasePage {
     let withdrawLinksCount = await this.allWithdrawLink.count();
 
     while (withdrawLinksCount > 0) {
-      console.debug(`Found ${withdrawLinksCount} existing leave(s). Withdrawing the first one...`);
+      console.debug(
+        `Found ${withdrawLinksCount} existing leave(s). Withdrawing the first one...`
+      );
 
-      // Click the first withdraw link
       await this.allWithdrawLink.first().click();
 
-      // Fill the withdrawal reason
       await this.fillWithDrawReason(withdrawReason);
 
-      // Submit the withdrawal
       await this.SubmitButton.click();
 
-      // Recalculate the number of remaining withdraw links
       withdrawLinksCount = await this.allWithdrawLink.count();
-      
     }
 
     console.debug("No more existing leaves to withdraw.");
   }
 
-  async dateRange(attempt: number = 3) {
-      console.log(`--- Attempt ${attempt + 1} ---`);
-      await this.DateRange.click();
-      // Move to next month if retrying
-      while(attempt > 0) {
-        const nextArrow = this.page.locator(".react-datepicker__navigation--next");
-        //await  nextArrow.isVisible() && await nextArrow.isEnabled())
-          // await nextArrow.click();
-        
-        // Pick random start and end days in month
-        // if (attempt == 3) 
-        //   const startDay = "09/20/2025"
-        //   const endDay = "09/24/2025";
-        
-      
-          const startDay = Math.floor(Math.random() * 28) + 1;
-          const endDay = startDay + Math.floor(Math.random() * (29 - startDay)); // Avoid SAME day
-        
+  async dateRange(attempt: number = 1): Promise<void> {
+    await this.DateRange.click();
 
-      // Click start and end day in picker
-      const startLocator = this.page.locator(
-        `.react-datepicker__month .react-datepicker__day--0${String(startDay).padStart(2, "0")}`
+    const getDayLocator = (day: number) =>
+      this.page.locator(
+        `.react-datepicker__month .react-datepicker__day--0${String(
+          day
+        ).padStart(2, "0")}`
       );
-      await startLocator.first().click();
 
-      const endLocator = this.page.locator(
-        `.react-datepicker__month .react-datepicker__day--0${String(endDay).padStart(2, "0")}`
+    let startDay: number;
+    let endDay: number;
+
+    if (attempt === 1) {
+      // Pick a random start day between 1 and 26 (30 - 4)
+      startDay = Math.floor(Math.random() * 26) + 1;
+      endDay = startDay + 4; // fixed 4 days duration
+    } else {
+      // Move to next month for retries
+      const nextArrow = this.page.locator(
+        ".react-datepicker__navigation--next"
       );
-      await endLocator.last().click();
-
-      console.log(`Picked range: ${startDay} → ${endDay}`);
-
-      // Duplicate error message check
-      const duplicateFound = await this.duplicateLeaveToastMessage
-        .waitFor({ state: "visible", timeout: 5000 })
-        .then(() => true)
-        .catch(() => false);
-
-      if (!duplicateFound) {
-        //
-        console.log("Date range accepted.");
-        break;
+      if ((await nextArrow.isVisible()) && (await nextArrow.isEnabled())) {
+        await nextArrow.click();
+        await this.page.waitForTimeout(500);
       }
-        attempt--;
-        console.log("Duplicate date range found, retrying...");
+      // Pick a random start day in next month
+      startDay = Math.floor(Math.random() * 26) + 1;
+      endDay = startDay + 4;
     }
-  }}
+
+    await getDayLocator(startDay).first().click();
+    await getDayLocator(endDay).last().click();
+
+    console.log(
+      `Picked ${
+        attempt === 1 ? "random" : "retry"
+      } range: ${startDay} → ${endDay}`
+    );
+  }
+}

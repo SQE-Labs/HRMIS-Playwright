@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
-import testData from "../testData/testData.json";
+import { BasePage } from "../pages/Basepage";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
 import { MyTeamLeavePage } from "../pages/myTeamLeave";
 import { ApplyLeaves } from "../pages/ApplyLeaves";
-
+import { ApproveLeaveHR } from "../pages/ApproveLeaveHR";
+import testData from "../testData/testData.json";
 
 let loginObj: LoginPage;
 // let approveLeaveHR: ApproveLeaveHR;
@@ -30,8 +31,10 @@ test.describe("Approve Leave HR module ", () => {
 
     console.log(">> Starting test case : " + testInfo.title);
   });
-
-  test("HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({ page }) => {
+  // Covered MyTeam Leave Approve flow in this test case.
+  test.skip("HRMIS_4, HRMIS_8 HRMIS_3 HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({
+    page,
+  }) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
     await applyLeave.waitForDotsLoaderToDisappear();
 
@@ -81,7 +84,9 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke ", async ({page, }) => {
+  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @eti", async ({
+    page,
+  }) => {
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
     await approveLeaveHR.waitforLoaderToDisappear();
@@ -101,6 +106,5 @@ test.describe("Approve Leave HR module ", () => {
       constants.APPROVED_STATUS,
       testData.LEAVE_EMP_NAME3
     );
-    
   });
 });
