@@ -41,6 +41,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
         await EmployeeOnboarding.expandEmployeeOnboardingTab();
         await EmployeeOnboarding.naviagateToOnboardingForm();
 
+
     });
 
     test("Submit Onboarding form @smoke", async ({ page, context, browser }) => {
@@ -124,7 +125,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
             department: "APIs",
             designation: "Customer Success Manager",
             assignManager: "Elon Mask",
-            leaveManager: "Autom Mation User",
+            leaveManager: "Vishal Thakur",
             employeeType: "REGULAR",
             employeeSubType: "Full time",
             employeeFlag: "CCI_INDIA"

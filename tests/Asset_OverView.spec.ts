@@ -29,7 +29,11 @@ test.describe("Asset Overview page", () => {
                 let headerTxt = await assetOverview.getHeaderText();
                 expect(headerTxt?.trim()).toBe("Asset Overview")
 
-                //ALL CARDS DSIPLAY ON ASSET OVERVIEW PAGE
+        })
+
+
+        test("All cards display on Asset Overview Page", async ({ page }) => {
+                console.debug('All cards display on Asset Overview Page');
                 expect(await assetOverview.getCardsCount()).toBe(testData.assetsCardCount);
                 expect(await assetOverview.getTotalAssetCount()).toBe(testData.assetsCardCount);
                 let options = await assetOverview.getFilterDropdownOption();

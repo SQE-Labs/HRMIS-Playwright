@@ -50,7 +50,7 @@ test.describe("'Employee Management > Document Upload module @smoke'", () => {
         await EmployeeDirectory.waitForDotsLoaderToDisappear()
         await EmployeeDirectory.fillNameField(name)
         await page.getByText("Submit").click()
-        await EmployeeDirectory.verifySuccessMessage(constants.DESIGNATION_SUCESSMESSSAGE) 
+        await EmployeeDirectory.verifySuccessMessage(constants.DESIGNATION_SUCESSMESSSAGE)
         await EmployeeDirectory.waitForDotsLoaderToDisappear()
         await expect(page.getByText(name)).toBeVisible()
 
