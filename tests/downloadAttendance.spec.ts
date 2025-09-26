@@ -21,7 +21,7 @@ test.describe("Download Attendance page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("HRMIS_55,  Verify UI labels on Download Attendance page @smoke @eti", async ({
+  test(" A&L_Download_Attndnc_1,Verify UI labels on Download Attendance page @smoke @eti", async ({
     page,
   }) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
@@ -29,8 +29,10 @@ test.describe("Download Attendance page", () => {
     await downloadAttendance.verifyUILabels();
   });
 
-  // skipping this test case as no record is present to verify the download functionality
-  // will automate this test case once we have the data
-  test.skip('HRMIS_59 Verify Month dropdown on Download Attendance page @smoke @eti', async ({ page }) => {
+
+  test.skip('A&L_Download_Attndnc_5, Verify that an excel file gets downloaded, @smoke @eti', async ({ page }) => {
+    await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
+    await downloadAttendance.waitForDotsLoaderToDisappear();  
+    
 });
 });

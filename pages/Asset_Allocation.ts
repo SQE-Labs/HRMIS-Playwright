@@ -193,13 +193,17 @@ export class AssetAllocation extends BasePage {
 
         // Step 7: Calculate total from last page
         const lastPageRecordCount = await this.allocationRecord.count();
-        const totalRecords = (totalPages - 1) * totalRecordCount + lastPageRecordCount;
+        const totalRecords = totalPages > 1
+            ? (totalPages - 1) * totalRecordCount + lastPageRecordCount
+            : lastPageRecordCount;
+
 
         console.log("Calculated Total Records:", totalRecords);
         expect(totalAssetCount).toEqual(totalRecords);
         expect(await this.previousButton.isEnabled()).toBeTruthy();
     }
 
+   
 
     async assignAsset() {
 

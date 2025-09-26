@@ -7,6 +7,7 @@ export class DownloadAttendance extends BasePage {
   private monthDropdown: Locator = this.page.locator("//select[@id='month']");
   private yearDropdown: Locator = this.page.locator("//select[@id='year']");
   private employeeFlagDropdown: Locator = this.page.locator("//select[@id='employee-flag']");
+  private downloadButton: Locator = this.page.getByText('Compile & Download')
 
 
 
@@ -31,5 +32,12 @@ export class DownloadAttendance extends BasePage {
       await expect(this.yearDropdown).toHaveValue(yearString);
       await expect(this.employeeFlagDropdown).toHaveValue('ALL');
     }
+  }
+
+  async downloadAttendanceSheet(month:string , employeeName: string) {
+    await this.monthDropdown.selectOption(month);
+    await this.employeeFlagDropdown.selectOption(employeeName);
+
+
   }
 }

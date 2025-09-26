@@ -32,7 +32,7 @@ test.describe("Approve Leave HR module ", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
   // Covered MyTeam Leave Approve flow in this test case.
-  test.skip("HRMIS_4, HRMIS_8 HRMIS_3 HRMIS_32, HRMIS_44 Approve Leave HR @smoke @eti", async ({
+  test.skip("A&L_MY_Team_5, A&L_MY_Team_9, A&L_Approve(HR)_13 Approve Leave HR @smoke @eti", async ({
     page,
   }) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
@@ -84,7 +84,7 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("HRMIS_33, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @eti", async ({
+  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti" , async ({
     page,
   }) => {
     // Navigate to My Team Leave tab
