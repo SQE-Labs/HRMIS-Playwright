@@ -15,7 +15,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         loginPage = new LoginPage(page)
     })
 
-    test("Asset Request page Create Asset Request - L1 Approval @smoke", async ({ page }) => {
+    test("HRMIS_24 Asset Request page Create Asset Request - L1 Approval @smoke", async ({ page }) => {
         comment = await assetrequest.generateRandomString(10);
 
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
@@ -34,7 +34,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         expect(await assetrequest.column.isVisible()).toBeTruthy();
         await assetrequest.logout();
     })
-    test("Asset Request page L1 Approve the Request @smoke", async ({ page }) => {
+    test("HRMIS_26 Asset Request page L1 Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -53,7 +53,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
 
         await assetrequest.logout();
     })
-    test("Asset Request page L2 Approve the Request @smoke", async ({ page }) => {
+    test("HRMIS_28 Asset Request page L2 Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.L2.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -72,7 +72,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
 
         await assetrequest.logout();
     })
-    test("Asset Request page IT Approve the Request @smoke", async ({ page }) => {
+    test("HRMIS_30 , HRMIS_31 Asset Request page IT Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.IT.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -100,7 +100,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.logout();
 
     })
-    test("Asset Request page Store Approve the Request @smoke", async ({ page }) => {
+    test("HRMIS_33 Asset Request page Store Approve the Request @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.STORE.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -121,7 +121,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.logout();
     })
 
-    test("Check Asset is Delivered to Employee @smoke", async ({ page }) => {
+    test("HRMIS_33 Check Asset is Delivered to Employee @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
@@ -142,7 +142,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.logout();
     })
 
-    test("RTO Management - Asset Request Return Flow @smoke", async ({ page }) => {
+    test("HRMIS_40 RTO Management - Asset Request Return Flow @smoke", async ({ page }) => {
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToRtoManagementTab();

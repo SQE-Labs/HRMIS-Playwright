@@ -33,7 +33,7 @@ test.describe("Asset Rrequests page", () => {
         }
 
     })
-    test("Create Asset Request - Successful Submission @smoke", async ({ page }) => {
+    test("Create Asset Request - Successful Submission", async ({ page }) => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
@@ -43,7 +43,7 @@ test.describe("Asset Rrequests page", () => {
         expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
     })
 
-    test("Create Asset Request - Reset Button Clears Fields @smoke", async ({ page }) => {
+    test("HRMIS_23 Create Asset Request - Reset Button Clears Fields @smoke", async ({ page }) => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();

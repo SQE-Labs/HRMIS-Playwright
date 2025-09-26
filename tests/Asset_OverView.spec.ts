@@ -21,36 +21,29 @@ test.describe("Asset Overview page", () => {
 
         });
 
-        // TC_AM_003 & TC_AM_004 (merged)
-        test("Asset Overview page open and verify  header", async ({ page }) => {
+        test("HRMIS_1 , HRMIS_2 , HRMIS_3 Asset Overview page filter functionality @smoke", async ({ page }) => {
+                // Get all filter options
                 console.debug("Verify Asset Overview Element");
                 console.debug('Assert management tab expand');
                 //assertion
                 let headerTxt = await assetOverview.getHeaderText();
                 expect(headerTxt?.trim()).toBe("Asset Overview")
 
-        })
-
-
-        test("All cards display on Asset Overview Page", async ({ page }) => {
-                console.debug('All cards display on Asset Overview Page');
-
+                //ALL CARDS DSIPLAY ON ASSET OVERVIEW PAGE
                 expect(await assetOverview.getCardsCount()).toBe(testData.assetsCardCount);
                 expect(await assetOverview.getTotalAssetCount()).toBe(testData.assetsCardCount);
-        });
-
-        test("Asset Overview page filter  functionality TC_AM_06", async ({ page }) => {
-
                 let options = await assetOverview.getFilterDropdownOption();
                 expect(options.length).toBeGreaterThan(1);
                 await expect(assetOverview.overviewDropdown).toHaveText("All");
-                await assetOverview.selectFilterDropdownOption(options[1]);
+                const selectedOption = options[1];
+                await assetOverview.selectFilterDropdownOption(selectedOption);
                 await assetOverview.clickFilterButton();
-
+                const displayedAssetType = await assetOverview.getselectedOptionName();
+                expect(displayedAssetType?.trim()).toContain(selectedOption);
+                console.log(`Filter applied: Expected "${selectedOption}", found "${displayedAssetType?.trim()}"`);
         });
 
         test("Verify XLSX file is downloaded @smoke", async ({ page }) => {
-
                 let options = await assetOverview.getFilterDropdownOption();
                 expect(options.length).toBeGreaterThan(1);
                 await expect(assetOverview.overviewDropdown).toHaveText("All");
@@ -67,6 +60,7 @@ test.describe("Asset Overview page", () => {
                 }
 
         });
+
         test("Verify details display on cards", async () => {
                 // TC_AM_008
                 await assetOverview.selectAssetTypeDropdown("Desktop PC")
@@ -74,51 +68,51 @@ test.describe("Asset Overview page", () => {
                 console.debug("Details are displayed on cards");
         });
 
-        test("Verify when clicking on any card, card opens up @smoke", async () => {
+        test("HRMIS_4 Verify when clicking on any card, card opens up @smoke", async ({ page }) => {
                 // TC_AM_009
-                await assetOverview.openCard("Desktop PC");
+                let options = await assetOverview.getFilterDropdownOption();
+                expect(options.length).toBeGreaterThan(1);
+                await expect(assetOverview.overviewDropdown).toHaveText("All");
+                const selectedOption = options[4];
+                await assetOverview.selectFilterDropdownOption(selectedOption);
+                await assetOverview.clickFilterButton();
+                await assetOverview.openCard(selectedOption);
                 await assetOverview.countInnerAssets();
-        });
+                await expect(page.getByText("S.No.")).toBeVisible()
+                await expect(page.getByText("Manufacturer")).toBeVisible()
+                await expect(page.getByText("Model")).toBeVisible()
+                await expect(page.getByText("Processor")).toBeVisible()
+                await expect(page.getByText("RAM")).toBeVisible()
+                await expect(page.getByText("SSD").first()).toBeVisible()
+                await expect(page.getByText("Serial Number")).toBeVisible()
+                await expect(page.getByText("Super Owner").last()).toBeVisible()
+                await expect(page.getByText("Owner").last()).toBeVisible()
+                await expect(page.getByText("Status")).toBeVisible()
+                await expect(page.getByText("Availability").last()).toBeVisible()
 
-        test('Verify Owner options for Super Owner = All', async () => {
-                await assetOverview.openCard("Desktop PC")
                 await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('All', ['All', 'Caelius', 'Salesforce', 'Consultant', 'SQE Labs']);
-        });
-
-        test('Verify Owner options for Super Owner = CAELIUS_OWNED', async () => {
-                await assetOverview.openCard("Desktop PC")
                 await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('CAELIUS_OWNED', ['All', 'Caelius', 'Consultant', 'SQE Labs']);
-        });
-
-        test('Verify Salesforce is visible for Super Owner = CLIENT_OWNED', async () => {
-                await assetOverview.openCard("Desktop PC")
                 await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('CLIENT_OWNED', ['Salesforce'], false);
-        });
 
-        // TC_AM_017
-        test('Verify records are filtered based on Super Owner, Owner, and Availability selections', async ({ page }) => {
+        });
+        test('HRMIS_5 , HRMIS_6 Verify records are filtered based on dropdowns and export behavior @smoke', async ({ page }) => {
                 await assetOverview.openCard("Desktop PC");
                 const filteredCount = await assetOverview.filterAssetsByDropdownSelections();
                 if (filteredCount === 0) {
-                        console.debug(" No records available");
+                        console.debug("No records available after filtering.");
                         expect(filteredCount).toBe(0);
+                        await assetOverview.clickExportButton();
+                        const toastMessage = await assetOverview.toast.innerText();
+                        expect(toastMessage).toBe("No Record Available!");
                 } else {
                         console.debug(`${filteredCount} records found after filtering.`);
                         expect(filteredCount).toBeGreaterThan(0);
-                }
-        });
-        //  Need to fixed -- bug already raised
-        test('Verify XLSX file is downloaded after filtering and clicking Export @smoke', async ({ page }) => {
-                await assetOverview.getFilteredData();
-                if (await assetOverview.emptyRecord.isVisible()) {
-                        await assetOverview.clickExportButton();
-                        expect(await assetOverview.toast.innerText()).toBe("No Record Available!");
-                } else {
                         await assetOverview.verifyXLSXDownload(page, async () => {
                                 await assetOverview.clickExportButton();
                         });
                 }
         });
+
         // TC_AM_019
         test('Verify Sorting', async ({ page }) => {
                 test.setTimeout(480000);
@@ -154,6 +148,5 @@ test.describe("Asset Overview page", () => {
                 await assetOverview.waitforLoaderToDisappear()
                 await expect(assetOverview.overviewHeader).toBeVisible()
                 await expect(assetOverview.card.first()).toBeVisible()
-
         })
 });
