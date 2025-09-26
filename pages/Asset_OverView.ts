@@ -145,6 +145,11 @@ export class OverView extends AssetManagementTab {
         await this.assetTypeDropdown.selectOption({ label: optionText });
         console.debug(`Successfully selected: ${optionText}`);
     }
+
+    async getselectedOptionName() {
+        return await this.page.locator("div>h5").textContent()
+    }
+
     async clickFilterButton(): Promise<void> {
         await this.filterButton.click();
         await this.waitforLoaderToDisappear();
@@ -158,7 +163,7 @@ export class OverView extends AssetManagementTab {
     }
 
 
-    async selectAssetTypeDropdown(ddValue :  string) {
+    async selectAssetTypeDropdown(ddValue: string) {
         await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 5000 });
         await this.assetTypeDropdown.selectOption({ label: ddValue });
         await this.filterButton.click()
@@ -180,7 +185,7 @@ export class OverView extends AssetManagementTab {
     }
 
     // TC_AM_009
-    async openCard(ddValue : string): Promise<void> {
+    async openCard(ddValue: string): Promise<void> {
         await this.selectAssetTypeDropdown(ddValue);
         await this.card.click();
         await this.waitforLoaderToDisappear()
@@ -341,10 +346,10 @@ export class OverView extends AssetManagementTab {
     async selectOwnerDropDown(owner: string) {
         await this.ownerDropdown.selectOption(owner)
     }
-    async selectSuperOwnerDropDown(superOwner : string) {
+    async selectSuperOwnerDropDown(superOwner: string) {
         await this.superOwnerDropdown.selectOption(superOwner)
     }
-    async selectAvailabilityDropDown(availability : string) {
+    async selectAvailabilityDropDown(availability: string) {
         await this.availabilityDropdown.selectOption(availability)
     }
 

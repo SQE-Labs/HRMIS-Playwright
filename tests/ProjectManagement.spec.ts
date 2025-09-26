@@ -28,7 +28,7 @@ test.describe.serial("Project Management", () => {
     })
 
 
-    let projectName;
+    let projectName: string;
     test("Create a new project successfully ", async ({ page }) => {
 
         await ProjectManagementObj.clickCreateProject()

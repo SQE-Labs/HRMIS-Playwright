@@ -8,7 +8,7 @@ test.describe("Asset Allocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page)
         await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
-        
+
         allocation = new AssetAllocation(page)
         await AssetHelper.navigateToAllocationAsset(page, allocation.allocationAsset);
         console.log(">> Starting test case : " + test.info().title);
@@ -22,14 +22,14 @@ test.describe("Asset Allocation page", () => {
     })
 
     test("Functionality of search Bar ", async ({ page }) => {
-        await allocation.getBySearchdata(allocation.assetTypeName, "KeyWord" , "Asset Name")
+        await allocation.getBySearchdata(allocation.assetTypeName, "KeyWord", "Asset Name")
     })
     test("Functionality of search Bar serial Number ", async ({ page }) => {
-        await allocation.getBySearchdata(allocation.assetSerialNumber,"DELL004", "serial Number")
+        await allocation.getBySearchdata(allocation.assetSerialNumber, "DELL004", "serial Number")
     })
 
     test("Functionality of search Bar Owner name ", async ({ page }) => {
-        await allocation.getBySearchdata(allocation.assetOwnerName,"Caelius", "Owner name")
+        await allocation.getBySearchdata(allocation.assetOwnerName, "Caelius", "Owner name")
     })
 
     test("Functionality of search Bar Employee name @smoke", async ({ page }) => {
@@ -46,13 +46,17 @@ test.describe("Asset Allocation page", () => {
 
     // TC_AM_029
 
-    test("Pagination @smoke", async () => {
+    test("HRMIS_8 , HRMIS_9, HRMIS_10 Pagination @smoke", async () => {
         expect(await allocation.pagination())
         console.log("Pagination verified !!")
     })
 
 
-    test("Assign asset  @smoke", async () => {
+    test("HRMIS_12 Assign asset  @smoke", async ({page}) => {
+        expect(await allocation.assignAssetSmoke())
+    })
+
+    test(" Assign asset @regression", async () => {
         expect(await allocation.assignAsset())
     })
 })

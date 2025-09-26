@@ -49,9 +49,14 @@ export class AssetAllocation extends BasePage {
     public assetTableSerialNumber: Locator;
     public assetTableRowSix: Locator;
     public assetTypeDropdownSvg: Locator;
+    public totalAssetRequest: Locator;
+    public column: Locator;
+
 
     constructor(page: Page) {
         super(page);
+        this.totalAssetRequest = page.locator(".total");
+        this.column = page.locator("(//thead//tr)[1]");
         this.allocationAsset = page.locator("//a[text()='Asset Allocation']");
         this.allocationAssignAssetHeader = page.locator("div>h1");
         this.allocationPageHeader = page.locator("div>h1");
@@ -157,7 +162,7 @@ export class AssetAllocation extends BasePage {
         // Step 2: Set items per page to the first available option (index 0)
         await this.itemsPerPage.waitFor({ state: 'visible' });
         await this.itemsPerPage.click();
-        await this.itemsPerPage.selectOption({ index: 0 });
+        await this.itemsPerPage.selectOption({ value: "40" });
         await this.page.waitForTimeout(500);
 
         const selectedValue = parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
@@ -297,4 +302,34 @@ export class AssetAllocation extends BasePage {
         await this.toastContainer.isVisible();
         console.log("Successfully assigned!");
     }
+    async assignAssetSmoke() {
+        // Verify 'Assign Asset' button is present and click it
+        expect(await this.allocationAssignAsset.textContent()).toEqual("Assign Asset");
+        await this.waitforLoaderToDisappear();
+        await this.allocationAssignAsset.click();
+        // Select employee
+        await this.allocationSelectEmployee.click();
+        await this.employeeOption.click();
+        // Select asset type
+        await this.allocationSelectAssetType.click();
+        await this.assetTypeOption.click();
+        await expect(this.assetTypePopUp).toBeVisible();
+        await this.waitForDotsLoaderToDisappear();
+        await this.waitForSpinnerLoaderToDisappear();
+        // Select first asset
+        const serialNumbers2 = await this.page.locator("table tr td:nth-child(4)").allTextContents();
+        const selectedSerialNumber = serialNumbers2[0];
+        await this.popupSearchBar.pressSequentially(selectedSerialNumber);
+        await this.assetRadioButton.first().click();
+        // Add a comment
+        await this.allocationComment.fill("Thank you !!");
+        // Submit the assignment
+        await this.submitButton.click();
+        // Check toast/confirmation is visible
+        await expect(this.toastContainer).toBeVisible();
+        console.log("Successfully assigned!");
+
+    }
+
+   
 }
