@@ -216,7 +216,7 @@ test.describe('Asset Enrollment Page', () => {
         await expect(assetEnrollment.submitButton).toBeVisible();
     })
 
-    test('bulk create asset  Upload valid .xls / .xlsx file @smoke', async ({ page }) => {
+    test('HRMIS_36 bulk create asset  Upload valid .xls / .xlsx file @smoke', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset()
         await assetEnrollment.uploadAndVerifyFile(testData.VALID_XLSX_FILE, page, assetEnrollment.submitButton, assetEnrollment.popupMessage)
         console.debug(await assetEnrollment.successPopup.innerText());
@@ -452,7 +452,7 @@ test.describe('Asset Enrollment Page', () => {
         await expect(assetEnrollment.createAssetTypePopupHeader).toBeHidden();
     });
 
-    test('Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke', async ({ page }) => {
+    test('HRMIS_35 Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         let name = await AssetHelper.generateRandomString(5)
@@ -492,7 +492,7 @@ test.describe('Asset Enrollment Page', () => {
     })
 
 
-    test('should approve asset type request and verify status is updated to APPROVED @smoke', async ({ page }) => {
+    test('HRMIS_38 should approve asset type request and verify status is updated to APPROVED @smoke', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
         const noRecordLocator = page.locator(".fs-4");
@@ -511,7 +511,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('should reject asset type request and verify status is updated to REJECTED @smoke', async ({ page }) => {
+    test('HRMIS_39 should reject asset type request and verify status is updated to REJECTED @smoke', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
