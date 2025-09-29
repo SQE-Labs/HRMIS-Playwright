@@ -70,7 +70,7 @@ test.describe.serial("'Caelius Polices'", () => {
     test("Download the Policy.  @smoke", async ({ page, context, browser }) => {
 
         await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
-        // await helper.fetchLastRecordView('40');
+        await helper.fetchLastRecordView('40');
         const downloadPath = await utils.verifyXLSXDownload2(page, async () => {
         
             await Polices_caeliusPolicy.clickOnViewLink();
