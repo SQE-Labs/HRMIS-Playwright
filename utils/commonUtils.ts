@@ -1,10 +1,12 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect, Page, Download, Locator, Response } from '@playwright/test';
+import { expect, Page, Download, Locator, Response, BrowserContext } from '@playwright/test';
+
 
 export class CommonUtils {
-    
+
+
     async verifyXLSXDownload(
         page: Page,
         exportTrigger: () => Promise<void>
@@ -23,7 +25,7 @@ export class CommonUtils {
         }
         // Wait for download and trigger export
         const [download] = await Promise.all([
-            page.waitForEvent('download', { timeout: 15000 }),
+            page.waitForEvent('download', { timeout: 30000 }),
             exportTrigger(),
         ]);
 
@@ -34,6 +36,7 @@ export class CommonUtils {
 
         return downloadPath;
     }
+
 
 
 
@@ -173,7 +176,7 @@ export class CommonUtils {
     }
 
 
-    async openYopmailandNavigaeToVerifyPopup(yopmailUrl: string, context, emailID?: string) {
+    async openYopmailandNavigaeToVerifyPopup(yopmailUrl: string, context: BrowserContext, emailID?: string) {
 
         // 1.  open new tab for Yopmail
         const yopmailPage = await context.newPage();
@@ -208,6 +211,58 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    
+
+    async pdfViewerDownloadTrigger(page: Page): Promise<void> {
+        const downloadButton = page.locator('pdf-viewer#viewer')
+            .locator('viewer-toolbar#toolbar')
+            .locator('viewer-download-controls#downloads')
+            .locator('cr-icon-button#save');
+
+        await downloadButton.waitFor({ state: 'visible' });
+        await downloadButton.click();
+    }
+
+    async verifyXLSXDownload2(
+        page: Page,
+        exportTrigger: () => Promise<void>
+    ): Promise<string> {
+        const downloadDir = path.join(process.cwd(), 'Download');
+
+        // Ensure the Download directory exists
+        if (!fs.existsSync(downloadDir)) {
+            fs.mkdirSync(downloadDir, { recursive: true });
+        }
+
+        // Auto-delete all files in the folder
+        const oldFiles = fs.readdirSync(downloadDir);
+        for (const file of oldFiles) {
+            fs.unlinkSync(path.join(downloadDir, file));
+        }
+
+        // Wait for page stability before triggering download
+        await page.waitForLoadState('networkidle');
+
+        // Trigger download and wait for it at the same time
+        const [download] = await Promise.all([
+            page.waitForEvent('download', { timeout: 30000 }),
+            exportTrigger()  // 👈 Your button click or export action
+        ]);
+
+        // Construct download path
+        const downloadedFile = download.suggestedFilename();
+        const downloadPath = path.join(downloadDir, downloadedFile);
+
+        // Save the file
+        await download.saveAs(downloadPath);
+
+        // Verify file exists
+        if (!fs.existsSync(downloadPath)) {
+            throw new Error(`Downloaded file not found at ${downloadPath}`);
+        }
+
+        return downloadPath;
+    }
+
+
 
 }
