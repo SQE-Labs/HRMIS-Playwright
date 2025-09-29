@@ -48,7 +48,7 @@ test.describe.serial("'Caelius Polices'", () => {
         const successMessage = await Polices_caeliusPolicy.toastMessage();
         expect(successMessage).toEqual(actualSuccessMessage);
 
-    })
+    });
 
     test("Update Policy @smoke", async ({ page, context, browser }) => {
 
@@ -65,20 +65,19 @@ test.describe.serial("'Caelius Polices'", () => {
 
         expect(successMessage).toEqual(actualSuccessMessage);
 
-    })
+    });
 
     test("Download the Policy.  @smoke", async ({ page, context, browser }) => {
 
         await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
         await helper.fetchLastRecordView('40');
-        const downloadPath = await utils.verifyXLSXDownload(page, async () => {
+        const downloadPath = await utils.verifyXLSXDownload2(page, async () => {
+        
             await Polices_caeliusPolicy.clickOnViewLink();
+        
         });
 
         expect(path.extname(downloadPath)).toBe('.pdf');
 
-
-    })
-
-
+    });
 });
