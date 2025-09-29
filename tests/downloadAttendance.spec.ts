@@ -30,9 +30,11 @@ test.describe("Download Attendance page", () => {
   });
 
 
-  test.skip('A&L_Download_Attndnc_5, Verify that an excel file gets downloaded, @smoke @eti', async ({ page }) => {
+  test('A&L_Download_Attndnc_5, Verify that an excel file gets downloaded, @smoke @eti', async ({ page }) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
-    await downloadAttendance.waitForDotsLoaderToDisappear();  
+    await downloadAttendance.waitForDotsLoaderToDisappear();
+    downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur");
     
-});
-});
+
+  });
+}); 

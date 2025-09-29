@@ -146,6 +146,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToRtoManagementTab();
+        await page.pause();
         await assetrequest.waitforLoaderToDisappear();
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord();
         expect(totalRequestCount).toBeGreaterThan(0)
@@ -158,6 +159,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke", async () => {
         await assetrequest.dockerNumber.fill(await assetrequest.generateRandomString(5));
         await assetrequest.uploadFile("screenshot.png", page)
         await assetrequest.comment.fill(comment);
+        await page.pause();
         await assetrequest.clickOnSubmitButton();
         await assetrequest.waitforLoaderToDisappear();
         expect(await assetrequest.verifySuccessMessage("Asset return request accepted"));

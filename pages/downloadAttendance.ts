@@ -8,6 +8,8 @@ export class DownloadAttendance extends BasePage {
   private yearDropdown: Locator = this.page.locator("//select[@id='year']");
   private employeeFlagDropdown: Locator = this.page.locator("//select[@id='employee-flag']");
   private downloadButton: Locator = this.page.getByText('Compile & Download')
+  private selectEmployeeDropdown: Locator = this.page.locator(".css-1xc3v61-indicatorContainer")
+
 
 
 
@@ -26,6 +28,7 @@ export class DownloadAttendance extends BasePage {
       const monthName = today.toLocaleString('default', { month: 'long' }); // e.g. 'September'
       const yearString = today.getFullYear().toString();
 
+
       // verify the default selected values
 
       await expect(await this.monthDropdown.inputValue()).toBe(monthName);
@@ -34,10 +37,25 @@ export class DownloadAttendance extends BasePage {
     }
   }
 
-  async downloadAttendanceSheet(month:string , employeeName: string) {
-    await this.monthDropdown.selectOption(month);
-    await this.employeeFlagDropdown.selectOption(employeeName);
-
+  async downloadAttendanceSheet(month: string, employeeName: string) {
+    await this.selectMonth(month);
+    await this.selectEmployee(employeeName);
+    await this.downloadButton.click();
+    await this.waitForDotsLoaderToDisappear();
 
   }
+
+  async selectMonth(month: string) {
+    await this.monthDropdown.selectOption(month);
+  }
+
+  async selectEmployee(employeeName: string) {
+    await this.selectEmployeeDropdown.click();
+
+    // Use getByText for dynamic matching
+    const employeeOption = this.page.getByText(employeeName);
+    await employeeOption.waitFor({ state: 'visible' });
+    await employeeOption.click();
+  }
 }
+
