@@ -211,6 +211,7 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    
 
     async pdfViewerDownloadTrigger(page: Page): Promise<void> {
         const downloadButton = page.locator('pdf-viewer#viewer')
@@ -221,48 +222,71 @@ export class CommonUtils {
         await downloadButton.waitFor({ state: 'visible' });
         await downloadButton.click();
     }
-
     async verifyXLSXDownload2(
         page: Page,
-        exportTrigger: () => Promise<void>
+        exportTrigger?: () => Promise<void> // Optional if you want to pass external trigger
     ): Promise<string> {
-        const downloadDir = path.join(process.cwd(), 'Download');
+    const downloadDir = path.join(process.cwd(), 'Download');
 
-        // Ensure the Download directory exists
-        if (!fs.existsSync(downloadDir)) {
-            fs.mkdirSync(downloadDir, { recursive: true });
-        }
-
-        // Auto-delete all files in the folder
-        const oldFiles = fs.readdirSync(downloadDir);
-        for (const file of oldFiles) {
-            fs.unlinkSync(path.join(downloadDir, file));
-        }
-
-        // Wait for page stability before triggering download
-        await page.waitForLoadState('networkidle');
-
-        // Trigger download and wait for it at the same time
-        const [download] = await Promise.all([
-            page.waitForEvent('download', { timeout: 30000 }),
-            exportTrigger()  // 👈 Your button click or export action
-        ]);
-
-        // Construct download path
-        const downloadedFile = download.suggestedFilename();
-        const downloadPath = path.join(downloadDir, downloadedFile);
-
-        // Save the file
-        await download.saveAs(downloadPath);
-
-        // Verify file exists
-        if (!fs.existsSync(downloadPath)) {
-            throw new Error(`Downloaded file not found at ${downloadPath}`);
-        }
-
-        return downloadPath;
+    // Ensure Download directory exists
+    if (!fs.existsSync(downloadDir)) {
+        fs.mkdirSync(downloadDir, { recursive: true });
     }
 
+    // Clear old files
+    const oldFiles = fs.readdirSync(downloadDir);
+    for (const file of oldFiles) {
+        try {
+            fs.unlinkSync(path.join(downloadDir, file));
+        } catch (error) {
+            console.warn(`Failed to delete file ${file}:`, error);
+        }
+    }
 
+    // Wait for page idle
+    await page.waitForLoadState('networkidle');
 
+    // Locate the download button inside the iframe and shadow DOM
+    const downloadButton = page.frameLocator('iframe')
+        .locator('viewer-download-controls#downloads')
+        .locator('cr-icon-button#save');
+
+    // Wait for button visibility & click with force
+    await downloadButton.waitFor({ state: 'visible', timeout: 10000 });
+
+    // Trigger download and wait for event simultaneously
+    const [download] = await Promise.all([
+        page.waitForEvent('download', { timeout: 30000 }),
+        downloadButton.click({ force: true }),
+        exportTrigger ? exportTrigger() : Promise.resolve() // use exportTrigger if provided
+    ]);
+
+    // Suggested filename
+    const downloadedFile = download.suggestedFilename();
+
+    // Verify file extension is .xlsx (optional but recommended)
+    if (!downloadedFile.toLowerCase().endsWith('.xlsx')) {
+        throw new Error(`Downloaded file does not have expected .xlsx extension: ${downloadedFile}`);
+    }
+
+    // Construct path and save the file
+    const downloadPath = path.join(downloadDir, downloadedFile);
+    await download.saveAs(downloadPath);
+
+    // Wait shortly for filesystem completion
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Verify file exists
+    if (!fs.existsSync(downloadPath)) {
+        throw new Error(`Downloaded file not found at ${downloadPath}`);
+    }
+
+    return downloadPath;
 }
+}
+
+
+
+
+
+
