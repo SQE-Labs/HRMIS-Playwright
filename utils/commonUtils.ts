@@ -222,67 +222,56 @@ export class CommonUtils {
         await downloadButton.waitFor({ state: 'visible' });
         await downloadButton.click();
     }
-    async verifyXLSXDownload2(
+    
+    async downloadAndVerifyFile(
         page: Page,
-        exportTrigger?: () => Promise<void> // Optional if you want to pass external trigger
+        downloadTrigger: () => Promise<void>,
+        saveFolder: string = 'C:\\Users\\Caelius\\HRMIS-Playwright\\Download',
+        saveFileName?: string
     ): Promise<string> {
-    const downloadDir = path.join(process.cwd(), 'Download');
 
-    // Ensure Download directory exists
-    if (!fs.existsSync(downloadDir)) {
-        fs.mkdirSync(downloadDir, { recursive: true });
-    }
-
-    // Clear old files
-    const oldFiles = fs.readdirSync(downloadDir);
-    for (const file of oldFiles) {
-        try {
-            fs.unlinkSync(path.join(downloadDir, file));
-        } catch (error) {
-            console.warn(`Failed to delete file ${file}:`, error);
+        // 1️⃣ Ensure folder exists
+        if (!fs.existsSync(saveFolder)) {
+            fs.mkdirSync(saveFolder, { recursive: true });
         }
+
+        // 2️⃣ Delete all existing files in the folder
+        const oldFiles = fs.readdirSync(saveFolder);
+        for (const file of oldFiles) {
+            fs.unlinkSync(path.join(saveFolder, file));
+        }
+
+        // 3️⃣ Trigger the download
+        await downloadTrigger();
+
+        // 4️⃣ Wait for file to appear in folder
+        const timeout = 30000; // 30s
+        const pollingInterval = 500; // check every 0.5s
+        const start = Date.now();
+        let downloadedFile: string | null = null;
+
+        while (Date.now() - start < timeout) {
+            const files = fs.readdirSync(saveFolder);
+            if (files.length > 0) {
+                downloadedFile = files[0];
+                break;
+            }
+            await new Promise(res => setTimeout(res, pollingInterval));
+        }
+
+        if (!downloadedFile) {
+            throw new Error(' File download failed or took too long');
+        }
+
+        // 5️⃣ Rename file if custom name provided
+        const filePath = path.join(saveFolder, saveFileName || downloadedFile);
+        if (saveFileName) {
+            fs.renameSync(path.join(saveFolder, downloadedFile), filePath);
+        }
+
+        console.log('file downloaded successfully at:', filePath);
+        return filePath;
     }
-
-    // Wait for page idle
-    await page.waitForLoadState('networkidle');
-
-    // Locate the download button inside the iframe and shadow DOM
-    const downloadButton = page.frameLocator('iframe')
-        .locator('viewer-download-controls#downloads')
-        .locator('cr-icon-button#save');
-
-    // Wait for button visibility & click with force
-    await downloadButton.waitFor({ state: 'visible', timeout: 10000 });
-
-    // Trigger download and wait for event simultaneously
-    const [download] = await Promise.all([
-        page.waitForEvent('download', { timeout: 30000 }),
-        downloadButton.click({ force: true }),
-        exportTrigger ? exportTrigger() : Promise.resolve() // use exportTrigger if provided
-    ]);
-
-    // Suggested filename
-    const downloadedFile = download.suggestedFilename();
-
-    // Verify file extension is .xlsx (optional but recommended)
-    if (!downloadedFile.toLowerCase().endsWith('.xlsx')) {
-        throw new Error(`Downloaded file does not have expected .xlsx extension: ${downloadedFile}`);
-    }
-
-    // Construct path and save the file
-    const downloadPath = path.join(downloadDir, downloadedFile);
-    await download.saveAs(downloadPath);
-
-    // Wait shortly for filesystem completion
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Verify file exists
-    if (!fs.existsSync(downloadPath)) {
-        throw new Error(`Downloaded file not found at ${downloadPath}`);
-    }
-
-    return downloadPath;
-}
 }
 
 

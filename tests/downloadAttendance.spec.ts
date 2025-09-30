@@ -1,11 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
-import { BasePage } from "../pages/Basepage";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
-import * as constants from "../utils/constants";
 import testData from "../testData/testData.json";
-
 import { DownloadAttendance } from "../pages/downloadAttendance";
+
 
 let downloadAttendance: DownloadAttendance;
 let attendanceLeaveTab: AttendanceLeaveTab;
@@ -30,11 +28,14 @@ test.describe("Download Attendance page", () => {
   });
 
 
-  test('A&L_Download_Attndnc_5, Verify that an excel file gets downloaded, @smoke @eti', async ({ page }) => {
-    await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
-    await downloadAttendance.waitForDotsLoaderToDisappear();
-    downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur");
-    
+  test('A&L_Download_Attndnc_5: Verify that an Excel file gets downloaded @smoke @eti', async ({ page }) => {
+  await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
 
+    const downloadFolder = 'C:\\Users\\Caelius\\HRMIS-Playwright\\Download';
+    const filePath = await downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur(REGULAR)", downloadFolder);
+
+    console.log("Downloaded file verified at:", filePath);
   });
-}); 
+  
+  });
+  
