@@ -21,7 +21,7 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke ", async ({
+  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
     page,
   }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);

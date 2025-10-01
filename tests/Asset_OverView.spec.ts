@@ -99,7 +99,7 @@ test.describe("Asset Overview page", () => {
                 await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('CLIENT_OWNED', ['Salesforce'], false);
 
         });
-        test('HRMIS_5 , HRMIS_6 Verify records are filtered based on dropdowns and export behavior @smoke', async ({ page }) => {
+        test('HRMIS_5 , HRMIS_6 Verify records are filtered based on dropdowns and export behavior @smoke @knownbug', async ({ page }) => {
                 await assetOverview.openCard("Desktop PC");
                 const filteredCount = await assetOverview.filterAssetsByDropdownSelections();
                 if (filteredCount === 0) {

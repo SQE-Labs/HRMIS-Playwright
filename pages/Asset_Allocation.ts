@@ -153,71 +153,18 @@ export class AssetAllocation extends BasePage {
     async clickOnNextButton() {
         await this.nextButton.click();
     }
-    // async pagination() {
-    //     // Step 1: Get total asset count
-    //     const totalAllocationText = await this.totalAssetAssigned.allTextContents();
-    //     const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationText);
-    //     console.log("Total Asset Count:", totalAssetCount);
-
-    //     // Step 2: Set items per page to the first available option (index 0)
-    //     await this.itemsPerPage.waitFor({ state: 'visible' });
-    //     await this.itemsPerPage.click();
-    //     await this.itemsPerPage.selectOption({ value: "40" });
-    //     await this.page.waitForTimeout(500);
-
-    //     const selectedValue = parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
-    //     const assetNameCount = await this.assetTypeName.count();
-
-    //     console.log("Items Per Page (Selected):", selectedValue);
-    //     console.log("Asset Name Count (Visible):", assetNameCount);
-
-    //     // Step 3: Validate initial pagination state
-    //     expect(selectedValue).toEqual(assetNameCount);
-
-    //     // Step 4: Validate navigation buttons and go to the first page
-    //     await this.nextButton.click();
-    //     await this.page.waitForTimeout(1000);
-    //     expect(await this.previousButton.isEnabled()).toBeTruthy();
-    //     await this.previousButton.click();
-    //     await this.page.waitForTimeout(1000);
-    //     expect(await this.nextButton.isEnabled()).toBeTruthy();
-
-    //     // Step 5: Get pagination counts
-    //     const totalRecordCount = await this.allocationRecord.count(); // Records per page
-    //     const pageCountText = await this.pageCount.textContent();
-    //     const [currentPage, totalPages] = AssetHelper.extractPageCount(pageCountText || '');
-
-    //     console.log(`Current Page: ${currentPage}, Total Pages: ${totalPages}`);
-    //     const remainingPages = totalPages - currentPage;
-
-    //     // Step 6: Navigate through remaining pages
-    //     for (let i = 0; i < remainingPages; i++) {
-    //         await this.nextButton.click();
-    //         await this.page.waitForTimeout(1000);
-    //     }
-
-    //     // Step 7: Calculate total from last page
-    //     const lastPageRecordCount = await this.allocationRecord.count();
-    //     const totalRecords = totalPages > 1
-    //         ? (totalPages - 1) * totalRecordCount + lastPageRecordCount
-    //         : lastPageRecordCount;
-
-
-    //     console.log("Calculated Total Records:", totalRecords);
-    //     expect(totalAssetCount).toEqual(totalRecords);
-    //     expect(await this.previousButton.isEnabled()).toBeTruthy();
-    // }
     
     async pagination() {
         // Step 1: Get total asset count from header
         const totalAllocationText = await this.totalAssetAssigned.allTextContents();
         const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationText);
-        console.log("Total Asset Count:", totalAssetCount);
+        console.log("Total Asset Count (Header):", totalAssetCount);
 
         // Step 2: Set items per page to 40
         await this.itemsPerPage.waitFor({ state: 'visible' });
+        await this.itemsPerPage.scrollIntoViewIfNeeded();
         await this.itemsPerPage.selectOption({ value: "40" });
-        await this.assetTypeName.first().waitFor({ state: 'visible' }); // safer than timeout
+        await this.assetTypeName.first().waitFor({ state: 'visible' });
 
         const selectedValue = Number((await this.itemsPerPage.inputValue()).trim());
         const assetNameCount = await this.assetTypeName.count();
@@ -229,41 +176,61 @@ export class AssetAllocation extends BasePage {
         expect(selectedValue).toEqual(assetNameCount);
 
         // Step 4: Validate navigation buttons
+        await this.nextButton.scrollIntoViewIfNeeded();
         await this.nextButton.click();
         await this.allocationRecord.first().waitFor({ state: 'visible' });
         expect(await this.previousButton.isEnabled()).toBeTruthy();
 
+        await this.previousButton.scrollIntoViewIfNeeded();
         await this.previousButton.click();
         await this.allocationRecord.first().waitFor({ state: 'visible' });
         expect(await this.nextButton.isEnabled()).toBeTruthy();
 
-        // Step 5: Get pagination counts
-        const totalRecordCount = await this.allocationRecord.count(); // records per full page
+        // Step 5: Get total pages
         const pageCountText = await this.pageCount.textContent();
-        const [currentPage, totalPages] = AssetHelper.extractPageCount(pageCountText || '');
+        const [, totalPages] = AssetHelper.extractPageCount(pageCountText || '');
+        console.log("Total Pages:", totalPages);
 
-        console.log(`Current Page: ${currentPage}, Total Pages: ${totalPages}`);
+        // Step 6: Count total records across all pages with proper scrolling
+        let totalRecords = 0;
 
-        // Step 6: Navigate to the last page
-        for (let i = currentPage; i < totalPages; i++) {
-            await this.nextButton.click();
+        for (let page = 1; page <= totalPages; page++) {
+            const rowsOnPage = await this.allocationRecord.count();
+
+            if (rowsOnPage > 0) {
+                // Scroll all rows in batches to ensure lazy-loading
+                for (let i = 0; i < rowsOnPage; i += 5) {
+                    await this.allocationRecord.nth(i).scrollIntoViewIfNeeded();
+                }
+
+                // Always scroll the last row on the page (critical for last page)
+                await this.allocationRecord.nth(rowsOnPage - 1).scrollIntoViewIfNeeded();
+            }
+
+            // Wait a short moment for lazy-loaded rows
             await this.allocationRecord.first().waitFor({ state: 'visible' });
-        }
 
-        // Step 7: Calculate total records
-        const lastPageRecordCount = await this.allocationRecord.count();
-        const totalRecords = totalPages > 1
-            ? (totalPages - 1) * totalRecordCount + lastPageRecordCount
-            : lastPageRecordCount;
+            const finalRowsOnPage = await this.allocationRecord.count();
+            totalRecords += finalRowsOnPage;
+
+            console.log(`Page ${page} - Records Counted:`, finalRowsOnPage);
+
+            if (page < totalPages) {
+                await this.nextButton.scrollIntoViewIfNeeded();
+                await this.nextButton.click();
+                await this.allocationRecord.first().waitFor({ state: 'visible' });
+            }
+        }
 
         console.log("Calculated Total Records:", totalRecords);
 
         // Final validation
         expect(totalAssetCount).toEqual(totalRecords);
         expect(await this.previousButton.isEnabled()).toBeTruthy();
+
+        console.log("Pagination verified !!");
     }
 
-   
 
     async assignAsset() {
 
