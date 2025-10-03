@@ -227,54 +227,38 @@ export class CommonUtils {
     async downloadAndVerifyFile(
         page: Page,
         downloadTrigger: () => Promise<void>,
-        saveFolder: string = 'C:\\Users\\Caelius\\HRMIS-Playwright\\Download',
+        saveFolder?: string,
         saveFileName?: string
     ): Promise<string> {
 
-        // 1️⃣ Ensure folder exists
-        if (!fs.existsSync(saveFolder)) {
-            fs.mkdirSync(saveFolder, { recursive: true });
+        // 1️⃣ Set download folder (default: project root 'downloads')
+        const folder = saveFolder || path.join(process.cwd(), 'downloads');
+
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder, { recursive: true });
         }
 
-        // 2️⃣ Delete all existing files in the folder
-        const oldFiles = fs.readdirSync(saveFolder);
-        for (const file of oldFiles) {
-            fs.unlinkSync(path.join(saveFolder, file));
-        }
+        // 2️⃣ Wait for download to start and complete
+        const [download] = await Promise.all([
+            page.waitForEvent('download'),
+            downloadTrigger() // trigger the download action
+        ]);
 
-        // 3️⃣ Trigger the download
-        await downloadTrigger();
+        // 3️⃣ Save the download to the folder
+        const suggestedFilename = download.suggestedFilename();
+        const finalFileName = saveFileName || suggestedFilename;
+        const filePath = path.join(folder, finalFileName);
 
-        // 4️⃣ Wait for file to appear in folder
-        const timeout = 30000; // 30s
-        const pollingInterval = 500; // check every 0.5s
-        const start = Date.now();
-        let downloadedFile: string | null = null;
+        await download.saveAs(filePath);
 
-        while (Date.now() - start < timeout) {
-            const files = fs.readdirSync(saveFolder);
-            if (files.length > 0) {
-                downloadedFile = files[0];
-                break;
-            }
-            await new Promise(res => setTimeout(res, pollingInterval));
-        }
+        console.log('File downloaded successfully at:', filePath);
 
-        if (!downloadedFile) {
-            throw new Error(' File download failed or took too long');
-        }
+        // 4️⃣ Optional: verify the file exists
+        expect(fs.existsSync(filePath)).toBeTruthy();
 
-        // 5️⃣ Rename file if custom name provided
-        const filePath = path.join(saveFolder, saveFileName || downloadedFile);
-        if (saveFileName) {
-            fs.renameSync(path.join(saveFolder, downloadedFile), filePath);
-        }
-
-        console.log('file downloaded successfully at:', filePath);
         return filePath;
     }
 }
-
 
 
 
