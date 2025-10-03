@@ -180,6 +180,7 @@ export class CommonUtils {
 
         // 1.  open new tab for Yopmail
         const yopmailPage = await context.newPage();
+        
         await yopmailPage.goto(yopmailUrl);
 
         // 2. Click the first email (in ifinbox iframe)

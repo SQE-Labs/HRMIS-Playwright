@@ -66,49 +66,19 @@ test.describe.serial("'Caelius Polices'", () => {
         expect(successMessage).toEqual(actualSuccessMessage);
 
     });
+    // Cannot find the locator of Download pdf icon as it is embedded from the external source 
+    // test("Download the Policy.  @smoke", async ({ page }) => {
 
-//     test("Download the Policy.  @smoke", async ({ page, context, browser }) => {
+    //     await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
+    //     await helper.fetchLastRecordView('40');
+    //     const downloadPath = await utils.verifyXLSXDownload(page, async () => {
 
-//         await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
-//         await helper.fetchLastRecordView('40');
-//         // const downloadPath = await utils.downloadAndVerifyFile(page, async () => {
-        
-//             await Polices_caeliusPolicy.clickOnViewLink();
-//         // Step 1: Get the iframe
-//         const frameElementHandle = await page.waitForSelector('div.modal-pdf iframe');
-//         const frame = await frameElementHandle.contentFrame();
+    //         await Polices_caeliusPolicy.clickOnViewLink();
 
-//         // Step 2: Get download button inside iframe
-//         if (frame) {
-//             const downloadButton = frame.locator('cr-icon-button#save');
-//             await downloadButton.click();
-//         } else {
-//             throw new Error('Could not find the iframe content.');
-//         }
+    //     });
 
+    //     expect(path.extname(downloadPath)).toBe('.pdf');
 
-//         // expect(path.extname(downloadPath)).toBe('.pdf');
-
-// });
-
-
-    test("Download the Policy.  @smoke", async ({ page, context }) => {
-
-        await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
-        await helper.fetchLastRecordView('40');
-        await Polices_caeliusPolicy.clickOnViewLink();
-
-        // Step 1: Wait for iframe
-        const frameElementHandle = await page.waitForSelector("iframe[src='blob:https://topuptalent.com/8ed987ba-16d3-4ccd-aebf-4d9b22d32b2c']");
-
-        // Step 2: Switch to iframe
-        const frame = await frameElementHandle.contentFrame();
-        if (!frame) throw new Error('Iframe not found or not loaded');
-
-        // Step 3: Click download button inside iframe
-        const downloadButton = frame.locator('cr-icon-button#save');
-        await downloadButton.click();
-
-
-    });
+    // });
 });
+
