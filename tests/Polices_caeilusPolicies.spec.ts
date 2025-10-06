@@ -66,18 +66,19 @@ test.describe.serial("'Caelius Polices'", () => {
         expect(successMessage).toEqual(actualSuccessMessage);
 
     });
+    // Cannot find the locator of Download pdf icon as it is embedded from the external source 
+    // test("Download the Policy.  @smoke", async ({ page }) => {
 
-    test("Download the Policy.  @smoke", async ({ page, context, browser }) => {
+    //     await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
+    //     await helper.fetchLastRecordView('40');
+    //     const downloadPath = await utils.verifyXLSXDownload(page, async () => {
 
-        await Polices_caeliusPolicy.naviagateToPolicyViewerPage();
-        await helper.fetchLastRecordView('40');
-        const downloadPath = await utils.verifyXLSXDownload2(page, async () => {
-        
-            await Polices_caeliusPolicy.clickOnViewLink();
-        
-        });
+    //         await Polices_caeliusPolicy.clickOnViewLink();
 
-        expect(path.extname(downloadPath)).toBe('.pdf');
+    //     });
 
-    });
+    //     expect(path.extname(downloadPath)).toBe('.pdf');
+
+    // });
 });
+

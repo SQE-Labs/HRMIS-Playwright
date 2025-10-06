@@ -65,7 +65,7 @@ export class AssetDeallocation extends BasePage {
         await expect(this.page.getByText("Asset Type")).toBeVisible()
         await expect(this.page.getByText("Serial Number")).toBeVisible()
         await expect(this.page.getByText("Owner").last()).toBeVisible()
-        await expect(this.page.getByText("Action")).toBeVisible()
+        await expect(this.page.locator("//th[text()='Action']")).toBeVisible()
         const validDetails = await this.deallocationRecords.allTextContents();
         if (validDetails.length === 0) {
             if (await this.deallocationNoRecord.isVisible()) {
