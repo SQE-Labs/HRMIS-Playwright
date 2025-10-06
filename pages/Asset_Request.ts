@@ -203,10 +203,14 @@ export class AssetRequests extends AssetManagementTab {
 
         if (totalRequestCount > 0) {
             expect(await this.column.isVisible()).toBeTruthy();
-            await this.itemsPerPage.waitFor({ state: 'visible' });
+
+            await this.itemsPerPage.waitFor({ state: 'visible', timeout: 5000 });
             await this.itemsPerPage.click();
+            // Wait for dropdown options to load and select "40"
             await this.itemsPerPage.selectOption({ value: "40" });
-            await this.page.waitForTimeout(500);
+
+            // Wait for table to update dynamically instead of static timeout
+            await this.page.waitForSelector("//table//td[1]", { timeout: 10000 });
 
             const selectedValue = parseInt((await this.itemsPerPage.inputValue()).trim(), 10);
             const assetNameCount = await this.page.locator("//table//td[1]").count();
@@ -215,43 +219,44 @@ export class AssetRequests extends AssetManagementTab {
             let statusText = "";
 
             while (true) {
-                // Debug: print all first-column values
                 const allComments = await this.page.locator("//table//td[1]").allTextContents();
-                // console.log("Comments on this page:", allComments);
 
-                // Try to find the row with the comment
                 const commentLocator = this.page.locator(`//td[contains(normalize-space(), "${comment}")]`);
+                await commentLocator.first().waitFor({ state: 'visible', timeout: 3000 }).catch(() => { });
+
                 const commentCount = await commentLocator.count();
 
                 if (commentCount > 0) {
-                    // Found the comment on current page
                     const statusLocator = this.page.locator(
                         `//td[contains(normalize-space(), "${comment}")]/../td[${value}]`
                     );
+
+                    // Wait for status cell to be visible
+                    await statusLocator.waitFor({ state: 'visible', timeout: 5000 });
                     statusText = (await statusLocator.textContent())?.trim() || "";
                     found = true;
                     break;
                 }
 
-                // Check if Next is disabled
+                // Check if Next is disabled (end of pages)
                 const isDisabled = await this.nextButton.getAttribute("disabled");
                 if (isDisabled !== null) {
                     console.log("Next button disabled, reached last page.");
                     break;
                 }
-
                 // Go to next page
                 await this.nextButton.scrollIntoViewIfNeeded();
+                await this.nextButton.waitFor({ state: 'visible', timeout: 5000 });
                 await this.nextButton.click();
                 await this.waitforLoaderToDisappear();
-            }
 
-            expect(found).toBeTruthy(); // Fail early if comment not found
+                // Wait for table to reload
+                await this.page.waitForSelector("//table//td[1]", { timeout: 10000 });
+            }
+            expect(found).toBeTruthy();
             return statusText;
         }
-
-
-
     }
+
 
 }
