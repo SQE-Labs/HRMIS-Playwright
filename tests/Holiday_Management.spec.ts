@@ -29,5 +29,29 @@ test.describe("Holiday Management page", () => {
 
         // updating the holiday and verify the message 
         await holidayManagement.updateHoliday('Thanks Giving Day')
-    })
+    });
+
+    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
+        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+        await page.waitForLoadState();
+        await holidayManagement.addHoliday('Diwali Party', '24-10-2025')
+        await holidayManagement.waitForSpinnerLoaderToDisappear();
+        await holidayManagement.deletingHoliday();
+});
+
+
+ // Combining Holiday List module in this class
+test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year. @smoke @eti', async ({ page }) => {
+    await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
+    await page.waitForLoadState();
+    await holidayManagement.verifyHolidayListPage('2024')
+
+});
+
+// Combining Out of Office module in this class
+test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year. @smoke @eti', async ({ page }) => {
+    await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
+
+
+});
 });
