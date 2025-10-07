@@ -16,11 +16,12 @@ test.describe("Asset Allocation page", () => {
     test("Rediected Towards Asset Allocation page", async ({ page }) => {
         expect(await allocation.allocationPageHeader.isVisible()).toBeTruthy();
         expect(await allocation.allocationAssignAsset.isVisible()).toBeTruthy();
+
         expect(await allocation.searchBar.isVisible()).toBeTruthy();
         await allocation.getTotalAssetCount()
         await allocation.getColumnHeader()
     })
-
+        
     test("Functionality of search Bar ", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetTypeName, "KeyWord", "Asset Name")
     })

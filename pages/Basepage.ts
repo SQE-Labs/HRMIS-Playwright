@@ -3,7 +3,7 @@ import { CommonUtils } from '../utils/commonUtils';
 
 export class BasePage extends CommonUtils {
   protected page: Page;
-  readonly loader: Locator
+  // readonly loader: Locator
   readonly SpinLoader: Locator
   readonly threeDotLoader: Locator
   readonly Spinoverlay: Locator

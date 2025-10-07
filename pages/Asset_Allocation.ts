@@ -154,87 +154,6 @@ export class AssetAllocation extends BasePage {
         await this.nextButton.click();
     }
     
-    // async pagination() {
-    //     // Step 1: Get total asset count from header
-    //     const totalAllocationText = await this.totalAssetAssigned.allTextContents();
-    //     const totalAssetCount = AssetHelper.getAssetCountFromText(totalAllocationText);
-    //     console.log("Total Asset Count (Header):", totalAssetCount);
-
-    //     // Step 2: Set items per page to 40
-    //     await this.itemsPerPage.waitFor({ state: 'visible' });
-    //     await this.itemsPerPage.scrollIntoViewIfNeeded();
-    //     await this.itemsPerPage.selectOption({ value: "40" });
-    //     await this.assetTypeName.first().waitFor({ state: 'visible' });
-
-    //     const selectedValue = Number((await this.itemsPerPage.inputValue()).trim());
-    //     const assetNameCount = await this.assetTypeName.count();
-
-    //     console.log("Items Per Page (Selected):", selectedValue);
-    //     console.log("Asset Name Count (Visible):", assetNameCount);
-
-    //     // Step 3: Validate initial pagination state
-    //     expect(selectedValue).toEqual(assetNameCount);
-
-    //     // Step 4: Validate navigation buttons
-    //     await this.nextButton.scrollIntoViewIfNeeded();
-    //     await this.nextButton.click();
-    //     await this.allocationRecord.first().waitFor({ state: 'visible' });
-    //     expect(await this.previousButton.isEnabled()).toBeTruthy();
-
-    //     await this.previousButton.scrollIntoViewIfNeeded();
-    //     await this.previousButton.click();
-    //     await this.allocationRecord.first().waitFor({ state: 'visible' });
-    //     expect(await this.nextButton.isEnabled()).toBeTruthy();
-
-    //     // Step 5: Get total pages
-    //     const pageCountText = await this.pageCount.textContent();
-    //     const [, totalPages] = AssetHelper.extractPageCount(pageCountText || '');
-    //     console.log("Total Pages:", totalPages);
-
-    //     // Step 6: Count total records across all pages with proper scrolling
-    //     let totalRecords = 0;
-
-    //     for (let page = 1; page <= totalPages; page++) {
-    //         const rowsOnPage = await this.allocationRecord.count();
-
-    //         if (rowsOnPage > 0) {
-    //             // Scroll all rows in batches to ensure lazy-loading
-    //             for (let i = 0; i < rowsOnPage; i += 5) {
-    //                 await this.allocationRecord.nth(i).scrollIntoViewIfNeeded();
-    //             }
-
-    //             // Always scroll the last row on the page (critical for last page)
-    //             await this.allocationRecord.nth(rowsOnPage - 1).scrollIntoViewIfNeeded();
-    //         }
-
-    //         // Wait a short moment for lazy-loaded rows
-    //         await this.allocationRecord.first().waitFor({ state: 'visible' });
-
-    //         const finalRowsOnPage = await this.allocationRecord.count();
-    //         totalRecords += finalRowsOnPage;
-
-    //         console.log(`Page ${page} - Records Counted:`, finalRowsOnPage);
-
-    //         if (page < totalPages) {
-    //             await this.nextButton.scrollIntoViewIfNeeded();
-    //             await this.nextButton.click();
-    //             await this.waitForDotsLoaderToDisappear();
-    //             await this.allocationRecord.first().waitFor({ state: 'visible' });
-    //         }
-    //     }
-
-    //     console.log("Calculated Total Records:", totalRecords);
-
-    //     // Final validation
-    //     expect(totalAssetCount).toEqual(totalRecords);
-    //     expect(await this.previousButton.isEnabled()).toBeTruthy();
-
-    //     console.log("Pagination verified !!");
-    // }
-
-    
-
-
     async assignAsset() {
 
         expect(await this.allocationAssignAsset.textContent()).toEqual("Assign Asset");
@@ -381,7 +300,7 @@ export class AssetAllocation extends BasePage {
 
             if (rowsOnPage > 0) {
                 if (page === totalPages) {
-                    // ✅ On LAST PAGE → scroll every row sequentially for reliability
+                    //  On LAST PAGE → scroll every row sequentially for reliability
                     for (let j = 0; j < rowsOnPage; j++) {
                         await this.allocationRecord.nth(j).scrollIntoViewIfNeeded();
                         await expect(this.allocationRecord.nth(j)).toBeVisible();
@@ -394,8 +313,6 @@ export class AssetAllocation extends BasePage {
                             await this.allocationRecord.nth(j).scrollIntoViewIfNeeded();
                         }
                     }
-
-    // Ensure last row of current page is visible before counting
                 }
             }}}
    

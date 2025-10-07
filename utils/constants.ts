@@ -44,5 +44,9 @@ export const APPROVE_LEAVE_SUCCESSMESSAGE = "Successfully updated."
 export const DESIGNATION_SUCESSMESSSAGE = "Designation created successfully"
 export const DESIGNATION_UPDATE_SUCESSMESSSAGE = "Designation updated successfully"
 
+export const HOLIDAY_ADDED_TOAST ="Holiday added"
+export const HOLIDAY_REMOVE_TOAST ="Holiday removed successfully"
+
+
 
 
