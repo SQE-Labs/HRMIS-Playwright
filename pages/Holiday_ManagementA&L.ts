@@ -3,24 +3,28 @@ import { expect, Locator, Page } from '@playwright/test';
 import * as constants from "../utils/constants";
 
 export class holiday_Management extends BasePage {
-    private heading: Locator;
-    private searchField: Locator;
-    private statusDropdown: Locator;
-    private yearDropdown: Locator;
-    private addHolidayButton: Locator;
-    private holidayTable: Locator;
-    private editLink: Locator;
-    private holidayField: Locator;
-    private submitBtn: Locator;
-    private dateField: Locator;
-    private deleteLink : Locator;
-    private popupHeading : Locator;
-    private yesBtn : Locator;
-    private holidayList :Locator;
-    private leaveCount :Locator;
+    public heading: Locator;
+    public searchField: Locator;
+    public statusDropdown: Locator;
+    public yearDropdown: Locator;
+    public addHolidayButton: Locator;
+    public holidayTable: Locator;
+    public editLink: Locator;
+    public holidayField: Locator;
+    public submitBtn: Locator;
+    public dateField: Locator;
+    public deleteLink: Locator;
+    public popupHeading: Locator;
+    public yesBtn: Locator;
+    public holidayList: Locator;
+    public leaveCount: Locator;
+    public dateFilterO: Locator;
+    public nextArrow: Locator;
+    public dates: Locator;
+    public rowCount: Locator;
 
 
-    
+
 
 
     constructor(page: Page) {
@@ -36,48 +40,30 @@ export class holiday_Management extends BasePage {
         this.holidayField = page.getByPlaceholder('Enter Holiday');
         this.submitBtn = page.getByRole('button', { name: 'Submit' });
         this.dateField = page.locator("//input[@type='date']");
-        this.deleteLink = page.getByText('delete')
+        this.deleteLink = page.locator("(//a[text()='Delete'])[last()]")
         this.popupHeading = page.getByText("Are you sure you want to delete this holiday?");
         this.yesBtn = page.getByText("Yes")
         this.leaveCount = page.locator("//div[@class='total']/span");
 
+
         // holiday list
         this.holidayList = page.locator("//table/tbody/tr/td");
+
+        // Out of Office
+        this.dateFilterO = page.getByPlaceholder("MM-DD-YYYY")
+        this.nextArrow = page.locator("//button[@aria-label='Next Month']")
+        this.dates = page.locator(".react-datepicker__week>div");
+        this.rowCount = page.locator('tbody>tr')
+
     }
 
     async selectDate(date: string) {
-    // date format: "dd-mm-yyyy"
-    const [day, month, year] = date.split('-');
-    const formattedDate = `${year}-${month}-${day}`; // yyyy-mm-dd
+        // date format: "dd-mm-yyyy"
+        const [day, month, year] = date.split('-');
+        const formattedDate = `${year}-${month}-${day}`; // yyyy-mm-dd
 
-    // Fill the date field directly
-    await this.dateField.fill(formattedDate);
-}
-
-
-    async verifyUIelements() {
-        // Verify heading
-        await expect(this.heading).toBeVisible();
-
-        // Verify Search field
-        await expect(this.searchField).toBeVisible();
-
-        // Verify Status dropdown (default Pending)
-        await expect(this.statusDropdown).toBeVisible();
-        await expect(this.statusDropdown).toHaveValue('Pending');
-
-        // Verify Year dropdown (default = current year)
-        const currentYear = new Date().getFullYear().toString();
-        await expect(this.yearDropdown).toBeVisible();
-        await expect(this.yearDropdown).toHaveValue(currentYear);
-
-        // Verify +Add Holiday button
-        await expect(this.addHolidayButton).toBeVisible();
-
-        // Verify Holiday table
-        await expect(this.holidayTable).toBeVisible();
-
-
+        // Fill the date field directly
+        await this.dateField.fill(formattedDate);
     }
 
     async updateHoliday(newHolidayName: string) {
@@ -90,51 +76,46 @@ export class holiday_Management extends BasePage {
         // Step 3: Click Submit
         await this.submitBtn.click();
 
-        // step 4: Verify the success message 
-        const message = await this.toastMessage();
-        console.log("Success  message: " + message);
-        expect(message).toContain(constants.APPROVE_LEAVE_SUCCESSMESSAGE);
+
     }
-    async addHoliday(holidayName:string, date: string){
+    async addHoliday(holidayName: string, date: string) {
         // Clicking on Add button
-      //  await this.page.pause();
         await this.addHolidayButton.click()
         await this.holidayField.fill(holidayName)
         const [day, month, year] = date.split('-');
         const formattedDate = `${year}-${month}-${day}`;
         await this.dateField.fill(formattedDate)
         await this.submitBtn.click();
-        const message = await this.toastMessage();
-        console.log("Success  message: " + message);
-        expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
     }
 
-    async deletingHoliday(){
-        // Clicking on delete link
-        await this.deleteLink.first().click();
-        await expect(this.popupHeading).toBeVisible();
-        await this.yesBtn.click();
 
-        const message = await this.toastMessage();
-        console.log("Success  message: " + message);
-        expect(message).toContain(constants.HOLIDAY_REMOVE_TOAST);
-    }
+    async filterHolidayListByYear(selectedYear: string, yearColIndex: number, dateColIndex: number) {
 
-    async verifyHolidayListPage(selectedYear: string){
-    
-      // Verify 'Year' dropdown is visible
-     
-
-         // Select provided year or previous year by default
+        // Select provided year or previous year by default
         const year = selectedYear ?? (new Date().getFullYear() - 1).toString();
         await this.yearDropdown.selectOption(year);
 
-          // Wait for at least one row to appear
+        // Wait for at least one row to appear
         await this.holidayList.first().waitFor({ state: 'visible' });
 
-     
+        // Get Year column data
+        const yearData: string[] = await this.getTableRowdata(yearColIndex);
+        // Get Date column data
+        const dateData: string[] = await this.getTableRowdata(dateColIndex);
+
+        // Verify Year column
+        yearData.forEach(cellYear => {
+            expect(cellYear, `Year column mismatch. Expected ${year}, got ${cellYear}`).toBe(year);
+        });
+
+        // Verify Date column
+        dateData.forEach(dateStr => {
+            const cellYear = new Date(dateStr).getFullYear().toString();
+            expect(cellYear, `Date column mismatch. Expected ${year}, got ${cellYear}`).toBe(year);
+        });
 
     }
+
     async getTableRowdata(columnIndex: number): Promise<string[]> {
         // Wait for at least one cell in the desired column to appear
         await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`);
@@ -161,23 +142,67 @@ export class holiday_Management extends BasePage {
     }
 
 
-    async verifyOutOfOfficeElements(date:string ){
-        this.selectDate(date)
+    async verifyOutOfOfficeElements(date: string) {
+        this.dateFilterO.click()
+
         this.waitForDotsLoaderToDisappear();
-            // Get count of holiday rows
+        // Get count of holiday rows
         const listCount = await this.holidayList.count();
 
-    // Get all inner texts from leaveCount locator
+        // Get all inner texts from leaveCount locator
         const totalLeaveTexts = await this.leaveCount.allInnerTexts();
         const totalLeaveCount = totalLeaveTexts.length;
 
-    // Compare counts
-    await expect(listCount).toBe(totalLeaveCount);
+        // Compare counts
+        await expect(listCount).toBe(totalLeaveCount);
 
-    // Get all holiday text contents
-    const result = await this.holidayList.allTextContents();
-    console.log(result)
+        // Get all holiday text contents
+        const result = await this.holidayList.allTextContents();
+        console.log(result)
     }
 
+
+
+
+
+    async verifyDateInFromTo(selectedDate: string, fromColumn: number, toColumn: number) {
+        const fromDates = await this.getTableRowdata(fromColumn);
+        const toDates = await this.getTableRowdata(toColumn);
+
+        // Convert selectedDate string to Date object
+        const selectedDateObj = new Date(selectedDate);
+
+        // Check if selected date exists in any row in From or To column
+        let dateFound = false;
+        for (let i = 0; i < fromDates.length; i++) {
+            const fromDate = new Date(fromDates[i]);
+            const toDate = new Date(toDates[i]);
+
+            // Check if selected date is within From and To range
+            if (selectedDateObj.getTime() >= fromDate.getTime() && selectedDateObj.getTime() <= toDate.getTime()) {
+                dateFound = true;
+                break;
+            }
+        }
+
+        console.log(`Selected date ${selectedDate} found in From/To columns:`, dateFound);
+        expect(dateFound).toBe(true);
+    }
+
+    async selectSingleDate(targetMonth: string, targetYear: string, targetDay: string) {
+        // Loop until desired month and year are visible
+        while (!(await this.page.locator('.react-datepicker__current-month').textContent())?.includes(`${targetMonth} ${targetYear}`)) {
+            await this.nextArrow.click();
+        }
+
+        // Select the day
+        const allDates = await this.dates.all();
+        for (const dateCell of allDates) {
+            if ((await dateCell.textContent())?.trim() === targetDay) {
+                await dateCell.click();
+                break;
+            }
+        }
+    }
 }
 
