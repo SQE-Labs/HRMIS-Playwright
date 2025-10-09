@@ -29,13 +29,19 @@ test.describe("Download Attendance page", () => {
 
 
   test('A&L_Download_Attndnc_5: Verify that an Excel file gets downloaded @smoke @eti', async ({ page }) => {
-  await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
-
-    const downloadFolder = 'C:\\Users\\Caelius\\HRMIS-Playwright\\Download';
-    const filePath = await downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur(REGULAR)", downloadFolder);
-
-    console.log("Downloaded file verified at:", filePath);
+    await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
+    await downloadAttendance.selectMonth("April");
+    await downloadAttendance.selectEmployeeDropdown.click();
+    await page.getByText("Vishal Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText("Vishal Thakur(REGULAR)").click();
+    await downloadAttendance.waitForDotsLoaderToDisappear();
+    await downloadAttendance.verifyXLSXDownload(page, async () => {
+      await downloadAttendance.downloadButton.click();
+    });
+    // const downloadFolder = 'C:\\Users\\Caelius\\HRMIS-Playwright\\Download';
+    // const filePath = await downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur(REGULAR)", downloadFolder);
+    // console.log("Downloaded file verified at:", filePath);
   });
-  
-  });
-  
+
+});
+

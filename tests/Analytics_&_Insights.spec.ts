@@ -17,7 +17,7 @@ test.describe("Analytics & Insights module", () => {
         console.log(">> Starting test case : " + test.info().title);
     });
 
-    test("HRMIS_2 , HRMIS_4 User Role Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_2 , HRMIS_AI_4 User Role Report functionality @smoke", async ({ page }) => {
         // Navigate to User Role Report page
         await analyticsInsights.navigateToUserRoleReport();
         // Verify Page elements
@@ -42,10 +42,29 @@ test.describe("Analytics & Insights module", () => {
         console.log(name);
     });
 
-    test("HRMIS_4 Reimbursement Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_13 Asset Report functionality @smoke", async ({ page }) => {
         // Navigate to Asset Report page
         await analyticsInsights.navigateToAssetReport();
-        
+        await analyticsInsights.assetTypeDropdown.selectOption('All');
+        await analyticsInsights.ownerDropdown.selectOption('All');
+        await analyticsInsights.verifyXLSXDownload(page, async () => {
+            await analyticsInsights.downloadButton.click();
+        });
     });
 
+    test("HRMIS_AI_14 User Attendance Report functionality @smoke", async ({ page }) => {
+        await analyticsInsights.navigateToUserAttendanceReport();
+        await analyticsInsights.monthDropdown.waitFor({ state: 'visible', timeout: 30000 });
+        await analyticsInsights.monthDropdown.selectOption("April");
+        await analyticsInsights.waitForDotsLoaderToDisappear();
+        await analyticsInsights.selectEmployeeDropdown.click();
+        await page.getByText("Vishal Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
+        await page.getByText("Vishal Thakur(REGULAR)").click();
+        await analyticsInsights.waitForDotsLoaderToDisappear();
+        await analyticsInsights.verifyXLSXDownload(page, async () => {
+            await analyticsInsights.compileAndDownloadButton.click();
+        });
+    });
 });
+
+
