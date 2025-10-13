@@ -51,6 +51,7 @@ export class AttendanceLeaveTab extends BasePage{
    async navigateToAttendanceTab(tabName: string): Promise<void> {
     await this.attendanceLeave.click();
     await this.page.getByRole('link', { name: tabName }).click();
+    
   }
 
 }

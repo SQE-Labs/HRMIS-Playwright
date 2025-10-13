@@ -47,6 +47,7 @@ export const DESIGNATION_UPDATE_SUCESSMESSSAGE = "Designation updated successful
 export const HOLIDAY_ADDED_TOAST ="Holiday added"
 export const HOLIDAY_REMOVE_TOAST ="Holiday removed successfully"
 
+export const OFFICAL_DUTY_APPLY_TOAST ="On Official Duty request sent for approval"
 
 
 

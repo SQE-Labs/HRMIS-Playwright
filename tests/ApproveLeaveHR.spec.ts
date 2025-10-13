@@ -17,11 +17,7 @@ let approveLeaveHR: ApproveLeaveHR;
 
 test.describe("Approve Leave HR module ", () => {
   test.beforeEach(async ({ page }, testInfo) => {
-    loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+  
     // creating object for Approve Leave HR page
     // approveLeaveHR = new ApproveLeaveHR(page);
     attendanceLeaveTab = new AttendanceLeaveTab(page);
@@ -32,9 +28,12 @@ test.describe("Approve Leave HR module ", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
   // Covered MyTeam Leave Approve flow in this test case.
-  test.skip("A&L_MY_Team_5, A&L_MY_Team_9, A&L_Approve(HR)_13 Approve Leave HR @smoke @eti", async ({
-    page,
-  }) => {
+  test("A&L_MY_Team_5, A&L_MY_Team_9, A&L_Approve(HR)_13 Approve Leave HR @smoke @eti", async ({ page, }) => {
+    loginObj = new LoginPage(page);
+    await loginObj.validLogin(
+      testData.Employee.UserEmail,
+      testData.SuperUser.UserPassword
+    );
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
     await applyLeave.waitForDotsLoaderToDisappear();
 
@@ -66,9 +65,9 @@ test.describe("Approve Leave HR module ", () => {
     //logging out from Delivery Manager
     await attendanceLeaveTab.logout();
 
-    // Logging in as Super User
+    // Logging in as HR User
     await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
+      testData.HR.UserEmail,
       testData.SuperUser.UserPassword
     );
 
@@ -84,9 +83,13 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti" , async ({
-    page,
-  }) => {
+  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti" , async ({page }) => {
+    loginObj = new LoginPage(page);
+    await loginObj.validLogin(
+      testData.SuperUser.UserEmail,
+      testData.SuperUser.UserPassword
+    );
+   
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
     await approveLeaveHR.waitforLoaderToDisappear();
