@@ -42,6 +42,5 @@ test.describe("Download Attendance page", () => {
     // const filePath = await downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur(REGULAR)", downloadFolder);
     // console.log("Downloaded file verified at:", filePath);
   });
-
 });
 
