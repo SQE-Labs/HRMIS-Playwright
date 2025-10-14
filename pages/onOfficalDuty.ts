@@ -43,8 +43,8 @@ export class onOfficalDuty extends BasePage{
         await this.dateField.fill(formattedDate);
     }
 
-    async selectDeliveryLead(type: string) {
-        await this.deliveryLead.selectOption(type);
+    async selectDeliveryLead(DLtype: string) {
+        await this.deliveryLead.selectOption(DLtype);
     }
 
     async enterTask(task: string) {
@@ -58,6 +58,39 @@ export class onOfficalDuty extends BasePage{
         await expect(this.Mins).toBeVisible();
         await this.Mins.fill(`${mins}`);
     }
+
+    async applyOfficalDutyLeave(date: string, DLtype: string, task: string, hours: number, mins: number){
+        
+                // Clicking on Apply On Offical Duty tab
+                await this.applyOfficalDutyTab.click()
+                await this.page.waitForLoadState()
+        
+                // Select Date
+                await this.selectDate(date)
+        
+                // Select Delivery Lead
+                await this.selectDeliveryLead(DLtype)
+        
+                // Entering task
+                await this.enterTask(task)
+        
+                // Select horus
+                await this.enterHoursAndMins(hours, mins)
+        
+                // Clicking on submit
+                await this.submitBtn.click();
+                await this.page.waitForLoadState()
+
+                // verifying the success message
+                const message = await this.toastMessage();
+        
+                console.log("Success  message: " + message);
+                expect(message).toContain(constants.OFFICAL_DUTY_APPLY_TOAST);
+    }
+
+               
+
+
 
 
 }

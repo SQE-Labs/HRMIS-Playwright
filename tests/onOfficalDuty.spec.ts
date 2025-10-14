@@ -24,7 +24,7 @@ test.describe("On Offical Duty Page", () => {
 
     test('A&L_On_offc_duty_1, A&L_On_offc_duty_3, A&L_On_offc_duty_10 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke', async ({ page }) => {
 
-        // Login As Employee
+          // Login As Employee
         loginObj = new LoginPage(page);
         await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState();
@@ -78,15 +78,33 @@ test.describe("On Offical Duty Page", () => {
 
         await officalDuty.withdrawBtn.click();
 
-
         // verifying the success message
         const message2 = await officalDuty.toastMessage();
 
         console.log("Success  message: " + message2);
         expect(message2).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
-
-
-
-
     })
+
+
+    test('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke', async ({ page }) => {
+
+        // Login As Employee
+        loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
+
+        await page.waitForLoadState()
+
+        // verify subtabs appear
+        await expect(officalDuty.onOfficalDutyTab).toBeVisible();
+        await expect(officalDuty.applyOfficalDutyTab).toBeVisible();
+
+        await officalDuty.applyOfficalDutyLeave('02-10-2025', 'Piyush Dogra', 'Worked On Weekend', 10,35)
+
+
+
+
+    });
 });
+

@@ -53,7 +53,7 @@ export class holiday_Management extends BasePage {
         this.dateFilterO = page.getByPlaceholder("MM-DD-YYYY")
         this.nextArrow = page.locator("//button[@aria-label='Next Month']")
         this.dates = page.locator(".react-datepicker__week>div");
-        this.rowCount = page.locator('tbody>tr')
+        this.rowCount = page.locator('thead + tbody > tr:visible')
 
     }
 
@@ -120,7 +120,7 @@ export class holiday_Management extends BasePage {
         // Wait for at least one cell in the desired column to appear
         await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`);
 
-        const rows = await this.page.locator('tbody > tr');
+        const rows = await this.page.locator('tbody > tr:visible');
         const columnData: string[] = [];
 
         const rowCount = await rows.count();
@@ -132,7 +132,7 @@ export class holiday_Management extends BasePage {
 
         for (let i = 0; i < rowCount; i++) {
             const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
-            await cell.waitFor({ state: 'visible' });
+            await cell.waitFor({ state: 'visible', timeout: 5000 });
             const text = await cell.textContent();
             columnData.push((text ?? '').trim());
         }
