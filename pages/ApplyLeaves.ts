@@ -34,12 +34,8 @@ export class ApplyLeaves extends BasePage {
     this.SubmitButton = page.getByRole("button", { name: "Submit" });
     this.LeaveTypeTextBox = page.getByLabel("Type of leave");
     this.DateRange = page.getByPlaceholder("mm/dd/yyyy - mm/dd/yyyy");
-    this.ReasonOfLeaveBox = page.getByRole("textbox", {
-      name: "Reason of Leave *",
-    });
-    this.SuccessMessage = page.getByText(
-      "Leave Applied Successfully! Wait for Approval."
-    );
+    this.ReasonOfLeaveBox = page.getByRole("textbox", { name: "Reason of Leave *", });
+    this.SuccessMessage = page.getByText("Leave Applied Successfully! Wait for Approval.");
     this.WithdrawLink = this.page.getByText("Withdraw");
     this.WithdrawPopupTitle = page.getByText("Withdraw Leave Request");
     this.WithdrawReasonField = page.getByRole("textbox");
@@ -70,9 +66,9 @@ export class ApplyLeaves extends BasePage {
     return `${(currentDate.getMonth() + 1)
       .toString()
       .padStart(2, "0")}/${currentDate
-      .getDate()
-      .toString()
-      .padStart(2, "0")}/${currentDate.getFullYear()}`;
+        .getDate()
+        .toString()
+        .padStart(2, "0")}/${currentDate.getFullYear()}`;
   }
 
   async getApplyLeaveBtn() {
@@ -234,8 +230,7 @@ export class ApplyLeaves extends BasePage {
     await getDayLocator(endDay).last().click();
 
     console.log(
-      `Picked ${
-        attempt === 1 ? "random" : "retry"
+      `Picked ${attempt === 1 ? "random" : "retry"
       } range: ${startDay} → ${endDay}`
     );
   }

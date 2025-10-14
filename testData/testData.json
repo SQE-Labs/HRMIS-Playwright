@@ -15,9 +15,17 @@
     "STORE": {
         "UserEmail": "asset-store@caeliusconsulting.com"
     },
-    "DeliveryManager": {
-        "UserEmail": "emp2@caeliusconsulting.com"
+
+    "Employee":{
+        "UserEmail": "ishita.singh1@caeliusconsulting.com"
     },
+    "HR":{
+        "UserEmail" : "emp2@caeliusconsulting.com"
+    },
+    "DeliveryManager": {
+        "UserEmail": "piyush.dogra@caeliusconsulting.com"
+    },
+
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
