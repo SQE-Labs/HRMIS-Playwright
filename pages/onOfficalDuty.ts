@@ -16,6 +16,11 @@ export class onOfficalDuty extends BasePage{
     public submitBtn: Locator;
     public reasonField : Locator;
     public withdrawBtn : Locator;
+    public dlViewLink: Locator
+    public statusDropdown : Locator
+    public commentField: Locator = this.page.locator("[name=comment]");
+    public plCreditField :Locator;
+    public privilegeLeaveOption: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -31,7 +36,15 @@ export class onOfficalDuty extends BasePage{
         this.submitBtn= page.getByText('Submit')
         this.reasonField = page.locator('[name=reason]')
         this.withdrawBtn = page.locator("//button[text()='Withdraw']")
+        this.privilegeLeaveOption = page.locator("span.badge.badge-warning.mx-2", { hasText: "Privilege Leave" });
 
+        
+        // DL page
+        this.dlViewLink = page.locator("(//a[text()='View'])[last()]")
+        this.statusDropdown = page.locator('#action');
+
+        // HR Page
+        this.plCreditField = page.locator('#plAmount')
 }
 
     async selectDate(date: string) {
@@ -59,6 +72,16 @@ export class onOfficalDuty extends BasePage{
         await this.Mins.fill(`${mins}`);
     }
 
+    async selectLeaveStatus(type: string) {
+        await this.statusDropdown.selectOption(type);
+        this.waitForSpinnerLoaderToDisappear;
+    }
+
+    async selectPL(type: number) {
+        await this.plCreditField.selectOption(type.toString());
+        this.waitForSpinnerLoaderToDisappear;
+    }
+
     async applyOfficalDutyLeave(date: string, DLtype: string, task: string, hours: number, mins: number){
         
                 // Clicking on Apply On Offical Duty tab
@@ -66,7 +89,7 @@ export class onOfficalDuty extends BasePage{
                 await this.page.waitForLoadState()
         
                 // Select Date
-                await this.selectDate(date)
+                await this.dateField.fill(date)
         
                 // Select Delivery Lead
                 await this.selectDeliveryLead(DLtype)
@@ -87,6 +110,8 @@ export class onOfficalDuty extends BasePage{
                 console.log("Success  message: " + message);
                 expect(message).toContain(constants.OFFICAL_DUTY_APPLY_TOAST);
     }
+
+
 
                
 

@@ -6,7 +6,7 @@ export class AttendanceLeaveTab extends BasePage{
     static navigateToAttendanceTab(arg0: string) {
         throw new Error('Method not implemented.');
     }
-      private attendanceLeave: Locator;
+      public attendanceLeave: Locator;
       private subTabs: Locator;
 
        // Locators
