@@ -1,7 +1,8 @@
 {
     "SuperUser": {
         "UserEmail": "vishal.thakur1@caeliusconsulting.com",
-        "UserPassword": "Test@123"
+        "UserPassword": "Test@123",
+        "name": "Vishal Thakur"
     },
     "L1": {
         "UserEmail": "asset-l1@caeliusconsulting.com"
@@ -15,17 +16,18 @@
     "STORE": {
         "UserEmail": "asset-store@caeliusconsulting.com"
     },
-
-    "Employee":{
+    "Employee": {
         "UserEmail": "ishita.singh1@caeliusconsulting.com"
     },
-    "HR":{
-        "UserEmail" : "emp2@caeliusconsulting.com"
+    "HR": {
+        "UserEmail": "emp2@caeliusconsulting.com",
+        "name": "Elon Mask"
     },
     "DeliveryManager": {
-        "UserEmail": "piyush.dogra@caeliusconsulting.com"
+        "UserEmail": "piyush.dogra@caeliusconsulting.com",
+        "name": "Piyush Dogra"
     },
-
+    "EMPLOYEE_NAME": "Vishal   Thakur",
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
@@ -42,7 +44,7 @@
             "actualEnd": "09/30/2025"
         }
     },
-    "EMPLOYEE_NAME": "Vishal   Thakur",
+   
     "VALID_XLSX_FILE": "ValidDocument.xlsx",
     "UNSUPPORTED_FILE": "abc.docx",
     "ASSET_TYPE_COLUMN_LEFT": "AssetType_Column.xlsx",
@@ -57,8 +59,6 @@
     "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
     "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
     "NOUNIT_COLUMN": "NoUnit.xlsx",
-    "LEAVE_EMP_NAME": "Elon Mask",
-    "LEAVE_EMP_NAME2":"Ishita Test Sharma",
-    "LEAVE_EMP_NAME3":"Vishal thakur"
-
+    "LEAVE_EMP_NAME2": "Ishita Test Sharma",
+    "LEAVE_EMP_NAME3": "Vishal thakur"
 }

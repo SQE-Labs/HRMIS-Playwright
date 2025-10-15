@@ -3,7 +3,7 @@ import { BasePage } from "../pages/Basepage";
 import { expect, Locator, Page } from "@playwright/test";
 import * as constants from "../utils/constants";
 
-export class onOfficalDuty extends BasePage{
+export class OnOfficalDuty extends BasePage{
 
     public applyOfficalDutyTab: Locator;
     public viewBtn :Locator;
@@ -11,8 +11,8 @@ export class onOfficalDuty extends BasePage{
     public dateField : Locator  
     public deliveryLead : Locator;
     public taskField : Locator;
-    public Mins :Locator;
-    public Hours :Locator;
+    public mins :Locator;
+    public hours :Locator;
     public submitBtn: Locator;
     public reasonField : Locator;
     public withdrawBtn : Locator;
@@ -31,8 +31,8 @@ export class onOfficalDuty extends BasePage{
         this.dateField = page.locator("//input[@name='dateOOD']");
         this.deliveryLead = page.locator('#deliveryLead')
         this.taskField = page.locator('.timesheet-content  textarea')
-        this.Hours = page.locator("//div[@class='timesheet-content']//span[text()='Hrs']/preceding::input[1]")
-        this.Mins = page.locator("//div[@class='timesheet-content']//span[text()='Mins']/preceding::input[1]")
+        this.hours = page.locator("//div[@class='timesheet-content']//span[text()='Hrs']/preceding::input[1]")
+        this.mins = page.locator("//div[@class='timesheet-content']//span[text()='Mins']/preceding::input[1]")
         this.submitBtn= page.getByText('Submit')
         this.reasonField = page.locator('[name=reason]')
         this.withdrawBtn = page.locator("//button[text()='Withdraw']")
@@ -65,11 +65,11 @@ export class onOfficalDuty extends BasePage{
     }
 
     async enterHoursAndMins(hours: number, mins: number) {
-        await expect(this.Hours).toBeVisible();
-        await this.Hours.fill(`${hours}`);
+        await expect(this.hours).toBeVisible();
+        await this.hours.fill(`${hours}`);
 
-        await expect(this.Mins).toBeVisible();
-        await this.Mins.fill(`${mins}`);
+        await expect(this.mins).toBeVisible();
+        await this.mins.fill(`${mins}`);
     }
 
     async selectLeaveStatus(type: string) {

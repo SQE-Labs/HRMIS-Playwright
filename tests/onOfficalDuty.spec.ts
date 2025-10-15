@@ -3,22 +3,24 @@ import { LoginPage } from "../pages/LoginPage";
 import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { onOfficalDuty } from "../pages/onOfficalDuty";
+import { OnOfficalDuty } from "../pages/onOfficalDuty";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import { off } from "process";
 
 
 let loginObj: LoginPage;
 let attendanceLeaveTab: AttendanceLeaveTab;
-let officalDuty: onOfficalDuty;
+let officalDuty: OnOfficalDuty;
 let holidayManagement: holiday_Management
 
 test.describe("On Offical Duty Page", () => {
 
+
+
     test.beforeEach(async ({ page }, testInfo) => {
 
         // object creation
-        officalDuty = new onOfficalDuty(page);
+        officalDuty = new OnOfficalDuty(page);
         attendanceLeaveTab = new AttendanceLeaveTab(page);
         holidayManagement = new holiday_Management(page);
 
@@ -101,7 +103,7 @@ test.describe("On Offical Duty Page", () => {
         // navigates to holiday management sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState();
-        // selecting the holiday name and date
+        // selecting the holiday name and date  
         const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
         console.log("Holiday added on:", addedHolidayDate);
 
@@ -120,7 +122,7 @@ test.describe("On Offical Duty Page", () => {
 
         // Get the text
         const oldPrivilegeText = await officalDuty.privilegeLeaveOption.textContent();
-    
+
         // Extract the number (e.g., 13)
         const oldPrivilegeCount = Number(oldPrivilegeText?.match(/\d+/)?.[0]);
         console.log("Old Privilege Leave Count:", oldPrivilegeCount);
@@ -134,7 +136,7 @@ test.describe("On Offical Duty Page", () => {
         await expect(officalDuty.onOfficalDutyTab).toBeVisible();
         await expect(officalDuty.applyOfficalDutyTab).toBeVisible();
 
-        await officalDuty.applyOfficalDutyLeave(addedHolidayDate, 'Piyush Dogra', 'Worked On Weekend', 10, 35)
+        await officalDuty.applyOfficalDutyLeave(addedHolidayDate, testData.DeliveryManager.name, 'Worked On Weekend', 10, 35)
 
         // Logout
         await officalDuty.logout();
@@ -196,7 +198,7 @@ test.describe("On Offical Duty Page", () => {
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
         await officalDuty.waitforLoaderToDisappear()
-        
+
         // Wait for element to be visible
         await officalDuty.privilegeLeaveOption.waitFor({ state: 'visible', timeout: 5000 });
 
@@ -206,6 +208,10 @@ test.describe("On Offical Duty Page", () => {
         // Extract the number 
         const newPrivilegeCount = Number(newPrivilegeText?.match(/\d+/)?.[0]);
         console.log("New Privilege Leave Count:", newPrivilegeCount);
+
+        //assertion
+        await expect
+
 
     });
 });
