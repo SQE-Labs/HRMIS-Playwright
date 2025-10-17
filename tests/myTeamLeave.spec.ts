@@ -37,7 +37,7 @@ test.describe("My Team Leave Page", () => {
     // for Approve status
     await myTeamLeave.verifyTheEmployeeNamesInTheList(
       constants.APPROVED_STATUS,
-      testData.LEAVE_EMP_NAME
+      testData.HR.name 
     );
     await myTeamLeave.waitforLoaderToDisappear();
     await page.waitForTimeout(2000);
@@ -45,7 +45,7 @@ test.describe("My Team Leave Page", () => {
     // for Reject status
     await myTeamLeave.verifyTheEmployeeNamesInTheList(
       constants.REJECTED_STATUS,
-      testData.LEAVE_EMP_NAME
+      testData.HR.name 
     );
   });
 

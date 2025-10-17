@@ -19,6 +19,8 @@ test.describe("On Offical Duty Page", () => {
 
     test.beforeEach(async ({ page }, testInfo) => {
 
+
+
         // object creation
         officalDuty = new OnOfficalDuty(page);
         attendanceLeaveTab = new AttendanceLeaveTab(page);
@@ -51,7 +53,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.selectDate('25-10-2025')
 
         // Select Delivery Lead
-        await officalDuty.selectDeliveryLead('Piyush Dogra')
+        await officalDuty.selectDeliveryLead(testData.DeliveryManager.name)
 
         // Entering task
         await officalDuty.enterTask("Worked On Weekend")
@@ -210,9 +212,97 @@ test.describe("On Offical Duty Page", () => {
         console.log("New Privilege Leave Count:", newPrivilegeCount);
 
         //assertion
-        await expect
-
-
+        await expect(newPrivilegeCount).toBeGreaterThan(oldPrivilegeCount)
     });
+
+    // Failed due to assertion failed inconsistent appears for the reject toast
+    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @knownBug', async({page})=>{
+
+        //Login As Super Admin
+        loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+
+        // navigates to holiday management sub tab
+        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+        await page.waitForLoadState();
+        // selecting the holiday name and date  
+        const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
+        console.log("Holiday added on:", addedHolidayDate);
+
+        // logout as super admin
+        await officalDuty.logout();
+
+
+        // Login as Employee
+        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+    
+      // Navigate to on offical duty page
+       // await attendanceLeaveTab.attendanceLeave.click();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
+        await page.waitForLoadState()
+
+        // verify subtabs appear
+        await expect(officalDuty.onOfficalDutyTab).toBeVisible();
+        await expect(officalDuty.applyOfficalDutyTab).toBeVisible();
+
+        await officalDuty.applyOfficalDutyLeave(addedHolidayDate, testData.DeliveryManager.name, 'Worked On Weekend', 10, 35)
+
+        // Logout
+        await officalDuty.logout();
+
+        // Login as Delivery Lead
+        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (DL)");
+        await officalDuty.waitForDotsLoaderToDisappear()
+
+        // Clicking on View Link
+        await officalDuty.dlViewLink.click();
+
+        // select Action from Drop down and enter comment
+        await officalDuty.selectLeaveStatus(constants.REJECTED_STATUS)
+        await officalDuty.commentField.fill(constants.REJECT_ACTION)
+
+        // Clicking on submit button
+        await officalDuty.submitBtn.click();
+
+        // verifying the success message
+        const message = await officalDuty.toastMessage();
+
+        console.log("Success  message: " + message);
+        expect(message).toContain(constants.OFFICAL_DUTY_REJECT_TOAST);
+
+        // logout from DL
+        await officalDuty.logout();
+
+        // Login As HR to Approve the request
+        await loginObj.validLogin(testData.HR.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (HR)");
+        await officalDuty.waitForDotsLoaderToDisappear()
+
+        // Clicking on View Link
+        await officalDuty.dlViewLink.click();
+
+        // select Action from Drop down and enter comment and PL
+        await officalDuty.selectLeaveStatus(constants.REJECTED_STATUS)
+        await officalDuty.commentField.fill(constants.REJECT_ACTION)
+
+        // click on submit button
+        await officalDuty.submitBtn.click();
+
+        // verifying the success message
+        const message3 = await officalDuty.toastMessage();
+
+        console.log("Success  message: " + message3);
+        expect(message3).toContain(constants.OFFICAL_DUTY_REJECT_TOAST);
+
+        // logout from HR
+        await officalDuty.logout()
+
+
+    })
 });
 

@@ -119,6 +119,7 @@ export class holiday_Management extends BasePage {
         // Call your original addHoliday method
         await this.addHoliday(holidayName, formattedDateForMethod);
         await this.editLink.last().click();
+        await this.holidayField.fill(holidayName)
         await this.updateStatusDropdown.selectOption('Approved')
         await this.submitBtn.click();
 

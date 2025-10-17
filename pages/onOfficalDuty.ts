@@ -56,8 +56,8 @@ export class OnOfficalDuty extends BasePage{
         await this.dateField.fill(formattedDate);
     }
 
-    async selectDeliveryLead(DLtype: string) {
-        await this.deliveryLead.selectOption(DLtype);
+    async selectDeliveryLead(dlType: string) {
+        await this.deliveryLead.selectOption(dlType);
     }
 
     async enterTask(task: string) {
@@ -82,7 +82,7 @@ export class OnOfficalDuty extends BasePage{
         this.waitForSpinnerLoaderToDisappear;
     }
 
-    async applyOfficalDutyLeave(date: string, DLtype: string, task: string, hours: number, mins: number){
+    async applyOfficalDutyLeave(date: string, dlType: string, task: string, hours: number, mins: number){
         
                 // Clicking on Apply On Offical Duty tab
                 await this.applyOfficalDutyTab.click()
@@ -92,7 +92,7 @@ export class OnOfficalDuty extends BasePage{
                 await this.dateField.fill(date)
         
                 // Select Delivery Lead
-                await this.selectDeliveryLead(DLtype)
+               await this.selectDeliveryLead(dlType)
         
                 // Entering task
                 await this.enterTask(task)
