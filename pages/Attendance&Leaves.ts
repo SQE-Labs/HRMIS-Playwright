@@ -6,7 +6,7 @@ export class AttendanceLeaveTab extends BasePage{
     static navigateToAttendanceTab(arg0: string) {
         throw new Error('Method not implemented.');
     }
-      private attendanceLeave: Locator;
+      public attendanceLeave: Locator;
       private subTabs: Locator;
 
        // Locators
@@ -51,6 +51,7 @@ export class AttendanceLeaveTab extends BasePage{
    async navigateToAttendanceTab(tabName: string): Promise<void> {
     await this.attendanceLeave.click();
     await this.page.getByRole('link', { name: tabName }).click();
+    
   }
 
 }

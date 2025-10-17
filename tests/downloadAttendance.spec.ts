@@ -19,9 +19,7 @@ test.describe("Download Attendance page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test(" A&L_Download_Attndnc_1,Verify UI labels on Download Attendance page @smoke @eti", async ({
-    page,
-  }) => {
+  test(" A&L_Download_Attndnc_1,Verify UI labels on Download Attendance page @smoke @eti", async ({page,}) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyUILabels();

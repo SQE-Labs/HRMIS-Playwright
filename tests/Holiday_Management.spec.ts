@@ -104,20 +104,23 @@ test.describe("Holiday Management page new", () => {
         await page.waitForLoadState();
         // Clicking on date field
         await holidayManagement.dateFilterO.click()
-        await holidayManagement.selectSingleDate('October', '2025', '7')
+        await holidayManagement.selectSingleDate('October', '2025', '8')
         const selectedDate = await holidayManagement.dateFilterO.inputValue();
-        await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 3000 });
+        await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 6000 });
         // Get count of table rows
         const listCount = await holidayManagement.rowCount.count();
         console.log("Visible rows count:", listCount);
 
-        // Get text inside leaveCount (like "2")
+        await holidayManagement.leaveCount.waitFor({ state: 'visible', timeout: 5000});
+    
+        // Get text inside leaveCount 
         const leaveCountText = await holidayManagement.leaveCount.first().textContent();
         const totalLeaveCount = Number(leaveCountText?.trim());
         console.log("Leave count value:", totalLeaveCount);
 
         // Compare actual numbers
         await expect(listCount).toBe(totalLeaveCount);
+
         const fromColumnIndex = 4;
         const toColumnIndex = 5;
 

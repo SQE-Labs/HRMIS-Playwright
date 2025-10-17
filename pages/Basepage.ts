@@ -76,6 +76,7 @@ export class BasePage extends CommonUtils {
     expect(message?.trim()).toBe(expectedMessage);
     console.log(`Success message verified: ${expectedMessage}`);
   }
+  
 
   async logout() {
     await this.page.evaluate(() => window.scrollTo(0, 0));
