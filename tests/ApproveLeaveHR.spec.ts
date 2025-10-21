@@ -17,7 +17,7 @@ let approveLeaveHR: ApproveLeaveHR;
 
 test.describe("Approve Leave HR module ", () => {
   test.beforeEach(async ({ page }, testInfo) => {
-  
+
     // creating object for Approve Leave HR page
     // approveLeaveHR = new ApproveLeaveHR(page);
     attendanceLeaveTab = new AttendanceLeaveTab(page);
@@ -83,13 +83,13 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti" , async ({page }) => {
+  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti", async ({ page }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,
       testData.SuperUser.UserPassword
     );
-   
+
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
     await approveLeaveHR.waitforLoaderToDisappear();
