@@ -11,19 +11,19 @@ let loginObj: LoginPage;
 
 test.describe("My Team Leave Page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
-    loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+   
 
     myTeamLeave = new MyTeamLeavePage(page);
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({
-    page,
-  }) => {
+  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({ page,}) => {
+
+    loginObj = new LoginPage(page);
+    await loginObj.validLogin(
+      testData.SuperUser.UserEmail,
+      testData.SuperUser.UserPassword
+    );
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
 
@@ -37,7 +37,7 @@ test.describe("My Team Leave Page", () => {
     // for Approve status
     await myTeamLeave.verifyTheEmployeeNamesInTheList(
       constants.APPROVED_STATUS,
-      testData.LEAVE_EMP_NAME
+      testData.HR.name 
     );
     await myTeamLeave.waitforLoaderToDisappear();
     await page.waitForTimeout(2000);
@@ -45,13 +45,18 @@ test.describe("My Team Leave Page", () => {
     // for Reject status
     await myTeamLeave.verifyTheEmployeeNamesInTheList(
       constants.REJECTED_STATUS,
-      testData.LEAVE_EMP_NAME
+      testData.HR.name 
     );
   });
 
   test(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     const applyLeave = new ApplyLeaves(page);
+    loginObj = new LoginPage(page);
+    await loginObj.validLogin(
+      testData.Employee.UserEmail,
+      testData.SuperUser.UserPassword
+    );
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
 
    await  applyLeave.withdrawExistingLeave();

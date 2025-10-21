@@ -24,7 +24,7 @@ test.describe("Apply leaves page", () => {
   }) => {
     const loginObj = new LoginPage(page);
     await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
+      testData.Employee.UserEmail,
       testData.SuperUser.UserPassword
     );
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
@@ -55,7 +55,7 @@ test.describe("Apply leaves page", () => {
     myTeamLeave = new MyTeamLeavePage(page);
 
     await loginObj.validLogin(
-      testData["DeliveryManager"].UserEmail,
+      testData["HR"].UserEmail,
       testData.SuperUser.UserPassword
     );
     await page.waitForLoadState("networkidle");

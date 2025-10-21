@@ -5,14 +5,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class DownloadAttendance extends BasePage {
-  private labels: Locator = this.page.locator("//div[@class='inputs column-gap-2']//label");
-  private monthDropdown: Locator = this.page.locator("//select[@id='month']");
-  private monthOption: Locator = this.page.locator("//select[@id='month']/option");
-  private yearDropdown: Locator = this.page.locator("//select[@id='year']");
-  private employeeFlagDropdown: Locator = this.page.locator("//select[@id='employee-flag']");
-  private downloadButton: Locator = this.page.getByText('Compile & Download')
-  private selectEmployeeDropdown: Locator = this.page.locator(".css-19bb58m");
-  private employeeOption: Locator = this.page.locator("#react-select-2-listbox span")
+  public labels: Locator = this.page.locator("//div[@class='inputs column-gap-2']//label");
+  public monthDropdown: Locator = this.page.locator("//select[@id='month']");
+  public monthOption: Locator = this.page.locator("//select[@id='month']/option");
+  public yearDropdown: Locator = this.page.locator("//select[@id='year']");
+  public employeeFlagDropdown: Locator = this.page.locator("//select[@id='employee-flag']");
+  public downloadButton: Locator = this.page.getByText('Compile & Download')
+  public selectEmployeeDropdown: Locator = this.page.locator(".css-19bb58m");
+  public employeeOption: Locator = this.page.locator("#react-select-2-listbox span")
 
 
 
@@ -75,8 +75,6 @@ export class DownloadAttendance extends BasePage {
 
     return filePath; // return path in case test wants to use it
   }
-
-
 
   async selectMonth(month: string) {
     // Wait for dropdown to be visible
