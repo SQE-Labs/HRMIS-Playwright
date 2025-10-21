@@ -95,7 +95,8 @@ export class Employee_HRSetup extends BasePage {
         leaveManager,
         employeeType,
         employeeSubType,
-        employeeFlag
+        employeeFlag,
+        projectEligibility
     }: {
         department: string;
         designation: string;
@@ -104,6 +105,7 @@ export class Employee_HRSetup extends BasePage {
         employeeType: string;
         employeeSubType: string;
         employeeFlag: string
+        projectEligibility: string
     }) {
 
         // Helper function to handle React-Select style dropdowns
@@ -124,6 +126,7 @@ export class Employee_HRSetup extends BasePage {
         await selectReactDropdown("Select Employee Type", employeeType);
         await selectReactDropdown("Select Sub Employee Type", employeeSubType);
         await selectReactDropdown("Select Flag", employeeFlag);
+        await selectReactDropdown("Select Eligibility", projectEligibility);
 
     }
 

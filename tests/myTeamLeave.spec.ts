@@ -3,7 +3,7 @@ import { LoginPage } from "../pages/LoginPage";
 import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { MyTeamLeavePage } from "../pages/myTeamLeave";
+import { MyTeamLeavePage } from "../pages/MyTeamLeave";
 import { ApplyLeaves } from "../pages/ApplyLeaves";
 
 let myTeamLeave: MyTeamLeavePage;
