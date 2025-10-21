@@ -25,6 +25,7 @@ export class holiday_Management extends BasePage {
     public dates: Locator;
     public rowCount: Locator;
     public updateStatusDropdown: Locator
+    public lastEditLink: Locator;
 
 
 
@@ -50,6 +51,7 @@ export class holiday_Management extends BasePage {
         this.popupHeading = page.getByText("Are you sure you want to delete this holiday?");
         this.yesBtn = page.getByText("Yes")
         this.leaveCount = page.locator("//div[@class='total']/span");
+        this.lastEditLink = page.locator("//a[@class='fw-bolder'][text()='Edit']").last();
 
 
         // holiday list
@@ -89,7 +91,7 @@ export class holiday_Management extends BasePage {
 
     async updateHoliday(newHolidayName: string) {
         // Step 1: Click on Edit link
-        await this.editLink.click();
+        await this.lastEditLink.click();
 
         // Step 2: Update data in any field (Holiday Name in this case)
         await this.holidayField.fill(newHolidayName);
@@ -110,22 +112,35 @@ export class holiday_Management extends BasePage {
     }
 
     async addHolidayWithRandomDate(holidayName: string = "Comp_Off Leave") {
-        const randomDate = await this.getRandomDate(); // generate random date
+        // Step 1: Generate random date in yyyy-mm-dd format
+        const randomDate = await this.getRandomDate(); // e.g., "2025-10-21"
 
-        // Convert it to dd-mm-yyyy for your existing addHoliday method
+        // Step 2: Convert yyyy-mm-dd → dd-mm-yyyy for your existing addHoliday method
         const [year, month, day] = randomDate.split('-');
         const formattedDateForMethod = `${day}-${month}-${year}`;
 
-        // Call your original addHoliday method
+        // Step 3: Call your original addHoliday method
         await this.addHoliday(holidayName, formattedDateForMethod);
+
+        // Step 4: Edit the holiday details and approve it
         await this.editLink.last().click();
-        await this.holidayField.fill(holidayName)
-        await this.updateStatusDropdown.selectOption('Approved')
+        await this.holidayField.fill(holidayName);
+        await this.updateStatusDropdown.selectOption('Approved');
         await this.submitBtn.click();
 
-        // Return the date in yyyy-mm-dd format to use in applyOfficalDutyLeave
-        return randomDate;
+        // Step 5: Convert yyyy-mm-dd → "Month, DD, YYYY" for external use
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const monthIndex = parseInt(month, 10) - 1;
+        const formattedForOtherUse = `${monthNames[monthIndex]}, ${day}, ${year}`;
+
+        // Step 6: Return the formatted date
+        return formattedForOtherUse;
     }
+
+
 
 
     async filterHolidayListByYear(selectedYear: string, yearColIndex: number, dateColIndex: number) {
