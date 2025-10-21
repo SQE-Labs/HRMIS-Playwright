@@ -111,11 +111,4 @@ export class OnOfficalDuty extends BasePage{
                 expect(message).toContain(constants.OFFICAL_DUTY_APPLY_TOAST);
     }
 
-
-
-               
-
-
-
-
 }
