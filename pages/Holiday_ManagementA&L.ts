@@ -4,7 +4,7 @@ import * as constants from "../utils/constants";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 
 export class holiday_Management extends BasePage {
-    
+
     public heading: Locator;
     public searchField: Locator;
     public statusDropdown: Locator;
@@ -135,11 +135,11 @@ export class holiday_Management extends BasePage {
         await this.yearDropdown.selectOption(year);
 
         // Wait for at least one row to appear
-        await this.holidayList.first().waitFor({ state: 'visible', timeout:3000 });
+        await this.holidayList.first().waitFor({ state: 'visible', timeout: 5000 });
 
         // Get Year column data
         const yearData: string[] = await this.getTableRowdata(yearColIndex);
-        
+
         // Get Date column data
         const dateData: string[] = await this.getTableRowdata(dateColIndex);
 
