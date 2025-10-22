@@ -2,6 +2,7 @@ import { BasePage } from '../pages/Basepage';
 import { expect, Locator, Page } from '@playwright/test';
 import * as constants from "../utils/constants";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
+import { time } from 'console';
 
 export class holiday_Management extends BasePage {
 
@@ -26,6 +27,9 @@ export class holiday_Management extends BasePage {
     public rowCount: Locator;
     public updateStatusDropdown: Locator
     public lastEditLink: Locator;
+    public holidayExistingWarning: Locator;
+    public cancelBtn: Locator;
+    public holidayRow: Locator;
 
 
 
@@ -47,11 +51,14 @@ export class holiday_Management extends BasePage {
         this.holidayField = page.getByPlaceholder('Enter Holiday');
         this.submitBtn = page.getByRole('button', { name: 'Submit' });
         this.dateField = page.locator("//input[@type='date']");
-        this.deleteLink = page.locator("(//a[text()='Delete'])[last()]")
+        this.deleteLink = page.getByText('Delete').first();
         this.popupHeading = page.getByText("Are you sure you want to delete this holiday?");
         this.yesBtn = page.getByText("Yes")
         this.leaveCount = page.locator("//div[@class='total']/span");
         this.lastEditLink = page.locator("//a[@class='fw-bolder'][text()='Edit']").last();
+        this.holidayExistingWarning = page.getByText("Holiday for similar date is already existed");
+        this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
+        this.holidayRow = page.locator("//tbody/tr/td[2]");
 
 
         // holiday list
@@ -102,12 +109,13 @@ export class holiday_Management extends BasePage {
 
     }
     async addHoliday(holidayName: string, date: string) {
-        // Clicking on Add button
-        await this.addHolidayButton.click()
-        await this.holidayField.fill(holidayName)
         const [day, month, year] = date.split('-');
         const formattedDate = `${year}-${month}-${day}`;
-        await this.dateField.fill(formattedDate)
+
+        // Adding the holiday
+        await this.addHolidayButton.click();
+        await this.holidayField.fill(holidayName);
+        await this.dateField.fill(formattedDate);
         await this.submitBtn.click();
     }
 
@@ -221,6 +229,7 @@ export class holiday_Management extends BasePage {
 
 
     async verifyDateInFromTo(selectedDate: string, fromColumn: number, toColumn: number) {
+        
         const fromDates = await this.getTableRowdata(fromColumn);
         const toDates = await this.getTableRowdata(toColumn);
 
