@@ -125,10 +125,11 @@ test.describe.serial("'Employee Onboarding module'", () => {
             department: "APIs",
             designation: "Customer Success Manager",
             assignManager: "Elon Mask",
-            leaveManager: "Vishal Thakur",
+            leaveManager: testData.EMPLOYEE_NAME,
             employeeType: "REGULAR",
             employeeSubType: "Full time",
-            employeeFlag: "CCI_INDIA"
+            employeeFlag: "CCI_INDIA",
+            projectEligibility: "Yes"
         });
 
 
