@@ -127,12 +127,12 @@ test.describe.serial("'Employee Onboarding module'", () => {
             department: "APIs",
             designation: "Customer Success Manager",
             assignManager: "Elon Mask",
-            leaveManager: "Vishal Dev Thakur",
+            leaveManager: testData.EMPLOYEE_NAME,
             employeeType: "REGULAR",
             employeeSubType: "Full time",
             employeeFlag: "CCI_INDIA",
             projectEligibility: "Yes"
-        } as any);
+        });
 
 
         await Employe_HRSetupTable.clickApprovBttn();

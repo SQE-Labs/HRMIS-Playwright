@@ -35,10 +35,10 @@ test.describe("Analytics & Insights module", () => {
         expect(await page.getByText("Action").last().isVisible()).toBeTruthy();
 
         // Verify Search functionality
-        await page.getByPlaceholder('Search By Employee Name').fill(testData.SuperUser.name)
+        await page.getByPlaceholder('Search By Employee Name').fill(testData.EMPLOYEE_NAME)
         await analyticsInsights.waitforLoaderToDisappear();
         var name = await page.locator('tr>td').nth(1).textContent();
-        expect(name).toEqual('Vishal Dev Thakur');
+        expect(name).toEqual(testData.EMPLOYEE_NAME);
         console.log(name);
     });
 
@@ -58,8 +58,8 @@ test.describe("Analytics & Insights module", () => {
         await analyticsInsights.monthDropdown.selectOption("April");
         await analyticsInsights.waitForDotsLoaderToDisappear();
         await analyticsInsights.selectEmployeeDropdown.click();
-        await page.getByText("Vishal Dev Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
-        await page.getByText("Vishal Dev Thakur(REGULAR)").click();
+        await page.getByText("Vishal Dev Thakur").waitFor({ state: 'visible', timeout: 60000 });
+        await page.getByText("Vishal Dev Thakur").click();
         await analyticsInsights.waitForDotsLoaderToDisappear();
         await analyticsInsights.verifyXLSXDownload(page, async () => {
             await analyticsInsights.compileAndDownloadButton.click();

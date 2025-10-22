@@ -104,8 +104,8 @@ export class Employee_HRSetup extends BasePage {
         leaveManager: string;
         employeeType: string;
         employeeSubType: string;
-        employeeFlag: string
-        projectEligibility: string
+        employeeFlag: string;
+        projectEligibility: string;
     }) {
 
         // Helper function to handle React-Select style dropdowns
