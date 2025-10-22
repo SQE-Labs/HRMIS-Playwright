@@ -76,8 +76,6 @@ export class DownloadAttendance extends BasePage {
     return filePath; // return path in case test wants to use it
   }
 
-
-
   async selectMonth(month: string) {
     // Wait for dropdown to be visible
     await this.monthDropdown.waitFor({ state: 'visible', timeout: 30000 });

@@ -1,7 +1,8 @@
 {
     "SuperUser": {
         "UserEmail": "vishal.thakur1@caeliusconsulting.com",
-        "UserPassword": "Test@123"
+        "UserPassword": "Test@123",
+        "name": "Vishal Dev Thakur"
     },
     "L1": {
         "UserEmail": "asset-l1@caeliusconsulting.com"
@@ -19,10 +20,12 @@
         "UserEmail": "ishita.singh1@caeliusconsulting.com"
     },
     "HR": {
-        "UserEmail": "emp2@caeliusconsulting.com"
+        "UserEmail": "emp2@caeliusconsulting.com",
+        "name": "Elon Mask"
     },
     "DeliveryManager": {
-        "UserEmail": "piyush.dogra@caeliusconsulting.com"
+        "UserEmail": "piyush.dogra@caeliusconsulting.com",
+        "name": "Piyush Dogra"
     },
     "DefaultSelectedoption": "All",
     "DefaultOwner": "Consultant",
@@ -55,7 +58,6 @@
     "EXISTINGSERIALNUMBER_COLUMN": "ExistingSerialNumber.xlsx",
     "NONEXISTINGASSETTYPE_COLUMN": "NonExistingAssetType.xlsx",
     "NOUNIT_COLUMN": "NoUnit.xlsx",
-    "LEAVE_EMP_NAME": "Elon Mask",
     "LEAVE_EMP_NAME2": "Ishita Test Sharma",
     "LEAVE_EMP_NAME3": "Vishal thakur"
 }

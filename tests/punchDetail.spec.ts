@@ -27,6 +27,6 @@ test.describe("Apply leaves page", () => {
     await attendanceLeaveTab.navigateToAttendanceTab("Punch Details");
     await punchDetail.verifyPunchDetailsPage();
     // Select Employee from dropdown
-    await punchDetail.selectEmployee(testData.LEAVE_EMP_NAME3);
+    await punchDetail.selectEmployee(testData.HR.name);
   });
 });

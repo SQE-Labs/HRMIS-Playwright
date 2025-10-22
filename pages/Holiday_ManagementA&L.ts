@@ -1,8 +1,10 @@
 import { BasePage } from '../pages/Basepage';
 import { expect, Locator, Page } from '@playwright/test';
 import * as constants from "../utils/constants";
+import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 
 export class holiday_Management extends BasePage {
+
     public heading: Locator;
     public searchField: Locator;
     public statusDropdown: Locator;
@@ -22,6 +24,8 @@ export class holiday_Management extends BasePage {
     public nextArrow: Locator;
     public dates: Locator;
     public rowCount: Locator;
+    public updateStatusDropdown: Locator
+    public lastEditLink: Locator;
 
 
 
@@ -29,11 +33,14 @@ export class holiday_Management extends BasePage {
 
     constructor(page: Page) {
         super(page);
+        let attendanceLeaveTab: AttendanceLeaveTab
+        attendanceLeaveTab = new AttendanceLeaveTab(page)
 
         this.heading = page.getByRole('heading', { name: 'Holiday Management' });
         this.searchField = page.getByPlaceholder('Search By Holiday');
         this.statusDropdown = page.locator('#status')
         this.yearDropdown = page.locator('#year')
+        this.updateStatusDropdown = page.locator("(//select[@id='status' and @name='status'])[2]")
         this.addHolidayButton = page.getByText('+ Add Holiday')
         this.holidayTable = page.locator('.table-responsive')
         this.editLink = page.locator("//a[@class='fw-bolder'][text()='Edit']").first();
@@ -44,6 +51,7 @@ export class holiday_Management extends BasePage {
         this.popupHeading = page.getByText("Are you sure you want to delete this holiday?");
         this.yesBtn = page.getByText("Yes")
         this.leaveCount = page.locator("//div[@class='total']/span");
+        this.lastEditLink = page.locator("//a[@class='fw-bolder'][text()='Edit']").last();
 
 
         // holiday list
@@ -53,7 +61,7 @@ export class holiday_Management extends BasePage {
         this.dateFilterO = page.getByPlaceholder("MM-DD-YYYY")
         this.nextArrow = page.locator("//button[@aria-label='Next Month']")
         this.dates = page.locator(".react-datepicker__week>div");
-        this.rowCount = page.locator('tbody>tr')
+        this.rowCount = page.locator('thead + tbody > tr:visible')
 
     }
 
@@ -66,9 +74,24 @@ export class holiday_Management extends BasePage {
         await this.dateField.fill(formattedDate);
     }
 
+    async getRandomDate(): Promise<string> {
+        const start = new Date(2025, 0, 1);
+        const end = new Date(2025, 11, 31);
+        const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+        const randomDate = new Date(randomTime);
+
+        const day = String(randomDate.getDate()).padStart(2, '0');
+        const month = String(randomDate.getMonth() + 1).padStart(2, '0');
+        const year = randomDate.getFullYear();
+
+        // Return in yyyy-mm-dd format for input[type="date"]
+        return `${year}-${month}-${day}`;
+    }
+
+
     async updateHoliday(newHolidayName: string) {
         // Step 1: Click on Edit link
-        await this.editLink.click();
+        await this.lastEditLink.click();
 
         // Step 2: Update data in any field (Holiday Name in this case)
         await this.holidayField.fill(newHolidayName);
@@ -88,6 +111,37 @@ export class holiday_Management extends BasePage {
         await this.submitBtn.click();
     }
 
+    async addHolidayWithRandomDate(holidayName: string = "Comp_Off Leave") {
+        // Step 1: Generate random date in yyyy-mm-dd format
+        const randomDate = await this.getRandomDate(); // e.g., "2025-10-21"
+
+        // Step 2: Convert yyyy-mm-dd → dd-mm-yyyy for your existing addHoliday method
+        const [year, month, day] = randomDate.split('-');
+        const formattedDateForMethod = `${day}-${month}-${year}`;
+
+        // Step 3: Call your original addHoliday method
+        await this.addHoliday(holidayName, formattedDateForMethod);
+
+        // Step 4: Edit the holiday details and approve it
+        await this.editLink.last().click();
+        await this.holidayField.fill(holidayName);
+        await this.updateStatusDropdown.selectOption('Approved');
+        await this.submitBtn.click();
+
+        // Step 5: Convert yyyy-mm-dd → "Month, DD, YYYY" for external use
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const monthIndex = parseInt(month, 10) - 1;
+        const formattedForOtherUse = `${monthNames[monthIndex]}, ${day}, ${year}`;
+
+        // Step 6: Return the formatted date
+        return formattedForOtherUse;
+    }
+
+
+
 
     async filterHolidayListByYear(selectedYear: string, yearColIndex: number, dateColIndex: number) {
 
@@ -96,10 +150,11 @@ export class holiday_Management extends BasePage {
         await this.yearDropdown.selectOption(year);
 
         // Wait for at least one row to appear
-        await this.holidayList.first().waitFor({ state: 'visible' });
+        await this.holidayList.first().waitFor({ state: 'visible', timeout: 5000 });
 
         // Get Year column data
         const yearData: string[] = await this.getTableRowdata(yearColIndex);
+
         // Get Date column data
         const dateData: string[] = await this.getTableRowdata(dateColIndex);
 
@@ -120,7 +175,7 @@ export class holiday_Management extends BasePage {
         // Wait for at least one cell in the desired column to appear
         await this.page.waitForSelector(`tr>th:nth-child(${columnIndex})`);
 
-        const rows = await this.page.locator('tbody > tr');
+        const rows = await this.page.locator('tbody > tr:visible');
         const columnData: string[] = [];
 
         const rowCount = await rows.count();
@@ -132,7 +187,7 @@ export class holiday_Management extends BasePage {
 
         for (let i = 0; i < rowCount; i++) {
             const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
-            await cell.waitFor({ state: 'visible' });
+            await cell.waitFor({ state: 'visible', timeout: 5000 });
             const text = await cell.textContent();
             columnData.push((text ?? '').trim());
         }

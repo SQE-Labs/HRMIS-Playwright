@@ -19,9 +19,7 @@ test.describe("Download Attendance page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test(" A&L_Download_Attndnc_1,Verify UI labels on Download Attendance page @smoke @eti", async ({
-    page,
-  }) => {
+  test(" A&L_Download_Attndnc_1,Verify UI labels on Download Attendance page @smoke @eti", async ({page,}) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyUILabels();
@@ -32,8 +30,8 @@ test.describe("Download Attendance page", () => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.selectMonth("April");
     await downloadAttendance.selectEmployeeDropdown.click();
-    await page.getByText("Vishal Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
-    await page.getByText("Vishal Thakur(REGULAR)").click();
+    await page.getByText("Vishal Dev Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText("Vishal Dev Thakur(REGULAR)").click();
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyXLSXDownload(page, async () => {
       await downloadAttendance.downloadButton.click();
