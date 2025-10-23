@@ -40,7 +40,7 @@ export class Employee_HRSetup extends BasePage {
     }
 
 
-    async fetchLastRecordView(record) {
+    async fetchLastRecordView(record:string) {
 
         await this.itemsPerPageDropDown.selectOption(record);
 
@@ -78,7 +78,7 @@ export class Employee_HRSetup extends BasePage {
         await this.approveTab.click();
     }
 
-    async fillEmailID(finalEmail): Promise<void> {
+    async fillEmailID(finalEmail:string): Promise<void> {
         console.log(finalEmail)
         await this.caeliusEmailField.fill(finalEmail);
     }

@@ -52,5 +52,8 @@ export const OFFICAL_DUTY_SUCCESS_TOAST ="On Official Duty request Approved"
 export const OFFICAL_DUTY_REJECT_TOAST ="On Official Duty request Rejected"
 
 
+export const ROLE_ADD_SUCCESSMESSAGE ="Successfully created."
+export const ROLE_UPDATE_SUCCESSMESSAGE ="Successfully Updated."
+
 
     

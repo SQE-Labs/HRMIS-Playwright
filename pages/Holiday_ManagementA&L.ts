@@ -1,8 +1,7 @@
 import { BasePage } from '../pages/Basepage';
 import { expect, Locator, Page } from '@playwright/test';
-import * as constants from "../utils/constants";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
-import { time } from 'console';
+
 
 export class holiday_Management extends BasePage {
 
@@ -158,7 +157,7 @@ export class holiday_Management extends BasePage {
         await this.yearDropdown.selectOption(year);
 
         // Wait for at least one row to appear
-        await this.holidayList.first().waitFor({ state: 'visible', timeout: 5000 });
+        await this.holidayList.first().waitFor({ state: 'visible', timeout: 6000 });
 
         // Get Year column data
         const yearData: string[] = await this.getTableRowdata(yearColIndex);

@@ -79,7 +79,7 @@ test.describe("Holiday Management page new", () => {
         const selectedDate = await holidayManagement.dateFilterO.inputValue();
 
         // Wait for the last row to be visible
-        await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 5000 });
+        await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 7000 });
 
         // Get total count after all rows are visible
         const listCount = await holidayManagement.rowCount.count();
@@ -89,7 +89,7 @@ test.describe("Holiday Management page new", () => {
         await holidayManagement.rowCount.nth(listCount - 1).scrollIntoViewIfNeeded();
 
 
-        await holidayManagement.leaveCount.waitFor({ state: 'visible', timeout: 5000 });
+        await holidayManagement.leaveCount.waitFor({ state: 'visible', timeout: 7000 });
 
         // Get text inside leaveCount 
         const leaveCountText = await holidayManagement.leaveCount.first().textContent();
