@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import testData from "../testData/testData.json";
-import { myAttendance } from "../pages/myAttendance";
+import { myAttendance } from "../pages/MyAttendance";
 
 let myAttend : myAttendance
 let attendanceLeaveTab: AttendanceLeaveTab;

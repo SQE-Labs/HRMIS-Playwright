@@ -1,5 +1,5 @@
-import { LoginPage } from "../pages/LoginPage";
-import { BasePage } from "../pages/Basepage";
+import { LoginPage } from "./LoginPage";
+import { BasePage } from "./Basepage";
 import { expect, Locator, Page } from "@playwright/test";
 import * as constants from "../utils/constants";
 

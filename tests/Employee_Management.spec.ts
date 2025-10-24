@@ -56,7 +56,7 @@ test.describe("'Employee Management module'", () => {
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("verify Department Filter Results With Or Without Employees", async ({ page }) => {
+    test("verify Department Filter Results With Or Without Employees @smoke", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Admin')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()

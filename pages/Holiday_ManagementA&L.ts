@@ -1,7 +1,7 @@
 import { BasePage } from '../pages/Basepage';
 import { expect, Locator, Page } from '@playwright/test';
-import * as constants from "../utils/constants";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
+
 
 export class holiday_Management extends BasePage {
 
@@ -26,6 +26,9 @@ export class holiday_Management extends BasePage {
     public rowCount: Locator;
     public updateStatusDropdown: Locator
     public lastEditLink: Locator;
+    public holidayExistingWarning: Locator;
+    public cancelBtn: Locator;
+    public holidayRow: Locator;
 
 
 
@@ -47,11 +50,14 @@ export class holiday_Management extends BasePage {
         this.holidayField = page.getByPlaceholder('Enter Holiday');
         this.submitBtn = page.getByRole('button', { name: 'Submit' });
         this.dateField = page.locator("//input[@type='date']");
-        this.deleteLink = page.locator("(//a[text()='Delete'])[last()]")
+        this.deleteLink = page.getByText('Delete').first();
         this.popupHeading = page.getByText("Are you sure you want to delete this holiday?");
         this.yesBtn = page.getByText("Yes")
         this.leaveCount = page.locator("//div[@class='total']/span");
         this.lastEditLink = page.locator("//a[@class='fw-bolder'][text()='Edit']").last();
+        this.holidayExistingWarning = page.getByText("Holiday for similar date is already existed");
+        this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
+        this.holidayRow = page.locator("//tbody/tr/td[2]");
 
 
         // holiday list
@@ -102,12 +108,13 @@ export class holiday_Management extends BasePage {
 
     }
     async addHoliday(holidayName: string, date: string) {
-        // Clicking on Add button
-        await this.addHolidayButton.click()
-        await this.holidayField.fill(holidayName)
         const [day, month, year] = date.split('-');
         const formattedDate = `${year}-${month}-${day}`;
-        await this.dateField.fill(formattedDate)
+
+        // Adding the holiday
+        await this.addHolidayButton.click();
+        await this.holidayField.fill(holidayName);
+        await this.dateField.fill(formattedDate);
         await this.submitBtn.click();
     }
 
@@ -150,7 +157,7 @@ export class holiday_Management extends BasePage {
         await this.yearDropdown.selectOption(year);
 
         // Wait for at least one row to appear
-        await this.holidayList.first().waitFor({ state: 'visible', timeout: 5000 });
+        await this.holidayList.first().waitFor({ state: 'visible', timeout: 6000 });
 
         // Get Year column data
         const yearData: string[] = await this.getTableRowdata(yearColIndex);
@@ -221,6 +228,7 @@ export class holiday_Management extends BasePage {
 
 
     async verifyDateInFromTo(selectedDate: string, fromColumn: number, toColumn: number) {
+
         const fromDates = await this.getTableRowdata(fromColumn);
         const toDates = await this.getTableRowdata(toColumn);
 
@@ -244,7 +252,42 @@ export class holiday_Management extends BasePage {
         expect(dateFound).toBe(true);
     }
 
-    async selectSingleDate(targetMonth: string, targetYear: string, targetDay: string) {
+    async selectSingleDate(dateStr: string) {
+        const [monthStr, dayStr, yearStr] = dateStr.split('-');
+        const targetMonth = Number(monthStr);
+        const targetDay = Number(dayStr);
+        const targetYear = Number(yearStr);
+
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const monthName = monthNames[targetMonth - 1];
+
+        const currentMonthLocator = this.page.locator('.react-datepicker__current-month');
+
+        // Wait until the correct month/year is displayed
+        while (!(await currentMonthLocator.textContent())?.includes(`${monthName} ${targetYear}`)) {
+            await this.nextArrow.click();
+            // wait until calendar updates
+            await this.page.waitForTimeout(300);
+        }
+
+        // Pick only visible days in the currently displayed month
+        const dateCell = this.page.locator('.react-datepicker__day:not(.react-datepicker__day--outside-month)')
+            .filter({ hasText: targetDay.toString() })
+            .first();
+
+        // Ensure element is attached and visible
+        await dateCell.waitFor({ state: 'visible', timeout: 5000 });
+
+        // Click with force to bypass headless visibility issues
+        await dateCell.click({ force: true });
+
+        // Optional: small delay to allow input to update
+        await this.page.waitForTimeout(200);
+    }
+    async selectSingleDateWithMonth(targetMonth: string, targetYear: string, targetDay: string) {
         // Loop until desired month and year are visible
         while (!(await this.page.locator('.react-datepicker__current-month').textContent())?.includes(`${targetMonth} ${targetYear}`)) {
             await this.nextArrow.click();
@@ -260,4 +303,3 @@ export class holiday_Management extends BasePage {
         }
     }
 }
-
