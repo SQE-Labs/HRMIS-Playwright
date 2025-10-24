@@ -49,7 +49,8 @@ test.describe("My Team Leave Page", () => {
     );
   });
 
-  test(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
+  // Already covered in the HR aprroval flow flow
+  test.skip(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     const applyLeave = new ApplyLeaves(page);
     loginObj = new LoginPage(page);

@@ -228,7 +228,7 @@ export class holiday_Management extends BasePage {
 
 
     async verifyDateInFromTo(selectedDate: string, fromColumn: number, toColumn: number) {
-        
+
         const fromDates = await this.getTableRowdata(fromColumn);
         const toDates = await this.getTableRowdata(toColumn);
 
@@ -287,9 +287,19 @@ export class holiday_Management extends BasePage {
         // Optional: small delay to allow input to update
         await this.page.waitForTimeout(200);
     }
+    async selectSingleDateWithMonth(targetMonth: string, targetYear: string, targetDay: string) {
+        // Loop until desired month and year are visible
+        while (!(await this.page.locator('.react-datepicker__current-month').textContent())?.includes(`${targetMonth} ${targetYear}`)) {
+            await this.nextArrow.click();
+        }
 
-
-
-
+        // Select the day
+        const allDates = await this.dates.all();
+        for (const dateCell of allDates) {
+            if ((await dateCell.textContent())?.trim() === targetDay) {
+                await dateCell.click();
+                break;
+            }
+        }
+    }
 }
-

@@ -105,6 +105,7 @@ test.describe("On Offical Duty Page", () => {
         // navigates to holiday management sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState();
+        
         // selecting the holiday name and date  
         const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
         console.log("Holiday added on:", addedHolidayDate);
