@@ -144,7 +144,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login as Delivery Lead
-        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.DeliveryManager.password);
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (DL)");
         await officalDuty.waitForDotsLoaderToDisappear()

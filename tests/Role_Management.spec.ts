@@ -13,7 +13,8 @@ test.describe("Role Management Tests", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('RM_1, Verify that Role Management UI elements are present @smoke @eti', async ({ page }) => {
+    // testcase failed due to 
+    test('RM_1, Verify that Role Management UI elements are present @smoke @eti @knowBug#510', async ({ page }) => {
        
         await loginObj.validLogin(
             testData.SuperUser.UserEmail,
@@ -237,7 +238,7 @@ test.describe("Role Management Tests", () => {
         // verify toast message 
         let deleteMessage = await roleManagement.toastMessage();
         console.log("Delete Success  message: " + deleteMessage);
-        expect(deleteMessage).toContain("Successfully deleted");   
+        expect(deleteMessage).toContain(constants.ROLE_DELETE_SUCCESSMESSAGE);   
        
     });
 

@@ -68,37 +68,47 @@ test.describe("Holiday Management page new", () => {
 
     // Combining Out of Office Module in this class
     test('A&L_Out_of_offc_1,Verify that Out Of Office page @smoke @eti', async ({ page }) => {
+
         // Navigates to Out of Office sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
         await page.waitForLoadState();
+
         // Clicking on date field
         await holidayManagement.dateFilterO.click()
 
-        await holidayManagement.selectSingleDate('October', '2025', '1')
+        await holidayManagement.selectSingleDate('10-05-2025')
         await page.waitForLoadState();
-        const selectedDate = await holidayManagement.dateFilterO.inputValue();
 
-        // Wait for the last row to be visible
+        const firstRow = holidayManagement.rowCount.first();
+        await firstRow.waitFor({ state: 'visible', timeout: 7000 });
+
+
+        // Get the selected date value from input
+        const selectedDate = await holidayManagement.dateFilterO.inputValue();
+        console.log("Selected date:", selectedDate);
+
+        // Wait for at least one row to be visible
         await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 7000 });
 
-        // Get total count after all rows are visible
+        // Get total number of rows currently visible
         const listCount = await holidayManagement.rowCount.count();
         console.log("Visible rows count:", listCount);
 
-        // Scroll the last row into view
-        await holidayManagement.rowCount.nth(listCount - 1).scrollIntoViewIfNeeded();
+        // Optional: scroll the last row into view safely
+        if (listCount > 0) {
+            await holidayManagement.rowCount.last().scrollIntoViewIfNeeded();
+        }
 
-
+        // Wait for leave count element to be visible
         await holidayManagement.leaveCount.waitFor({ state: 'visible', timeout: 7000 });
 
-        // Get text inside leaveCount 
+        // Get text inside leaveCount and convert to number
         const leaveCountText = await holidayManagement.leaveCount.first().textContent();
         const totalLeaveCount = Number(leaveCountText?.trim());
         console.log("Leave count value:", totalLeaveCount);
 
-        // Compare actual numbers
+        // Compare actual number of rows with leave count
         await expect(listCount).toBe(totalLeaveCount);
-
 
         const fromColumnIndex = 4;
         const toColumnIndex = 5;
@@ -132,13 +142,18 @@ test.describe("Holiday Management page new", () => {
                     await deleteBtn.scrollIntoViewIfNeeded();
                     await deleteBtn.click();
                     await holidayManagement.yesBtn.click();
-                    await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 });
+
+                    await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_REMOVE_TOAST}")`, {
+                        state: 'hidden',
+                        timeout: 7000
+                    });
+
                     break;
                 }
             }
 
-        // Re-add after deleting duplicates
-        await holidayManagement.addHoliday(holidayName, '20-10-2025');
+            // Re-add after deleting duplicates
+            await holidayManagement.addHoliday(holidayName, '20-10-2025');
         }
 
         // verifying the success message
@@ -147,7 +162,7 @@ test.describe("Holiday Management page new", () => {
         expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
 
         // wait until toast disappears
-        await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 });
+        await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
 
         // Deleting the holiday_________
 

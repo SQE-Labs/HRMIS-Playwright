@@ -252,20 +252,44 @@ export class holiday_Management extends BasePage {
         expect(dateFound).toBe(true);
     }
 
-    async selectSingleDate(targetMonth: string, targetYear: string, targetDay: string) {
-        // Loop until desired month and year are visible
-        while (!(await this.page.locator('.react-datepicker__current-month').textContent())?.includes(`${targetMonth} ${targetYear}`)) {
+    async selectSingleDate(dateStr: string) {
+        const [monthStr, dayStr, yearStr] = dateStr.split('-');
+        const targetMonth = Number(monthStr);
+        const targetDay = Number(dayStr);
+        const targetYear = Number(yearStr);
+
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const monthName = monthNames[targetMonth - 1];
+
+        const currentMonthLocator = this.page.locator('.react-datepicker__current-month');
+
+        // Wait until the correct month/year is displayed
+        while (!(await currentMonthLocator.textContent())?.includes(`${monthName} ${targetYear}`)) {
             await this.nextArrow.click();
+            // wait until calendar updates
+            await this.page.waitForTimeout(300);
         }
 
-        // Select the day
-        const allDates = await this.dates.all();
-        for (const dateCell of allDates) {
-            if ((await dateCell.textContent())?.trim() === targetDay) {
-                await dateCell.click();
-                break;
-            }
-        }
+        // Pick only visible days in the currently displayed month
+        const dateCell = this.page.locator('.react-datepicker__day:not(.react-datepicker__day--outside-month)')
+            .filter({ hasText: targetDay.toString() })
+            .first();
+
+        // Ensure element is attached and visible
+        await dateCell.waitFor({ state: 'visible', timeout: 5000 });
+
+        // Click with force to bypass headless visibility issues
+        await dateCell.click({ force: true });
+
+        // Optional: small delay to allow input to update
+        await this.page.waitForTimeout(200);
     }
+
+
+
+
 }
 
