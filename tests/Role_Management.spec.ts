@@ -7,21 +7,25 @@ import * as constants from "../utils/constants";
 let loginObj: LoginPage;
 let roleManagement: RoleManagement; 
 test.describe("Role Management Tests", () => {
-    test.beforeEach(async ({ page }, testInfo) => {
-        loginObj = new LoginPage(page); 
-        await loginObj.validLogin(
-            testData.SuperUser.UserEmail,
-            testData.SuperUser.UserPassword
-        );          
+    test.beforeEach(async ({ page }, testInfo) => { 
+         loginObj = new LoginPage(page);
         roleManagement = new RoleManagement(page);
         console.log(">> Starting test case : " + testInfo.title);
     });
 
     test('RM_1, Verify that Role Management UI elements are present @smoke @eti', async ({ page }) => {
+       
+        await loginObj.validLogin(
+            testData.SuperUser.UserEmail,
+            testData.SuperUser.UserPassword
+        );
+
         const roleName = "Automation Test Role";
         const roleDescription = "This is a role created by automation test.";
         const updatedRoleName = "Auto_Role_Updated";
         const updatedRoleDescription = "This role has been updated by automation test.";
+        const checkboxTabName = "Analytics&Insights";
+        const tabName = "Analytics & Insights;"
 
         // Navigating to Role Management tab
         await roleManagement.roleManagementTab.click();
@@ -55,8 +59,15 @@ test.describe("Role Management Tests", () => {
         await roleManagement.descriptionField.fill(updatedRoleDescription);
         await roleManagement.submitButton.click();
 
+        // verify toast message
+        let message1 = await roleManagement.toastMessage();
+        console.log("Success  message: " + message1);
+        // Successfully updated. message
+        expect(message1?.trim()).toContain(constants.APPROVE_LEAVE_SUCCESSMESSAGE);
+        await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
+
         // refreshing the page to avoid stale element reference
-        await page.reload();
+        await page.reload()
         await page.waitForLoadState();
         await roleManagement.fetchLastRecordView("40");
         await page.waitForLoadState();
@@ -76,7 +87,10 @@ test.describe("Role Management Tests", () => {
         await roleManagement.waitForSpinnerLoaderToDisappear();
 
         // Check all sub tab checkboxes under "Analytics&Insights" tab
-        await roleManagement.checkSubTabCheckbox("Analytics&Insights");
+        await roleManagement.checkSubTabCheckbox(checkboxTabName);
+
+        // store  checkboxTabName in a variable
+        const expectedTabName = checkboxTabName;
 
         // click on submit button
         await roleManagement.submitButton.click();
@@ -92,10 +106,106 @@ test.describe("Role Management Tests", () => {
         // verify the information text
         await expect(roleManagement.successMsg).toBeVisible();
         await page.waitForLoadState();
+
+        // Adding Code
+        // Navigate to Employee Management tab to verify the assigned role
+        await roleManagement.employeeManagementTab.click();
+        await roleManagement.roleMangementSubTab.click();
+        await page.waitForLoadState();
+
+        // select the employee from the dropdown
+        await roleManagement.selectEmloyee(testData.LEAVE_EMP_NAME2);
+        await roleManagement.waitForSpinnerLoaderToDisappear();
+
+        // select the updated role checkbox 
+        // Verify that the user can see the role checkbox in the sidebar
+        const updatedRoleCheckbox = page.getByRole('checkbox', { name: updatedRoleName });
+        await updatedRoleCheckbox.check();
+        await expect(updatedRoleCheckbox).toBeChecked();
+        await page.waitForLoadState();
+        // click on submit button
+        await roleManagement.submitButton.click();
+        await roleManagement.waitForSpinnerLoaderToDisappear();
+
+        // verify toast message
+        let message3 = await roleManagement.toastMessage();
+        console.log("Success  message: " + message3);
+        // Successfully updated. message
+        expect(message3?.trim()).toContain(constants.ROLE_UPDATE_SUCCESSMESSAGE);
+        await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
+
+        // verify the information text
+        await expect(roleManagement.roleAssignSuccessMsg).toBeVisible();
+        await page.waitForLoadState();
+
+        // logout user
+        await loginObj.logout();
+
+        // Login as the employee to verify the assigned role
+        await loginObj.validLogin(
+            testData.Employee.UserEmail,
+            testData.SuperUser.UserPassword
+        );
+        await page.waitForLoadState();
+
+
+        // Verify that the user can see the tab corresponding to the assigned role in the sidebar
+        // Locate the sidebar tab using the selected checkbox name
+        const sidebarTab = page.getByRole('link', { name: new RegExp(expectedTabName.replace('&', '\\s*&\\s*'), 'i') });
+
+        // Wait for it to be visible
+        await expect(sidebarTab).toBeVisible();
+
+        // Get and print the actual visible tab name
+        const actualTabName = await sidebarTab.innerText();
+        // Normalize both strings by removing spaces
+        const normalize = (str: string) => str.replace(/\s/g, '');
+
+        // Assert after normalization
+        expect(normalize(actualTabName)).toBe(normalize(expectedTabName));
+        console.log(" Visible tab is: " + actualTabName);
+
         
+        // Logout the employee user
+        await loginObj.logout();
+
+        // Login back as SuperUser to delete the created role
+        await loginObj.validLogin(
+            testData.SuperUser.UserEmail,
+            testData.SuperUser.UserPassword
+        );
+
+        //waiting for page to load
+        await page.waitForLoadState();
+
+        // before deleting unassign the role from employee
+        await roleManagement.employeeManagementTab.click();
+        await roleManagement.roleMangementSubTab.click();
+        await page.waitForLoadState();
+
+        // select the employee from the dropdown
+        await roleManagement.selectEmloyee(testData.LEAVE_EMP_NAME2);
+        await roleManagement.waitForSpinnerLoaderToDisappear();
+
+        // select the updated role checkbox 
+        // Verify that the user can see the role checkbox in the sidebar
+        const roleCheckbox = page.getByRole('checkbox', { name: updatedRoleName });
+        await roleCheckbox.uncheck();
+        await expect(roleCheckbox).not.toBeChecked();
+        await page.waitForLoadState();
+
+        // click on submit button
+        await roleManagement.submitButton.click();
+        await roleManagement.waitForSpinnerLoaderToDisappear();
+
+        // verify toast message
+        let unassignMessage = await roleManagement.toastMessage();
+        console.log("Unassign Role Success  message: " + unassignMessage);
+        expect(unassignMessage?.trim()).toContain(constants.ROLE_UPDATE_SUCCESSMESSAGE);
+        await page.waitForSelector('.Toastify__toast-body', { state: 'hidden', timeout: 5000 });
 
         // Navigate back to Role List tab to delete the created role
-       // await roleManagement.roleManagementTab.click();
+        await roleManagement.roleManagementTab.click();
         await roleManagement.navigateToRoleManagementTab("Role List");
         await page.waitForLoadState(); 
         await page.reload(); 
@@ -108,7 +218,6 @@ test.describe("Role Management Tests", () => {
         await roleManagement.searchRoleByName(updatedRoleName); 
         // waiting for search results to load
         await page.waitForLoadState();  
-
 
         // --- VERIFY ROLE AND DELETE USING RELATIVE LOCATOR ---
         const deleteRoleRow = page.locator(`tr:has-text("${updatedRoleName}")`);

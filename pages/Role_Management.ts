@@ -18,6 +18,10 @@ export class RoleManagement extends BasePage {
     public tabCheckbox: Locator;
     public successMsg: Locator;
     public yesButton: Locator;
+    public employeeManagementTab: Locator;
+    public selectEmployeeRoleDropdown: Locator;
+    public roleMangementSubTab: Locator;
+    public roleAssignSuccessMsg: Locator;
 
     constructor(page: Page) {
         super(page)
@@ -37,7 +41,11 @@ export class RoleManagement extends BasePage {
         this.subTabsCheckboxes = page.locator("//input[@id='check_Analytics&Insights']/..//div/input");
         this.tabCheckbox = page.locator("//input[@id='check_Analytics&Insights']");
        this.successMsg = page.locator("//strong[contains(., 'The menu has been successfully assigned to')]");
+        this.roleAssignSuccessMsg = page.locator("//strong[contains(., 'The role has been successfully assigned to')]")
        this.yesButton = page.getByRole('button', { name: 'Yes' });
+       this.employeeManagementTab = page.getByRole('link', { name: 'Employee Management' });
+        this.selectEmployeeRoleDropdown = page.locator(".css-1xc3v61-indicatorContainer")
+        this.roleMangementSubTab = page.locator("(//a[text()='Role Management'])[1]");
     }
 
     // Navigating to the sub tabs under the Role Management tab
@@ -64,7 +72,6 @@ export class RoleManagement extends BasePage {
     async selectRole(roleName: string): Promise<void> {
         await this.selectRoleDropdown.click();
         await this.page.getByText(roleName, { exact: true }).click();
-
     }
    
     async checkSubTabCheckbox(subTabName: string): Promise<void> {
@@ -88,9 +95,23 @@ export class RoleManagement extends BasePage {
         }
     }
     
+    async selectEmloyee(empName: string): Promise<void> {
+        await this.selectEmployeeRoleDropdown.click();
+        await this.page.getByText(empName, { exact: true }).click();
+    }
 
-    
 
-    
+    async selectUpdateRoleCheckbox(updatedName: string): Promise<void> {
+        const roleRow = this.page.locator(`tr:has-text("${updatedName}")`);
+        const roleCheckbox = roleRow.locator('input[type="checkbox"]');
+        await roleCheckbox.check();
+        await expect(roleCheckbox).toBeChecked();
+    }
+
+    async verifyTabVisible(tabName: string): Promise<void> {
+        const tab = this.page.getByRole('link', { name: tabName });
+        await expect(tab).toBeVisible();
+    }
+
 }
 
