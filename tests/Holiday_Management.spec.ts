@@ -4,6 +4,7 @@ import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import * as constants from "../utils/constants";
+import { time } from "console";
 
 let loginObj: LoginPage;
 let holidayManagement: holiday_Management
@@ -130,7 +131,7 @@ test.describe("Holiday Management page new", () => {
         const toastText = await toastMessage.textContent();
         if (toastText?.includes(warringMessage)) {
             console.log("Holiday already exists. Deleting the existing holiday.");
-            await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 });
+            await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
             await holidayManagement.cancelBtn.click();
 
             const allHolidays = await holidayManagement.holidayRow.all();
@@ -143,15 +144,17 @@ test.describe("Holiday Management page new", () => {
                     await deleteBtn.click();
                     await holidayManagement.yesBtn.click();
 
-                    await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_REMOVE_TOAST}")`, {
+                    await page.waitForSelector('Holiday removed successfully', {
                         state: 'hidden',
-                        timeout: 7000
+                        timeout: 8000
                     });
 
                     break;
                 }
             }
-
+            await page.reload();
+             await page.waitForLoadState();
+         
             // Re-add after deleting duplicates
             await holidayManagement.addHoliday(holidayName, '20-10-2025');
         }
@@ -159,18 +162,17 @@ test.describe("Holiday Management page new", () => {
         // verifying the success message
         const message = await holidayManagement.toastMessage();
         console.log("Success  message: " + message);
+        
         expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
-
-        // wait until toast disappears
-        await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
-
+        await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_ADDED_TOAST}")`, {state: 'hidden', timeout: 7000 });
+      
         // Deleting the holiday_________
 
         // Clicking on delete link dynamically based on holiday name
         const deleteLinkLocator = page.locator(`//td[contains(text(),'${holidayName}')]/following-sibling::td[4]/div/a[2]`);
 
         // Wait until delete link is visible
-        await deleteLinkLocator.waitFor({ state: 'visible' });
+        await deleteLinkLocator.waitFor({ state: 'visible', timeout: 5000 });
 
         // Scroll to the delete link
         await deleteLinkLocator.scrollIntoViewIfNeeded();
@@ -183,14 +185,10 @@ test.describe("Holiday Management page new", () => {
         await holidayManagement.yesBtn.click();
 
         // Wait for toast message and validate it
-        const message2 = await holidayManagement.toastMessage();
+        const message2 = await holidayManagement.toastMessage2();
         console.log("Success message after delete:", message2);
         expect(message2).toContain(constants.HOLIDAY_REMOVE_TOAST);
 
     });
 
 });
-
-
-
-

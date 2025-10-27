@@ -71,6 +71,22 @@ export class BasePage extends CommonUtils {
     return message
   }
 
+  async toastMessage2() {
+    // Wait for at least one toast to appear
+    const toast = this.page.locator('.Toastify__toast-body').last();
+    await toast.waitFor({ state: 'visible' });
+
+    // Get its text
+    const message = await toast.textContent();
+    console.debug(message);
+
+    // Wait for that toast to disappear before proceeding
+    await toast.waitFor({ state: 'detached' });
+
+    return message;
+  }
+
+
   async verifySuccessMessage(expectedMessage: string) {
     const message = await this.toastMessage();
     expect(message?.trim()).toBe(expectedMessage);
@@ -85,5 +101,16 @@ export class BasePage extends CommonUtils {
     await this.page.waitForLoadState('networkidle');
     console.log("User logged out successfully");
   }
+
+  async waitFor(locator: Locator | string, state: 'visible' | 'hidden' | 'attached' | 'detached' = 'visible', timeout = 7000) {
+    if (typeof locator === 'string') {
+      // If string passed, treat as selector
+      await this.page.waitForSelector(locator, { state, timeout });
+    } else {
+      // If locator passed (Locator object)
+      await locator.waitFor({ state, timeout });
+    }
+  }
+
 
 }

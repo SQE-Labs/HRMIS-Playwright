@@ -29,9 +29,8 @@ export class holiday_Management extends BasePage {
     public holidayExistingWarning: Locator;
     public cancelBtn: Locator;
     public holidayRow: Locator;
-
-
-
+    public holidayRemoveToast: Locator;
+    public holidayAddedToast: Locator;
 
 
     constructor(page: Page) {
@@ -58,7 +57,8 @@ export class holiday_Management extends BasePage {
         this.holidayExistingWarning = page.getByText("Holiday for similar date is already existed");
         this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
         this.holidayRow = page.locator("//tbody/tr/td[2]");
-
+        this.holidayRemoveToast = page.getByText("Holiday removed successfully");
+        this.holidayAddedToast = page.getByText("Holiday added");
 
         // holiday list
         this.holidayList = page.locator("//table/tbody/tr/td");
@@ -116,6 +116,7 @@ export class holiday_Management extends BasePage {
         await this.holidayField.fill(holidayName);
         await this.dateField.fill(formattedDate);
         await this.submitBtn.click();
+        await this.page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 });
     }
 
     async addHolidayWithRandomDate(holidayName: string = "Comp_Off Leave") {
@@ -146,9 +147,6 @@ export class holiday_Management extends BasePage {
         // Step 6: Return the formatted date
         return formattedForOtherUse;
     }
-
-
-
 
     async filterHolidayListByYear(selectedYear: string, yearColIndex: number, dateColIndex: number) {
 
@@ -222,10 +220,6 @@ export class holiday_Management extends BasePage {
         const result = await this.holidayList.allTextContents();
         console.log(result)
     }
-
-
-
-
 
     async verifyDateInFromTo(selectedDate: string, fromColumn: number, toColumn: number) {
 
