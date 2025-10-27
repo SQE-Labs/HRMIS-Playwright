@@ -3,7 +3,7 @@ import { LoginPage } from "../pages/LoginPage";
 import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { MyTeamLeavePage } from "../pages/myTeamLeave";
+import { MyTeamLeavePage } from "../pages/MyTeamLeave";
 import { ApplyLeaves } from "../pages/ApplyLeaves";
 
 let myTeamLeave: MyTeamLeavePage;
@@ -49,7 +49,8 @@ test.describe("My Team Leave Page", () => {
     );
   });
 
-  test(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
+  // Already covered in the HR aprroval flow flow
+  test.skip(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     const applyLeave = new ApplyLeaves(page);
     loginObj = new LoginPage(page);

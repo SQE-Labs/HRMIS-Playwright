@@ -40,7 +40,7 @@ export class Employee_HRSetup extends BasePage {
     }
 
 
-    async fetchLastRecordView(record) {
+    async fetchLastRecordView(record:string) {
 
         await this.itemsPerPageDropDown.selectOption(record);
 
@@ -78,7 +78,7 @@ export class Employee_HRSetup extends BasePage {
         await this.approveTab.click();
     }
 
-    async fillEmailID(finalEmail): Promise<void> {
+    async fillEmailID(finalEmail:string): Promise<void> {
         console.log(finalEmail)
         await this.caeliusEmailField.fill(finalEmail);
     }
@@ -95,7 +95,8 @@ export class Employee_HRSetup extends BasePage {
         leaveManager,
         employeeType,
         employeeSubType,
-        employeeFlag
+        employeeFlag,
+        projectEligibility
     }: {
         department: string;
         designation: string;
@@ -103,7 +104,8 @@ export class Employee_HRSetup extends BasePage {
         leaveManager: string;
         employeeType: string;
         employeeSubType: string;
-        employeeFlag: string
+        employeeFlag: string;
+        projectEligibility: string;
     }) {
 
         // Helper function to handle React-Select style dropdowns
@@ -124,6 +126,7 @@ export class Employee_HRSetup extends BasePage {
         await selectReactDropdown("Select Employee Type", employeeType);
         await selectReactDropdown("Select Sub Employee Type", employeeSubType);
         await selectReactDropdown("Select Flag", employeeFlag);
+        await selectReactDropdown("Select Eligibility", projectEligibility);
 
     }
 

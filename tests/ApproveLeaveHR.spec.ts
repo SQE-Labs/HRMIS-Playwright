@@ -48,7 +48,7 @@ test.describe("Approve Leave HR module ", () => {
     // Logging in as Delivery Manager
     await loginObj.validLogin(
       testData["DeliveryManager"].UserEmail,
-      testData.SuperUser.UserPassword
+      testData.DeliveryManager.password
     );
 
     // await myTeamLeave.clickOnCrossIcon();

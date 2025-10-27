@@ -105,6 +105,7 @@ test.describe("On Offical Duty Page", () => {
         // navigates to holiday management sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState();
+        
         // selecting the holiday name and date  
         const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
         console.log("Holiday added on:", addedHolidayDate);
@@ -144,7 +145,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login as Delivery Lead
-        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.DeliveryManager.password);
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (DL)");
         await officalDuty.waitForDotsLoaderToDisappear()

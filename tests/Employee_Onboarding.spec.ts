@@ -96,6 +96,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
         await Employee_ITApprovalTable.clickOnApproveTab();
 
         const finalEmail = Emplpoyee_nameObj + domain;
+      
         // const finalEmail = "knUvew@caeliusconsulting.com";
         await Employee_ITApprovalTable.fillEmailID(finalEmail);
 
@@ -115,6 +116,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
         Employe_HRSetupTable = new Employee_HRSetup(page);
         await Employe_HRSetupTable.navigateToHRSetup();
         const HRaaprovedname = await Employe_HRSetupTable.fetchLastRecordView('40');
+        const empName = Emplpoyee_nameObj;
         expect(HRaaprovedname).toEqual(Emplpoyee_nameObj);
 
         await Employe_HRSetupTable.clickOnViewLink();
@@ -125,10 +127,11 @@ test.describe.serial("'Employee Onboarding module'", () => {
             department: "APIs",
             designation: "Customer Success Manager",
             assignManager: "Elon Mask",
-            leaveManager: "Vishal Thakur",
+            leaveManager: testData.EMPLOYEE_NAME,
             employeeType: "REGULAR",
             employeeSubType: "Full time",
-            employeeFlag: "CCI_INDIA"
+            employeeFlag: "CCI_INDIA",
+            projectEligibility: "Yes"
         });
 
 
