@@ -2,9 +2,10 @@ import { LoginPage } from "./LoginPage";
 import { BasePage } from "./Basepage";
 import { expect, Locator, Page } from "@playwright/test";
 import * as constants from "../utils/constants";
+import { holiday_Management } from "./Holiday_ManagementA&L";
 
 export class OnOfficalDuty extends BasePage{
-
+    public holidayManagement: holiday_Management;
     public applyOfficalDutyTab: Locator;
     public viewBtn :Locator;
     public onOfficalDutyTab : Locator
@@ -24,6 +25,7 @@ export class OnOfficalDuty extends BasePage{
 
     constructor(page: Page) {
         super(page);
+        this.holidayManagement = new holiday_Management(page);
 
         this.onOfficalDutyTab = page.locator("//li[@class='nav-item']/button[text()='On Official Duty']")
         this.applyOfficalDutyTab = page.getByText('Apply On Official Duty', { exact: true });
@@ -88,9 +90,9 @@ export class OnOfficalDuty extends BasePage{
                 await this.applyOfficalDutyTab.click()
                 await this.page.waitForLoadState()
         
-                // Select Date
-                await this.dateField.fill(date)
-        
+                // Open the date picker
+                await this.dateField.fill(date);
+                
                 // Select Delivery Lead
                await this.selectDeliveryLead(dlType)
         
@@ -110,5 +112,8 @@ export class OnOfficalDuty extends BasePage{
                 console.log("Success  message: " + message);
                 expect(message).toContain(constants.OFFICAL_DUTY_APPLY_TOAST);
     }
+
+
+    
 
 }
