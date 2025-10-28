@@ -68,56 +68,62 @@ test.describe("Holiday Management page new", () => {
     });
 
     // Combining Out of Office Module in this class
-    test('A&L_Out_of_offc_1,Verify that Out Of Office page @smoke @eti', async ({ page }) => {
-
-        // Navigates to Out of Office sub tab
+    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti', async ({ page }) => {
+        // Navigate to Out of Office sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
-        await page.waitForLoadState();
+        await page.waitForLoadState('networkidle');
 
-        // Clicking on date field
-        await holidayManagement.dateFilterO.click()
+        // Click on date field
+        await holidayManagement.dateFilterO.click();
 
-        await holidayManagement.selectSingleDate('10-05-2025')
-        await page.waitForLoadState();
+        // Select date
+        await holidayManagement.selectSingleDate('10-07-2025');
+        await page.waitForLoadState('networkidle');
 
+        // Wait until at least one row appears
         const firstRow = holidayManagement.rowCount.first();
-        await firstRow.waitFor({ state: 'visible', timeout: 7000 });
+        await firstRow.waitFor({ state: 'visible', timeout: 10000 });
 
-
-        // Get the selected date value from input
+        // Get selected date value from input
         const selectedDate = await holidayManagement.dateFilterO.inputValue();
         console.log("Selected date:", selectedDate);
 
-        // Wait for at least one row to be visible
-        await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 7000 });
+        // Get total visible rows
+        let listCount = await holidayManagement.rowCount.count();
+        console.log("Initial visible rows count:", listCount);
 
-        // Get total number of rows currently visible
-        const listCount = await holidayManagement.rowCount.count();
-        console.log("Visible rows count:", listCount);
-
-        // Optional: scroll the last row into view safely
+        // Scroll the last row into view if needed (safe scroll)
         if (listCount > 0) {
-            await holidayManagement.rowCount.last().scrollIntoViewIfNeeded();
+            const lastRow = holidayManagement.rowCount.nth(listCount - 1);
+            await expect(lastRow).toBeVisible({ timeout: 10000 });
+            await lastRow.scrollIntoViewIfNeeded();
+            // Give short time for potential lazy load after scroll
+            await holidayManagement.rowCount.last().waitFor({ state: 'visible', timeout: 5000 });
         }
 
-        // Wait for leave count element to be visible
-        await holidayManagement.leaveCount.waitFor({ state: 'visible', timeout: 7000 });
+        // Recount rows after scroll
+        listCount = await holidayManagement.rowCount.count();
+        console.log("Final visible rows count after scroll:", listCount);
 
-        // Get text inside leaveCount and convert to number
+        // Ensure leave count is visible
+        await expect(holidayManagement.leaveCount.first()).toBeVisible({ timeout: 10000 });
+
+        // Get leave count text and convert to number
         const leaveCountText = await holidayManagement.leaveCount.first().textContent();
         const totalLeaveCount = Number(leaveCountText?.trim());
         console.log("Leave count value:", totalLeaveCount);
 
         // Compare actual number of rows with leave count
-        await expect(listCount).toBe(totalLeaveCount);
+        expect(listCount).toBe(totalLeaveCount);
 
+        // Column indices for date range
         const fromColumnIndex = 4;
         const toColumnIndex = 5;
 
-        // Verify selected date is present in the date range from to To
+        // Verify selected date is present in the date range
         await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
     });
-
+   
     test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
         const holidayName = 'Diwali';
         const warringMessage = 'Holiday for similar date is already existed';

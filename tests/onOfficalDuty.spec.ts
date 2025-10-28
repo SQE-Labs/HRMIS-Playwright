@@ -100,16 +100,29 @@ test.describe("On Offical Duty Page", () => {
         // Login As Super Admin
         loginObj = new LoginPage(page);
         await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
-        await page.waitForLoadState();
+        await page.waitForLoadState('networkidle');
 
-        // navigates to holiday management sub tab
+        // Navigate to Holiday Management
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
-        await page.waitForLoadState();
-        
+        await page.waitForLoadState('networkidle');
+
+        // Delete the holiday if it already exists
+        const holidayName = "Comp_Off Leave";
+        await holidayManagement.deleteAllCompOffHolidays(holidayName);
+
+        // Confirm deletion by verifying the row no longer exists
+        const deletedRows = page.locator(`tr:has-text("${holidayName}")`);
+        await expect(deletedRows).toHaveCount(0, { timeout: 15000 });
+
+        // Wait until no network requests or spinners remain (UI stability)
+        await page.waitForLoadState('networkidle');
+
+        // Refresh page to ensure table is clean before next action
+        await page.reload({ waitUntil: 'networkidle' });
+
         // selecting the holiday name and date  
         const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
         console.log("Holiday added on:", addedHolidayDate);
-
 
         // logout as super admin
         await officalDuty.logout();
@@ -214,10 +227,43 @@ test.describe("On Offical Duty Page", () => {
 
         //assertion
         await expect(newPrivilegeCount).toBeGreaterThan(oldPrivilegeCount)
+
+        // logout from employee
+        await officalDuty.logout();
+
+        // login as super admin
+        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        // navigates to holiday management sub tab
+        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+        await page.waitForLoadState();
+
+        // select Approve status from dropdown to delete the holiday
+        await holidayManagement.statusDropdown.selectOption(constants.ApproveStatus)
+        await page.waitForLoadState();
+
+        // delete the holiday added
+
+        // --- VERIFY ROLE AND DELETE USING RELATIVE LOCATOR ---
+        const deleteRoleRow = page.locator(`tr:has-text("${addedHolidayDate}")`);
+
+        // Wait for the row to appear
+        await expect(deleteRoleRow).toBeVisible({ timeout: 8000 });
+
+        // Wait for Delete button inside this row
+        const deleteButton = deleteRoleRow.getByText('Delete');
+        await expect(deleteButton).toBeVisible({ timeout: 5000 });
+
+        // Click Delete
+        await deleteButton.click();
+        await holidayManagement.yesBtn.click();
+        await holidayManagement.waitForSpinnerLoaderToDisappear();
+
+
     });
 
     // Failed due to assertion failed inconsistent appears for the reject toast
-    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @knownBug', async({page})=>{
+    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @knownBug', async ({ page }) => {
 
         //Login As Super Admin
         loginObj = new LoginPage(page);
@@ -234,13 +280,12 @@ test.describe("On Offical Duty Page", () => {
         // logout as super admin
         await officalDuty.logout();
 
-
         // Login as Employee
         await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState();
-    
-      // Navigate to on offical duty page
-       // await attendanceLeaveTab.attendanceLeave.click();
+
+        // Navigate to on offical duty page
+        // await attendanceLeaveTab.attendanceLeave.click();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
         await page.waitForLoadState()
 
