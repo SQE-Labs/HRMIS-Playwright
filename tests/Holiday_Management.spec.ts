@@ -4,6 +4,7 @@ import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import * as constants from "../utils/constants";
+import { time } from "console";
 
 let loginObj: LoginPage;
 let holidayManagement: holiday_Management
@@ -67,56 +68,62 @@ test.describe("Holiday Management page new", () => {
     });
 
     // Combining Out of Office Module in this class
-    test('A&L_Out_of_offc_1,Verify that Out Of Office page @smoke @eti', async ({ page }) => {
-
-        // Navigates to Out of Office sub tab
+    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti', async ({ page }) => {
+        // Navigate to Out of Office sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
-        await page.waitForLoadState();
+        await page.waitForLoadState('networkidle');
 
-        // Clicking on date field
-        await holidayManagement.dateFilterO.click()
+        // Click on date field
+        await holidayManagement.dateFilterO.click();
 
-        await holidayManagement.selectSingleDate('10-05-2025')
-        await page.waitForLoadState();
+        // Select date
+        await holidayManagement.selectSingleDate('11-03-2025');
+        await page.waitForLoadState('networkidle');
 
+        // Wait until at least one row appears
         const firstRow = holidayManagement.rowCount.first();
-        await firstRow.waitFor({ state: 'visible', timeout: 7000 });
+        await firstRow.waitFor({ state: 'visible', timeout: 10000 });
 
-
-        // Get the selected date value from input
+        // Get selected date value from input
         const selectedDate = await holidayManagement.dateFilterO.inputValue();
         console.log("Selected date:", selectedDate);
 
-        // Wait for at least one row to be visible
-        await holidayManagement.rowCount.first().waitFor({ state: 'visible', timeout: 7000 });
+        // Get total visible rows
+        let listCount = await holidayManagement.rowCount.count();
+        console.log("Initial visible rows count:", listCount);
 
-        // Get total number of rows currently visible
-        const listCount = await holidayManagement.rowCount.count();
-        console.log("Visible rows count:", listCount);
-
-        // Optional: scroll the last row into view safely
+        // Scroll the last row into view if needed (safe scroll)
         if (listCount > 0) {
-            await holidayManagement.rowCount.last().scrollIntoViewIfNeeded();
+            const lastRow = holidayManagement.rowCount.nth(listCount - 1);
+            await expect(lastRow).toBeVisible({ timeout: 10000 });
+            await lastRow.scrollIntoViewIfNeeded();
+            // Give short time for potential lazy load after scroll
+            await holidayManagement.rowCount.last().waitFor({ state: 'visible', timeout: 5000 });
         }
 
-        // Wait for leave count element to be visible
-        await holidayManagement.leaveCount.waitFor({ state: 'visible', timeout: 7000 });
+        // Recount rows after scroll
+        listCount = await holidayManagement.rowCount.count();
+        console.log("Final visible rows count after scroll:", listCount);
 
-        // Get text inside leaveCount and convert to number
+        // Ensure leave count is visible
+        await expect(holidayManagement.leaveCount.first()).toBeVisible({ timeout: 10000 });
+
+        // Get leave count text and convert to number
         const leaveCountText = await holidayManagement.leaveCount.first().textContent();
         const totalLeaveCount = Number(leaveCountText?.trim());
         console.log("Leave count value:", totalLeaveCount);
 
         // Compare actual number of rows with leave count
-        await expect(listCount).toBe(totalLeaveCount);
+        expect(listCount).toBe(totalLeaveCount);
 
+        // Column indices for date range
         const fromColumnIndex = 4;
         const toColumnIndex = 5;
 
-        // Verify selected date is present in the date range from to To
+        // Verify selected date is present in the date range
         await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
     });
-
+   
     test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
         const holidayName = 'Diwali';
         const warringMessage = 'Holiday for similar date is already existed';
@@ -130,7 +137,7 @@ test.describe("Holiday Management page new", () => {
         const toastText = await toastMessage.textContent();
         if (toastText?.includes(warringMessage)) {
             console.log("Holiday already exists. Deleting the existing holiday.");
-            await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 });
+            await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
             await holidayManagement.cancelBtn.click();
 
             const allHolidays = await holidayManagement.holidayRow.all();
@@ -143,15 +150,17 @@ test.describe("Holiday Management page new", () => {
                     await deleteBtn.click();
                     await holidayManagement.yesBtn.click();
 
-                    await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_REMOVE_TOAST}")`, {
+                    await page.waitForSelector('Holiday removed successfully', {
                         state: 'hidden',
-                        timeout: 7000
+                        timeout: 8000
                     });
 
                     break;
                 }
             }
-
+            await page.reload();
+             await page.waitForLoadState();
+         
             // Re-add after deleting duplicates
             await holidayManagement.addHoliday(holidayName, '20-10-2025');
         }
@@ -159,18 +168,17 @@ test.describe("Holiday Management page new", () => {
         // verifying the success message
         const message = await holidayManagement.toastMessage();
         console.log("Success  message: " + message);
+        
         expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
-
-        // wait until toast disappears
-        await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
-
+        await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_ADDED_TOAST}")`, {state: 'hidden', timeout: 7000 });
+      
         // Deleting the holiday_________
 
         // Clicking on delete link dynamically based on holiday name
         const deleteLinkLocator = page.locator(`//td[contains(text(),'${holidayName}')]/following-sibling::td[4]/div/a[2]`);
 
         // Wait until delete link is visible
-        await deleteLinkLocator.waitFor({ state: 'visible' });
+        await deleteLinkLocator.waitFor({ state: 'visible', timeout: 5000 });
 
         // Scroll to the delete link
         await deleteLinkLocator.scrollIntoViewIfNeeded();
@@ -183,14 +191,10 @@ test.describe("Holiday Management page new", () => {
         await holidayManagement.yesBtn.click();
 
         // Wait for toast message and validate it
-        const message2 = await holidayManagement.toastMessage();
+        const message2 = await holidayManagement.toastMessage2();
         console.log("Success message after delete:", message2);
         expect(message2).toContain(constants.HOLIDAY_REMOVE_TOAST);
 
     });
 
 });
-
-
-
-

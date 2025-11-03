@@ -7,7 +7,7 @@ import * as fs from 'fs';
 
 
 let attendanceLeaveTab: AttendanceLeaveTab;
-let downloadLeaveReport : DownloadLeaveReport;
+let downloadLeaveReport: DownloadLeaveReport;
 
 
 test.describe("Download Leave Report", () => {
@@ -24,7 +24,7 @@ test.describe("Download Leave Report", () => {
     })
 
 
-    test('HRMIS_A&L_134, HRMIS_A&L_137, HRMIS_A&L_138 Verify navigation to the Download Leaves Report page, field reset on Reset click, and report download after selecting an Employee Flag option. @smoke, @eti', async ({page})=>{
+    test('HRMIS_A&L_134, HRMIS_A&L_137, HRMIS_A&L_138 Verify navigation to the Download Leaves Report page, field reset on Reset click, and report download after selecting an Employee Flag option. @smoke, @eti', async ({ page }) => {
         // 1 Navigate to "Download Leaves Report" page
         await attendanceLeaveTab.navigateToAttendanceTab("Download Leaves Report");
         await downloadLeaveReport.waitForDotsLoaderToDisappear();
@@ -33,20 +33,20 @@ test.describe("Download Leave Report", () => {
         const headingText = await downloadLeaveReport.heading.textContent();
         expect(headingText).toContain("Download Leaves Report");
 
+        await page.pause()
         // 2 Initial selection before reset
-        await downloadLeaveReport.selectDates('02/10/2025', '04/10/2025');
+        await downloadLeaveReport.selectDates2('01/11/2025', '02/11/2025');
         await downloadLeaveReport.selectEmployeeFlag('IRED_INDIA');
         await downloadLeaveReport.heading.click();
 
         // 3 Click Reset and verify fields are reset
         await downloadLeaveReport.resetBtn.click()
-        expect(await downloadLeaveReport.fromDateField.inputValue()).toBe(""); 
-        expect(await downloadLeaveReport.toDateField.inputValue()).toBe("");   
-        expect(await downloadLeaveReport.employeeFlag.inputValue()).toBe("CCI_INDIA"); 
+        expect(await downloadLeaveReport.fromDateField.inputValue()).toBe("");
+        expect(await downloadLeaveReport.toDateField.inputValue()).toBe("");
+        expect(await downloadLeaveReport.employeeFlag.inputValue()).toBe("CCI_INDIA");
 
         // 4 Re-select dates & employee flag after reset
-        await downloadLeaveReport.selectDates('02/10/2025', '04/10/2025');
-        await downloadLeaveReport.selectEmployeeFlag('IRED_INDIA');
+        await downloadLeaveReport.selectDates2('01/11/2025', '02/11/2025');
         await downloadLeaveReport.heading.click()
 
         // 5 Download report and verify

@@ -39,6 +39,7 @@ test.describe("My Team Leave Page", () => {
       constants.APPROVED_STATUS,
       testData.HR.name 
     );
+
     await myTeamLeave.waitforLoaderToDisappear();
     await page.waitForTimeout(2000);
 

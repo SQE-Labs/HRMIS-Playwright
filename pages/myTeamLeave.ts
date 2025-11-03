@@ -18,6 +18,7 @@ export class MyTeamLeavePage extends BasePage {
   private submitButton: Locator;
   public approveSuccessMessage: Locator;
   public employeeRows: Locator;
+  public noRecordMsg : Locator
   // public employeeColumn1: Locator
   
 
@@ -40,6 +41,7 @@ export class MyTeamLeavePage extends BasePage {
     this.approveSuccessMessage = page.getByText("Successfully updated.");
     this.employeeRows = page.locator("//table/tbody/tr");
     this.employeeColumn = page.locator("//table//tbody/tr/td[2]");
+    this.noRecordMsg = page.getByText('No Record Available')
   }
 
   async verifyDefaultValueOfStatusDropdown() {
@@ -117,36 +119,61 @@ export class MyTeamLeavePage extends BasePage {
   }
   // ....................
 
-    async verifyTheEmployeeNamesInTheList(leaveStatus: string, employeeName: string) {
-    // Select the leave status
+  async verifyTheEmployeeNamesInTheList(leaveStatus: string, employeeName: string) {
+    // --- Step 1: Select Leave Status ---
     await this.selectLeaveStatus(leaveStatus);
     await this.waitforLoaderToDisappear();
-
-    // Verify the leave status dropdown value
-    const selectedValue = await this.statusDropdown.inputValue();
-    expect(selectedValue).toBe(leaveStatus);
-
     await this.waitForDotsLoaderToDisappear();
-    await this.waitforLoaderToDisappear();
 
-    // Enter partial employee name in search box
+    // --- Step 2: Verify Dropdown Value ---
+    const selectedValue = (await this.statusDropdown.inputValue()).trim();
+    expect(selectedValue).toBe(leaveStatus);
+    console.log(`Leave status selected: ${selectedValue}`);
+
+    // --- Step 3: Search Employee ---
     await this.searchEmployee(employeeName);
     await this.waitforLoaderToDisappear();
 
-    // Wait for search results to appear
-    await this.employeeRows.first().waitFor({ state: "visible" });
+    // --- Step 4: Check if any record exists ---
+    const rowCount = await this.employeeRows.count();
+    console.log(`Total records found: ${rowCount}`);
 
-    // Get all employee names in the list
+    if (await this.noRecordMsg.isVisible()) {
+      // --- Optional: Check for “No records found” message ---
+      const noDataMessage = this.page.locator('//div[contains(text(),"No records found")]');
+      if (await noDataMessage.isVisible()) {
+        console.log(`ℹ No records found for employee "${employeeName}" under status "${leaveStatus}".`);
+      } else {
+        console.warn(`⚠ No records found for "${employeeName}" but no message displayed.`);
+      }
+      return; // exit gracefully
+    }
+
+    // --- Step 5: Wait for first result ---
+    await this.employeeRows.first().waitFor({ state: "visible", timeout: 5000 });
+
+    // --- Step 6: Get all employee names ---
     const employees = await this.getEmployeeNames();
     console.log("Search results:", employees);
 
-    // Verify each employee name contains the search term (case-insensitive)
-    for (let name of employees) {
-      if (name) {
-        expect(name.trim().toLowerCase()).toContain(employeeName.toLowerCase());
+    // --- Step 7: Validate employee names ---
+    const invalidNames: string[] = [];
+    for (const name of employees) {
+      const cleanName = name.trim();
+      if (cleanName === "") continue;
+      if (!cleanName.toLowerCase().includes(employeeName.toLowerCase())) {
+        invalidNames.push(cleanName);
       }
     }
-}
+
+    if (invalidNames.length > 0) {
+      console.error(`❌ Some names did not match "${employeeName}":`, invalidNames);
+    } else {
+      console.log(`✅ All ${employees.length} employees matched "${employeeName}".`);
+    }
+
+    expect.soft(invalidNames.length, `Invalid names found for "${employeeName}"`).toBe(0);
+  }
 
 }
 

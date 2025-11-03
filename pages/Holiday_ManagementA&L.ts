@@ -1,6 +1,7 @@
 import { BasePage } from '../pages/Basepage';
 import { expect, Locator, Page } from '@playwright/test';
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
+import * as constants from '../utils/constants';
 
 
 export class holiday_Management extends BasePage {
@@ -29,9 +30,8 @@ export class holiday_Management extends BasePage {
     public holidayExistingWarning: Locator;
     public cancelBtn: Locator;
     public holidayRow: Locator;
-
-
-
+    public holidayRemoveToast: Locator;
+    public holidayAddedToast: Locator;
 
 
     constructor(page: Page) {
@@ -58,7 +58,8 @@ export class holiday_Management extends BasePage {
         this.holidayExistingWarning = page.getByText("Holiday for similar date is already existed");
         this.cancelBtn = page.getByRole('button', { name: 'Cancel' });
         this.holidayRow = page.locator("//tbody/tr/td[2]");
-
+        this.holidayRemoveToast = page.getByText("Holiday removed successfully");
+        this.holidayAddedToast = page.getByText("Holiday added");
 
         // holiday list
         this.holidayList = page.locator("//table/tbody/tr/td");
@@ -81,8 +82,15 @@ export class holiday_Management extends BasePage {
     }
 
     async getRandomDate(): Promise<string> {
-        const start = new Date(2025, 0, 1);
-        const end = new Date(2025, 11, 31);
+        const now = new Date();
+
+        // Start: 1st day of the current month
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // End: last day of the next month
+        const end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+
+        // Generate a random timestamp between start and end
         const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
         const randomDate = new Date(randomTime);
 
@@ -90,9 +98,11 @@ export class holiday_Management extends BasePage {
         const month = String(randomDate.getMonth() + 1).padStart(2, '0');
         const year = randomDate.getFullYear();
 
-        // Return in yyyy-mm-dd format for input[type="date"]
+        // Return in yyyy-mm-dd format
         return `${year}-${month}-${day}`;
     }
+
+
 
 
     async updateHoliday(newHolidayName: string) {
@@ -116,67 +126,92 @@ export class holiday_Management extends BasePage {
         await this.holidayField.fill(holidayName);
         await this.dateField.fill(formattedDate);
         await this.submitBtn.click();
+        await this.page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 });
     }
 
     async addHolidayWithRandomDate(holidayName: string = "Comp_Off Leave") {
         // Step 1: Generate random date in yyyy-mm-dd format
-        const randomDate = await this.getRandomDate(); // e.g., "2025-10-21"
-
-        // Step 2: Convert yyyy-mm-dd → dd-mm-yyyy for your existing addHoliday method
-        const [year, month, day] = randomDate.split('-');
+        const randomDate = await this.getRandomDate();
+        const [year, month, day] = randomDate.split("-");
         const formattedDateForMethod = `${day}-${month}-${year}`;
 
-        // Step 3: Call your original addHoliday method
+        // Step 2: Add holiday
         await this.addHoliday(holidayName, formattedDateForMethod);
+        await this.page.waitForLoadState("networkidle");
 
-        // Step 4: Edit the holiday details and approve it
-        await this.editLink.last().click();
-        await this.holidayField.fill(holidayName);
-        await this.updateStatusDropdown.selectOption('Approved');
-        await this.submitBtn.click();
-
-        // Step 5: Convert yyyy-mm-dd → "Month, DD, YYYY" for external use
+        // Step 3: Format date as shown in table (e.g., "October 25, 2025")
         const monthNames = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
         ];
-        const monthIndex = parseInt(month, 10) - 1;
-        const formattedForOtherUse = `${monthNames[monthIndex]}, ${day}, ${year}`;
+        const formattedForOtherUse = `${monthNames[parseInt(month) - 1]} ${day}, ${year}`;
 
-        // Step 6: Return the formatted date
+        // Step 4: Wait until the holiday row that CONTAINS this date appears
+        const holidayRow = this.page.locator("tr", { hasText: formattedForOtherUse });
+        await expect(holidayRow).toBeVisible({ timeout: 10000 });
+
+        // Step 5: Click on the "Edit" link inside that row (contains-based)
+        const editLink = holidayRow.locator("a:has-text('Edit')");
+        await expect(editLink).toBeVisible({ timeout: 5000 });
+        await editLink.click();
+
+        // Step 6: Wait until form fields appear, update, and approve
+        await expect(this.holidayField).toBeVisible({ timeout: 5000 });
+        await this.holidayField.fill(holidayName);
+        await this.updateStatusDropdown.selectOption("Approved");
+        await this.submitBtn.click();
+        await this.page.waitForLoadState("networkidle");
+
+        // Step 7: Return formatted date for external verification
         return formattedForOtherUse;
     }
 
 
 
-
     async filterHolidayListByYear(selectedYear: string, yearColIndex: number, dateColIndex: number) {
-
         // Select provided year or previous year by default
         const year = selectedYear ?? (new Date().getFullYear() - 1).toString();
         await this.yearDropdown.selectOption(year);
+        await this.page.waitForLoadState('networkidle');
 
-        // Wait for at least one row to appear
-        await this.holidayList.first().waitFor({ state: 'visible', timeout: 6000 });
+        // Ensure at least one row appears after filtering
+        const firstRow = this.holidayList.first();
+        await expect(firstRow, 'Holiday list did not load after selecting year.').toBeVisible({ timeout: 10000 });
 
-        // Get Year column data
-        const yearData: string[] = await this.getTableRowdata(yearColIndex);
+        // Small wait to allow UI to stabilize if data loads dynamically
+        await this.page.waitForFunction(
+            () => document.querySelectorAll('tbody > tr').length > 0,
+            { timeout: 10000 }
+        );
 
-        // Get Date column data
-        const dateData: string[] = await this.getTableRowdata(dateColIndex);
+        // Scroll to the bottom row to ensure all rows are rendered
+        const totalRows = await this.holidayList.count();
+        if (totalRows > 0) await this.holidayList.last().scrollIntoViewIfNeeded();
 
-        // Verify Year column
-        yearData.forEach(cellYear => {
-            expect(cellYear, `Year column mismatch. Expected ${year}, got ${cellYear}`).toBe(year);
-        });
+        // Get Year and Date column data
+        const [yearData, dateData] = await Promise.all([
+            this.getTableRowdata(yearColIndex),
+            this.getTableRowdata(dateColIndex)
+        ]);
 
-        // Verify Date column
-        dateData.forEach(dateStr => {
-            const cellYear = new Date(dateStr).getFullYear().toString();
-            expect(cellYear, `Date column mismatch. Expected ${year}, got ${cellYear}`).toBe(year);
-        });
+        // Verify Year column values
+        for (const cellYear of yearData) {
+            expect(
+                cellYear.trim(),
+                `Year column mismatch. Expected ${year}, got ${cellYear}`
+            ).toBe(year);
+        }
 
+        // Verify Date column year matches the selected year
+        for (const dateStr of dateData) {
+            const parsedYear = new Date(dateStr).getFullYear().toString();
+            expect(
+                parsedYear,
+                `Date column mismatch. Expected ${year}, got ${parsedYear}`
+            ).toBe(year);
+        }
     }
+
 
     async getTableRowdata(columnIndex: number): Promise<string[]> {
         // Wait for at least one cell in the desired column to appear
@@ -222,10 +257,6 @@ export class holiday_Management extends BasePage {
         const result = await this.holidayList.allTextContents();
         console.log(result)
     }
-
-
-
-
 
     async verifyDateInFromTo(selectedDate: string, fromColumn: number, toColumn: number) {
 
@@ -288,18 +319,57 @@ export class holiday_Management extends BasePage {
         await this.page.waitForTimeout(200);
     }
     async selectSingleDateWithMonth(targetMonth: string, targetYear: string, targetDay: string) {
+        const monthLabel = this.page.locator('.react-datepicker__current-month');
+        let maxTries = 12; // safety limit to avoid infinite loop
+
         // Loop until desired month and year are visible
-        while (!(await this.page.locator('.react-datepicker__current-month').textContent())?.includes(`${targetMonth} ${targetYear}`)) {
+        while (maxTries > 0) {
+            const currentMonth = (await monthLabel.textContent())?.trim();
+            if (currentMonth?.includes(`${targetMonth} ${targetYear}`)) {
+                break; // found the correct month/year
+            }
+
             await this.nextArrow.click();
+            await this.page.waitForTimeout(500); // let UI update
+            maxTries--;
         }
 
-        // Select the day
+        // Select the target day
         const allDates = await this.dates.all();
         for (const dateCell of allDates) {
-            if ((await dateCell.textContent())?.trim() === targetDay) {
+            const dateText = (await dateCell.textContent())?.trim();
+            if (dateText === targetDay) {
                 await dateCell.click();
                 break;
             }
         }
     }
+    async deleteAllCompOffHolidays(holidayName: string) {
+        // Step 1: Filter holidays by Approved status
+        await this.statusDropdown.selectOption(constants.ApproveStatus);
+        await this.page.waitForLoadState('networkidle');
+
+        // Step 2: Locate all matching holiday rows
+        let holidayRows = this.page.locator(`tr:has-text("${holidayName}")`);
+
+        // Step 3: Keep deleting until none left
+        while (await holidayRows.count() > 0) {
+            const firstRow = holidayRows.first();
+            const deleteButton = firstRow.getByRole('button', { name: /delete/i });
+
+            await deleteButton.click();
+            await this.yesBtn.click();
+
+            // Wait until that specific row disappears
+            await expect(firstRow).toHaveCount(0, { timeout: 10000 });
+
+            // Refresh locator (table updates dynamically)
+            holidayRows = this.page.locator(`tr:has-text("${holidayName}")`);
+        }
+
+        // Step 4: Optional final assertion
+        await expect(holidayRows).toHaveCount(0);
+    }
+
+
 }
