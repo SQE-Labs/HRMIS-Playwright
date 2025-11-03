@@ -46,6 +46,23 @@ export class DownloadLeaveReport extends BasePage{
     async selectEmployeeFlag(type:string){
         await this.employeeFlag.selectOption(type)
     }
+    async selectDates2(fromDate: string, toDate: string) {
+        // Both dates are in "dd/mm/yyyy" format
+        const [fromDay, fromMonth, fromYear] = fromDate.split('/');
+        const formattedFromDate = `${fromMonth}-${fromDay}-${fromYear}`; // mm-dd-yyyy
 
+        const [toDay, toMonth, toYear] = toDate.split('/');
+        const formattedToDate = `${toMonth}-${toDay}-${toYear}`; // mm-dd-yyyy
+
+        // Wait and fill From Date
+        await this.fromDateField.waitFor({ state: 'visible', timeout: 5000 });
+        await this.fromDateField.fill(formattedFromDate);
+
+        // Wait and fill To Date
+        await this.toDateField.waitFor({ state: 'visible', timeout: 5000 });
+        await this.toDateField.fill(formattedToDate);
+    }
+
+    
 
 }

@@ -77,7 +77,7 @@ test.describe("Holiday Management page new", () => {
         await holidayManagement.dateFilterO.click();
 
         // Select date
-        await holidayManagement.selectSingleDate('10-07-2025');
+        await holidayManagement.selectSingleDate('11-03-2025');
         await page.waitForLoadState('networkidle');
 
         // Wait until at least one row appears
