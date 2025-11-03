@@ -112,5 +112,37 @@ export class BasePage extends CommonUtils {
     }
   }
 
+  async verifyTooltipMessage(element: Locator, expectedText: string) {
+    // Step 1: Hover or focus to trigger tooltip
+    await element.hover();
+    await this.page.waitForTimeout(500);
+
+    // Step 2: Look for custom tooltip in DOM
+    const tooltip = this.page.locator(
+      '.mat-tooltip, [role="tooltip"], .tooltip, .ant-tooltip-inner, [data-tooltip]'
+    );
+
+    let tooltipText = "";
+
+    try {
+      // Step 3: Try to get custom tooltip text if visible
+      await expect(tooltip.first()).toBeVisible({ timeout: 1500 });
+      tooltipText = (await tooltip.first().innerText()).trim();
+    } catch {
+      // Step 4: Fallback 1 – get 'title' attribute
+      tooltipText = (await element.getAttribute("title"))?.trim() || "";
+
+      // Step 5: Fallback 2 – handle browser-native validation tooltip
+      if (!tooltipText) {
+        tooltipText = await element.evaluate(
+          (el) => (el as HTMLInputElement).validationMessage || ""
+        );
+      }
+    }
+
+    console.log(`Tooltip Text: "${tooltipText}"`);
+    expect(tooltipText).toBe(expectedText);
+  }
 
 }
+
