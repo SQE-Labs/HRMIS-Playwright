@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 import { Analytics_Insights } from "../pages/Analytics_&_Insights";
 import testData from "../testData/testData.json";
+import { SELECT_ITEM } from "../utils/constants";
 
 let analyticsInsights: Analytics_Insights;
 
@@ -42,7 +43,26 @@ test.describe("Analytics & Insights module", () => {
         console.log(name);
     });
 
-    test("HRMIS_AI_13 Asset Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_11 Reset button restores default Asset Report filter values @smoke", async ({ page }) => {
+        // Navigate to Asset Report page
+        await analyticsInsights.navigateToAssetReport();
+        await analyticsInsights.assetTypeDropdown.selectOption('All');
+        await analyticsInsights.ownerDropdown.selectOption('All');
+        // Click Reset button
+        await analyticsInsights.resetButton.click();
+        await analyticsInsights.waitforLoaderToDisappear()
+        // Verify filters are reset
+        let tooltipMessage = await analyticsInsights.getValidationMessage(analyticsInsights.assetTypeDropdown)
+        expect(tooltipMessage === SELECT_ITEM).toBeTruthy();
+        const assetTypeValue = await page.locator('#filterAssetType >> option:checked').textContent();
+        const ownerValue = await page.locator('#filterOwner >> option:checked').textContent();
+        console.log(`Asset Type after reset: ${assetTypeValue}`);
+        console.log(`Owner after reset: ${ownerValue}`);
+        expect(assetTypeValue).toBe('Select an asset type');
+        expect(ownerValue).toBe('Select an owner');
+    })
+
+    test("HRMIS_AI_12 Asset Report functionality @smoke", async ({ page }) => {
         // Navigate to Asset Report page
         await analyticsInsights.navigateToAssetReport();
         await analyticsInsights.assetTypeDropdown.selectOption('All');
@@ -52,7 +72,31 @@ test.describe("Analytics & Insights module", () => {
         });
     });
 
-    test("HRMIS_AI_14 User Attendance Report functionality @smoke", async ({ page }) => {
+    test("user resets User Attendance Report filters to default values @smoke", async ({ page }) => {
+        const month = new Date().toLocaleString('default', { month: 'long' });
+        console.log(month);
+
+        // Navigate to User Attendance Report page
+        await analyticsInsights.navigateToUserAttendanceReport();
+        await analyticsInsights.monthDropdown.selectOption("April");
+        await analyticsInsights.waitForDotsLoaderToDisappear();
+        await analyticsInsights.selectEmployeeDropdown.click();
+        await page.getByText("Vishal Dev Thakur").waitFor({ state: 'visible', timeout: 60000 });
+        await page.getByText("Vishal Dev Thakur").click();
+        await analyticsInsights.waitForDotsLoaderToDisappear();
+        // Click Reset button
+        await analyticsInsights.resetButton.click();
+        await analyticsInsights.waitForDotsLoaderToDisappear();
+        // Verify filters are reset
+        const monthValue = await page.locator('#month >> option:checked').textContent();
+        const employeeValue = await page.locator(".css-1jqq78o-placeholder").textContent();
+        console.log(`Month after reset: ${monthValue}`);
+        console.log(`Employee after reset: ${employeeValue}`);
+        expect(monthValue).toBe(month);
+        expect(employeeValue).toBe('Select...');
+    });
+
+    test("HRMIS_AI_13 User Attendance Report functionality @smoke", async ({ page }) => {
         await analyticsInsights.navigateToUserAttendanceReport();
         await analyticsInsights.monthDropdown.waitFor({ state: 'visible', timeout: 30000 });
         await analyticsInsights.monthDropdown.selectOption("April");
@@ -65,6 +109,11 @@ test.describe("Analytics & Insights module", () => {
             await analyticsInsights.compileAndDownloadButton.click();
         });
     });
+
+
+
+
+
 });
 
 
