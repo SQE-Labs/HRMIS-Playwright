@@ -52,6 +52,7 @@ test.describe.serial("Salary Management", () => {
         // Assert the fields are cleared / reset
         expect(resetEmployeeType).toBe("");
         expect(resetMonth).toBe(""); 
+        
     })
 
     test("Verify the validation tooltip of Salary Management Tab @reg, @eti", async({page})=>{

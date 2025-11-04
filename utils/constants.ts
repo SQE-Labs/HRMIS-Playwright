@@ -60,5 +60,7 @@ export const ApproveStatus = "Approved"
 export const PLEASE_SELECT_ITEM_TOOLTIP ="Please select an item in the list."
 export const PLEASE_SELECT_FILE_TOOLTIP ="Please select a file."
 
+export const PLEASE_FILL_IN_TOOLTOP ="Please fill"
+
 
     

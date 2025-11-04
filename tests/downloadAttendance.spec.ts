@@ -3,6 +3,7 @@ import { LoginPage } from "../pages/LoginPage";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import testData from "../testData/testData.json";
 import { DownloadAttendance } from "../pages/downloadAttendance";
+import * as constants from "../utils/constants";
 
 
 let downloadAttendance: DownloadAttendance;
@@ -35,10 +36,10 @@ test.describe("Download Attendance page", () => {
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyXLSXDownload(page, async () => {
       await downloadAttendance.downloadButton.click();
+
+      
     });
-    // const downloadFolder = 'C:\\Users\\Caelius\\HRMIS-Playwright\\Download';
-    // const filePath = await downloadAttendance.downloadAttendanceSheet("April", "Vishal Thakur(REGULAR)", downloadFolder);
-    // console.log("Downloaded file verified at:", filePath);
   });
+
 });
 

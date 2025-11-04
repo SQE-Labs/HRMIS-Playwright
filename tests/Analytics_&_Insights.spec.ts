@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 import { Analytics_Insights } from "../pages/Analytics_&_Insights";
 import testData from "../testData/testData.json";
+import * as constants from "../utils/constants";
+
 
 let analyticsInsights: Analytics_Insights;
 
@@ -51,6 +53,40 @@ test.describe("Analytics & Insights module", () => {
             await analyticsInsights.downloadButton.click();
         });
     });
+
+    test("HRMIS_AI_13.1 Verify the Reset button functionality of Asset Report @reg, @eti", async ({ page }) => {
+        // Navigate to Asset Report page
+        await analyticsInsights.navigateToAssetReport();
+        await analyticsInsights.assetTypeDropdown.selectOption('All');
+        await analyticsInsights.ownerDropdown.selectOption('All');
+        await analyticsInsights.resetButton.click();
+
+        const assetTypeText = await analyticsInsights.assetTypeDropdown.textContent();
+        const ownerText = await analyticsInsights.ownerDropdown.textContent();
+
+        expect(assetTypeText).toContain('Select');
+        expect(ownerText).toContain('Select');
+
+    });
+
+    test("HRMIS_AI_13.2 Verify the validation tooltip functionality of Asset Report @reg, @eti", async ({ page }) => {
+        // Navigate to Asset Report page
+        await analyticsInsights.navigateToAssetReport();
+        await page.waitForLoadState()
+        await analyticsInsights.downloadButton.click();
+        // verify the tooltip for Asset Type field
+        await analyticsInsights.verifyTooltipMessage(analyticsInsights.assetTypeDropdown, constants.PLEASE_SELECT_ITEM_TOOLTIP)
+        
+        // verify the tooltip for Owner field 
+        await analyticsInsights.assetTypeDropdown.selectOption('All');
+        await analyticsInsights.downloadButton.click();
+        await analyticsInsights.verifyTooltipMessage(analyticsInsights.ownerDropdown, constants.PLEASE_SELECT_ITEM_TOOLTIP)
+
+
+
+        
+    })
+
 
     test("HRMIS_AI_14 User Attendance Report functionality @smoke", async ({ page }) => {
         await analyticsInsights.navigateToUserAttendanceReport();
