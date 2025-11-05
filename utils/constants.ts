@@ -57,9 +57,8 @@ export const ROLE_UPDATE_SUCCESSMESSAGE ="Successfully Updated."
 export const ROLE_DELETE_SUCCESSMESSAGE ="Successfully deleted"
 export const ApproveStatus = "Approved"
 
-export const PLEASE_SELECT_ITEM_TOOLTIP ="Please select an item in the list."
-export const PLEASE_SELECT_FILE_TOOLTIP ="Please select a file."
 
+export const SELECT_FILE_TOOLTIP ="Please select a file."
 export const PLEASE_FILL_IN_TOOLTOP ="Please fill"
 
 

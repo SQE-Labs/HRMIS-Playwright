@@ -75,12 +75,12 @@ test.describe("Analytics & Insights module", () => {
         await page.waitForLoadState()
         await analyticsInsights.downloadButton.click();
         // verify the tooltip for Asset Type field
-        await analyticsInsights.verifyTooltipMessage(analyticsInsights.assetTypeDropdown, constants.PLEASE_SELECT_ITEM_TOOLTIP)
+        await analyticsInsights.verifyTooltipMessage(analyticsInsights.assetTypeDropdown, constants.SELECT_ITEM)
         
         // verify the tooltip for Owner field 
         await analyticsInsights.assetTypeDropdown.selectOption('All');
         await analyticsInsights.downloadButton.click();
-        await analyticsInsights.verifyTooltipMessage(analyticsInsights.ownerDropdown, constants.PLEASE_SELECT_ITEM_TOOLTIP)
+        await analyticsInsights.verifyTooltipMessage(analyticsInsights.ownerDropdown, constants.SELECT_ITEM)
 
 
 

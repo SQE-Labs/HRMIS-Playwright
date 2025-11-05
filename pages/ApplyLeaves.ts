@@ -7,13 +7,13 @@ export class ApplyLeaves extends BasePage {
   private ApplyLeaveButton: Locator;
   public ApplyLeavePopupTitle: Locator;
   private SubmitButton: Locator;
-  private LeaveTypeTextBox: Locator;
-  private DateRange: Locator;
-  private ReasonOfLeaveBox: Locator;
+  public  LeaveTypeTextBox: Locator;
+  public  DateRange: Locator;
+  public ReasonOfLeaveBox: Locator;
   public SuccessMessage: Locator;
   private WithdrawLink: Locator;
   public WithdrawPopupTitle: Locator;
-  private WithdrawReasonField: Locator;
+  public  WithdrawReasonField: Locator;
   public WithdrawSuccessMessage: Locator;
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;

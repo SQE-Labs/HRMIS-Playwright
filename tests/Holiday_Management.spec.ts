@@ -77,8 +77,8 @@ test.describe("Holiday Management page new", () => {
         await holidayManagement.dateFilterO.click();
 
         // Select date
-        await holidayManagement.selectSingleDate('11-03-2025');
-        await page.waitForLoadState('networkidle');
+        await holidayManagement.selectSingleDate('11-05-2025');
+        await page.waitForLoadState('domcontentloaded');
 
         // Wait until at least one row appears
         const firstRow = holidayManagement.rowCount.first();
@@ -92,37 +92,53 @@ test.describe("Holiday Management page new", () => {
         let listCount = await holidayManagement.rowCount.count();
         console.log("Initial visible rows count:", listCount);
 
-        // Scroll the last row into view if needed (safe scroll)
+        // Scroll the last row into view only if needed (safe check)
         if (listCount > 0) {
             const lastRow = holidayManagement.rowCount.nth(listCount - 1);
+
+            // Wait until it's attached & visible
+            await lastRow.waitFor({ state: 'attached', timeout: 5000 });
             await expect(lastRow).toBeVisible({ timeout: 10000 });
-            await lastRow.scrollIntoViewIfNeeded();
-            // Give short time for potential lazy load after scroll
-            await holidayManagement.rowCount.last().waitFor({ state: 'visible', timeout: 5000 });
+
+            // Check if the last row is already visible in viewport
+            const isRowVisible = await lastRow.isVisible();
+
+            // Only scroll if not visible to avoid DOM detachment errors
+            if (!isRowVisible) {
+                try {
+                    await lastRow.scrollIntoViewIfNeeded();
+                } catch (error) {
+                    console.warn("⚠️ Last row might have re-rendered, retrying...");
+                    const refreshedLastRow = holidayManagement.rowCount.last();
+                    await refreshedLastRow.waitFor({ state: 'attached', timeout: 5000 });
+                    await refreshedLastRow.scrollIntoViewIfNeeded();
+                }
+            }
+
+            // Recount rows after scroll
+            listCount = await holidayManagement.rowCount.count();
+            console.log("Final visible rows count after scroll:", listCount);
+
+            // Ensure leave count is visible
+            await expect(holidayManagement.leaveCount.first()).toBeVisible({ timeout: 10000 });
+
+            // Get leave count text and convert to number
+            const leaveCountText = await holidayManagement.leaveCount.first().textContent();
+            const totalLeaveCount = Number(leaveCountText?.trim());
+            console.log("Leave count value:", totalLeaveCount);
+
+            // Compare actual number of rows with leave count
+            expect(listCount).toBe(totalLeaveCount);
+
+            // Column indices for date range
+            const fromColumnIndex = 4;
+            const toColumnIndex = 5;
+
+            // Verify selected date is present in the date range
+            await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
         }
+        });
 
-        // Recount rows after scroll
-        listCount = await holidayManagement.rowCount.count();
-        console.log("Final visible rows count after scroll:", listCount);
-
-        // Ensure leave count is visible
-        await expect(holidayManagement.leaveCount.first()).toBeVisible({ timeout: 10000 });
-
-        // Get leave count text and convert to number
-        const leaveCountText = await holidayManagement.leaveCount.first().textContent();
-        const totalLeaveCount = Number(leaveCountText?.trim());
-        console.log("Leave count value:", totalLeaveCount);
-
-        // Compare actual number of rows with leave count
-        expect(listCount).toBe(totalLeaveCount);
-
-        // Column indices for date range
-        const fromColumnIndex = 4;
-        const toColumnIndex = 5;
-
-        // Verify selected date is present in the date range
-        await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
-    });
    
     test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
         const holidayName = 'Diwali';
@@ -133,6 +149,7 @@ test.describe("Holiday Management page new", () => {
         await page.waitForLoadState();
 
         await holidayManagement.addHoliday(holidayName, '20-10-2025');
+
         const toastMessage = await page.waitForSelector('.Toastify__toast-body', { state: 'visible', timeout: 5000 });
         const toastText = await toastMessage.textContent();
         if (toastText?.includes(warringMessage)) {

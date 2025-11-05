@@ -3,7 +3,7 @@ import { LoginPage } from "../pages/LoginPage";
 import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { OnOfficalDuty } from "../pages/onOfficalDuty";
+import { OnOfficalDuty } from "../pages/OnOfficalDuty";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import { off } from "process";
 
