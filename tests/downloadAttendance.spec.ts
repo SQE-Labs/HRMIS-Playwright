@@ -35,11 +35,30 @@ test.describe("Download Attendance page", () => {
     await page.getByText("Vishal Dev Thakur(REGULAR)").click();
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyXLSXDownload(page, async () => {
-      await downloadAttendance.downloadButton.click();
-
-      
+      await downloadAttendance.downloadButton.click();   
     });
   });
+
+  test ('Verify the Reset button functionality @reg, @eti', async ({page})=>{
+    await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
+    await downloadAttendance.selectMonth("April");
+    await downloadAttendance.selectEmployeeDropdown.click();
+    await page.getByText("Vishal Dev Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText("Vishal Dev Thakur(REGULAR)").click();
+    await downloadAttendance.waitForSpinnerLoaderToDisappear();
+    await downloadAttendance.resetButton.click()
+    await downloadAttendance.waitForSpinnerLoaderToDisappear();
+
+
+    // verify the values after reset it
+    const today = new Date();
+    const monthName = today.toLocaleString('default', { month: 'long' }); // e.g. 'September'
+    const yearString = today.getFullYear().toString();
+
+    await expect(await downloadAttendance.monthDropdown.inputValue()).toBe(monthName);
+    await expect(downloadAttendance.yearDropdown).toHaveValue(yearString);
+    await expect(downloadAttendance.employeeFlagDropdown).toHaveValue('ALL');
+  })
 
 });
 

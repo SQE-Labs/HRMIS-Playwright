@@ -347,8 +347,70 @@ test.describe("On Offical Duty Page", () => {
 
         // logout from HR
         await officalDuty.logout()
+    })
 
+    test('Verify the validation tooltip on the offical duty page @reg, @eti', async ({page})=>{
+        // Login As Employee
+        loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
+
+        await page.waitForLoadState()
+
+        // Clicking on Apply On Offical Duty tab
+        await officalDuty.applyOfficalDutyTab.click()
+        await page.waitForLoadState()
+
+        // Verify the validation tooltip for the 'Date' field 
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.dateField,constants.PLEASE_FILL_IN_TOOLTOP)
+
+        // Verify the tooltip for the select delivery manager field 
+        await officalDuty.selectDate('25-10-2025')
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.deliveryLead, constants.SELECT_ITEM)
+
+        // verify the tooltip for the task field 
+        // Select Delivery Lead
+        await officalDuty.selectDeliveryLead(testData.DeliveryManager.name)
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.taskField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+        // verify the tooltip for the hours field
+        await officalDuty.enterTask("Worked On Weekend")
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.hours, constants.PLEASE_FILL_IN_TOOLTOP)
 
     })
+
+    test('Verify the hours and mins gets reset after clicking on the reset icon', async ({page})=>{
+        // Login As Employee
+        loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
+
+        await page.waitForLoadState()
+
+        // Clicking on Apply On Offical Duty tab
+        await officalDuty.applyOfficalDutyTab.click()
+        await page.waitForLoadState()
+
+        // Entering task
+        await officalDuty.enterTask("Worked On Weekend")
+
+        // Select horus
+        await officalDuty.enterHoursAndMins(8, 30)
+        
+        // clicking on reset button
+        await officalDuty.resetTimeButton.click()
+
+        // verifying the field after reset it
+        await expect(officalDuty.taskField).toBe('');
+        await expect(officalDuty.hours).toBe('');
+        await expect(officalDuty.mins).toBe('');
+    })
 });
+
 

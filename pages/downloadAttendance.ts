@@ -13,6 +13,7 @@ export class DownloadAttendance extends BasePage {
   public downloadButton: Locator = this.page.getByText('Compile & Download')
   public selectEmployeeDropdown: Locator = this.page.locator(".css-19bb58m");
   public employeeOption: Locator = this.page.locator("#react-select-2-listbox span")
+  public resetButton : Locator = this.page.getByText('Reset')
 
 
 

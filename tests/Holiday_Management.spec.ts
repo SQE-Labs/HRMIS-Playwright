@@ -58,6 +58,103 @@ test.describe("Holiday Management page new", () => {
     });
 
 
+    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
+        const holidayName = 'Diwali';
+        const warringMessage = 'Holiday for similar date is already existed';
+
+        // Navigate to Holiday Management
+        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+        await page.waitForLoadState();
+
+        await holidayManagement.addHoliday(holidayName, '20-10-2025');
+
+        const toastMessage = await page.waitForSelector('.Toastify__toast-body', { state: 'visible', timeout: 5000 });
+        const toastText = await toastMessage.textContent();
+        if (toastText?.includes(warringMessage)) {
+            console.log("Holiday already exists. Deleting the existing holiday.");
+            await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
+            await holidayManagement.cancelBtn.click();
+
+            const allHolidays = await holidayManagement.holidayRow.all();
+            for (const cell of allHolidays) {
+                const cellText = (await cell.innerText()).trim();
+                if (cellText.toLowerCase() === holidayName.toLowerCase()) {
+                    const row = cell.locator('xpath=ancestor::tr');
+                    const deleteBtn = row.locator("a:has-text('Delete'), .delete-link");
+                    await deleteBtn.scrollIntoViewIfNeeded();
+                    await deleteBtn.click();
+                    await holidayManagement.yesBtn.click();
+
+                    await page.waitForSelector('Holiday removed successfully', {
+                        state: 'hidden',
+                        timeout: 8000
+                    });
+
+                    break;
+                }
+            }
+            await page.reload();
+            await page.waitForLoadState();
+
+            // Re-add after deleting duplicates
+            await holidayManagement.addHoliday(holidayName, '20-10-2025');
+        }
+
+        // verifying the success message
+        const message = await holidayManagement.toastMessage();
+        console.log("Success  message: " + message);
+
+        expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
+        await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_ADDED_TOAST}")`, { state: 'hidden', timeout: 7000 });
+
+        // Deleting the holiday_________
+
+        // Clicking on delete link dynamically based on holiday name
+        const deleteLinkLocator = page.locator(`//td[contains(text(),'${holidayName}')]/following-sibling::td[4]/div/a[2]`);
+
+        // Wait until delete link is visible
+        await deleteLinkLocator.waitFor({ state: 'visible', timeout: 5000 });
+
+        // Scroll to the delete link
+        await deleteLinkLocator.scrollIntoViewIfNeeded();
+
+        // Click the delete link
+        await deleteLinkLocator.click();
+
+        // Wait for confirmation popup and confirm
+        await expect(holidayManagement.popupHeading).toBeVisible();
+        await holidayManagement.yesBtn.click();
+
+        // Wait for toast message and validate it
+        const message2 = await holidayManagement.toastMessage2();
+        console.log("Success message after delete:", message2);
+        expect(message2).toContain(constants.HOLIDAY_REMOVE_TOAST);
+
+    });
+
+test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', async ({page})=>{
+    // Navigate to Holiday Management
+    await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+    await page.waitForLoadState();
+
+    // clicking on Add Holiday Button
+    await holidayManagement.addHolidayButton.click();
+    await holidayManagement.submitBtn.click()
+    await holidayManagement.verifyTooltipMessage(holidayManagement.holidayField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+    // Verifying the tooltip message for the Date field
+    await holidayManagement.holidayField.fill("New year party");
+    await holidayManagement.submitBtn.click() 
+    await holidayManagement.verifyTooltipMessage(holidayManagement.dateField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+    await await holidayManagement.selectDate('31-12-2031')
+    await holidayManagement.submitBtn.click()
+    await holidayManagement.verifyTooltipMessage(holidayManagement.dateField, constants.DATE_VALUE_CHECK)
+});
+
+
+
+
     // Combining Holiday List module in this class
     test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year @smoke @eti', async ({ page }) => {
 
@@ -138,80 +235,4 @@ test.describe("Holiday Management page new", () => {
             await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
         }
         });
-
-   
-    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
-        const holidayName = 'Diwali';
-        const warringMessage = 'Holiday for similar date is already existed';
-
-        // Navigate to Holiday Management
-        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
-        await page.waitForLoadState();
-
-        await holidayManagement.addHoliday(holidayName, '20-10-2025');
-
-        const toastMessage = await page.waitForSelector('.Toastify__toast-body', { state: 'visible', timeout: 5000 });
-        const toastText = await toastMessage.textContent();
-        if (toastText?.includes(warringMessage)) {
-            console.log("Holiday already exists. Deleting the existing holiday.");
-            await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 7000 });
-            await holidayManagement.cancelBtn.click();
-
-            const allHolidays = await holidayManagement.holidayRow.all();
-            for (const cell of allHolidays) {
-                const cellText = (await cell.innerText()).trim();
-                if (cellText.toLowerCase() === holidayName.toLowerCase()) {
-                    const row = cell.locator('xpath=ancestor::tr');
-                    const deleteBtn = row.locator("a:has-text('Delete'), .delete-link");
-                    await deleteBtn.scrollIntoViewIfNeeded();
-                    await deleteBtn.click();
-                    await holidayManagement.yesBtn.click();
-
-                    await page.waitForSelector('Holiday removed successfully', {
-                        state: 'hidden',
-                        timeout: 8000
-                    });
-
-                    break;
-                }
-            }
-            await page.reload();
-             await page.waitForLoadState();
-         
-            // Re-add after deleting duplicates
-            await holidayManagement.addHoliday(holidayName, '20-10-2025');
-        }
-
-        // verifying the success message
-        const message = await holidayManagement.toastMessage();
-        console.log("Success  message: " + message);
-        
-        expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
-        await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_ADDED_TOAST}")`, {state: 'hidden', timeout: 7000 });
-      
-        // Deleting the holiday_________
-
-        // Clicking on delete link dynamically based on holiday name
-        const deleteLinkLocator = page.locator(`//td[contains(text(),'${holidayName}')]/following-sibling::td[4]/div/a[2]`);
-
-        // Wait until delete link is visible
-        await deleteLinkLocator.waitFor({ state: 'visible', timeout: 5000 });
-
-        // Scroll to the delete link
-        await deleteLinkLocator.scrollIntoViewIfNeeded();
-
-        // Click the delete link
-        await deleteLinkLocator.click();
-
-        // Wait for confirmation popup and confirm
-        await expect(holidayManagement.popupHeading).toBeVisible();
-        await holidayManagement.yesBtn.click();
-
-        // Wait for toast message and validate it
-        const message2 = await holidayManagement.toastMessage2();
-        console.log("Success message after delete:", message2);
-        expect(message2).toContain(constants.HOLIDAY_REMOVE_TOAST);
-
-    });
-
 });

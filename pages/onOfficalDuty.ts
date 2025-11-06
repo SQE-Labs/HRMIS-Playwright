@@ -22,6 +22,7 @@ export class OnOfficalDuty extends BasePage{
     public commentField: Locator = this.page.locator("[name=comment]");
     public plCreditField :Locator;
     public privilegeLeaveOption: Locator;
+    public resetTimeButton : Locator;
 
     constructor(page: Page) {
         super(page);
@@ -39,7 +40,7 @@ export class OnOfficalDuty extends BasePage{
         this.reasonField = page.locator('[name=reason]')
         this.withdrawBtn = page.locator("//button[text()='Withdraw']")
         this.privilegeLeaveOption = page.locator("span.badge.badge-warning.mx-2", { hasText: "Privilege Leave" });
-
+        this.resetTimeButton = page.locator(".button.button-reset-timesheet-row")
         
         // DL page
         this.dlViewLink = page.locator("(//a[text()='View'])[last()]")

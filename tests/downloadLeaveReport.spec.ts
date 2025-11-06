@@ -58,8 +58,7 @@ test.describe("Download Leave Report", () => {
         console.log("Downloaded file path:", filePath);
     });
 
-    //  Test failed in cross-browser run due to tooltip text variation —
-    // Chrome: “fill in” vs Firefox: “fill out.”
+        
     test('Verify the validation tooltip functionality of Download Leave Reports, @eti, @reg', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab("Download Leaves Report");
         await downloadLeaveReport.waitForDotsLoaderToDisappear();
