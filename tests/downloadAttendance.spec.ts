@@ -31,8 +31,8 @@ test.describe("Download Attendance page", () => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.selectMonth("April");
     await downloadAttendance.selectEmployeeDropdown.click();
-    await page.getByText("Vishal Dev Thakur(REGULAR)").waitFor({ state: 'visible', timeout: 60000 });
-    await page.getByText("Vishal Dev Thakur(REGULAR)").click();
+    await page.getByText("Vishal Dev Thakur").waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText("Vishal Dev Thakur").click();
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyXLSXDownload(page, async () => {
       await downloadAttendance.downloadButton.click();   

@@ -50,7 +50,7 @@ test.describe("On Offical Duty Page", () => {
         await page.waitForLoadState()
 
         // Select Date
-        await officalDuty.selectDate('25-10-2025')
+        await officalDuty.selectDate('01-11-2025')
 
         // Select Delivery Lead
         await officalDuty.selectDeliveryLead(testData.DeliveryManager.name)
@@ -94,7 +94,7 @@ test.describe("On Offical Duty Page", () => {
         expect(message2).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     })
 
-
+// Need to discuss with dev may be new bug
     test('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke', async ({ page }) => {
 
         // Login As Super Admin
@@ -105,7 +105,7 @@ test.describe("On Offical Duty Page", () => {
         // Navigate to Holiday Management
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState('networkidle');
-
+        await page.pause()
         // Delete the holiday if it already exists
         const holidayName = "Comp_Off Leave";
         await holidayManagement.deleteAllCompOffHolidays(holidayName);
@@ -121,6 +121,7 @@ test.describe("On Offical Duty Page", () => {
         await page.reload({ waitUntil: 'networkidle' });
 
         // selecting the holiday name and date  
+        await page.pause()
         const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
         console.log("Holiday added on:", addedHolidayDate);
 

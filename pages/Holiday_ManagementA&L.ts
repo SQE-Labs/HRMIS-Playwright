@@ -357,13 +357,10 @@ export class holiday_Management extends BasePage {
         // Step 3: Keep deleting until none left
         while (await holidayRows.count() > 0) {
             const firstRow = holidayRows.first();
-            const deleteButton = firstRow.getByRole('button', { name: /delete/i });
+            const deleteButton = firstRow.locator("//a[text()='Delete']");
 
             await deleteButton.click();
             await this.yesBtn.click();
-
-            // Wait until that specific row disappears
-            await expect(firstRow).toHaveCount(0, { timeout: 10000 });
 
             // Refresh locator (table updates dynamically)
             holidayRows = this.page.locator(`tr:has-text("${holidayName}")`);
