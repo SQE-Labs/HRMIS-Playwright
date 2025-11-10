@@ -31,7 +31,7 @@ test.describe("On Offical Duty Page", () => {
 
 
 
-    test('A&L_On_offc_duty_1, A&L_On_offc_duty_3, A&L_On_offc_duty_10 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke', async ({ page }) => {
+    test('A&L_On_offc_duty_1, A&L_On_offc_duty_3, A&L_On_offc_duty_10 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke @reg', async ({ page }) => {
 
         // Login As Employee
         loginObj = new LoginPage(page);
@@ -95,7 +95,7 @@ test.describe("On Offical Duty Page", () => {
     })
 
 // Need to discuss with dev may be new bug
-    test('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke', async ({ page }) => {
+    test('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke @reg', async ({ page }) => {
 
         // Login As Super Admin
         loginObj = new LoginPage(page);
@@ -264,7 +264,7 @@ test.describe("On Offical Duty Page", () => {
     });
 
     // Failed due to assertion failed inconsistent appears for the reject toast
-    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @knownBug', async ({ page }) => {
+    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @reg @knownBug', async ({ page }) => {
 
         //Login As Super Admin
         loginObj = new LoginPage(page);
@@ -385,7 +385,7 @@ test.describe("On Offical Duty Page", () => {
 
     })
 
-    test('Verify the hours and mins gets reset after clicking on the reset icon', async ({page})=>{
+    test('Verify the hours and mins gets reset after clicking on the reset icon @reg', async ({page})=>{
         // Login As Employee
         loginObj = new LoginPage(page);
         await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);

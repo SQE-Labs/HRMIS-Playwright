@@ -14,7 +14,7 @@ test.describe("Role Management Tests", () => {
     });
 
     // testcase failed due to 
-    test('RM_1, Verify that Role Management UI elements are present @smoke @eti @knowBug#510', async ({ page }) => {
+    test('RM_1, Verify that Role Management UI elements are present @smoke @eti @reg @knowBug#510', async ({ page }) => {
        
         await loginObj.validLogin(
             testData.SuperUser.UserEmail,

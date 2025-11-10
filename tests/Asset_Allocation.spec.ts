@@ -13,7 +13,7 @@ test.describe("Asset Allocation page", () => {
         await AssetHelper.navigateToAllocationAsset(page, allocation.allocationAsset);
         console.log(">> Starting test case : " + test.info().title);
     });
-    test("Rediected Towards Asset Allocation page", async ({ page }) => {
+    test("Rediected Towards Asset Allocation page @reg", async ({ page }) => {
         expect(await allocation.allocationPageHeader.isVisible()).toBeTruthy();
         expect(await allocation.allocationAssignAsset.isVisible()).toBeTruthy();
 
@@ -22,18 +22,18 @@ test.describe("Asset Allocation page", () => {
         await allocation.getColumnHeader()
     })
         
-    test("Functionality of search Bar ", async ({ page }) => {
+    test("Functionality of search Bar @reg", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetTypeName, "KeyWord", "Asset Name")
     })
-    test("Functionality of search Bar serial Number ", async ({ page }) => {
+    test("Functionality of search Bar serial Number @reg", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetSerialNumber, "DELL004", "serial Number")
     })
 
-    test("Functionality of search Bar Owner name ", async ({ page }) => {
+    test("Functionality of search Bar Owner name @reg", async ({ page }) => {
         await allocation.getBySearchdata(allocation.assetOwnerName, "Caelius", "Owner name")
     })
 
-    test("Functionality of search Bar Employee name @smoke", async ({ page }) => {
+    test("Functionality of search Bar Employee name @smoke @reg", async ({ page }) => {
         await allocation.searchByEmployeeName()
     })
 
@@ -47,17 +47,17 @@ test.describe("Asset Allocation page", () => {
 
     // TC_AM_029
 
-    test("HRMIS_8 , HRMIS_9, HRMIS_10 Pagination @smoke", async () => {
+    test("HRMIS_8 , HRMIS_9, HRMIS_10 Pagination @smoke @reg", async () => {
         expect(await allocation.pagination())
         console.log("Pagination verified !!")
     })
 
 
-    test("HRMIS_12 Assign asset  @smoke", async ({page}) => {
+    test("HRMIS_12 Assign asset  @smoke @reg", async ({page}) => {
         expect(await allocation.assignAssetSmoke())
     })
 
-    test(" Assign asset @regression", async () => {
+    test(" Assign asset @reg", async () => {
         expect(await allocation.assignAsset())
     })
 })

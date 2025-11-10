@@ -24,7 +24,7 @@ test.describe("Holiday Management page new", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('A&L_hldy_mngmnt_1, A&L_hldy_mngmnt_4, Verify that Holiday Management UI elements and Updating the existing holiday @smoke @eti', async ({ page }) => {
+    test('A&L_hldy_mngmnt_1, A&L_hldy_mngmnt_4, Verify that Holiday Management UI elements and Updating the existing holiday @smoke @eti @reg', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState();
         // Verify heading
@@ -58,7 +58,7 @@ test.describe("Holiday Management page new", () => {
     });
 
 
-    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
+    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti @reg', async ({ page }) => {
         const holidayName = 'Diwali';
         const warringMessage = 'Holiday for similar date is already existed';
 
@@ -156,7 +156,7 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
 
 
     // Combining Holiday List module in this class
-    test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year @smoke @eti', async ({ page }) => {
+    test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year @smoke @eti @reg', async ({ page }) => {
 
         // navigates to Holiday list subtab
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
@@ -165,7 +165,7 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
     });
 
     // Combining Out of Office Module in this class
-    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti', async ({ page }) => {
+    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti @reg', async ({ page }) => {
         // Navigate to Out of Office sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
         await page.waitForLoadState('networkidle');
