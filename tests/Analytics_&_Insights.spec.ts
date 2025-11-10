@@ -81,10 +81,7 @@ test.describe("Analytics & Insights module", () => {
         await analyticsInsights.assetTypeDropdown.selectOption('All');
         await analyticsInsights.downloadButton.click();
         await analyticsInsights.verifyTooltipMessage(analyticsInsights.ownerDropdown, constants.SELECT_ITEM)
-
-
-
-        
+ 
     })
 
 
