@@ -17,7 +17,7 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti", async ({ page,}) => {
+  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti @reg", async ({ page,}) => {
 
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
@@ -51,7 +51,7 @@ test.describe("My Team Leave Page", () => {
   });
 
   // Already covered in the HR aprroval flow flow
-  test.skip(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti", async ({page }) => {
+  test.skip(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti @reg", async ({page }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     const applyLeave = new ApplyLeaves(page);
     loginObj = new LoginPage(page);

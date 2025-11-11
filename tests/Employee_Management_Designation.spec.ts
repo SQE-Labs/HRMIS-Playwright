@@ -24,7 +24,7 @@ test.describe("'Employee Management > Document Upload module @smoke'", () => {
     });
 
 
-    test("Validate Designation Add, Edit, Cancel functionality in Employee Directory @smoke", async ({ page }) => {
+    test("Validate Designation Add, Edit, Cancel functionality in Employee Directory @smoke @reg", async ({ page }) => {
         let name = await EmployeeDirectory.generateRandomString(7)
         let name1 = await EmployeeDirectory.generateRandomString(7)
 

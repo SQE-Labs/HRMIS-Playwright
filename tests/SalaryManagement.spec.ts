@@ -29,7 +29,7 @@ test.describe.serial("Salary Management", () => {
 
     });
 
-    test("Upload Salary Slip successfully @smoke", async ({ page }) => {
+    test("Upload Salary Slip successfully @smoke @reg", async ({ page }) => {
         await salaryObj.selectEmployeeType("REGULAR");
         await utils.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
         await salaryObj.selectMonth("August");
@@ -38,7 +38,7 @@ test.describe.serial("Salary Management", () => {
         await expect(successToast).toEqual("Successfully Uploaded!");
     });
 
-    test ("Verify the Reset functionality @reg, @eti", async({page})=>{
+    test("Verify the Reset functionality @reg @eti", async({page})=>{
         await salaryObj.selectEmployeeType("REGULAR");
         await utils.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
         await salaryObj.selectMonth("August");

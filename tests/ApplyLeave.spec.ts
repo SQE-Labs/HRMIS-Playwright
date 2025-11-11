@@ -19,7 +19,7 @@ test.describe("Apply leaves page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("A&L_2, A&L_3, A&L_11, A&L_16, A&L_17, A&L_21, ApplyLeave and Withdraw Leave - End to End flow @smoke @eti", async ({
+  test("A&L_2, A&L_3, A&L_11, A&L_16, A&L_17, A&L_21, ApplyLeave and Withdraw Leave - End to End flow @smoke @eti @reg", async ({
     page,
   }) => {
     const loginObj = new LoginPage(page);
@@ -52,7 +52,7 @@ test.describe("Apply leaves page", () => {
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
 
-  test("A&L_12, A&L_13, A&L_15, Verify that user is able to apply leave with 0 privilege balance @smoke @eti", async ({
+  test("A&L_12, A&L_13, A&L_15, Verify that user is able to apply leave with 0 privilege balance @smoke @eti @reg", async ({
     page,
   }) => {
     const loginObj = new LoginPage(page);
@@ -62,10 +62,11 @@ test.describe("Apply leaves page", () => {
       testData["HR"].UserEmail,
       testData.SuperUser.UserPassword
     );
+
     await page.waitForLoadState("networkidle");
 
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
-
+    
     await applyLeave.withdrawExistingLeave();
 
     // Apply Leave

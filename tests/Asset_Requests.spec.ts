@@ -20,7 +20,7 @@ test.describe("Asset Rrequests page", () => {
         await assetrequest.waitforLoaderToDisappear()
 
     })
-    test("Asset Request page No Record ", async ({ page }) => {
+    test("Asset Request page No Record @reg ", async ({ page }) => {
         await page.waitForLoadState('domcontentloaded')
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
         if (totalRequestCount === 0) {
@@ -33,7 +33,7 @@ test.describe("Asset Rrequests page", () => {
         }
 
     })
-    test("Create Asset Request - Successful Submission", async ({ page }) => {
+    test("Create Asset Request - Successful Submission @reg", async ({ page }) => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
@@ -43,7 +43,7 @@ test.describe("Asset Rrequests page", () => {
         expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
     })
 
-    test("HRMIS_23 Create Asset Request - Reset Button Clears Fields @smoke", async ({ page }) => {
+    test("HRMIS_23 Create Asset Request - Reset Button Clears Fields @smoke @reg", async ({ page }) => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();

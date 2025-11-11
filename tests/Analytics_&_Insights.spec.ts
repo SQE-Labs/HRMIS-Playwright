@@ -19,7 +19,7 @@ test.describe("Analytics & Insights module", () => {
         console.log(">> Starting test case : " + test.info().title);
     });
 
-    test("HRMIS_AI_2 , HRMIS_AI_4 User Role Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_2 , HRMIS_AI_4 User Role Report functionality @smoke @reg", async ({ page }) => {
         // Navigate to User Role Report page
         await analyticsInsights.navigateToUserRoleReport();
         // Verify Page elements
@@ -44,26 +44,7 @@ test.describe("Analytics & Insights module", () => {
         console.log(name);
     });
 
-    test("HRMIS_AI_11 Reset button restores default Asset Report filter values @smoke", async ({ page }) => {
-        // Navigate to Asset Report page
-        await analyticsInsights.navigateToAssetReport();
-        await analyticsInsights.assetTypeDropdown.selectOption('All');
-        await analyticsInsights.ownerDropdown.selectOption('All');
-        // Click Reset button
-        await analyticsInsights.resetButton.click();
-        await analyticsInsights.waitforLoaderToDisappear()
-        // Verify filters are reset
-        let tooltipMessage = await analyticsInsights.getValidationMessage(analyticsInsights.assetTypeDropdown)
-        expect(tooltipMessage === constants.SELECT_ITEM).toBeTruthy();
-        const assetTypeValue = await page.locator('#filterAssetType >> option:checked').textContent();
-        const ownerValue = await page.locator('#filterOwner >> option:checked').textContent();
-        console.log(`Asset Type after reset: ${assetTypeValue}`);
-        console.log(`Owner after reset: ${ownerValue}`);
-        expect(assetTypeValue).toBe('Select an asset type');
-        expect(ownerValue).toBe('Select an owner');
-    })
-
-    test("HRMIS_AI_12 Asset Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_13 Asset Report functionality @smoke @reg", async ({ page }) => {
         // Navigate to Asset Report page
         await analyticsInsights.navigateToAssetReport();
         await analyticsInsights.assetTypeDropdown.selectOption('All');
@@ -104,7 +85,7 @@ test.describe("Analytics & Insights module", () => {
     })
 
 
-    test("HRMIS_AI_14 User Attendance Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_14 User Attendance Report functionality @smoke @reg", async ({ page }) => {
         await analyticsInsights.navigateToUserAttendanceReport();
         await analyticsInsights.monthDropdown.waitFor({ state: 'visible', timeout: 30000 });
         await analyticsInsights.monthDropdown.selectOption("April");

@@ -200,38 +200,42 @@ export class ApplyLeaves extends BasePage {
 
     const getDayLocator = (day: number) =>
       this.page.locator(
-        `.react-datepicker__month .react-datepicker__day--0${String(
-          day
-        ).padStart(2, "0")}`
+        `.react-datepicker__month .react-datepicker__day--0${String(day).padStart(2, "0")}`
       );
+
+    const today = new Date();
+    const currentDay = today.getDate();
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
 
     let startDay: number;
     let endDay: number;
 
     if (attempt === 1) {
-      // Pick a random start day between 1 and 26 (30 - 4)
-      startDay = Math.floor(Math.random() * 26) + 1;
-      endDay = startDay + 4; // fixed 4 days duration
+      // ✅ Pick a random start day between today+1 and end of month-5
+      startDay = currentDay + Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
+      endDay = startDay + 4; // fixed 4-day duration
     } else {
       // Move to next month for retries
-      const nextArrow = this.page.locator(
-        ".react-datepicker__navigation--next"
-      );
+      const nextArrow = this.page.locator(".react-datepicker__navigation--next");
       if ((await nextArrow.isVisible()) && (await nextArrow.isEnabled())) {
         await nextArrow.click();
         await this.page.waitForTimeout(500);
       }
-      // Pick a random start day in next month
+
+      // ✅ Random start day in next month (future month)
       startDay = Math.floor(Math.random() * 26) + 1;
       endDay = startDay + 4;
     }
+
+    // Adjust for month overflow
+    if (endDay > daysInMonth) endDay = daysInMonth;
 
     await getDayLocator(startDay).first().click();
     await getDayLocator(endDay).last().click();
 
     console.log(
-      `Picked ${attempt === 1 ? "random" : "retry"
-      } range: ${startDay} → ${endDay}`
+      `Picked ${attempt === 1 ? "random" : "retry"} range: ${startDay} → ${endDay}`
     );
   }
+
 }

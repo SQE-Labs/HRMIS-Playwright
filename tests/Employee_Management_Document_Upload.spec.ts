@@ -9,7 +9,7 @@ import { FILL_OUT_FIELD, FILL_IN_FIELD } from '../utils/constants';
 
 let EmployeeDirectory: Employee_Management
 
-test.describe("'Employee Management > Document Upload module'", () => {
+test.describe("'Employee Management > Document Upload module '", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
@@ -23,12 +23,12 @@ test.describe("'Employee Management > Document Upload module'", () => {
     });
 
 
-    test("Documents Upload Tab", async ({ page }) => {
+    test("Documents Upload Tab @reg", async ({ page }) => {
         await EmployeeDirectory.Document_upload_Header.isVisible()
         var header = await EmployeeDirectory.Document_upload_Header.textContent()
         expect(header).toEqual("Document Upload")
     })
-    test("Documents Upload Dropdown", async ({ page }) => {
+    test("Documents Upload Dropdown @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         var ColoumnCount = await EmployeeDirectory.Document_Upload_Column.count()
@@ -40,7 +40,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         }
     })
 
-    test("Documents Upload upload button ", async ({ page }) => {
+    test("Documents Upload upload button @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -51,7 +51,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
     })
 
 
-    test("Documents Upload upload button cancel button functionality ", async ({ page }) => {
+    test("Documents Upload upload button cancel button functionality @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -60,7 +60,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         await EmployeeDirectory.Popup_Cancel_button.click()
         await EmployeeDirectory.PopUp_Header.isHidden()
     })
-    test("Documents Upload upload button cross icon functionality ", async ({ page }) => {
+    test("Documents Upload upload button cross icon functionality @reg ", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -70,7 +70,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         await EmployeeDirectory.PopUp_Header.isHidden()
 
     })
-    test("Documents Upload PopUp Functionality ", async ({ page }) => {
+    test("Documents Upload PopUp Functionality @reg ", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -80,7 +80,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
         expect(validationmesssage).toEqual('Please select a file.')
     })
 
-    test("shows validation message if comment field is empty", async ({ page }) => {
+    test("shows validation message if comment field is empty @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -92,7 +92,7 @@ test.describe("'Employee Management > Document Upload module'", () => {
 
     })
 
-    test("Upload document with comment and opens preview tab @smoke", async ({ page, context }) => {
+    test("Upload document with comment and opens preview tab @smoke @reg", async ({ page, context }) => {
         
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()

@@ -17,11 +17,11 @@ test.describe("'Employee Management > Role Management module'", () => {
         await EmployeeDirectory.navigateToRoleManagement()
         await EmployeeDirectory.waitforLoaderToDisappear()
     });
-    test("Role Management subtab @smoke", async ({ page }) => {
+    test("Role Management subtab @smoke @reg", async ({ page }) => {
         var header = await EmployeeDirectory.Role_Header.textContent()
         expect(header).toEqual("Role Management")
     })
-    test("Role Management Dropdown @smoke", async ({ page }) => {
+    test("Role Management Dropdown @smoke @reg", async ({ page }) => {
 
         await EmployeeDirectory.Dropdown.click()
         var optioncount = await page.locator(".css-10wo9uf-option").count()

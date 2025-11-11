@@ -21,7 +21,7 @@ test.describe("Asset Overview page", () => {
 
         });
 
-        test("HRMIS_1 , HRMIS_2 , HRMIS_3 Asset Overview page filter functionality @smoke", async ({ page }) => {
+        test("HRMIS_1 , HRMIS_2 , HRMIS_3 Asset Overview page filter functionality @smoke @reg", async ({ page }) => {
                 // Get all filter options
                 console.debug("Verify Asset Overview Element");
                 console.debug('Assert management tab expand');
@@ -47,7 +47,7 @@ test.describe("Asset Overview page", () => {
                 console.log(`Filter applied: Expected "${selectedOption}", found "${displayedAssetType?.trim()}"`);
         });
 
-        test("Verify XLSX file is downloaded @smoke", async ({ page }) => {
+        test("Verify XLSX file is downloaded @smoke @reg", async ({ page }) => {
                 let options = await assetOverview.getFilterDropdownOption();
                 expect(options.length).toBeGreaterThan(1);
                 await expect(assetOverview.overviewDropdown).toHaveText("All");
@@ -72,7 +72,7 @@ test.describe("Asset Overview page", () => {
                 console.debug("Details are displayed on cards");
         });
 
-        test("HRMIS_4 Verify when clicking on any card, card opens up @smoke", async ({ page }) => {
+        test("HRMIS_4 Verify when clicking on any card, card opens up @smoke @reg", async ({ page }) => {
                 // TC_AM_009
                 let options = await assetOverview.getFilterDropdownOption();
                 expect(options.length).toBeGreaterThan(1);
@@ -99,7 +99,7 @@ test.describe("Asset Overview page", () => {
                 await assetOverview.verifyOwnerDropdownOptionsForSuperOwner('CLIENT_OWNED', ['Salesforce'], false);
 
         });
-        test('HRMIS_5 , HRMIS_6 Verify records are filtered based on dropdowns and export behavior @smoke @knownbug', async ({ page }) => {
+        test('HRMIS_5 , HRMIS_6 Verify records are filtered based on dropdowns and export behavior @smoke @reg @knownbug', async ({ page }) => {
                 await assetOverview.openCard("Desktop PC");
                 const filteredCount = await assetOverview.filterAssetsByDropdownSelections();
                 if (filteredCount === 0) {
@@ -146,7 +146,7 @@ test.describe("Asset Overview page", () => {
 
         })
 
-        test("Verify Redirection from asset Overview header @smoke", async () => {
+        test("Verify Redirection from asset Overview header @smoke @reg", async () => {
                 await assetOverview.openCard("Desktop PC")
                 await assetOverview.assetOverviewRedirect.click()
                 await assetOverview.waitforLoaderToDisappear()

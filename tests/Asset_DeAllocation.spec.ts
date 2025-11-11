@@ -16,7 +16,7 @@ test.describe("Asset DeAllocation page", () => {
     test("Asset Deallocation page ", async ({ page }) => {
         await DeAllocation.deallocation()
     })
-    test("HRMIS_13 to HRMIS_16 handles deallocation flow with or without available records @smoke ", async ({ page }) => {
+    test("HRMIS_13 to HRMIS_16 handles deallocation flow with or without available records @smoke @reg ", async ({ page }) => {
         await DeAllocation.handleDeallocationFlow()
     })
 })
