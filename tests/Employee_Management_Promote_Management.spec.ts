@@ -21,21 +21,22 @@ test.describe("'Employee Management module >  Promotion'", () => {
     });
 
 
-    test("verify Promotion Management tab header is visible", async ({ page }) => {
+    test("verify Promotion Management tab header is visible @reg", async ({ page }) => {
 
         let header = await EmployeeDirectory.PromotionHeader.textContent()
         await expect(EmployeeDirectory.PromotionHeader).toBeVisible()
         expect(header).toEqual("Promotion Management")
     })
 
-    test("select Promotion from dropdown and verify data table renders", async ({ page }) => {
+    test("select Promotion from dropdown and verify data table renders @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
+        await page.pause()
         await EmployeeDirectory.LeaveManagerData()
     })
 
 
-    test("click Promote button and verify Promote Employee popup header", async ({ page }) => {
+    test("click Promote button and verify Promote Employee popup header @reg", async ({ page }) => {
 
 
         await EmployeeDirectory.Dropdown.click()
@@ -45,7 +46,7 @@ test.describe("'Employee Management module >  Promotion'", () => {
         let header = await EmployeeDirectory.PromotionPopUpHeader.textContent()
         expect(header).toEqual("Promote Employee")
     })
-    test("close Promote Employee popup using cross button", async ({ page }) => {
+    test("close Promote Employee popup using cross button @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
@@ -55,7 +56,7 @@ test.describe("'Employee Management module >  Promotion'", () => {
 
     })
 
-    test("close Promote Employee popup using cancel button", async ({ page }) => {
+    test("close Promote Employee popup using cancel button @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
@@ -66,7 +67,7 @@ test.describe("'Employee Management module >  Promotion'", () => {
 
     })
 
-    test("close  Employee popup using cancel button @smoke", async ({ page }) => {
+    test("close  Employee popup using cancel button @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
@@ -77,7 +78,7 @@ test.describe("'Employee Management module >  Promotion'", () => {
         await EmployeeDirectory.getDesignationoptionCount()
     })
 
-    test("promote employee by selecting department and designation, then verify success message @smoke", async ({ page }) => {
+    test("promote employee by selecting department and designation, then verify success message @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()

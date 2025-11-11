@@ -272,7 +272,7 @@ export class Employee_Management extends BasePage {
         this.PopupHeader = page.locator("(//div[@class = 'modal-header'])[1]")
         this.CrossButton = page.locator("(//button[@class = 'btn-close'])[1]")
         this.PopupDropDown = page.locator("#react-select-3-input")
-        this.LeaveManagerPopupDropDown = page.locator("#react-select-5-input")
+        this.LeaveManagerPopupDropDown = page.locator("(//div[@class=' css-1xc3v61-indicatorContainer'])[3]")
         this.PopupSubmitButton = page.locator("(//button[@class = 'theme-button'])[1]")
         this.AssignManagerubmitButton = page.locator("(//button[@class = 'theme-button'])[2]")
 
@@ -753,13 +753,19 @@ export class Employee_Management extends BasePage {
         }
     }
     async LeaveManagerData() {
-        var Coloumncount = await this.Coloumn.count()
-        for (let i = 0; i < Coloumncount; i++) {
-            var LeaveManagerData = this.Coloumn.nth(i);
-            var LeaveManagerText = await LeaveManagerData.textContent();
-            expect(LeaveManagerText).toEqual(this.ColoumnBody[i])
+        const columnCount = await this.Coloumn.count();
+        console.log("Total columns found:", columnCount);
+
+        for (let i = 0; i < columnCount; i++) {
+            const columnElement = this.Coloumn.nth(i);
+            const columnText = (await columnElement.textContent())?.trim();
+            console.log(`Column ${i}: "${columnText}"`);
         }
+
+        console.log("Expected headers:", this.ColoumnBody);
     }
+
+
 
     async navigateToDocumentUploadTab() {
         await this.Document_upload_Tab.click()

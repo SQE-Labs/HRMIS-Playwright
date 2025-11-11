@@ -21,28 +21,28 @@ test.describe("My Reimbursement page", () => {
         await reimbursement.waitforLoaderToDisappear()
     });
 
-    test("TC_MR_001 Reimbursement page", async ({ page }) => {
+    test("TC_MR_001 Reimbursement page @reg", async ({ page }) => {
         await reimbursement.verifySubtabs();
     });
-    test("TC_MR_002 Reimbursement page Collapse", async ({ page }) => {
+    test("TC_MR_002 Reimbursement page Collapse @reg", async ({ page }) => {
         await reimbursement.collapseReimburmentTab();
     });
 
 
-    test("TC_MR_003 Reimbursement Request page", async ({ page }) => {
+    test("TC_MR_003 Reimbursement Request page @reg", async ({ page }) => {
         await expect(reimbursement.Header).toBeVisible();
         let Header = await reimbursement.Header.textContent();
         expect(Header).toEqual('Reimbursement Requests');
         await expect(reimbursement.Table).toBeVisible();
     });
 
-    test("TC_MR_004 Search Valid Data", async ({ page }) => {
+    test("TC_MR_004 Search Valid Data @reg", async ({ page }) => {
         let name = await reimbursement.getExistingnameFromTable()
         await reimbursement.searchExistingData(name);
     });
 
 
-    test("TC_MR_005 Search Invalid Data", async ({ page }) => {
+    test("TC_MR_005 Search Invalid Data @reg", async ({ page }) => {
         let name = await reimbursement.generateRandomString(6);
         await reimbursement.SearchBar.pressSequentially(name);
         await expect(reimbursement.No_Record).toBeVisible();
@@ -77,12 +77,12 @@ test.describe("My Reimbursement page", () => {
         }
     });
 
-    test("TC_MR_013 Reimbursement Request", async ({ page }) => {
+    test("TC_MR_013 Reimbursement Request @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await expect(page.locator(".card")).toBeVisible();
     });
 
-    test("TC_MR_014 Back to Reimbursement", async ({ page }) => {
+    test("TC_MR_014 Back to Reimbursement @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Back_to_Reimbursement.click();
         await reimbursement.waitforLoaderToDisappear();
@@ -91,7 +91,7 @@ test.describe("My Reimbursement page", () => {
         expect(Header).toEqual('Reimbursement Requests');
 
     });
-    test("should_show_travel_specific_fields_for_travel_expense_claim_type", async ({ page }) => {
+    test("should_show_travel_specific_fields_for_travel_expense_claim_type @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
 
@@ -102,7 +102,7 @@ test.describe("My Reimbursement page", () => {
 
     })
 
-    test("should_validate_all_required_fields_in_reimbursement_request_form", async ({ page }) => {
+    test("should_validate_all_required_fields_in_reimbursement_request_form @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Sumbit_button.click();
         let message = await reimbursement.getValidationMessage(reimbursement.Reimbursement_Type);
@@ -175,7 +175,7 @@ test.describe("My Reimbursement page", () => {
     });
 
 
-    test("should_submit_travel_expense_reimbursement_when_all_fields_are_valid @smoke", async ({ page }) => {
+    test("should_submit_travel_expense_reimbursement_when_all_fields_are_valid @smoke @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
 
@@ -218,7 +218,7 @@ test.describe("My Reimbursement page", () => {
 
     });
 
-    test("should reset all reimbursement form fields and hide conditional inputs @smoke", async ({ page }) => {
+    test("should reset all reimbursement form fields and hide conditional inputs @smoke @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Reimbursement_Type.selectOption("Travel Expense");
         let currentDate = await reimbursement.getCurrentDate();
@@ -255,7 +255,7 @@ test.describe("My Reimbursement page", () => {
         expect(await reimbursement.Comment_Field.inputValue()).toEqual("");
     });
 
-    test("should_show_error_for_unsupported_file_type_in_receipt_upload", async ({ page }) => {
+    test("should_show_error_for_unsupported_file_type_in_receipt_upload @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Receipt.setInputFiles("./files/abc.docx");
         let message = await reimbursement.toastMessage();
@@ -263,7 +263,7 @@ test.describe("My Reimbursement page", () => {
     });
 
 
-    test("should_show_error_for_file_size_exceeding_limit_in_receipt_upload", async ({ page }) => {
+    test("should_show_error_for_file_size_exceeding_limit_in_receipt_upload @reg", async ({ page }) => {
         await reimbursement.clickOnReimbursementRequestButton();
         await reimbursement.Back_to_Reimbursement.click();
         await reimbursement.waitforLoaderToDisappear();
@@ -274,21 +274,21 @@ test.describe("My Reimbursement page", () => {
 
 
 
-    test("TC_MR_007 Withdrawal", async ({ page }) => {
+    test("TC_MR_007 Withdrawal @reg", async ({ page }) => {
         await reimbursement.withdrawal();
         await expect(reimbursement.Withdraw_popUp_body).toBeVisible();
     });
-    test("TC_MR_008 Withdrawal Cross Button", async ({ page }) => {
+    test("TC_MR_008 Withdrawal Cross Button @reg", async ({ page }) => {
         await reimbursement.withdrawal();
         await reimbursement.cross_icon.click();
         await expect(reimbursement.Withdraw_popUp_body).toBeHidden();
     });
-    test("TC_MR_009 Withdrawal Cancel Button", async ({ page }) => {
+    test("TC_MR_009 Withdrawal Cancel Button @reg", async ({ page }) => {
         await reimbursement.withdrawal();
         await reimbursement.Cancel_button.click();
         await expect(reimbursement.Withdraw_popUp_body).toBeHidden();
     });
-    test("TC_MR_010 Withdraw Empty Comment Field", async ({ page }) => {
+    test("TC_MR_010 Withdraw Empty Comment Field @reg", async ({ page }) => {
         await reimbursement.withdrawal();
         await reimbursement.Sumbit_button.click();
         let message = await reimbursement.getValidationMessage(reimbursement.Comment_Field);
@@ -301,7 +301,7 @@ test.describe("My Reimbursement page", () => {
             await reimbursement.View_Link.click();
         });
     });
-    test("TC_MR_012 Withdraw Fill All Mandatory Field", async ({ page }) => {
+    test("TC_MR_012 Withdraw Fill All Mandatory Field @reg", async ({ page }) => {
         await reimbursement.withdrawal();
         let comment = await reimbursement.generateRandomString(10);
         await reimbursement.Comment_Field.fill(comment);

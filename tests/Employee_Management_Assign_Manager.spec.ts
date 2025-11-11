@@ -18,7 +18,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.waitforLoaderToDisappear()
     });
 
-    test("hould display Assign Manager tab with Manager and Leave Manager sub-tabs", async ({ page }) => {
+    test("should display Assign Manager tab with Manager and Leave Manager sub-tabs @reg", async ({ page }) => {
         let AssignHeader = await EmployeeDirectory.AssignManagerHeader.textContent()
         expect(AssignHeader).toEqual("Assign Manager")
         expect(EmployeeDirectory.AssignManagerSubTabManager).toHaveText('Manager')
@@ -28,13 +28,13 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
 
-    test("should get column count after selecting an employee from dropdown", async ({ page }) => {
+    test("should get column count after selecting an employee from dropdown @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.getColumnCount()
     })
-    test("should open Assign Manager popup after selecting employee and clicking action button", async ({ page }) => {
+    test("should open Assign Manager popup after selecting employee and clicking action button @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -44,7 +44,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     })
 
-    test("should close Assign Manager popup when cross button is clicked", async ({ page }) => {
+    test("should close Assign Manager popup when cross button is clicked @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -54,7 +54,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     })
 
-    test("should close Assign Manager popup when cancel button is clicked", async ({ page }) => {
+    test("should close Assign Manager popup when cancel button is clicked @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -64,7 +64,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
     })
 
-    test(" assign manager successfully when valid selection is made @smoke", async ({ page }) => {
+    test(" assign manager successfully when valid selection is made @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -75,7 +75,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         let message = await EmployeeDirectory.toastMessage()
         expect(message).toEqual("Successfully Assigned!")
     })
-    test("show error when employee is assigned as their own manager", async ({ page }) => {
+    test("show error when employee is assigned as their own manager @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.selectEmployeeOption.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -89,7 +89,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
 
 
 
-    test("navigate to Leave Manager tab and verify header", async ({ page }) => {
+    test("navigate to Leave Manager tab and verify header @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         let LeaveManagerHeader = await page.locator("(//h3[@class = 'heading'])[2]").textContent()
@@ -97,7 +97,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         // await EmployeeDirectory.Assign_Leave_Manager()
     })
 
-    test("assign leave manager and verify column count", async ({ page }) => {
+    test("assign leave manager and verify column count @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.LeaveManagerPopupDropDown.click()

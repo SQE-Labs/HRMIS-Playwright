@@ -20,7 +20,7 @@ test.describe("'Employee Management module'", () => {
 
     });
 
-    test("Navigating to the Employee Directory tab.", async ({ page }) => {
+    test("Navigating to the Employee Directory tab. @reg", async ({ page }) => {
         const Directory_Header = await EmployeeDirectory.Employee_Directory_tab_Header.textContent()
         expect(Directory_Header?.trim()).toEqual("Employee Directory")
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
@@ -35,28 +35,28 @@ test.describe("'Employee Management module'", () => {
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("Verify NoRecordMessage For Invalid Employee Search @smoke", async ({ page }) => {
+    test("Verify NoRecordMessage For Invalid Employee Search @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.waitForDotsLoaderToDisappear();
         await EmployeeDirectory.searchByEmployeeDirectorySearchBar("978735")  //invalid Employee name
         let Norecord = await EmployeeDirectory.noRecord(0)
         expect(Norecord).toEqual("No Record Available")
     })
 
-    test("verify Employee Count Matches After Department Filter Applied @smoke", async ({ page }) => {
+    test("verify Employee Count Matches After Department Filter Applied @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("verify Employee Count After Selecting Status Filter @smoke", async ({ page }) => {
+    test("verify Employee Count After Selecting Status Filter @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
         expect(TotalCards).toEqual(TotalEmployeecount)
     })
 
-    test("verify Department Filter Results With Or Without Employees @smoke", async ({ page }) => {
+    test("verify Department Filter Results With Or Without Employees @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Admin')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let { TotalCards, TotalEmployeecount } = await EmployeeDirectory.totalCardsCount()
@@ -68,7 +68,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("verify Status Filter Results With Or Without Employees @smoke", async ({ page }) => {
+    test("verify Status Filter Results With Or Without Employees @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectDepartment, 'Technical')
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'BLOCKED (Temporally Disable)')
@@ -82,7 +82,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("verify Employee Profile Name Matches Card Name @smoke", async ({ page }) => {
+    test("verify Employee Profile Name Matches Card Name @smoke @reg", async ({ page }) => {
         let employeecardName = await EmployeeDirectory.fechingEmployeeName()
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -90,14 +90,14 @@ test.describe("'Employee Management module'", () => {
         expect(employeecardName).toContain(EmployeeName)
     })
 
-    test("verify BasicInfo Accordion Displays Correctly In Employee Profile", async ({ page }) => {
+    test("verify BasicInfo Accordion Displays Correctly In Employee Profile @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnBasicInfo()
         await EmployeeDirectory.getAccordionBodycountAndText(EmployeeDirectory.AccordionBodyKey, EmployeeDirectory.BasicInfoAccordionBody)
     })
 
-    test("Verify Basic Info Accordion Toggle Behavior", async ({ page }) => {
+    test("Verify Basic Info Accordion Toggle Behavior @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(1)
@@ -171,13 +171,13 @@ test.describe("'Employee Management module'", () => {
         expect(originalLastName).not.toEqual(updatedLastName)
     })
 
-    test("verify Work Accordion Accordion Displays Correctly In Employee Profile", async ({ page }) => {
+    test("verify Work Accordion Accordion Displays Correctly In Employee Profile @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnWorkAccordion()
         await EmployeeDirectory.getAccordionBodycountAndText(EmployeeDirectory.WorkAccordionkey, EmployeeDirectory.WorkAccordionBody)
     })
-    test("Verify Work Accordion Toggle Behavior", async ({ page }) => {
+    test("Verify Work Accordion Toggle Behavior @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(2)
@@ -192,7 +192,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("verify Validation Message When WorkDate Is Cleared In Work", async ({ page }) => {
+    test("verify Validation Message When WorkDate Is Cleared In Work @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnWorkAccordion()
@@ -241,14 +241,14 @@ test.describe("'Employee Management module'", () => {
         expect(ExistingDate).not.toEqual(CurrentDate)
     })
 
-    test("verify Personal Details Accordion Accordion Displays Correctly In Employee Profile", async ({ page }) => {
+    test("verify Personal Details Accordion Accordion Displays Correctly In Employee Profile @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
         await EmployeeDirectory.getAccordionBodycountAndText(EmployeeDirectory.PersonalDetailsKey, EmployeeDirectory.PersonalDetailsBody)
     })
 
-    test("Verify Personal Details Toggle Behavior", async ({ page }) => {
+    test("Verify Personal Details Toggle Behavior @reg", async ({ page }) => {
 
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -264,7 +264,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("verify Validation Message When Date Is Cleared In Perosnal Details", async ({ page }) => {
+    test("verify Validation Message When Date Is Cleared In Perosnal Details @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -297,7 +297,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toBe(PANCARD_FIELD)
     })
 
-    test("verify Validation Message When Present Address Is Cleared In Perosnal Details", async ({ page }) => {
+    test("verify Validation Message When Present Address Is Cleared In Perosnal Details @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -309,7 +309,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("verify Validation Message When Blood Group option selects 'Select blood Group' In Perosnal Details", async ({ page }) => {
+    test("verify Validation Message When Blood Group option selects 'Select blood Group' In Perosnal Details @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -320,7 +320,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toBe(SELECT_ITEM)
     })
 
-    test("verify Validation Message When Marital status selects 'Select Marital Status' In Perosnal Details", async ({ page }) => {
+    test("verify Validation Message When Marital status selects 'Select Marital Status' In Perosnal Details @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -331,7 +331,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toBe(SELECT_ITEM)
     })
 
-    test("verify Validation Message When Alternate number Is Cleared In Perosnal Details", async ({ page }) => {
+    test("verify Validation Message When Alternate number Is Cleared In Perosnal Details @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -344,7 +344,7 @@ test.describe("'Employee Management module'", () => {
     })
 
 
-    test("verify Validation Message When Permanent Address Is Cleared In Perosnal Details", async ({ page }) => {
+    test("verify Validation Message When Permanent Address Is Cleared In Perosnal Details @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -368,7 +368,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage).toBe(PASSPORT_FIELD)
     })
 
-    test("verify Profile Update With Random Peronal Details clicking on closw button ", async ({ page }) => {
+    test("verify Profile Update With Random Peronal Details clicking on closw button @reg ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -386,7 +386,7 @@ test.describe("'Employee Management module'", () => {
     })
 
 
-    test("verify Profile Update With Random Perosnal details Info Fields", async ({ page }) => {
+    test("verify Profile Update With Random Perosnal details Info Fields @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -408,7 +408,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("verify Employee have work experience or not ", async ({ page }) => {
+    test("verify Employee have work experience or not @reg ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnWorkExperience()
@@ -420,7 +420,7 @@ test.describe("'Employee Management module'", () => {
             console.debug("Employee have work Experience")
         }
     })
-    test("Verify Work Experience  Toggle Behavior", async ({ page }) => {
+    test("Verify Work Experience  Toggle Behavior @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(4)
@@ -435,7 +435,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("verify Employee have Education or not ", async ({ page }) => {
+    test("verify Employee have Education or not @reg ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnWorkExperience()
@@ -448,7 +448,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("Verify Education  Toggle Behavior", async ({ page }) => {
+    test("Verify Education  Toggle Behavior @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(5)
@@ -462,7 +462,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("verify Employee have Dependents or not ", async ({ page }) => {
+    test("verify Employee have Dependents or not @reg ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnDependents()
@@ -475,7 +475,7 @@ test.describe("'Employee Management module'", () => {
         }
     })
 
-    test("Verify Dependents  Toggle Behavior", async ({ page }) => {
+    test("Verify Dependents  Toggle Behavior @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.verifyCollapseIsHidden(6)
@@ -488,7 +488,7 @@ test.describe("'Employee Management module'", () => {
 
     })
 
-    test("Navigating to the Employee Directory tab > Assigned Assets @smoke", async ({ page }) => {
+    test("Navigating to the Employee Directory tab > Assigned Assets @smoke @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.AssignedAssets.isEnabled()
@@ -536,7 +536,7 @@ test.describe("'Employee Management module'", () => {
 
 
 
-    test("navigate to Employee Access Block ", async ({ page }) => {
+    test("navigate to Employee Access Block @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -544,7 +544,7 @@ test.describe("'Employee Management module'", () => {
         expect(await EmployeeDirectory.Status.isVisible())
     })
 
-    test("Verify validation message appears in Employee access status  in  Employee Access Block ", async ({ page }) => {
+    test("Verify validation message appears in Employee access status  in  Employee Access Block @reg ", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -640,7 +640,7 @@ test.describe("'Employee Management module'", () => {
 
     // })
 
-    test("should Display LeftOut Fields When Status Is LeftOut ", async ({ page }) => {
+    test("should Display LeftOut Fields When Status Is LeftOut @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -649,7 +649,7 @@ test.describe("'Employee Management module'", () => {
         await expect(EmployeeDirectory.LeftOutCommentField).toBeVisible()
     })
 
-    test("shouldShowValidationMessageWhenLeftOutDateIsEmpty", async ({ page }) => {
+    test("shouldShowValidationMessageWhenLeftOutDateIsEmpty @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -659,7 +659,7 @@ test.describe("'Employee Management module'", () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     })
 
-    test("shouldShowValidationMessageWhenLeftOutCommentIsEmpty", async ({ page }) => {
+    test("shouldShowValidationMessageWhenLeftOutCommentIsEmpty @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -698,7 +698,7 @@ test.describe("'Employee Management module'", () => {
     })
 
 
-    test("should show no records or fail to update left out employee status to verified", async ({ page }) => {
+    test("should show no records or fail to update left out employee status to verified @reg", async ({ page }) => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
         await EmployeeDirectory.waitforLoaderToDisappear()
         let cardsCount = await EmployeeDirectory.leftOutCards.count()
