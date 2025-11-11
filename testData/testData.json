@@ -37,7 +37,11 @@
     "Projects": {
         "Project1": {
             "name": "AutomationProject",
+            "projectType": "MuleSoft Integration",
             "deliveryLead": "Piyush Dogra",
+            "projectManager": "Vishal Thakur",
+            "principalSponsor": "Simran Kaur",
+            "leadBusinessAnalyst": "Ishita Sharma",
             "description": "Test project created via Playwright automation.",
             "sowStart": "09/01/2025",
             "sowEnd": "09/25/2025",

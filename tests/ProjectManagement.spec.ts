@@ -29,7 +29,7 @@ test.describe.serial("Project Management", () => {
 
 
     let projectName: string;
-    test("Create a new project successfully ", async ({ page }) => {
+    test("Create a new project successfully @smoke", async ({ page }) => {
 
         await ProjectManagementObj.clickCreateProject()
         // Read data from JSON file ...
@@ -43,7 +43,9 @@ test.describe.serial("Project Management", () => {
 
         await ProjectManagementObj.fillAndSubmitProjectForm(projectPayload)
         const successToast = await ProjectManagementObj.toastMessage()
-        await expect(successToast).toEqual("Project created")
+        expect(successToast).toEqual("Project created successfully.")
+        await ProjectManagementObj.searchProject(projectName);
+        await expect(page.locator(`button:has-text("${projectName}"):has-text("Active")`)).toBeVisible();
     })
 
 
