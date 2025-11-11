@@ -62,10 +62,11 @@ test.describe("Apply leaves page", () => {
       testData["HR"].UserEmail,
       testData.SuperUser.UserPassword
     );
+
     await page.waitForLoadState("networkidle");
 
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
-
+    
     await applyLeave.withdrawExistingLeave();
 
     // Apply Leave

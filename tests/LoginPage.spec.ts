@@ -4,7 +4,7 @@ import testData from '../testData/testData.json';
 // import dotenv from 'dotenv';
 // dotenv.config();
 
-test('User should be able to login successfully', async ({ page }) => {
+test('User should be able to login successfully @smoke @reg', async ({ page }) => {
     const loginPage = new LoginPage(page)
     await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
 
