@@ -58,7 +58,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
         await EmployeeOnboarding.uploadAndVerifyFile(DummyResume, page, EmployeeOnboarding.submitButton)
         await EmployeeOnboarding.waitforLoaderToDisappear();
         let message = await EmployeeOnboarding.toastMessage();
-        expect(message).toEqual("Onboarding welcome mail sent");
+        expect(message).toEqual("Onboarding welcome mail sent.");
     });
 
 

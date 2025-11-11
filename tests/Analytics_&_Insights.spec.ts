@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 import { Analytics_Insights } from "../pages/Analytics_&_Insights";
 import testData from "../testData/testData.json";
-import { SELECT_ITEM } from "../utils/constants";
+import * as constants from "../utils/constants";
+
 
 let analyticsInsights: Analytics_Insights;
 
@@ -53,7 +54,7 @@ test.describe("Analytics & Insights module", () => {
         await analyticsInsights.waitforLoaderToDisappear()
         // Verify filters are reset
         let tooltipMessage = await analyticsInsights.getValidationMessage(analyticsInsights.assetTypeDropdown)
-        expect(tooltipMessage === SELECT_ITEM).toBeTruthy();
+        expect(tooltipMessage === constants.SELECT_ITEM).toBeTruthy();
         const assetTypeValue = await page.locator('#filterAssetType >> option:checked').textContent();
         const ownerValue = await page.locator('#filterOwner >> option:checked').textContent();
         console.log(`Asset Type after reset: ${assetTypeValue}`);
@@ -72,31 +73,38 @@ test.describe("Analytics & Insights module", () => {
         });
     });
 
-    test("user resets User Attendance Report filters to default values @smoke", async ({ page }) => {
-        const month = new Date().toLocaleString('default', { month: 'long' });
-        console.log(month);
-
-        // Navigate to User Attendance Report page
-        await analyticsInsights.navigateToUserAttendanceReport();
-        await analyticsInsights.monthDropdown.selectOption("April");
-        await analyticsInsights.waitForDotsLoaderToDisappear();
-        await analyticsInsights.selectEmployeeDropdown.click();
-        await page.getByText("Vishal Dev Thakur").waitFor({ state: 'visible', timeout: 60000 });
-        await page.getByText("Vishal Dev Thakur").click();
-        await analyticsInsights.waitForDotsLoaderToDisappear();
-        // Click Reset button
+    test("HRMIS_AI_13.1 Verify the Reset button functionality of Asset Report @reg, @eti", async ({ page }) => {
+        // Navigate to Asset Report page
+        await analyticsInsights.navigateToAssetReport();
+        await analyticsInsights.assetTypeDropdown.selectOption('All');
+        await analyticsInsights.ownerDropdown.selectOption('All');
         await analyticsInsights.resetButton.click();
-        await analyticsInsights.waitForDotsLoaderToDisappear();
-        // Verify filters are reset
-        const monthValue = await page.locator('#month >> option:checked').textContent();
-        const employeeValue = await page.locator(".css-1jqq78o-placeholder").textContent();
-        console.log(`Month after reset: ${monthValue}`);
-        console.log(`Employee after reset: ${employeeValue}`);
-        expect(monthValue).toBe(month);
-        expect(employeeValue).toBe('Select...');
+
+        const assetTypeText = await analyticsInsights.assetTypeDropdown.textContent();
+        const ownerText = await analyticsInsights.ownerDropdown.textContent();
+
+        expect(assetTypeText).toContain('Select');
+        expect(ownerText).toContain('Select');
+
     });
 
-    test("HRMIS_AI_13 User Attendance Report functionality @smoke", async ({ page }) => {
+    test("HRMIS_AI_13.2 Verify the validation tooltip functionality of Asset Report @reg, @eti", async ({ page }) => {
+        // Navigate to Asset Report page
+        await analyticsInsights.navigateToAssetReport();
+        await page.waitForLoadState()
+        await analyticsInsights.downloadButton.click();
+        // verify the tooltip for Asset Type field
+        await analyticsInsights.verifyTooltipMessage(analyticsInsights.assetTypeDropdown, constants.SELECT_ITEM)
+        
+        // verify the tooltip for Owner field 
+        await analyticsInsights.assetTypeDropdown.selectOption('All');
+        await analyticsInsights.downloadButton.click();
+        await analyticsInsights.verifyTooltipMessage(analyticsInsights.ownerDropdown, constants.SELECT_ITEM)
+ 
+    })
+
+
+    test("HRMIS_AI_14 User Attendance Report functionality @smoke", async ({ page }) => {
         await analyticsInsights.navigateToUserAttendanceReport();
         await analyticsInsights.monthDropdown.waitFor({ state: 'visible', timeout: 30000 });
         await analyticsInsights.monthDropdown.selectOption("April");

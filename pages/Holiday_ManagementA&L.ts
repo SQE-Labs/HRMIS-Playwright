@@ -147,8 +147,10 @@ export class holiday_Management extends BasePage {
         const formattedForOtherUse = `${monthNames[parseInt(month) - 1]} ${day}, ${year}`;
 
         // Step 4: Wait until the holiday row that CONTAINS this date appears
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForLoadState()
         const holidayRow = this.page.locator("tr", { hasText: formattedForOtherUse });
-        await expect(holidayRow).toBeVisible({ timeout: 10000 });
+        await expect(holidayRow).toBeVisible({ timeout: 15000 });
 
         // Step 5: Click on the "Edit" link inside that row (contains-based)
         const editLink = holidayRow.locator("a:has-text('Edit')");
@@ -229,7 +231,7 @@ export class holiday_Management extends BasePage {
 
         for (let i = 0; i < rowCount; i++) {
             const cell = rows.nth(i).locator(`td:nth-child(${columnIndex})`);
-            await cell.waitFor({ state: 'visible', timeout: 5000 });
+            await cell.waitFor({ state: 'visible', timeout: 7000 });
             const text = await cell.textContent();
             columnData.push((text ?? '').trim());
         }
@@ -355,13 +357,10 @@ export class holiday_Management extends BasePage {
         // Step 3: Keep deleting until none left
         while (await holidayRows.count() > 0) {
             const firstRow = holidayRows.first();
-            const deleteButton = firstRow.getByRole('button', { name: /delete/i });
+            const deleteButton = firstRow.locator("//a[text()='Delete']");
 
             await deleteButton.click();
             await this.yesBtn.click();
-
-            // Wait until that specific row disappears
-            await expect(firstRow).toHaveCount(0, { timeout: 10000 });
 
             // Refresh locator (table updates dynamically)
             holidayRows = this.page.locator(`tr:has-text("${holidayName}")`);

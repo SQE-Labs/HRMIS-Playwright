@@ -83,4 +83,28 @@ test.describe("My Team Leave Page", () => {
       constants.APPROVE_LEAVE_SUCCESSMESSAGE
     );
   });
+
+test('Verify the Validation Tooltip on Leave Approval popup, @reg, @eti', async  ({page})=>{
+  loginObj = new LoginPage(page);
+  await loginObj.validLogin(
+    testData.SuperUser.UserEmail,
+    testData.SuperUser.UserPassword
+  );
+  const attendanceLeaveTab = new AttendanceLeaveTab(page);
+  await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
+
+  await page.waitForLoadState()
+  await myTeamLeave.viewLink.first().click()
+
+  // verifying tooltip for the leave action field 
+  await page.waitForLoadState()
+  await myTeamLeave.submitButton.click()
+  await myTeamLeave.verifyTooltipMessage(myTeamLeave.leaveActionField,constants.SELECT_ITEM)
+
+  // verifying tooltip for the reason field 
+  await myTeamLeave.selectLeaveAction('Reject');
+  await myTeamLeave.submitButton.click()
+  await myTeamLeave.verifyTooltipMessage(myTeamLeave.reasonField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+})
 });

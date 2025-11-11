@@ -5,7 +5,7 @@ import testData from "../testData/testData.json";
 import { ApplyLeaves } from "../pages/ApplyLeaves";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { MyTeamLeavePage } from "../pages/myTeamLeave";
+import { MyTeamLeavePage } from "../pages/MyTeamLeave";
 
 let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
@@ -40,6 +40,10 @@ test.describe("Apply leaves page", () => {
     await applyLeave.getWithDrawLink();
 
     await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
+    // verify the blank tooltip message
+    await applyLeave.getSubmitButton()
+    await applyLeave.verifyTooltipMessage(applyLeave.WithdrawReasonField,constants.PLEASE_FILL_IN_TOOLTOP);
+
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
@@ -79,4 +83,33 @@ test.describe("Apply leaves page", () => {
     console.log("Withdraw message: " + message);
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
+
+  test('Verify the validation tooltip on Apply Leave page @eti, @reg', async ({page})=>{
+    const loginObj = new LoginPage(page);
+    await loginObj.validLogin(
+      testData.Employee.UserEmail,
+      testData.SuperUser.UserPassword
+    );
+    await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
+    await applyLeave.waitForDotsLoaderToDisappear();
+
+    await applyLeave.getApplyLeaveBtn();
+    await page.waitForLoadState()
+
+    // verify the tooltip for the Type of Leave field
+    await applyLeave.getSubmitButton()
+    await applyLeave.verifyTooltipMessage(applyLeave.LeaveTypeTextBox, constants.SELECT_ITEM)
+
+    // verify the tooltip for the Date Range Field 
+    await applyLeave.LeaveTypeTextBox.selectOption('PrivilegeLeave');
+    await applyLeave.getSubmitButton()
+    await page.waitForLoadState()
+    await applyLeave.verifyTooltipMessage(applyLeave.DateRange, constants.PLEASE_FILL_IN_TOOLTOP)
+
+    // verify the tooltip for the Reason of Leave field 
+    for (let attempt = 1; attempt <= 1; attempt++) {
+    await applyLeave.selectDateRange(attempt); }
+    await applyLeave.getSubmitButton()
+    await applyLeave.verifyTooltipMessage(applyLeave.ReasonOfLeaveBox,constants.PLEASE_FILL_IN_TOOLTOP) 
+});
 });

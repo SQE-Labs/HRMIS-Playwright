@@ -52,22 +52,23 @@ test.describe.serial("Salary Management", () => {
         // Assert the fields are cleared / reset
         expect(resetEmployeeType).toBe("");
         expect(resetMonth).toBe(""); 
+        
     })
 
     test("Verify the validation tooltip of Salary Management Tab @reg, @eti", async({page})=>{
         // step 1: Leaving all field blank and getting validation tooltip
         await salaryObj.submitForm();
-        await salaryObj.verifyTooltipMessage(salaryObj.employeeTypeDropdown, constants.PLEASE_SELECT_ITEM_TOOLTIP)
+        await salaryObj.verifyTooltipMessage(salaryObj.employeeTypeDropdown, constants.SELECT_ITEM)
 
         // step 2: Verify the tooltip for salary slip field 
         await salaryObj.selectEmployeeType("REGULAR");
         await salaryObj.submitForm();
-        await salaryObj.verifyTooltipMessage(salaryObj.salarySlipUpload, constants.PLEASE_SELECT_FILE_TOOLTIP)
+        await salaryObj.verifyTooltipMessage(salaryObj.salarySlipUpload, constants.SELECT_FILE_TOOLTIP)
 
         // step 3 verify tooltip for select month field 
         await utils.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, salaryObj.submitButton);
         await salaryObj.submitForm();
-        await salaryObj.verifyTooltipMessage(salaryObj.monthDropdown, constants.PLEASE_SELECT_ITEM_TOOLTIP)
+        await salaryObj.verifyTooltipMessage(salaryObj.monthDropdown, constants.SELECT_ITEM)
     })
 
 });
