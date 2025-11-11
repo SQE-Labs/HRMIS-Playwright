@@ -5,6 +5,7 @@ import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import * as constants from "../utils/constants";
 import { time } from "console";
+import { TIMEOUT } from "dns";
 
 let loginObj: LoginPage;
 let holidayManagement: holiday_Management
@@ -179,11 +180,14 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
 
         // Wait until at least one row appears
         const firstRow = holidayManagement.rowCount.first();
-        await firstRow.waitFor({ state: 'visible', timeout: 10000 });
+        await page.waitForSelector('thead + tbody > tr:visible')
+        await firstRow.waitFor({ state: 'visible', timeout: 15000 });
 
         // Get selected date value from input
         const selectedDate = await holidayManagement.dateFilterO.inputValue();
         console.log("Selected date:", selectedDate);
+        await page.waitForLoadState()
+        await page.waitForSelector('thead + tbody > tr:visible', { timeout: 10000 });
 
         // Get total visible rows
         let listCount = await holidayManagement.rowCount.count();

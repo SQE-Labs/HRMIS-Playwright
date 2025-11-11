@@ -68,7 +68,7 @@ export class holiday_Management extends BasePage {
         this.dateFilterO = page.getByPlaceholder("MM-DD-YYYY")
         this.nextArrow = page.locator("//button[@aria-label='Next Month']")
         this.dates = page.locator(".react-datepicker__week>div");
-        this.rowCount = page.locator('thead + tbody > tr:visible')
+        this.rowCount = page.locator('.resume.custom>tbody>tr:visible')
 
     }
 
