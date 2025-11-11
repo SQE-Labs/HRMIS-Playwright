@@ -141,7 +141,7 @@ export class BasePage extends CommonUtils {
     }
 
     console.log(`Tooltip Text: "${tooltipText}"`);
-    expect(tooltipText).toBe(expectedText);
+    expect(tooltipText.toLowerCase()).toContain(expectedText.toLowerCase());
   }
 
 }

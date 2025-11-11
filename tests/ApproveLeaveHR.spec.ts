@@ -3,7 +3,7 @@ import { LoginPage } from "../pages/LoginPage";
 import { BasePage } from "../pages/Basepage";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { MyTeamLeavePage } from "../pages/myTeamLeave";
+import { MyTeamLeavePage } from "../pages/MyTeamLeave";
 import { ApplyLeaves } from "../pages/ApplyLeaves";
 import { ApproveLeaveHR } from "../pages/ApproveLeaveHR";
 import testData from "../testData/testData.json";
@@ -28,7 +28,7 @@ test.describe("Approve Leave HR module ", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
   // Covered MyTeam Leave Approve flow in this test case.
-  test("A&L_MY_Team_5, A&L_MY_Team_9, A&L_Approve(HR)_13 Approve Leave HR @smoke @eti", async ({ page, }) => {
+  test("A&L_MY_Team_5, A&L_MY_Team_9, A&L_Approve(HR)_13 Approve Leave HR @smoke @reg @eti", async ({ page, }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.Employee.UserEmail,
@@ -83,7 +83,7 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti", async ({ page }) => {
+  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti @reg", async ({ page }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,

@@ -3,7 +3,7 @@ import { LoginPage } from "../pages/LoginPage";
 import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import * as constants from "../utils/constants";
-import { OnOfficalDuty } from "../pages/onOfficalDuty";
+import { OnOfficalDuty } from "../pages/OnOfficalDuty";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import { off } from "process";
 
@@ -31,7 +31,7 @@ test.describe("On Offical Duty Page", () => {
 
 
 
-    test('A&L_On_offc_duty_1, A&L_On_offc_duty_3, A&L_On_offc_duty_10 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke', async ({ page }) => {
+    test('A&L_On_offc_duty_1, A&L_On_offc_duty_3, A&L_On_offc_duty_10 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke @reg', async ({ page }) => {
 
         // Login As Employee
         loginObj = new LoginPage(page);
@@ -50,7 +50,7 @@ test.describe("On Offical Duty Page", () => {
         await page.waitForLoadState()
 
         // Select Date
-        await officalDuty.selectDate('25-10-2025')
+        await officalDuty.selectDate('01-11-2025')
 
         // Select Delivery Lead
         await officalDuty.selectDeliveryLead(testData.DeliveryManager.name)
@@ -94,8 +94,8 @@ test.describe("On Offical Duty Page", () => {
         expect(message2).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     })
 
-
-    test('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke', async ({ page }) => {
+// Need to discuss with dev may be new bug
+    test('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke @reg', async ({ page }) => {
 
         // Login As Super Admin
         loginObj = new LoginPage(page);
@@ -105,7 +105,7 @@ test.describe("On Offical Duty Page", () => {
         // Navigate to Holiday Management
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState('networkidle');
-
+        await page.pause()
         // Delete the holiday if it already exists
         const holidayName = "Comp_Off Leave";
         await holidayManagement.deleteAllCompOffHolidays(holidayName);
@@ -121,6 +121,7 @@ test.describe("On Offical Duty Page", () => {
         await page.reload({ waitUntil: 'networkidle' });
 
         // selecting the holiday name and date  
+        await page.pause()
         const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
         console.log("Holiday added on:", addedHolidayDate);
 
@@ -263,7 +264,7 @@ test.describe("On Offical Duty Page", () => {
     });
 
     // Failed due to assertion failed inconsistent appears for the reject toast
-    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @knownBug', async ({ page }) => {
+    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @reg @knownBug', async ({ page }) => {
 
         //Login As Super Admin
         loginObj = new LoginPage(page);
@@ -347,8 +348,70 @@ test.describe("On Offical Duty Page", () => {
 
         // logout from HR
         await officalDuty.logout()
+    })
 
+    test('Verify the validation tooltip on the offical duty page @reg, @eti', async ({page})=>{
+        // Login As Employee
+        loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
+
+        await page.waitForLoadState()
+
+        // Clicking on Apply On Offical Duty tab
+        await officalDuty.applyOfficalDutyTab.click()
+        await page.waitForLoadState()
+
+        // Verify the validation tooltip for the 'Date' field 
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.dateField,constants.PLEASE_FILL_IN_TOOLTOP)
+
+        // Verify the tooltip for the select delivery manager field 
+        await officalDuty.selectDate('25-10-2025')
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.deliveryLead, constants.SELECT_ITEM)
+
+        // verify the tooltip for the task field 
+        // Select Delivery Lead
+        await officalDuty.selectDeliveryLead(testData.DeliveryManager.name)
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.taskField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+        // verify the tooltip for the hours field
+        await officalDuty.enterTask("Worked On Weekend")
+        await officalDuty.submitBtn.click();
+        await officalDuty.verifyTooltipMessage(officalDuty.hours, constants.PLEASE_FILL_IN_TOOLTOP)
 
     })
+
+    test('Verify the hours and mins gets reset after clicking on the reset icon @reg', async ({page})=>{
+        // Login As Employee
+        loginObj = new LoginPage(page);
+        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await page.waitForLoadState();
+        await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
+
+        await page.waitForLoadState()
+
+        // Clicking on Apply On Offical Duty tab
+        await officalDuty.applyOfficalDutyTab.click()
+        await page.waitForLoadState()
+
+        // Entering task
+        await officalDuty.enterTask("Worked On Weekend")
+
+        // Select horus
+        await officalDuty.enterHoursAndMins(8, 30)
+        
+        // clicking on reset button
+        await officalDuty.resetTimeButton.click()
+
+        // verifying the field after reset it
+        await expect(officalDuty.taskField).toBe('');
+        await expect(officalDuty.hours).toBe('');
+        await expect(officalDuty.mins).toBe('');
+    })
 });
+
 

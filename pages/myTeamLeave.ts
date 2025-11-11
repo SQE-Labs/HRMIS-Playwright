@@ -11,11 +11,11 @@ export class MyTeamLeavePage extends BasePage {
   public statusDropdown: Locator;
   employeeColumn: any;
   public CrossIcon: Locator;
-  private viewLink: Locator;
+  public viewLink: Locator;
   public LeaveApprovePopupTitle: Locator;
-  private leaveActionField: Locator;
-  private reasonField: Locator;
-  private submitButton: Locator;
+  public leaveActionField: Locator;
+  public reasonField: Locator;
+  public submitButton: Locator;
   public approveSuccessMessage: Locator;
   public employeeRows: Locator;
   public noRecordMsg : Locator
@@ -144,7 +144,7 @@ export class MyTeamLeavePage extends BasePage {
       if (await noDataMessage.isVisible()) {
         console.log(`ℹ No records found for employee "${employeeName}" under status "${leaveStatus}".`);
       } else {
-        console.warn(`⚠ No records found for "${employeeName}" but no message displayed.`);
+        console.warn(`⚠No records found for "${employeeName}" but no message displayed.`);
       }
       return; // exit gracefully
     }
@@ -167,9 +167,9 @@ export class MyTeamLeavePage extends BasePage {
     }
 
     if (invalidNames.length > 0) {
-      console.error(`❌ Some names did not match "${employeeName}":`, invalidNames);
+      console.error(`Some names did not match "${employeeName}":`, invalidNames);
     } else {
-      console.log(`✅ All ${employees.length} employees matched "${employeeName}".`);
+      console.log(`All ${employees.length} employees matched "${employeeName}".`);
     }
 
     expect.soft(invalidNames.length, `Invalid names found for "${employeeName}"`).toBe(0);

@@ -7,7 +7,7 @@ import { CommonUtils } from "../utils/commonUtils";
 import { FILL_OUT_FIELD, FILL_IN_FIELD, SELECT_ITEM } from "../utils/constants";
 
 let EmployeeDirectory: Employee_Management;
-test.describe("'Employee Management > Approve Document module'", () => {
+test.describe("'Employee Management > Approve Document module', @reg", () => {
   test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const basepage = new BasePage(page);
@@ -23,7 +23,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
     await EmployeeDirectory.waitforLoaderToDisappear();
   });
 
-  test("Approve Document Tab", async ({ page }) => {
+  test("Approve Document Tab @reg", async ({ page }) => {
     var header = await EmployeeDirectory.Approve_Header.textContent();
     expect(header).toEqual("Approve Document");
     let labelcount = await EmployeeDirectory.Approve_Label.count();
@@ -35,7 +35,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
     }
   });
 
-  test("compares approved document types in UI with dropdown options", async ({
+  test("compares approved document types in UI with dropdown options @reg", async ({
     page,
   }) => {
     // Exit if no records
@@ -137,7 +137,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
     expect(await EmployeeDirectory.Action_Button_popup.isHidden()).toBe(true);
   });
 
-  test("should download file after clicking View button @smoke", async ({
+  test("should download file after clicking View button @smoke, @reg", async ({
     page,
   }) => {
     await EmployeeDirectory.No_Record.isVisible().then(async (isVisible) => {
@@ -167,7 +167,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
     });
   });
 
-  test("should show validation message when action is not selected", async ({
+  test("should show validation message when action is not selected, @reg", async ({
     page,
   }) => {
     if (await EmployeeDirectory.No_Record.isVisible()) {
@@ -187,7 +187,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
     expect(message).toEqual(SELECT_ITEM);
   });
 
-  test("should change document status to approved and show success toast @smoke", async ({
+  test("should change document status to approved and show success toast @smoke, @reg", async ({
     page,
   }) => {
     if (await EmployeeDirectory.No_Record.isVisible()) {
@@ -210,7 +210,7 @@ test.describe("'Employee Management > Approve Document module'", () => {
     expect(message).toEqual("Document Approval Status Changed to approved");
   });
 
-  test("should validate rejection reason and change status to rejected @smoke", async ({
+  test("should validate rejection reason and change status to rejected @smoke, @reg", async ({
     page,
   }) => {
     if (await EmployeeDirectory.No_Record.isVisible()) {

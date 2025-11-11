@@ -25,14 +25,14 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('New Asset Enrollment Page @smoke', async ({ page }) => {
+    test('New Asset Enrollment Page @smoke @reg', async ({ page }) => {
         expect(await assetEnrollment.assetEnrollmentHeader.isVisible()).toBeTruthy();
         expect(await assetEnrollment.assetEnrollmentTabs.isVisible()).toBeTruthy();
         expect(await assetEnrollment.createAssetTabs.allTextContents()).toEqual(assetEnrollment.createAssetTabsDetails);
         await assetEnrollment.enrollment();
     });
     // to-do
-    test('New Asset Enrollment Create Asset-positive @smoke', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-positive @smoke @reg', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField(
             'USB HUB Adapter',
             '342ASD',
@@ -47,20 +47,20 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('New Asset Enrollment Create Asset-  blank asset type validation', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-  blank asset type validation @reg', async ({ page }) => {
         await assetEnrollment.clickOnSubmitButton()
 
         let tooltipMessage = await assetEnrollment.getValidationMessage(assetEnrollment.assetType)
         expect(tooltipMessage).toBe(SELECT_ITEM);
 
     });
-    test('New Asset Enrollment Create Asset-  blank Model validation', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-  blank Model validation @reg', async ({ page }) => {
         await assetEnrollment.SelectAssetType("USB HUB Adapter")
         await assetEnrollment.clickOnSubmitButton()
         let tooltipMessage = await assetEnrollment.getValidationMessage(assetEnrollment.model)
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
-    test('New Asset Enrollment Create Asset-   Model validation', async () => {
+    test('New Asset Enrollment Create Asset-   Model validation @reg', async () => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '543543', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
         await assetEnrollment.clickOnSubmitButton()
         let message2 = await assetEnrollment.validationMessage.textContent();
@@ -75,14 +75,14 @@ test.describe('Asset Enrollment Page', () => {
     })
 
 
-    test('New Asset Enrollment Create Asset-  blank super owner validation', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-  blank super owner validation @reg', async ({ page }) => {
         await assetEnrollment.SelectAssetType("USB HUB Adapter")
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.clickOnSubmitButton()
         let tooltipMessage = await assetEnrollment.getValidationMessage(assetEnrollment.superOwnerLocator)
         expect(tooltipMessage).toBe(SELECT_ITEM);
     });
-    test('New Asset Enrollment Create Asset-  blank  owner validation', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-  blank  owner validation @reg', async ({ page }) => {
         await assetEnrollment.SelectAssetType("USB HUB Adapter")
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.selectSuperOwner(testData.DefaultSuperOwner)
@@ -97,7 +97,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage).toBe(SELECT_ITEM);
 
     });
-    test('New Asset Enrollment Create Asset-  blank  manufacturer validation', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-  blank  manufacturer validation @reg', async ({ page }) => {
         await assetEnrollment.SelectAssetType("USB HUB Adapter")
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.selectSuperOwner(testData.DefaultSuperOwner)
@@ -106,7 +106,7 @@ test.describe('Asset Enrollment Page', () => {
         let tooltipMessage = await assetEnrollment.getValidationMessage(assetEnrollment.manufacturer)
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
-    test('New Asset Enrollment Create Asset-  blank  serial number validation', async ({ page }) => {
+    test('New Asset Enrollment Create Asset-  blank  serial number validation @reg', async ({ page }) => {
         await assetEnrollment.SelectAssetType("USB HUB Adapter")
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.selectSuperOwner(testData.DefaultSuperOwner)
@@ -117,7 +117,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
 
     });
-    test('New Asset Enrollment Create Asset- Warranty year validtaion', async ({ page }) => {
+    test('New Asset Enrollment Create Asset- Warranty year validtaion @reg', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '342ASD', 'CAELIUS_OWNED', "Caelius", 'HP02', await assetEnrollment.generateRandomInteger(5))
         await expect(assetEnrollment.warrantyYear).toBeDisabled();
         await assetEnrollment.fillWarrantyYear('1')
@@ -145,7 +145,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('New Asset Enrollment Create Asset- purchase field  validtaion', async ({ page }) => {
+    test('New Asset Enrollment Create Asset- purchase field  validtaion @reg', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '342ASD', 'CAELIUS_OWNED', "Caelius", 'HP02', await assetEnrollment.generateRandomInteger(5))
         const purchaseCostValue = await assetEnrollment.purchaseCost.getAttribute('value');
         expect(purchaseCostValue).toEqual("0");
@@ -163,21 +163,21 @@ test.describe('Asset Enrollment Page', () => {
         expect(message5).toEqual('Amount must be less than or equal to 10,00,000 (10 Lacs)')
     });
 
-    test('User try to enter more than 40 characters in Model field', async () => {
+    test('User try to enter more than 40 characters in Model field @reg', async () => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '1234567890123456789012345678901234567890145', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
         expect(message).toEqual('Model cannot exceed 40 characters.')
     })
-    test('User try to enter more than 40 characters in Manufracturer field', async () => {
+    test('User try to enter more than 40 characters in Manufracturer field @reg', async () => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", '1234567890123456789012345678901234567890145', '6900')
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
         expect(message).toEqual('Manufacturer cannot exceed 40 characters.')
     })
-    test('Try to enter only numbers in Manufracturer field', async () => {
+    test('Try to enter only numbers in Manufracturer field @reg', async () => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", '232332', '6900')
         await assetEnrollment.clickOnSubmitButton()
         let message = await assetEnrollment.validationMessage.textContent();
@@ -186,7 +186,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toEqual('Entry cannot contain only numbers and special characters')
     })
 
-    test('User try to enter more than 40 characters in Serial number field', async () => {
+    test('User try to enter more than 40 characters in Serial number field @reg', async () => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '1234567890123456789012345678901234567890145')
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
@@ -194,7 +194,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toEqual('Serial Number must not exceed 40 characters.')
     })
 
-    test('User try to enter Special charcters only in  Serial number field', async () => {
+    test('User try to enter Special charcters only in  Serial number field @reg', async () => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '@#$%')
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
@@ -202,21 +202,21 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toEqual('Entry cannot contain only special characters')
     })
 
-    test('User try to enter Existing Serial number', async ({ page }) => {
+    test('User try to enter Existing Serial number @reg', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '13')
         await assetEnrollment.clickOnSubmitButton();
         expect(await assetEnrollment.toastMessage()).toEqual("The serial number provided is a duplicate; an asset with this serial number already exists")
 
     })
 
-    test('Navigate to bulk create asset ', async () => {
+    test('Navigate to bulk create asset @reg ', async () => {
         await assetEnrollment.navigateToBulkCreateAsset()
         await expect(assetEnrollment.bulkAssetHeader).toBeVisible();
         await expect(assetEnrollment.chooseButton).toBeVisible();
         await expect(assetEnrollment.submitButton).toBeVisible();
     })
 
-    test('HRMIS_36 bulk create asset  Upload valid .xls / .xlsx file @smoke', async ({ page }) => {
+    test('HRMIS_36 bulk create asset  Upload valid .xls / .xlsx file @smoke @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset()
         await assetEnrollment.uploadAndVerifyFile(testData.VALID_XLSX_FILE, page, assetEnrollment.submitButton, assetEnrollment.popupMessage)
         console.debug(await assetEnrollment.successPopup.innerText());
@@ -229,7 +229,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(assetEnrollment.toastMessage()).toEqual("Invalid file type. Please upload valid .xls, .xlsx file only.")
     })
 
-    test('Bulk Create - Upload Field Empty', async ({ page }) => {
+    test('Bulk Create - Upload Field Empty @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.clickOnSubmitButton();
 
@@ -238,7 +238,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(validationMessage).toBe("Please select a file.");
     });
 
-    test('Bulk Create - When Asset Type Is Missing', async ({ page }) => {
+    test('Bulk Create - When Asset Type Is Missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.ASSET_TYPE_COLUMN_LEFT, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -248,7 +248,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("Asset Type is missing.");
     });
 
-    test('Bulk Create - When MODEL column is missing', async ({ page }) => {
+    test('Bulk Create - When MODEL column is missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.MODEL_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -258,7 +258,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("Model is missing.");
     });
 
-    test('Bulk Create - When Owner_Column is missing', async ({ page }) => {
+    test('Bulk Create - When Owner_Column is missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.OWNER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -268,7 +268,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("Owner is missing.");
     });
 
-    test('Bulk Create - When Manufracture coloumn is missing', async ({ page }) => {
+    test('Bulk Create - When Manufracture coloumn is missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.MANUFRACTURE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -278,7 +278,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("Manufacturers is missing.");
     });
 
-    test('Bulk Create - When SerialNumber coloumn is missing', async ({ page }) => {
+    test('Bulk Create - When SerialNumber coloumn is missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.SERIALNUMBER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -289,7 +289,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain(' "serialCell" is null');
 
     });
-    test('Bulk Create - When Processor coloumn is missing', async ({ page }) => {
+    test('Bulk Create - When Processor coloumn is missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.PROCESSOR_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -320,7 +320,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("Purchase is missing.");
     });
 
-    test('Bulk Create - When SuperOwner coloumn is missing', async ({ page }) => {
+    test('Bulk Create - When SuperOwner coloumn is missing @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.SUPEROWNER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -330,7 +330,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("SuperOwner is missing.");
     });
 
-    test('Bulk Create - When user enter ExistingSerialNumber coloumn ', async ({ page }) => {
+    test('Bulk Create - When user enter ExistingSerialNumber coloumn @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -340,7 +340,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.join(" ")).toContain("Duplicate serial number");
     });
 
-    test('Bulk Create - When user enter NonExistingSerialNumber coloumn ', async ({ page }) => {
+    test('Bulk Create - When user enter NonExistingSerialNumber coloumn @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await page.pause()
         await assetEnrollment.uploadAndVerifyFile(testData.NONEXISTINGASSETTYPE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
@@ -350,7 +350,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.length).toBeGreaterThan(0);
         expect(errorMessages.join(" ")).toContain("Asset type with name 'Laptop kit' does not exist or is not verified.");
     });
-    test('Bulk Create - When user enter Nounit coloumn ', async ({ page }) => {
+    test('Bulk Create - When user enter Nounit coloumn @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.NOUNIT_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -361,14 +361,14 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('should Display All AssetTypeRequest Columns', async ({ page }) => {
+    test('should Display All AssetTypeRequest Columns @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest()
         await assetEnrollment.verifyAllAssetTypeRequestColumnsVisible();
         await expect(assetEnrollment.createAssetTypeButton).toBeVisible();
     });
 
 
-    test('should open Create Asset Type popup with correct header and all labels visible', async ({ page }) => {
+    test('should open Create Asset Type popup with correct header and all labels visible @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest()
         await assetEnrollment.clickOnCreateAssetTypeButton()
         const header = await assetEnrollment.createAssetTypePopupHeader.textContent();
@@ -381,7 +381,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('New Asset Enrollment Asset Type Request Create Asset Type Empty Field', async ({ page }) => {
+    test('New Asset Enrollment Asset Type Request Create Asset Type Empty Field @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         await assetEnrollment.clickOnSubmitButton();
@@ -389,7 +389,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
 
-    test('New Asset Enrollment Asset Type Request Create Asset Type Comment Field Empty', async ({ page }) => {
+    test('New Asset Enrollment Asset Type Request Create Asset Type Comment Field Empty @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(5));
@@ -413,7 +413,7 @@ test.describe('Asset Enrollment Page', () => {
 
 
 
-    test('Asset Type Request Asset Name Field Only Special Characters', async ({ page }) => {
+    test('Asset Type Request Asset Name Field Only Special Characters @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         await assetEnrollment.popupAssetNameField.fill("#@$#@#")
@@ -425,7 +425,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Asset Type Request Asset Name Field Only Number', async ({ page }) => {
+    test('Asset Type Request Asset Name Field Only Number @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         await assetEnrollment.popupAssetNameField.fill("1111")
@@ -437,7 +437,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('Create Asset Type Cross Icon', async ({ page }) => {
+    test('Create Asset Type Cross Icon @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         await assetEnrollment.clickOnPopUpCrossIcon()
@@ -445,14 +445,14 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Create Asset Type Cancel Button', async ({ page }) => {
+    test('Create Asset Type Cancel Button @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         await assetEnrollment.clickOnPopUpCancelButton()
         await expect(assetEnrollment.createAssetTypePopupHeader).toBeHidden();
     });
 
-    test('HRMIS_35 Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke', async ({ page }) => {
+    test('HRMIS_35 Create Asset Type Created and Verify Created Asset Type Is Displayed @smoke @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         let name = await AssetHelper.generateRandomString(5)
@@ -464,7 +464,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.verifyAssetTypeIsPresentInList(name)
     });
 
-    test('Create Asset Type Verify Sorting @smoke ', async ({ page }) => {
+    test('Create Asset Type Verify Sorting @smoke @reg ', async ({ page }) => {
         test.setTimeout(480000);
         await assetEnrollment.navigateToAssetTypeRequest();
 
@@ -492,7 +492,7 @@ test.describe('Asset Enrollment Page', () => {
     })
 
 
-    test('HRMIS_38 should approve asset type request and verify status is updated to APPROVED @smoke', async ({ page }) => {
+    test('HRMIS_38 should approve asset type request and verify status is updated to APPROVED @smoke @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
         const noRecordLocator = page.locator(".fs-4");
@@ -511,7 +511,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('HRMIS_39 should reject asset type request and verify status is updated to REJECTED @smoke', async ({ page }) => {
+    test('HRMIS_39 should reject asset type request and verify status is updated to REJECTED @smoke @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -526,7 +526,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.verifyAssetTypeStatusByName(rejectedName, "REJECTED");
     });
 
-    test('Asset Type Request Approve Date', async ({ page }) => {
+    test('Asset Type Request Approve Date @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -540,7 +540,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Asset Type Request Reject Date', async ({ page }) => {
+    test('Asset Type Request Reject Date @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -554,7 +554,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Request No Record', async ({ page }) => {
+    test('Approve Asset Type Request No Record @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.approveAssetTypeRequestNoRecord();
     });
@@ -562,7 +562,7 @@ test.describe('Asset Enrollment Page', () => {
 
 
 
-    test('Approve Asset Type Request Verification @smoke', async ({ page }) => {
+    test('Approve Asset Type Request Verification @smoke @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton();
         let name = await AssetHelper.generateRandomString(5);
@@ -577,7 +577,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Request status does not selected', async ({ page }) => {
+    test('Approve Asset Type Request status does not selected @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         await assetEnrollment.clickOnSubmitButton()
@@ -585,7 +585,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toBe(SELECT_ITEM);
     });
 
-    test('Approve Asset Type Request comment field empty', async ({ page }) => {
+    test('Approve Asset Type Request comment field empty @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         await assetEnrollment.actionDropdown.selectOption({ value: 'APPROVED' })
@@ -595,7 +595,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Request Approve selected ', async ({ page }) => {
+    test('Approve Asset Type Request Approve selected @reg ', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         let name = await page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
@@ -607,7 +607,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Request Rejected', async ({ page }) => {
+    test('Approve Asset Type Request Rejected @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         let name = await page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
@@ -618,21 +618,21 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toEqual(`Request for ${name} asset type denied successfully`)
     });
 
-    test('Approve Asset Type Request Cross', async ({ page }) => {
+    test('Approve Asset Type Request Cross @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         await assetEnrollment.clickOnPopUpCrossIcon()
         await expect(page.locator("#staticBackdropLabel")).toBeHidden();
     });
 
-    test('Approve Asset Type Request Cancel', async ({ page }) => {
+    test('Approve Asset Type Request Cancel @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         await assetEnrollment.clickOnPopUpCancelButton()
         await expect(page.locator("#staticBackdropLabel")).toBeHidden();
     });
     // to-do
-    test('Reject Asset Type Request with Comment', async ({ page }) => {
+    test('Reject Asset Type Request with Comment @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         const { option, comment } = await assetEnrollment.AssetTypeRequestCommentApprove('REJECTED');
@@ -641,7 +641,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.verifyAssetStatusByComment(option, comment);
     });
     // to-do
-    test('Approve Asset Type Request with Comment', async ({ page }) => {
+    test('Approve Asset Type Request with Comment @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
 
@@ -653,7 +653,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
 
-    test('Correct Request Date Appear', async ({ page }) => {
+    test('Correct Request Date Appear @reg', async ({ page }) => {
         await assetEnrollment.navigateToAssetTypeRequest();
         await assetEnrollment.clickOnCreateAssetTypeButton()
         let name = await AssetHelper.generateRandomString(5)
@@ -667,7 +667,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
 
-    test('Approve Asset Type Sorting ', async ({ page }) => {
+    test('Approve Asset Type Sorting @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
         const noRecordLocator = page.locator(".fs-4");

@@ -44,7 +44,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
 
     });
 
-    test("Submit Onboarding form @smoke", async ({ page, context, browser }) => {
+    test("Submit Onboarding form @smoke @reg", async ({ page, context, browser }) => {
 
 
         Employee_emailID = await EmployeeOnboarding.generateRandomString() + "@yopmail.com";
@@ -58,11 +58,11 @@ test.describe.serial("'Employee Onboarding module'", () => {
         await EmployeeOnboarding.uploadAndVerifyFile(DummyResume, page, EmployeeOnboarding.submitButton)
         await EmployeeOnboarding.waitforLoaderToDisappear();
         let message = await EmployeeOnboarding.toastMessage();
-        expect(message).toEqual("Onboarding welcome mail sent");
+        expect(message).toEqual("Onboarding welcome mail sent.");
     });
 
 
-    test(" Verify and submit the hire is able to submit onboard form @smoke", async ({ page, context, browser }) => {
+    test(" Verify and submit the hire is able to submit onboard form @smoke @reg", async ({ page, context, browser }) => {
         // 2nd test case
         await page.waitForTimeout(5000);
         const yopmailUrl = `https://yopmail.com/?${Employee_emailID}`;
@@ -85,7 +85,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
 
     });
 
-    test(" verify that new onboarding form appear under IT approval @smoke", async ({ page, context, browser }) => {
+    test(" verify that new onboarding form appear under IT approval @smoke @reg", async ({ page, context, browser }) => {
         Employee_ITApprovalTable = new Employee_ITApproval(page)
         await Employee_ITApprovalTable.navigateToITApproval();
         const lastRecordName = await Employee_ITApprovalTable.fetchLastRecordView('40');
@@ -111,7 +111,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
     })
 
 
-    test("Verify that Profile appear under the HRSetup and Verify that Profile update successfully @smoke", async ({ page, context, browser }) => {
+    test("Verify that Profile appear under the HRSetup and Verify that Profile update successfully @smoke @reg", async ({ page, context, browser }) => {
         test.setTimeout(480000);
         Employe_HRSetupTable = new Employee_HRSetup(page);
         await Employe_HRSetupTable.navigateToHRSetup();
@@ -142,7 +142,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
         expect(HRMISsuccessMessage).toEqual(expectedSuccessMessageHRMISAccountCreated);
     })
 
-    test("Fill Email Setup Request form @smoke", async ({ page }) => {
+    test("Fill Email Setup Request form @smoke @reg", async ({ page }) => {
         const emailSetupPage = new Employee_EmailSetup(page);
 
         await emailSetupPage.navigateToEmailSetupPage();
@@ -171,7 +171,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
     });
 
 
-    test("Export the excel @smoke", async ({ page }) => {
+    test("Export the excel @smoke @reg", async ({ page }) => {
         const emailSetupPage = new Employee_EmailSetup(page);
         utils = new CommonUtils;
         await emailSetupPage.navigateToEmailSetupPage();
@@ -182,7 +182,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
 
     });
 
-    test("View option @smoke", async ({ page }) => {
+    test("View option @smoke @reg", async ({ page }) => {
         approveEmailSetupPage = new Employee_EmailApprove(page);
         utils = new CommonUtils;
         await approveEmailSetupPage.navigateToApproveEmailSetupPage();

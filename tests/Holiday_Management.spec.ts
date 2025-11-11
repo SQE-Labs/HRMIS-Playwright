@@ -24,7 +24,7 @@ test.describe("Holiday Management page new", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('A&L_hldy_mngmnt_1, A&L_hldy_mngmnt_4, Verify that Holiday Management UI elements and Updating the existing holiday @smoke @eti', async ({ page }) => {
+    test('A&L_hldy_mngmnt_1, A&L_hldy_mngmnt_4, Verify that Holiday Management UI elements and Updating the existing holiday @smoke @eti @reg', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
         await page.waitForLoadState();
         // Verify heading
@@ -58,73 +58,7 @@ test.describe("Holiday Management page new", () => {
     });
 
 
-    // Combining Holiday List module in this class
-    test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year @smoke @eti', async ({ page }) => {
-
-        // navigates to Holiday list subtab
-        await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
-        await page.waitForLoadState();
-        await holidayManagement.filterHolidayListByYear('2024', 3, 4)
-    });
-
-    // Combining Out of Office Module in this class
-    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti', async ({ page }) => {
-        // Navigate to Out of Office sub tab
-        await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
-        await page.waitForLoadState('networkidle');
-
-        // Click on date field
-        await holidayManagement.dateFilterO.click();
-
-        // Select date
-        await holidayManagement.selectSingleDate('11-03-2025');
-        await page.waitForLoadState('networkidle');
-
-        // Wait until at least one row appears
-        const firstRow = holidayManagement.rowCount.first();
-        await firstRow.waitFor({ state: 'visible', timeout: 10000 });
-
-        // Get selected date value from input
-        const selectedDate = await holidayManagement.dateFilterO.inputValue();
-        console.log("Selected date:", selectedDate);
-
-        // Get total visible rows
-        let listCount = await holidayManagement.rowCount.count();
-        console.log("Initial visible rows count:", listCount);
-
-        // Scroll the last row into view if needed (safe scroll)
-        if (listCount > 0) {
-            const lastRow = holidayManagement.rowCount.nth(listCount - 1);
-            await expect(lastRow).toBeVisible({ timeout: 10000 });
-            await lastRow.scrollIntoViewIfNeeded();
-            // Give short time for potential lazy load after scroll
-            await holidayManagement.rowCount.last().waitFor({ state: 'visible', timeout: 5000 });
-        }
-
-        // Recount rows after scroll
-        listCount = await holidayManagement.rowCount.count();
-        console.log("Final visible rows count after scroll:", listCount);
-
-        // Ensure leave count is visible
-        await expect(holidayManagement.leaveCount.first()).toBeVisible({ timeout: 10000 });
-
-        // Get leave count text and convert to number
-        const leaveCountText = await holidayManagement.leaveCount.first().textContent();
-        const totalLeaveCount = Number(leaveCountText?.trim());
-        console.log("Leave count value:", totalLeaveCount);
-
-        // Compare actual number of rows with leave count
-        expect(listCount).toBe(totalLeaveCount);
-
-        // Column indices for date range
-        const fromColumnIndex = 4;
-        const toColumnIndex = 5;
-
-        // Verify selected date is present in the date range
-        await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
-    });
-   
-    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti', async ({ page }) => {
+    test('A&L_hldy_mngmnt_10, A&L_hldy_mngmnt_13, Verify the success message after adding and deleting the holidays @smoke @eti @reg', async ({ page }) => {
         const holidayName = 'Diwali';
         const warringMessage = 'Holiday for similar date is already existed';
 
@@ -133,6 +67,7 @@ test.describe("Holiday Management page new", () => {
         await page.waitForLoadState();
 
         await holidayManagement.addHoliday(holidayName, '20-10-2025');
+
         const toastMessage = await page.waitForSelector('.Toastify__toast-body', { state: 'visible', timeout: 5000 });
         const toastText = await toastMessage.textContent();
         if (toastText?.includes(warringMessage)) {
@@ -159,8 +94,8 @@ test.describe("Holiday Management page new", () => {
                 }
             }
             await page.reload();
-             await page.waitForLoadState();
-         
+            await page.waitForLoadState();
+
             // Re-add after deleting duplicates
             await holidayManagement.addHoliday(holidayName, '20-10-2025');
         }
@@ -168,10 +103,10 @@ test.describe("Holiday Management page new", () => {
         // verifying the success message
         const message = await holidayManagement.toastMessage();
         console.log("Success  message: " + message);
-        
+
         expect(message).toContain(constants.HOLIDAY_ADDED_TOAST);
-        await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_ADDED_TOAST}")`, {state: 'hidden', timeout: 7000 });
-      
+        await page.waitForSelector(`.Toastify__toast-body:has-text("${constants.HOLIDAY_ADDED_TOAST}")`, { state: 'hidden', timeout: 7000 });
+
         // Deleting the holiday_________
 
         // Clicking on delete link dynamically based on holiday name
@@ -197,4 +132,107 @@ test.describe("Holiday Management page new", () => {
 
     });
 
+test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', async ({page})=>{
+    // Navigate to Holiday Management
+    await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+    await page.waitForLoadState();
+
+    // clicking on Add Holiday Button
+    await holidayManagement.addHolidayButton.click();
+    await holidayManagement.submitBtn.click()
+    await holidayManagement.verifyTooltipMessage(holidayManagement.holidayField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+    // Verifying the tooltip message for the Date field
+    await holidayManagement.holidayField.fill("New year party");
+    await holidayManagement.submitBtn.click() 
+    await holidayManagement.verifyTooltipMessage(holidayManagement.dateField, constants.PLEASE_FILL_IN_TOOLTOP)
+
+    await await holidayManagement.selectDate('31-12-2031')
+    await holidayManagement.submitBtn.click()
+    await holidayManagement.verifyTooltipMessage(holidayManagement.dateField, constants.DATE_VALUE_CHECK)
+});
+
+
+
+
+    // Combining Holiday List module in this class
+    test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year @smoke @eti @reg', async ({ page }) => {
+
+        // navigates to Holiday list subtab
+        await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
+        await page.waitForLoadState();
+        await holidayManagement.filterHolidayListByYear('2024', 3, 4)
+    });
+
+    // Combining Out of Office Module in this class
+    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti @reg', async ({ page }) => {
+        // Navigate to Out of Office sub tab
+        await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
+        await page.waitForLoadState('networkidle');
+
+        // Click on date field
+        await holidayManagement.dateFilterO.click();
+
+        // Select date
+        await holidayManagement.selectSingleDate('11-05-2025');
+        await page.waitForLoadState('domcontentloaded');
+
+        // Wait until at least one row appears
+        const firstRow = holidayManagement.rowCount.first();
+        await firstRow.waitFor({ state: 'visible', timeout: 10000 });
+
+        // Get selected date value from input
+        const selectedDate = await holidayManagement.dateFilterO.inputValue();
+        console.log("Selected date:", selectedDate);
+
+        // Get total visible rows
+        let listCount = await holidayManagement.rowCount.count();
+        console.log("Initial visible rows count:", listCount);
+
+        // Scroll the last row into view only if needed (safe check)
+        if (listCount > 0) {
+            const lastRow = holidayManagement.rowCount.nth(listCount - 1);
+
+            // Wait until it's attached & visible
+            await lastRow.waitFor({ state: 'attached', timeout: 5000 });
+            await expect(lastRow).toBeVisible({ timeout: 10000 });
+
+            // Check if the last row is already visible in viewport
+            const isRowVisible = await lastRow.isVisible();
+
+            // Only scroll if not visible to avoid DOM detachment errors
+            if (!isRowVisible) {
+                try {
+                    await lastRow.scrollIntoViewIfNeeded();
+                } catch (error) {
+                    console.warn("⚠️ Last row might have re-rendered, retrying...");
+                    const refreshedLastRow = holidayManagement.rowCount.last();
+                    await refreshedLastRow.waitFor({ state: 'attached', timeout: 5000 });
+                    await refreshedLastRow.scrollIntoViewIfNeeded();
+                }
+            }
+
+            // Recount rows after scroll
+            listCount = await holidayManagement.rowCount.count();
+            console.log("Final visible rows count after scroll:", listCount);
+
+            // Ensure leave count is visible
+            await expect(holidayManagement.leaveCount.first()).toBeVisible({ timeout: 10000 });
+
+            // Get leave count text and convert to number
+            const leaveCountText = await holidayManagement.leaveCount.first().textContent();
+            const totalLeaveCount = Number(leaveCountText?.trim());
+            console.log("Leave count value:", totalLeaveCount);
+
+            // Compare actual number of rows with leave count
+            expect(listCount).toBe(totalLeaveCount);
+
+            // Column indices for date range
+            const fromColumnIndex = 4;
+            const toColumnIndex = 5;
+
+            // Verify selected date is present in the date range
+            await holidayManagement.verifyDateInFromTo(selectedDate, fromColumnIndex, toColumnIndex);
+        }
+        });
 });
