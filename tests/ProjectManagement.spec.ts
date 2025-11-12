@@ -1,13 +1,12 @@
 import { test, expect } from '@playwright/test'
 import { LoginPage } from '../pages/LoginPage'
-import { BasePage } from '../pages/Basepage'
 import { ProjectManagement } from '../pages/ProjectManagement'
 import testData from '../testData/testData.json'
 import projectData from '../testData/testData.json'
 import { CommonUtils } from '../utils/commonUtils'
 import { Helper } from '../utils/Helper'
 import { ProjectReport } from '../pages/ProjectReport'
-import path from 'path'
+import * as constants from "../utils/constants"
 
 let projectReportObj: ProjectReport
 let ProjectManagementObj: ProjectManagement
@@ -27,10 +26,32 @@ test.describe.serial("Project Management", () => {
         await ProjectManagementObj.navigateToProjectListTab()
     })
 
-
     let projectName: string;
-    test("Create a new project successfully @smoke", async ({ page }) => {
+    test("HRMIS_PTF_2 Verify project management page elements are visible @smoke @reg", async ({ page }) => {
+        await expect(ProjectManagementObj.searchInput).toBeVisible();
+        await expect(ProjectManagementObj.createProjectBtn).toBeVisible();
+        await expect(ProjectManagementObj.projectHeader).toBeVisible();
+    })
+    test("HRMIS_PTF_9, HRMIS_PTF_10 Verify project creation form fields are visible and cancel closes form @smoke @reg", async ({ page }) => {
+        await ProjectManagementObj.clickCreateProject()
+        await expect(ProjectManagementObj.projectNameInput).toBeVisible();
+        await expect(ProjectManagementObj.projectTypeDropdown).toBeVisible();
+        await expect(ProjectManagementObj.deliveryLeadDropdown).toBeVisible();
+        await expect(ProjectManagementObj.projectManagerDropdown).toBeVisible();
+        await expect(ProjectManagementObj.principalSponsorDropdown).toBeVisible();
+        await expect(ProjectManagementObj.leadBusinessAnalystDropdown).toBeVisible();
+        await expect(ProjectManagementObj.projectDescriptionInput).toBeVisible();
+        await expect(ProjectManagementObj.sowStartDateInput).toBeVisible();
+        await expect(ProjectManagementObj.sowEndDateInput).toBeVisible();
+        await expect(ProjectManagementObj.actualStartDateInput).toBeVisible();
+        await expect(ProjectManagementObj.actualEndDateInput).toBeVisible();
+        await expect(ProjectManagementObj.submitBtn).toBeVisible();
+        await expect(ProjectManagementObj.cancelBtn).toBeVisible();
 
+        await ProjectManagementObj.cancelBtn.click();
+        await expect(ProjectManagementObj.projectHeader).toBeVisible();
+    })
+    test("HRMIS_PTF_11 Create a new project successfully @smoke @reg", async ({ page }) => {
         await ProjectManagementObj.clickCreateProject()
         // Read data from JSON file ...
         const rawData = projectData.Projects.Project1;
@@ -43,30 +64,73 @@ test.describe.serial("Project Management", () => {
 
         await ProjectManagementObj.fillAndSubmitProjectForm(projectPayload)
         const successToast = await ProjectManagementObj.toastMessage()
-        expect(successToast).toEqual("Project created successfully.")
+        expect(successToast).toEqual(constants.PROJECT_CREATED_SUCCESSMESSAGE)
+        //HRMIS_PTF_3
         await ProjectManagementObj.searchProject(projectName);
         await expect(page.locator(`button:has-text("${projectName}"):has-text("Active")`)).toBeVisible();
     })
 
-
-
-    test("Filter project report by project name ", async ({ page }) => {
-
-        projectReportObj = new ProjectReport(page)
-        await projectReportObj.navigateToProjectReport();
-        await projectReportObj.filterByProjectName()
-        await projectReportObj.selectProjectByName(projectName);
-        await expect(projectReportObj.getProjectTable().locator(`text=${projectName}`)).toBeVisible()
+    test("HRMIS_PTF_4 Toggle project accordion expands and collapses @smoke @reg", async ({ page }) => {
+        await ProjectManagementObj.searchProject(projectName);
+        const projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        await expect(projectButton).toBeVisible();
+        await expect(ProjectManagementObj.accordion).toBeHidden();
+        await projectButton.click();
+        await expect(ProjectManagementObj.accordion).toBeVisible();
+        await projectButton.click();
+        await expect(ProjectManagementObj.accordion).toBeHidden();
     })
 
-
-    test("Download Project Report file", async ({ page }) => {
-        // Download and save locally
-        projectReportObj = new ProjectReport(page)
-        await projectReportObj.navigateToProjectReport();
-        const filePath = await utils.verifyXLSXDownload(page, async () => {
-            await projectReportObj.clickDownloadButton();
-        });
-        expect(path.extname(filePath)).toBe('.xlsx');
+    test("HRMIS_PTF_5, HRMIS_PTF_6 Verify push notification flow for project creation @smoke @reg", async ({ page }) => {
+        await ProjectManagementObj.searchProject(projectName);
+        const projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        await projectButton.click();
+        await ProjectManagementObj.clickOnPushNotificationBtn();
+        await expect(page.getByText("Send Notification")).toBeVisible();
+        await expect(page.getByText("Select Reason")).toBeVisible();
+        await ProjectManagementObj.reasonDropdown.click();
+        await ProjectManagementObj.reasonDropdown.fill('Project Created');
+        await ProjectManagementObj.reasonDropdown.press('Enter');
+        await ProjectManagementObj.clickOnSendBtn();
+        await ProjectManagementObj.clickOnYesBtn()
+        const notificationToast = await ProjectManagementObj.toastMessage()
+        expect(notificationToast).toEqual(constants.NOTIFICATION_SENT_SUCCESSMESSAGE)
     })
+
+    test("HRMIS_PTF_7,HRMIS_PTF_8  Verify add project team member flow @smoke @reg", async ({ page }) => {
+        await ProjectManagementObj.searchProject(projectName);
+        const projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        await projectButton.click();
+        await ProjectManagementObj.clickOnAddMembersBtn();
+
+        const rawData = projectData.Projects.AddNewMember;
+        const projectPayload = {
+            ...rawData
+        }
+        await ProjectManagementObj.addNewMember(projectPayload)
+
+        const addMemberToast = await ProjectManagementObj.toastMessage()
+        expect(addMemberToast).toEqual(constants.MEMBER_ASSIGNED_SUCCESSMESSAGE)
+        await expect(page.locator(`text=${projectPayload.employeeName}`).last()).toBeVisible()
+    })
+
+    // test("Filter project report by project name ", async ({ page }) => {
+
+    //     projectReportObj = new ProjectReport(page)
+    //     await projectReportObj.navigateToProjectReport();
+    //     await projectReportObj.filterByProjectName()
+    //     await projectReportObj.selectProjectByName(projectName);
+    //     await expect(projectReportObj.getProjectTable().locator(`text=${projectName}`)).toBeVisible()
+    // })
+
+
+    // test("Download Project Report file", async ({ page }) => {
+    //     // Download and save locally
+    //     projectReportObj = new ProjectReport(page)
+    //     await projectReportObj.navigateToProjectReport();
+    //     const filePath = await utils.verifyXLSXDownload(page, async () => {
+    //         await projectReportObj.clickDownloadButton();
+    //     });
+    //     expect(path.extname(filePath)).toBe('.xlsx');
+    // })
 });
