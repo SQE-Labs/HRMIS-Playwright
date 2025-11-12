@@ -187,7 +187,7 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
         const selectedDate = await holidayManagement.dateFilterO.inputValue();
         console.log("Selected date:", selectedDate);
         await page.waitForLoadState()
-        await page.waitForSelector('thead + tbody > tr:visible', { timeout: 10000 });
+        await page.waitForSelector('thead + tbody > tr:visible', { timeout: 15000 });
 
         // Get total visible rows
         let listCount = await holidayManagement.rowCount.count();

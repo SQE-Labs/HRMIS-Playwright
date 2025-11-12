@@ -84,27 +84,48 @@ test.describe("My Team Leave Page", () => {
     );
   });
 
-test('Verify the Validation Tooltip on Leave Approval popup, @reg, @eti', async  ({page})=>{
-  loginObj = new LoginPage(page);
-  await loginObj.validLogin(
-    testData.SuperUser.UserEmail,
-    testData.SuperUser.UserPassword
-  );
-  const attendanceLeaveTab = new AttendanceLeaveTab(page);
-  await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
+  test('Verify the Validation Tooltip on Leave Approval popup @reg @eti', async ({ page }) => {
+    const loginObj = new LoginPage(page);
+    const attendanceLeaveTab = new AttendanceLeaveTab(page);
 
-  await page.waitForLoadState()
-  await myTeamLeave.viewLink.first().click()
+    // Step 1: Login
+    await loginObj.validLogin(
+      testData.SuperUser.UserEmail,
+      testData.SuperUser.UserPassword
+    );
 
-  // verifying tooltip for the leave action field 
-  await page.waitForLoadState()
-  await myTeamLeave.submitButton.click()
-  await myTeamLeave.verifyTooltipMessage(myTeamLeave.leaveActionField,constants.SELECT_ITEM)
+    // Step 2: Navigate to My Team Leave tab
+    await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
+    await page.waitForLoadState('networkidle');
 
-  // verifying tooltip for the reason field 
-  await myTeamLeave.selectLeaveAction('Reject');
-  await myTeamLeave.submitButton.click()
-  await myTeamLeave.verifyTooltipMessage(myTeamLeave.reasonField, constants.PLEASE_FILL_IN_TOOLTOP)
+    // Step 3: Wait for table and click the first "View" link
+    await myTeamLeave.viewLink.first().waitFor({ state: 'visible', timeout: 10000 });
+    await myTeamLeave.viewLink.first().click();
+    await page.waitForLoadState('domcontentloaded');
 
-})
+    // Step 4: Verify tooltip for Leave Action field
+    await myTeamLeave.submitButton.waitFor({ state: 'visible', timeout: 5000 });
+    await myTeamLeave.submitButton.click();
+
+    await myTeamLeave.leaveActionField.waitFor({ state: 'visible', timeout: 5000 });
+    await myTeamLeave.verifyTooltipMessage(
+      myTeamLeave.leaveActionField,
+      constants.SELECT_ITEM
+    );
+
+    // Step 5: Verify tooltip for Reason field
+    await myTeamLeave.selectLeaveAction('Reject');
+
+    await myTeamLeave.submitButton.waitFor({ state: 'visible', timeout: 5000 });
+    await myTeamLeave.submitButton.click();
+
+    await myTeamLeave.reasonField.waitFor({ state: 'visible', timeout: 5000 });
+    await myTeamLeave.verifyTooltipMessage(
+      myTeamLeave.reasonField,
+      constants.PLEASE_FILL_IN_TOOLTOP
+    );
+
+    console.log('✅ Tooltip validations verified successfully.');
+  });
+
 });

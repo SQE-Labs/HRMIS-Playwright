@@ -85,7 +85,7 @@ test.describe("Apply leaves page", () => {
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
 
-  test('Verify the validation tooltip on Apply Leave page @eti, @reg', async ({page})=>{
+  test('HRMIS_A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Apply Leave page @eti, @reg', async ({page})=>{
     const loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.Employee.UserEmail,
@@ -102,7 +102,7 @@ test.describe("Apply leaves page", () => {
     await applyLeave.verifyTooltipMessage(applyLeave.LeaveTypeTextBox, constants.SELECT_ITEM)
 
     // verify the tooltip for the Date Range Field 
-    await applyLeave.LeaveTypeTextBox.selectOption('PrivilegeLeave');
+    await applyLeave.LeaveTypeTextBox.selectOption('Work From Home');
     await applyLeave.getSubmitButton()
     await page.waitForLoadState()
     await applyLeave.verifyTooltipMessage(applyLeave.DateRange, constants.PLEASE_FILL_IN_TOOLTOP)

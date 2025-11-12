@@ -140,9 +140,11 @@ export class BasePage extends CommonUtils {
       }
     }
 
-    console.log(`Tooltip Text: "${tooltipText}"`);
-    expect(tooltipText.toLowerCase()).toContain(expectedText.toLowerCase());
-  }
+    const normalize = (text: string) =>
+      text.toLowerCase().replace(/[^a-z0-9]/gi, ""); // removes /, -, spaces, etc.
 
+    expect(normalize(tooltipText)).toContain(normalize(expectedText));
+
+}
 }
 

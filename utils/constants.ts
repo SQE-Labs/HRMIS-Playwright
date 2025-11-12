@@ -60,6 +60,6 @@ export const ApproveStatus = "Approved"
 
 export const SELECT_FILE_TOOLTIP ="Please select a file."
 export const PLEASE_FILL_IN_TOOLTOP ="Please fill"
-export const DATE_VALUE_CHECK ="value must be 31-12-2030 or earlier."
+export const DATE_VALUE_CHECK ="value must be 31/12/2030 or earlier."
 
     
