@@ -7,13 +7,15 @@ import { CommonUtils } from '../utils/commonUtils'
 import { Helper } from '../utils/Helper'
 import { ProjectReport } from '../pages/ProjectReport'
 import * as constants from "../utils/constants"
+import path from 'path'
 
 let projectReportObj: ProjectReport
 let ProjectManagementObj: ProjectManagement
 let utils: CommonUtils
 let helper: Helper
 
-test.describe.serial("Project Management", () => {
+let projectName: string;
+test.describe.serial("Project TeamFlow Project List", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword)
@@ -25,8 +27,6 @@ test.describe.serial("Project Management", () => {
         await ProjectManagementObj.expandTab()
         await ProjectManagementObj.navigateToProjectListTab()
     })
-
-    let projectName: string;
     test("HRMIS_PTF_2 Verify project management page elements are visible @smoke @reg", async ({ page }) => {
         await expect(ProjectManagementObj.searchInput).toBeVisible();
         await expect(ProjectManagementObj.createProjectBtn).toBeVisible();
@@ -114,23 +114,17 @@ test.describe.serial("Project Management", () => {
         await expect(page.locator(`text=${projectPayload.employeeName}`).last()).toBeVisible()
     })
 
-    // test("Filter project report by project name ", async ({ page }) => {
-
-    //     projectReportObj = new ProjectReport(page)
-    //     await projectReportObj.navigateToProjectReport();
-    //     await projectReportObj.filterByProjectName()
-    //     await projectReportObj.selectProjectByName(projectName);
-    //     await expect(projectReportObj.getProjectTable().locator(`text=${projectName}`)).toBeVisible()
-    // })
-
-
-    // test("Download Project Report file", async ({ page }) => {
-    //     // Download and save locally
-    //     projectReportObj = new ProjectReport(page)
-    //     await projectReportObj.navigateToProjectReport();
-    //     const filePath = await utils.verifyXLSXDownload(page, async () => {
-    //         await projectReportObj.clickDownloadButton();
-    //     });
-    //     expect(path.extname(filePath)).toBe('.xlsx');
-    // })
+    test("HRMIS_PTF_14,HRMIS_PTF_15 Filter project report by project name @smoke @reg", async ({ page }) => {
+        projectReportObj = new ProjectReport(page)
+        await projectReportObj.navigateToProjectReport();
+        await expect(projectReportObj.filterByDropdown).toBeVisible();
+        await expect(projectReportObj.projectNameDropdown).toBeVisible();
+        await expect(projectReportObj.downloadButton).toBeVisible();
+        await projectReportObj.filterByProjectName()
+        await projectReportObj.selectProjectByName(projectName);
+        const filePath = await utils.verifyXLSXDownload(page, async () => {
+            await projectReportObj.clickDownloadButton();
+        });
+        expect(path.extname(filePath)).toBe('.xlsx');
+    })
 });
