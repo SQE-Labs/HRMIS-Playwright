@@ -157,7 +157,7 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
 
 
     // Combining Holiday List module in this class
-    test('A&L_hldy_list_1, A&L_hldy_list_2, Verify Holiday List page opens and shows results for selected year @smoke @eti @reg', async ({ page }) => {
+    test('HRMIS_A&L_105, A&L_106, Verify Holiday List page opens and shows results for selected year @smoke @eti @reg', async ({ page }) => {
 
         // navigates to Holiday list subtab
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
@@ -166,7 +166,7 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
     });
 
     // Combining Out of Office Module in this class
-    test('A&L_Out_of_offc_1, Verify that Out Of Office page @smoke @eti @reg', async ({ page }) => {
+    test('HRMIS_A&L_108,A&L_109, Verify that Out Of Office page @smoke @eti @reg', async ({ page }) => {
         // Navigate to Out of Office sub tab
         await attendanceLeaveTab.navigateToAttendanceTab("Out Of Office");
         await page.waitForLoadState('networkidle');

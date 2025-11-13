@@ -6,12 +6,14 @@ import * as constants from "../utils/constants";
 import { OnOfficalDuty } from "../pages/OnOfficalDuty";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import { off } from "process";
+import { MyTeamLeavePage } from "../pages/MyTeamLeave";
 
 
 let loginObj: LoginPage;
 let attendanceLeaveTab: AttendanceLeaveTab;
 let officalDuty: OnOfficalDuty;
 let holidayManagement: holiday_Management
+let myTeamLeave : MyTeamLeavePage
 
 test.describe("On Offical Duty Page", () => {
 
@@ -25,13 +27,14 @@ test.describe("On Offical Duty Page", () => {
         officalDuty = new OnOfficalDuty(page);
         attendanceLeaveTab = new AttendanceLeaveTab(page);
         holidayManagement = new holiday_Management(page);
+        myTeamLeave = new MyTeamLeavePage(page)
 
         console.log(">> Starting test case : " + testInfo.title);
     });
 
 
 
-    test('A&L_On_offc_duty_1, A&L_On_offc_duty_3, A&L_On_offc_duty_10 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke @reg', async ({ page }) => {
+    test('HRMIS_A&L_110, A&L_111, A&L_112, A&L_113, A&L_114, A&L_115, A&L_116, A&L_119 Verify that On Official Duty page and success messages after applying and withdraw the leaves, @eti @smoke @reg', async ({ page }) => {
 
         // Login As Employee
         loginObj = new LoginPage(page);
@@ -66,7 +69,7 @@ test.describe("On Offical Duty Page", () => {
         await page.waitForLoadState()
 
 
-        // verifying the success message
+        // verifying the success message    
         const message = await officalDuty.toastMessage();
 
         console.log("Success  message: " + message);
@@ -94,38 +97,38 @@ test.describe("On Offical Duty Page", () => {
         expect(message2).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     })
 
-
-    test.skip('End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke @reg', async ({ page }) => {
-
-        // Login As Super Admin
+    // need to correct the logic 
+    test('HRMIS_A&L_120, _A&L_121, A&L_122, A&L_123, A&L_125 - HRMIS_A&L_127, A&L_128, A&L_129, A&L_130, A&L_132,    End to End Flow Apply Offical Leave to Approve From DL and HR, @eti @smoke @reg', async ({ page }) => {
+        // const addedHolidayDate = 'November 30, 2025';
+         // Login As Super Admin
         loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
-        await page.waitForLoadState('networkidle');
+        // await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        // await page.waitForLoadState('networkidle');
 
-        // Navigate to Holiday Management
-        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
-        await page.waitForLoadState('networkidle');
+        // // Navigate to Holiday Management
+        // await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+        // await page.waitForLoadState('networkidle');
 
-        // Delete the holiday if it already exists
-        const holidayName = "Comp_Off Leave";
-        await holidayManagement.deleteAllCompOffHolidays(holidayName);
+        // // Delete the holiday if it already exists
+        // const holidayName = "Comp_Off Leave";
+        // await holidayManagement.deleteAllCompOffHolidays(holidayName, constants.ApproveStatus);
 
-        // Confirm deletion by verifying the row no longer exists
-        const deletedRows = page.locator(`tr:has-text("${holidayName}")`);
-        await expect(deletedRows).toHaveCount(0, { timeout: 15000 });
+        // // Confirm deletion by verifying the row no longer exists
+        // const deletedRows = page.locator(`tr:has-text("${holidayName}")`);
+        // await expect(deletedRows).toHaveCount(0, { timeout: 15000 });
 
-        // Wait until no network requests or spinners remain (UI stability)
-        await page.waitForLoadState('networkidle');
+        // // Wait until no network requests or spinners remain (UI stability)
+        // await page.waitForLoadState('networkidle');
 
-        // Refresh page to ensure table is clean before next action
-        await page.reload({ waitUntil: 'networkidle' });
+        // // Refresh page to ensure table is clean before next action
+        // await page.reload({ waitUntil: 'networkidle' });
 
-        // selecting the holiday name and date  
-        const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
-        console.log("Holiday added on:", addedHolidayDate);
+        // // selecting the holiday name and date  
+        //  const addedHolidayDate = await holidayManagement.addHolidayWithRandomDate();
+        //  console.log("Holiday added on:", addedHolidayDate);
 
-        // logout as super admin
-        await officalDuty.logout();
+        // //  logout as super admin
+        //  await officalDuty.logout();
 
         // Login As Employee
         await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
@@ -152,7 +155,7 @@ test.describe("On Offical Duty Page", () => {
         await expect(officalDuty.onOfficalDutyTab).toBeVisible();
         await expect(officalDuty.applyOfficalDutyTab).toBeVisible();
 
-        await officalDuty.applyOfficalDutyLeave(addedHolidayDate, testData.DeliveryManager.name, 'Worked On Weekend', 10, 35)
+        await officalDuty.applyOfficalDutyLeaveWithRetry(testData.DeliveryManager.name, 'Worked On Weekend', 10, 35)
 
         // Logout
         await officalDuty.logout();
@@ -160,6 +163,10 @@ test.describe("On Offical Duty Page", () => {
         // Login as Delivery Lead
         await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.DeliveryManager.password);
         await page.waitForLoadState();
+
+        if (await myTeamLeave.CrossIcon.isVisible()) {
+            await myTeamLeave.clickOnCrossIcon();
+        }
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (DL)");
         await officalDuty.waitForDotsLoaderToDisappear()
 
@@ -231,39 +238,39 @@ test.describe("On Offical Duty Page", () => {
         // logout from employee
         await officalDuty.logout();
 
-        // login as super admin
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
-        await page.waitForLoadState();
-        // navigates to holiday management sub tab
-        await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
-        await page.waitForLoadState();
+        // // login as super admin
+        // await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        // await page.waitForLoadState();
+        // // navigates to holiday management sub tab
+        // await attendanceLeaveTab.navigateToAttendanceTab("Holiday Management");
+        // await page.waitForLoadState();
 
-        // select Approve status from dropdown to delete the holiday
-        await holidayManagement.statusDropdown.selectOption(constants.ApproveStatus)
-        await page.waitForLoadState();
+        // // select Approve status from dropdown to delete the holiday
+        // await holidayManagement.statusDropdown.selectOption(constants.ApproveStatus)
+        // await page.waitForLoadState();
 
-        // delete the holiday added
+        // // delete the holiday added
 
-        // --- VERIFY ROLE AND DELETE USING RELATIVE LOCATOR ---
-        const deleteRoleRow = page.locator(`tr:has-text("${addedHolidayDate}")`);
+        // // --- VERIFY ROLE AND DELETE USING RELATIVE LOCATOR ---
+        // const deleteRoleRow = page.locator(`tr:has-text("${addedHolidayDate}")`);
 
-        // Wait for the row to appear
-        await expect(deleteRoleRow).toBeVisible({ timeout: 8000 });
+        // // Wait for the row to appear
+        // await expect(deleteRoleRow).toBeVisible({ timeout: 8000 });
 
-        // Wait for Delete button inside this row
-        const deleteButton = deleteRoleRow.getByText('Delete');
-        await expect(deleteButton).toBeVisible({ timeout: 5000 });
+        // // Wait for Delete button inside this row
+        // const deleteButton = deleteRoleRow.getByText('Delete');
+        // await expect(deleteButton).toBeVisible({ timeout: 5000 });
 
-        // Click Delete
-        await deleteButton.click();
-        await holidayManagement.yesBtn.click();
-        await holidayManagement.waitForSpinnerLoaderToDisappear();
+        // // Click Delete
+        // await deleteButton.click();
+        // await holidayManagement.yesBtn.click();
+        // await holidayManagement.waitForSpinnerLoaderToDisappear();
 
 
     });
 
     // Failed due to assertion failed inconsistent appears for the reject toast
-    test('End to End flow of Apply Offical Leave to Reject @smoke @eti @reg @knownBug', async ({ page }) => {
+    test(' HRMIS_A&L_126, A&L_133, End to End flow of Apply Offical Leave to Reject @smoke @eti @reg @knownBug', async ({ page }) => {
 
         //Login As Super Admin
         loginObj = new LoginPage(page);

@@ -50,6 +50,7 @@ export const HOLIDAY_REMOVE_TOAST ="Holiday removed successfully"
 export const OFFICAL_DUTY_APPLY_TOAST ="On Official Duty request sent for approval"
 export const OFFICAL_DUTY_SUCCESS_TOAST ="On Official Duty request Approved"
 export const OFFICAL_DUTY_REJECT_TOAST ="On Official Duty request Rejected"
+export const DUPLICATE_TOAST ="Duplicate leave request !";
 
 
 export const ROLE_ADD_SUCCESSMESSAGE ="Successfully created."

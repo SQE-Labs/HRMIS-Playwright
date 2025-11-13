@@ -19,7 +19,7 @@ test.describe("Apply leaves page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("A&L_2, A&L_3, A&L_11, A&L_16, A&L_17, A&L_21, ApplyLeave and Withdraw Leave - End to End flow @smoke @eti @reg", async ({
+  test(" HRMIS_A&L_1, A&L_2, A&L_3, A&L_11, A&L_16, A&L_17, A&L_18 A&L_21, ApplyLeave and Withdraw Leave - End to End flow @smoke @eti @reg", async ({
     page,
   }) => {
     const loginObj = new LoginPage(page);
@@ -52,7 +52,7 @@ test.describe("Apply leaves page", () => {
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
 
-  test("A&L_12, A&L_13, A&L_15, Verify that user is able to apply leave with 0 privilege balance @smoke @eti @reg", async ({
+  test("A&L_12, A&L_13, A&L_14 A&L_15, Verify that user is able to apply leave with 0 privilege balance @smoke @eti @reg", async ({
     page,
   }) => {
     const loginObj = new LoginPage(page);
@@ -88,7 +88,7 @@ test.describe("Apply leaves page", () => {
   test('HRMIS_A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Apply Leave page @eti, @reg', async ({page})=>{
     const loginObj = new LoginPage(page);
     await loginObj.validLogin(
-      testData.Employee.UserEmail,
+      testData.Employee.UserEmail,  
       testData.SuperUser.UserPassword
     );
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");

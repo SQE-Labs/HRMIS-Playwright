@@ -17,7 +17,7 @@ test.describe("My Team Leave Page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test("A&L_MY_Team_1, A&L_MY_Team_2 Validate My Team Leave Page UI Elements and Filter the records @smoke @eti @reg", async ({ page,}) => {
+  test("HRMIS_A&L_22,A&L_23,   Validate My Team Leave Page UI Elements and Filter the records @smoke @eti @reg", async ({ page,}) => {
 
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
@@ -51,7 +51,7 @@ test.describe("My Team Leave Page", () => {
   });
 
   // Already covered in the HR aprroval flow flow
-  test.skip(" A&L_MY_Team_5, A&L_MY_Team_9 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti @reg", async ({page }) => {
+  test.skip(" HRMIS_A&L_26, A&L_28, _A&L_29, A&L_30 Verify 'Leave Approval' popup opens on clicking 'View' and success message appears after submitting with all fields filled @smoke @eti @reg", async ({page }) => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     const applyLeave = new ApplyLeaves(page);
     loginObj = new LoginPage(page);
@@ -84,7 +84,7 @@ test.describe("My Team Leave Page", () => {
     );
   });
 
-  test('Verify the Validation Tooltip on Leave Approval popup @reg @eti', async ({ page }) => {
+  test('HRMIS_A&L_27,  Verify the Validation Tooltip on Leave Approval popup @reg @eti', async ({ page }) => {
     const loginObj = new LoginPage(page);
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
 
@@ -125,7 +125,7 @@ test.describe("My Team Leave Page", () => {
       constants.PLEASE_FILL_IN_TOOLTOP
     );
 
-    console.log('✅ Tooltip validations verified successfully.');
+    console.log('Tooltip validations verified successfully.');
   });
 
 });

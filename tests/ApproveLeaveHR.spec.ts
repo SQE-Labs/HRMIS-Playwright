@@ -28,7 +28,7 @@ test.describe("Approve Leave HR module ", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
   // Covered MyTeam Leave Approve flow in this test case.
-  test("A&L_MY_Team_5, A&L_MY_Team_9, A&L_Approve(HR)_13 Approve Leave HR @smoke @reg @eti", async ({ page, }) => {
+  test("HRMIS_A&L_31,A&L_37,  A&L_39, A&L_40, A&L_43 Approve Leave HR @smoke @reg @eti", async ({ page, }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.Employee.UserEmail,
@@ -50,8 +50,9 @@ test.describe("Approve Leave HR module ", () => {
       testData["DeliveryManager"].UserEmail,
       testData.DeliveryManager.password
     );
-
-    // await myTeamLeave.clickOnCrossIcon();
+    if(await myTeamLeave.CrossIcon.isVisible()){
+    await myTeamLeave.clickOnCrossIcon();
+    }
     await myTeamLeave.waitforLoaderToDisappear();
 
     // Navigate to My Team Leave tab and apply for approval from delivery manager
@@ -83,7 +84,7 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("A&L_Approve(HR)_2, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti @reg", async ({ page }) => {
+  test("HRMIS_A&L_32, HRMIS_A&L_34, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti @reg", async ({ page }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,

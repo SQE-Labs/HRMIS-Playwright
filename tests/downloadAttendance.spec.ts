@@ -20,14 +20,14 @@ test.describe("Download Attendance page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test(" A&L_Download_Attndnc_1,Verify UI labels on Download Attendance page @smoke @eti @reg", async ({page,}) => {
+  test(" HRMIS_A&L_54, Verify UI labels on Download Attendance page @smoke @eti @reg", async ({page,}) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.waitForDotsLoaderToDisappear();
     await downloadAttendance.verifyUILabels();
   });
 
 
-  test('A&L_Download_Attndnc_5: Verify that an Excel file gets downloaded @smoke @eti @reg', async ({ page }) => {
+  test(' A&L_55, A&L_58 Verify that an Excel file gets downloaded @smoke @eti @reg', async ({ page }) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.selectMonth("April");
     await downloadAttendance.selectEmployeeDropdown.click();
@@ -39,7 +39,7 @@ test.describe("Download Attendance page", () => {
     });
   });
 
-  test ('Verify the Reset button functionality @reg, @eti', async ({page})=>{
+  test('HRMIS_A&L_57, Verify the Reset button functionality @reg, @eti', async ({page})=>{
     await attendanceLeaveTab.navigateToAttendanceTab("Download Attendance");
     await downloadAttendance.selectMonth("April");
     await downloadAttendance.selectEmployeeDropdown.click();
