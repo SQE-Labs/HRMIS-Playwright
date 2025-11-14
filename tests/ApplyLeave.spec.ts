@@ -37,13 +37,30 @@ test.describe("Apply leaves page", () => {
 
     await applyLeave.SuccessMessage.waitFor({ state: "hidden", timeout: 5000 });
 
+    // Clicking on the WithDraw link
     await applyLeave.getWithDrawLink();
+    await page.waitForLoadState()
+    
+    // clicking on cancel button
+    await applyLeave.withDrawCancelBtn.click();
+
+    //reopen the withdraw link
+   await applyLeave.getWithDrawLink();
 
     await expect(applyLeave.WithdrawPopupTitle).toBeVisible();
+
     // verify the blank tooltip message
     await applyLeave.getSubmitButton()
     await applyLeave.verifyTooltipMessage(applyLeave.WithdrawReasonField,constants.PLEASE_FILL_IN_TOOLTOP);
 
+    // verify the entering less than 3 character
+    await applyLeave.fillWithDrawReason("Ca");
+    await applyLeave.getSubmitButton()
+    const lengthError = await applyLeave.reasonLengthValdiation.textContent();
+    expect(lengthError?.trim()).toBe(constants.REASON_LENGTH_VALIDATION);
+    await page.waitForLoadState()
+    
+    // Entering valid reason 
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
@@ -85,7 +102,7 @@ test.describe("Apply leaves page", () => {
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
 
-  test('HRMIS_A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Apply Leave page @eti, @reg', async ({page})=>{
+  test('HRMIS_ A&L_4, A&L_5, A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Apply Leave page @eti, @reg', async ({page})=>{
     const loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.Employee.UserEmail,  
@@ -95,6 +112,14 @@ test.describe("Apply leaves page", () => {
     await applyLeave.waitForDotsLoaderToDisappear();
 
     await applyLeave.getApplyLeaveBtn();
+    await page.waitForLoadState()
+
+    // verify the cross icon functionality
+    await applyLeave.applyCrossIcon.click();
+
+    // again click on get apply popup
+    await applyLeave.getApplyLeaveBtn();
+
     await page.waitForLoadState()
 
     // verify the tooltip for the Type of Leave field
@@ -112,5 +137,11 @@ test.describe("Apply leaves page", () => {
     await applyLeave.selectDateRange(attempt); }
     await applyLeave.getSubmitButton()
     await applyLeave.verifyTooltipMessage(applyLeave.ReasonOfLeaveBox,constants.PLEASE_FILL_IN_TOOLTOP) 
+
+    await applyLeave.waitForDotsLoaderToDisappear()
+
+    // verify the cancel button
+    await applyLeave.cancelBtn.click()
+
 });
 });
