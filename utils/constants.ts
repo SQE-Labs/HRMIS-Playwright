@@ -65,4 +65,5 @@ export const DATE_VALUE_CHECK = "value must be 31-12-2030 or earlier."
 export const PROJECT_CREATED_SUCCESSMESSAGE = "Project created successfully."
 export const MEMBER_ASSIGNED_SUCCESSMESSAGE = "Member assigned successfully."
 export const NOTIFICATION_SENT_SUCCESSMESSAGE = "Mail sent successfully."
+export const SHADOW_MEMBER_ASSIGNED_SUCCESSMESSAGE = "Shadow member created successfully.."
 

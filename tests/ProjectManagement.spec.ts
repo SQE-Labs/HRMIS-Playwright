@@ -8,13 +8,19 @@ import { Helper } from '../utils/Helper'
 import { ProjectReport } from '../pages/ProjectReport'
 import * as constants from "../utils/constants"
 import path from 'path'
+import { MIMEType } from 'util'
+import { MyProjects } from '../pages/MyProjects'
+import { ShadowResources } from '../pages/ShadowResources'
 
 let projectReportObj: ProjectReport
 let ProjectManagementObj: ProjectManagement
+let myProjectsPage: MyProjects
+let ShadowResourcesPage: ShadowResources
 let utils: CommonUtils
 let helper: Helper
 
 let projectName: string;
+let projectButton: any;
 test.describe.serial("Project TeamFlow Project List", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
@@ -83,7 +89,7 @@ test.describe.serial("Project TeamFlow Project List", () => {
 
     test("HRMIS_PTF_5, HRMIS_PTF_6 Verify push notification flow for project creation @smoke @reg", async ({ page }) => {
         await ProjectManagementObj.searchProject(projectName);
-        const projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
         await projectButton.click();
         await ProjectManagementObj.clickOnPushNotificationBtn();
         await expect(page.getByText("Send Notification")).toBeVisible();
@@ -99,7 +105,7 @@ test.describe.serial("Project TeamFlow Project List", () => {
 
     test("HRMIS_PTF_7,HRMIS_PTF_8  Verify add project team member flow @smoke @reg", async ({ page }) => {
         await ProjectManagementObj.searchProject(projectName);
-        const projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
         await projectButton.click();
         await ProjectManagementObj.clickOnAddMembersBtn();
 
@@ -126,5 +132,46 @@ test.describe.serial("Project TeamFlow Project List", () => {
             await projectReportObj.clickDownloadButton();
         });
         expect(path.extname(filePath)).toBe('.xlsx');
+    })
+
+    test("HRMIS_PTF_20,HRMIS_PTF_21,HRMIS_PTF_22,HRMIS_PTF_23,HRMIS_PTF_24 Verify Shadow Resources page elements are visible @smoke @reg", async ({ page }) => {
+        ShadowResourcesPage = new ShadowResources(page)
+        await ShadowResourcesPage.navigateToShadowResources();
+        await expect(ShadowResourcesPage.shadowResourcesHeader).toBeVisible();
+        await expect(ShadowResourcesPage.searchInput).toBeVisible();
+        const countBefore = await ShadowResourcesPage.resourcesList.count();
+        console.log(`Total shadow resources before search: ${countBefore}`);
+        expect(countBefore).toEqual(await ShadowResourcesPage.getTotalResources());
+        // Search and verify the project
+        await ShadowResourcesPage.searchResource(projectName)
+        await ShadowResourcesPage.verifyResourceInList(projectName)
+        //Add shadow member to the project
+        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        await projectButton.click();
+        await myProjectsPage.waitforLoaderToDisappear()
+        await expect(page.getByText("Shadow Members")).toBeVisible();
+        const rawData = projectData.Projects.AddShadowMember;
+        const projectPayload = {
+            ...rawData
+        }
+        await ShadowResourcesPage.addShadowMember(projectPayload)
+
+        const addMemberToast = await ProjectManagementObj.toastMessage()
+        expect(addMemberToast).toEqual(constants.MEMBER_ASSIGNED_SUCCESSMESSAGE)
+        await expect(page.locator(`text=${projectPayload.shadowName}`)).toBeVisible()
+    })
+
+    test("HRMIS_PTF_16,HRMIS_PTF_17 Verify project appears in My Projects page @smoke @reg", async ({ page }) => {
+        myProjectsPage = new MyProjects(page)
+        await myProjectsPage.navigateToMyProjects();
+        await expect(myProjectsPage.projectHeader).toBeVisible();
+        await expect(myProjectsPage.searchInput).toBeVisible();
+        const countBefore = await myProjectsPage.projectsList.count();
+        console.log(`Total projects before search: ${countBefore}`);
+        expect(countBefore).toEqual(await myProjectsPage.getTotalProjectsAssigned());
+        // Search and verify the project
+        await myProjectsPage.searchProject(projectName)
+        await myProjectsPage.verifyProjectInList(projectName)
+
     })
 });
