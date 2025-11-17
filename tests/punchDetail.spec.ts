@@ -23,7 +23,7 @@ test.describe("Apply leaves page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test(" A&L_Punch_1, Verify Punch Details page @smoke @eti @reg", async ({page,}) => {
+  test(" HRMIS_A&L_44, A&L_45,  Verify Punch Details page @smoke @eti @reg", async ({page,}) => {
     await attendanceLeaveTab.navigateToAttendanceTab("Punch Details");
     await punchDetail.verifyPunchDetailsPage();
     // Select Employee from dropdown
