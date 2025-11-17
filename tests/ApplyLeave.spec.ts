@@ -19,7 +19,7 @@ test.describe("Apply leaves page", () => {
     console.log(">> Starting test case : " + testInfo.title);
   });
 
-  test(" HRMIS_A&L_1, A&L_2, A&L_3, A&L_11, A&L_16, A&L_17, A&L_18 A&L_21, ApplyLeave and Withdraw Leave - End to End flow @smoke @eti @reg", async ({
+  test(" HRMIS_A&L_1, A&L_2, A&L_3, A&L_11, A&L_16, A&L_17, A&L_18, A&L_19, A&L_20 A&L_21, ApplyLeave and Withdraw Leave - End to End flow @smoke @eti @reg", async ({
     page,
   }) => {
     const loginObj = new LoginPage(page);
