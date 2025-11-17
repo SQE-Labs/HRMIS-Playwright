@@ -145,12 +145,14 @@ export class ProjectManagement extends BasePage {
         await expect(this.page.getByText("Add New Member")).toBeVisible();
         await expect(this.page.locator('.css-olqui2-singleValue:has-text("Active")')).toBeHidden();
         await this.employeeNameDropdown.click();
+        await this.page.waitForTimeout(2000);
         await this.employeeNameDropdown.fill(memberData.employeeName);
-        await this.employeeNameDropdown.press('Enter');
+        await this.page.getByText(memberData.employeeName).last().click();
         // Select Designation
         await this.designationDropdown.click();
+        await this.page.waitForTimeout(2000);
         await this.designationDropdown.fill(memberData.designation);
-        await this.designationDropdown.press('Enter');
+        await this.page.getByText(memberData.designation).last().click();
         // Fill Joining Date
         await this.joiningDateInput.fill(memberData.joiningDate);
         await expect(this.page.locator('.css-olqui2-singleValue:has-text("Active")')).toBeVisible();

@@ -148,7 +148,7 @@ test.describe.serial("Project TeamFlow Project List", () => {
         //Add shadow member to the project
         projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
         await projectButton.click();
-        await myProjectsPage.waitforLoaderToDisappear()
+        await page.waitForTimeout(2000);
         await expect(page.getByText("Shadow Members")).toBeVisible();
         const rawData = projectData.Projects.AddShadowMember;
         const projectPayload = {
