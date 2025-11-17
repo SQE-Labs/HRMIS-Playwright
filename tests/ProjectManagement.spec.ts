@@ -21,6 +21,7 @@ let helper: Helper
 
 let projectName: string;
 let projectButton: any;
+
 test.describe.serial("Project TeamFlow Project List", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
@@ -112,7 +113,7 @@ test.describe.serial("Project TeamFlow Project List", () => {
         const rawData = projectData.Projects.AddNewMember;
         const projectPayload = {
             ...rawData
-        }
+        }    
         await ProjectManagementObj.addNewMember(projectPayload)
 
         const addMemberToast = await ProjectManagementObj.toastMessage()
@@ -157,11 +158,11 @@ test.describe.serial("Project TeamFlow Project List", () => {
         await ShadowResourcesPage.addShadowMember(projectPayload)
 
         const addMemberToast = await ProjectManagementObj.toastMessage()
-        expect(addMemberToast).toEqual(constants.MEMBER_ASSIGNED_SUCCESSMESSAGE)
+        expect(addMemberToast).toEqual(constants.SHADOW_MEMBER_ASSIGNED_SUCCESSMESSAGE)
         await expect(page.locator(`text=${projectPayload.shadowName}`)).toBeVisible()
     })
 
-    test("HRMIS_PTF_16,HRMIS_PTF_17 Verify project appears in My Projects page @smoke @reg", async ({ page }) => {
+    test("HRMIS_PTF_16,HRMIS_PTF_17,HRMIS_PTF_18,HRMIS_PTF_19 Verify project appears in My Projects page @smoke @reg", async ({ page }) => {
         myProjectsPage = new MyProjects(page)
         await myProjectsPage.navigateToMyProjects();
         await expect(myProjectsPage.projectHeader).toBeVisible();
@@ -172,6 +173,19 @@ test.describe.serial("Project TeamFlow Project List", () => {
         // Search and verify the project
         await myProjectsPage.searchProject(projectName)
         await myProjectsPage.verifyProjectInList(projectName)
-
+        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
+        await projectButton.click();
+        await page.waitForTimeout(2000);
+        //Verify team members
+        await expect(page.getByText("Team Members").first()).toBeVisible();
+        await myProjectsPage.navigateToTeammembers(projectName);
+        await expect(page.locator(`text=${projectData.Projects.AddNewMember.employeeName}`).last()).toBeVisible()
+        await expect(page.locator(`text=${projectData.Projects.AddNewMember.designation}`)).toBeVisible()
+        //Verify shadow team members
+        await expect(page.getByText("Shadow Team Members")).toBeVisible();
+        await myProjectsPage.navigateToShadowTeammembers(projectName);
+        await expect(page.locator(`text=${projectData.Projects.AddShadowMember.shadowName}`)).toBeVisible()
+        await expect(page.locator(`text=${projectData.Projects.AddShadowMember.mainEmployeeName}`).last()).toBeVisible()
+        await expect(page.locator(`text=${projectData.Projects.AddShadowMember.designation}`)).toBeVisible()
     })
 });

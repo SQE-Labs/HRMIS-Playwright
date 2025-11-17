@@ -47,7 +47,7 @@ export class ShadowResources extends BasePage {
     async getTotalResources(): Promise<number> {
         const totalText = await this.totalResources.textContent();
         return parseInt(totalText || '0', 10);
-    }       
+    }
     async addShadowMember(memberData: {
         shadowName: string,
         mainEmployeeName: string,
@@ -57,6 +57,7 @@ export class ShadowResources extends BasePage {
     }): Promise<void> {
         // Select Employee Name
         await expect(this.page.getByText("Add Member")).toBeVisible();
+        await this.page.getByText("Add Member").click();
         await expect(this.page.locator('.css-olqui2-singleValue:has-text("Active")')).toBeHidden();
         await this.shadowEmployeeNameDropdown.fill(memberData.shadowName);
         await this.shadowEmployeeNameDropdown.press('Enter');

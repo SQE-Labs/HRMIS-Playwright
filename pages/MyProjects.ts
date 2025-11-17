@@ -40,6 +40,14 @@ export class MyProjects extends BasePage {
         const totalText = await this.totalProjectAssign.textContent();
         return parseInt(totalText || '0', 10);
     }
+    async navigateToTeammembers(projectName : string): Promise<void> {
+        await this.page.locator(`//h2//span[text()='${projectName}']/../../..//div//button[text()='Team Members']`).click();
+        await this.waitforLoaderToDisappear();
+    }
+    async navigateToShadowTeammembers(projectName: string): Promise<void> {
+        await this.page.locator(`//h2//span[text()='${projectName}']/../../..//div//button[text()='Shadow Team Members']`).click();
+        await this.waitforLoaderToDisappear();
+    }
     
 
 
