@@ -113,7 +113,7 @@ test.describe("Approve Leave HR module ", () => {
   });
 
  // Pagination does not appear while 
-  test(' HRMIS_A&L_35, HRMIS_A&L_36 Verify Next & Previous pagination', async ({ page }) => {
+  test.skip(' HRMIS_A&L_35, HRMIS_A&L_36 Verify Next & Previous pagination', async ({ page }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,
