@@ -10,6 +10,15 @@ export class ApproveLeaveHR extends BasePage {
     private submitButton: Locator = this.page.getByRole('button', { name: 'Submit' });
     private approveSuccessMessage: Locator = this.page.getByText('Successfully updated.');
     private leaveActionField: Locator =this.page.locator("#leaveAction");
+
+  public paginationContainer: Locator = this.page.locator('.pagination');
+  public activePage: Locator = this.page.locator('.pagination .active');
+  public nextBtn: Locator = this.page.locator('.pagination .next:not(.disabled)');
+  public prevBtn: Locator = this.page.locator('.pagination .previous:not(.disabled)');
+
+
+
+
     
      constructor(page: Page) {
     super(page);
@@ -52,7 +61,24 @@ async appoveLeaveActionHR(
     // Verify success message
     expect(await this.approveSuccessMessage.textContent()).toBe(successMessage);
   }
+
+
+  // Actions
+  async clickNext() {
+    await this.nextBtn.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async clickPrevious() {
+    await this.prevBtn.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async getActivePageNumber(): Promise<number> {
+    return Number(await this.activePage.innerText());
+  }
 }
+
 
 
 
