@@ -130,16 +130,28 @@ export class holiday_Management extends BasePage {
     }
 
     async addHolidayWithRandomDate(holidayName: string = "Comp_Off Leave") {
-        // Step 1: Generate random date in yyyy-mm-dd format
-        const randomDate = await this.getRandomDate();
-        const [year, month, day] = randomDate.split("-");
+        // Step 1: Calculate date range (current date → same date next month)
+        const today = new Date();
+        const nextMonth = new Date(today);
+        nextMonth.setMonth(today.getMonth() + 1); // adds one month
+
+        // Generate a random timestamp between today and nextMonth
+        const randomTime = today.getTime() + Math.random() * (nextMonth.getTime() - today.getTime());
+        const randomDateObj = new Date(randomTime);
+
+        const year = randomDateObj.getFullYear();
+        const month = String(randomDateObj.getMonth() + 1).padStart(2, "0");
+        const day = String(randomDateObj.getDate()).padStart(2, "0");
+
         const formattedDateForMethod = `${day}-${month}-${year}`;
+        const randomDate = `${year}-${month}-${day}`;
 
         // Step 2: Add holiday
         await this.addHoliday(holidayName, formattedDateForMethod);
         await this.page.waitForLoadState("networkidle");
+        await this.page.reload()
 
-        // Step 3: Format date as shown in table (e.g., "October 25, 2025")
+        // Step 3: Format date as shown in table (e.g., "November 25, 2025")
         const monthNames = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
@@ -147,12 +159,11 @@ export class holiday_Management extends BasePage {
         const formattedForOtherUse = `${monthNames[parseInt(month) - 1]} ${day}, ${year}`;
 
         // Step 4: Wait until the holiday row that CONTAINS this date appears
-        await this.page.waitForLoadState('domcontentloaded');
-        await this.page.waitForLoadState()
+        await this.page.waitForLoadState("domcontentloaded");
         const holidayRow = this.page.locator("tr", { hasText: formattedForOtherUse });
         await expect(holidayRow).toBeVisible({ timeout: 15000 });
 
-        // Step 5: Click on the "Edit" link inside that row (contains-based)
+        // Step 5: Click on the "Edit" link inside that row
         const editLink = holidayRow.locator("a:has-text('Edit')");
         await expect(editLink).toBeVisible({ timeout: 5000 });
         await editLink.click();
@@ -167,8 +178,6 @@ export class holiday_Management extends BasePage {
         // Step 7: Return formatted date for external verification
         return formattedForOtherUse;
     }
-
-
 
     async filterHolidayListByYear(selectedYear: string, yearColIndex: number, dateColIndex: number) {
         // Select provided year or previous year by default
@@ -346,9 +355,9 @@ export class holiday_Management extends BasePage {
             }
         }
     }
-    async deleteAllCompOffHolidays(holidayName: string) {
+    async deleteAllCompOffHolidays(holidayName: string, status: string) {
         // Step 1: Filter holidays by Approved status
-        await this.statusDropdown.selectOption(constants.ApproveStatus);
+        await this.statusDropdown.selectOption(status);
         await this.page.waitForLoadState('networkidle');
 
         // Step 2: Locate all matching holiday rows

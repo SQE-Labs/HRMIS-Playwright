@@ -66,7 +66,7 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
     expect([...uniqueTypes].sort()).toEqual([...dropdownTypes].sort());
   });
 
-  test("compares unique employee types with dropdown options", async ({
+  test("compares unique employee types with dropdown options @reg", async ({
     page,
   }) => {
     const uniqueTypes = await EmployeeDirectory.getUniqueTextSetFromLocator(
@@ -88,7 +88,7 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
     expect([...uniqueTypes].sort()).toEqual([...dropdownTypes].sort());
   });
 
-  test("filters employee records based on dropdown selection", async ({
+  test("filters employee records based on dropdown selection @reg", async ({
     page,
   }) => {
     await EmployeeDirectory.selectDropdownOptionByIndex(2);
@@ -108,7 +108,7 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
     expect([...filteredTypes].sort()).toEqual([selectedOption?.trim()]);
   });
 
-  test("opens verify document popup after clicking action button", async ({
+  test("opens verify document popup after clicking action button @reg ", async ({
     page,
   }) => {
     await EmployeeDirectory.Action_button.click();
@@ -129,7 +129,7 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
     expect(await EmployeeDirectory.Action_Button_popup.isHidden()).toBe(true);
   });
 
-  test("closes action popup on close icon click", async ({ page }) => {
+  test("closes action popup on close icon click @reg", async ({ page }) => {
     await EmployeeDirectory.Action_button.click();
     await EmployeeDirectory.waitforLoaderToDisappear();
     await page.locator(".btn-close").click();

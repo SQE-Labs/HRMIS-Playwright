@@ -25,7 +25,7 @@ test.describe("Download Leave Report", () => {
     })
 
 
-    test('HRMIS_A&L_134, HRMIS_A&L_137, HRMIS_A&L_138 Verify navigation to the Download Leaves Report page, field reset on Reset click, and report download after selecting an Employee Flag option. @smoke @reg @eti', async ({ page }) => {
+    test('HRMIS_A&L_134, A&L_135, A&L_136, HRMIS_A&L_137, HRMIS_A&L_138 Verify navigation to the Download Leaves Report page, field reset on Reset click, and report download after selecting an Employee Flag option. @smoke @reg @eti', async ({ page }) => {
         // 1 Navigate to "Download Leaves Report" page
         await attendanceLeaveTab.navigateToAttendanceTab("Download Leaves Report");
         await downloadLeaveReport.waitForDotsLoaderToDisappear();

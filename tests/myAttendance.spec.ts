@@ -17,7 +17,7 @@ test.describe("My attendance page", () => {
         console.log(">> Starting test case : " + testInfo.title);
     });
 
-    test('A&L_My_Attndnc_1, Verify that My Attendance page opens up after clicking on Attendance & Leaves @smoke @eti @reg', async ({ page }) => {
+    test('A&HRMIS_A&L_59,  Verify that My Attendance page opens up after clicking on Attendance & Leaves @smoke @eti @reg', async ({ page }) => {
         await attendanceLeaveTab.navigateToAttendanceTab("My Attendance");
         await myAttend.verifyCurrentMonthAndYear();
     });

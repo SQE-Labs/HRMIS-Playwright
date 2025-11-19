@@ -24,7 +24,13 @@ export class ApplyLeaves extends BasePage {
   private closeButton: Locator;
   private fromDate: Locator;
   private ToDate: Locator;
+  public cancelBtn: Locator;
+  public applyCrossIcon: Locator;
+  public withDrawCancelBtn: Locator;
+  public reasonLengthValdiation: Locator
+
   leaveCounter = 0;
+
 
   constructor(page: Page) {
     super(page);
@@ -39,26 +45,21 @@ export class ApplyLeaves extends BasePage {
     this.WithdrawLink = this.page.getByText("Withdraw");
     this.WithdrawPopupTitle = page.getByText("Withdraw Leave Request");
     this.WithdrawReasonField = page.getByRole("textbox");
-    this.WithdrawSuccessMessage = page.getByText(
-      "Leave Withdrawn Successfully"
-    );
-    this.YesButtonOfApplyLeave = page.locator(
-      "//div[contains(@class,'modal-full-height')]/div//button[text()='Yes']"
-    );
+    this.WithdrawSuccessMessage = page.getByText("Leave Withdrawn Successfully");
+    this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes']");
     this.privilegeLeaveOption = page.getByLabel("PrivilegeLeave");
-    this.duplicateLeaveToastMessage = page.locator(
-      "//div[text()='Duplicate leave request !']"
-    );
-    this.toastCloseButton = page.locator(
-      'button.Toastify__close-button[aria-label="close"]'
-    );
-    this.closeIconButton = page.locator(
-      'button.react-datepicker__close-icon[aria-label="Close"]'
-    );
+    this.duplicateLeaveToastMessage = page.locator("//div[text()='Duplicate leave request !']");
+    this.toastCloseButton = page.locator('button.Toastify__close-button[aria-label="close"]');
+    this.closeIconButton = page.locator('button.react-datepicker__close-icon[aria-label="Close"]');
     this.allWithdrawLink = this.page.locator("//tr//a[text()='Withdraw']");
     this.closeButton = this.page.locator("button.close");
     this.fromDate = page.locator("//table[@class='resume custom']//tr/td[2]");
     this.ToDate = page.locator("//table[@class='resume custom']//tr/td[3]");
+    this.cancelBtn = page.locator("(//button[contains(text(), 'Cancel')])[1]");
+    this.applyCrossIcon = page.locator("//h5[text()='Apply Leave']/../button");
+    this.withDrawCancelBtn = page.locator("(//button[contains(text(), 'Cancel')])[2]");
+    this.reasonLengthValdiation = page.getByText('Reason must be at least 3 characters long.')
+
   }
 
   async pickCurrentDate() {
