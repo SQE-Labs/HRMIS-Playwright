@@ -84,7 +84,7 @@ test.describe("Approve Leave HR module ", () => {
   });
 
   // failed while searching with firstname with last name #known bug
-  test("HRMIS_A&L_32, HRMIS_A&L_34, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti @reg", async ({ page }) => {
+  test("HRMIS_A&L_32,HRMIS_A&L_33  HRMIS_A&L_34, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti @reg", async ({ page }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,
@@ -111,4 +111,47 @@ test.describe("Approve Leave HR module ", () => {
       testData.LEAVE_EMP_NAME3
     );
   });
+
+ // Pagination does not appear while 
+  test.skip(' HRMIS_A&L_35, HRMIS_A&L_36 Verify Next & Previous pagination', async ({ page }) => {
+    loginObj = new LoginPage(page);
+    await loginObj.validLogin(
+      testData.SuperUser.UserEmail,
+      testData.SuperUser.UserPassword
+    );
+
+    await page.pause()
+    // Navigate to My Team Leave tab
+    await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
+    await approveLeaveHR.waitforLoaderToDisappear();
+
+    await myTeamLeave.statusDropdown.selectOption(constants.APPROVED_STATUS)
+    await myTeamLeave.waitForDotsLoaderToDisappear()
+
+    await page.waitForSelector('table tbody tr');
+
+    // Wait for pagination
+    await approveLeaveHR.paginationContainer.waitFor({ state: "visible", timeout: 10000 });
+
+
+    // verify the next page
+    // ---------------------- NEXT BUTTON TEST ----------------------
+    const pageBeforeNext = await approveLeaveHR.getActivePageNumber();
+    await approveLeaveHR.clickNext();
+    const pageAfterNext = await approveLeaveHR.getActivePageNumber();
+
+    expect(pageAfterNext).toBeGreaterThan(pageBeforeNext);
+    console.log(`Next button works: ${pageBeforeNext} → ${pageAfterNext}`);
+
+
+    // ---------------------- PREVIOUS BUTTON TEST ----------------------
+    const pageBeforePrevious = pageAfterNext;
+    await approveLeaveHR.clickPrevious();
+    const pageAfterPrevious = await approveLeaveHR.getActivePageNumber();
+
+    expect(pageAfterPrevious).toBeLessThan(pageBeforePrevious);
+    console.log(`Previous button works: ${pageBeforePrevious} → ${pageAfterPrevious}`);
+
+
+});
 });
