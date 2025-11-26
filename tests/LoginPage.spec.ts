@@ -12,3 +12,5 @@ test('User should be able to login successfully @smoke @reg', async ({ page }) =
     console.log("Login successful: The 'Caelius Consulting Logo' appears at the top-left corner of the dashboard")
     // await page.pause();
 });
+
+

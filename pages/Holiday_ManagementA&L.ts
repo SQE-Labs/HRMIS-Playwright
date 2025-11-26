@@ -32,6 +32,7 @@ export class holiday_Management extends BasePage {
     public holidayRow: Locator;
     public holidayRemoveToast: Locator;
     public holidayAddedToast: Locator;
+    public noRecordsMessage: Locator = this.page.getByText("No Record Available");
 
 
     constructor(page: Page) {
