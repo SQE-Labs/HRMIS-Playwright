@@ -78,7 +78,7 @@ test.describe("On Offical Duty Page", () => {
         // wait until toast disappears
         await page.waitForSelector('.toast-message', { state: 'hidden', timeout: 5000 })
 
-        // clicking on on offical duty 
+        // clicking on offical duty 
         await officalDuty.onOfficalDutyTab.click();
         await page.waitForLoadState()
 

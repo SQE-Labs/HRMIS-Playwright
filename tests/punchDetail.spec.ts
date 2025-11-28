@@ -77,9 +77,5 @@ test.describe("Apply leaves page", () => {
 
     // Also ensure popup does NOT open
     await expect(punchDetail.popupTitle).not.toBeVisible();
-
-  
-    
-
   });
 });

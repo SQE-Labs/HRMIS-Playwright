@@ -4,7 +4,7 @@ import testData from "../testData/testData.json";
 import { AttendanceLeaveTab } from "../pages/Attendance&Leaves";
 import { holiday_Management } from "../pages/Holiday_ManagementA&L";
 import * as constants from "../utils/constants";
-import { time } from "console";
+import { assert, time } from "console";
 import { TIMEOUT } from "dns";
 
 let loginObj: LoginPage;
@@ -163,6 +163,17 @@ test('Verifying the validation tooltip for the Add Holiday page @reg, @eti', asy
         await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
         await page.waitForLoadState();
         await holidayManagement.filterHolidayListByYear('2024', 3, 4)
+    });
+    test("HRMIS_A&L_107,Verify that information message appears, when user selects any option with no records from 'Year' dropdown field, @smoke @eti @reg", async ({ page }) => {
+
+        // navigates to Holiday list subtab
+        await attendanceLeaveTab.navigateToAttendanceTab("Holiday List");
+        await page.waitForLoadState();
+   
+        await holidayManagement.yearDropdown.selectOption('2030');
+        await page.waitForLoadState();
+        await expect(holidayManagement.noRecordsMessage).toBeVisible();
+   
     });
 
     // Combining Out of Office Module in this class
