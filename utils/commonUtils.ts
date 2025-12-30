@@ -180,7 +180,7 @@ export class CommonUtils {
 
         // 1.  open new tab for Yopmail
         const yopmailPage = await context.newPage();
-        
+
         await yopmailPage.goto(yopmailUrl);
 
         // 2. Click the first email (in ifinbox iframe)
@@ -212,7 +212,7 @@ export class CommonUtils {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    
+
 
     async pdfViewerDownloadTrigger(page: Page): Promise<void> {
         const downloadButton = page.locator('pdf-viewer#viewer')
@@ -223,7 +223,7 @@ export class CommonUtils {
         await downloadButton.waitFor({ state: 'visible' });
         await downloadButton.click();
     }
-    
+
     async downloadAndVerifyFile(
         page: Page,
         downloadTrigger: () => Promise<void>,
@@ -259,10 +259,19 @@ export class CommonUtils {
         return filePath;
     }
 
-    
+    async getCurrentDateFormatted(): Promise<string> {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm: string | number = today.getMonth() + 1;
+        let dd: string | number = today.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        const formattedToday = yyyy + '-' + mm + '-' + dd;
+        return formattedToday;
+    }
+
 }
-
-
-
 
 
