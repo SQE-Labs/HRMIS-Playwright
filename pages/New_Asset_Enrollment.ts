@@ -1,6 +1,7 @@
 
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
+import { asyncWrapProviders } from "async_hooks";
 
 export class AssetEnrollment extends AssetManagementTab {
     public assetEnrollmentSubtab: Locator;
@@ -16,6 +17,9 @@ export class AssetEnrollment extends AssetManagementTab {
     public model: Locator;
     public manufacturer: Locator;
     public serialNumber: Locator;
+    public processor: Locator;
+    public ram: Locator;
+    public ssd: Locator;
     public purchaseCost: Locator;
     public validationMessage: Locator;
     public warranty: Locator;
@@ -74,23 +78,26 @@ export class AssetEnrollment extends AssetManagementTab {
         this.model = page.locator("//input[@name = 'model']");
         this.manufacturer = page.locator("//input[@name = 'manufacture']");
         this.serialNumber = page.locator("//input[@name = 'serialNumber']");
+        this.processor = page.locator("//input[@name = 'processor']");
+        this.ram = page.locator("//input[@name = 'ram']");
+        this.ssd = page.locator("//input[@name = 'ssd']");
         this.purchaseCost = page.locator("//div//input[@name = 'purchaseCost']");
         this.validationMessage = page.locator(".text-danger");
-        this.warranty = page.locator("//input[@type = 'number']");
+        this.warranty = page.locator("//input[@name = 'warrantyExpired']");
         this.warrantyYear = page.locator("#warrantyUnit");
         this.calendar = page.locator("//input[@type = 'date']");
         this.comment = page.locator("//textarea[@id = 'comment']");
-        this.bulkAsset = page.locator("//button[@id = 'tab1-tab']");
+        this.bulkAsset = page.locator("//button[text() = 'Bulk Create Asset']");
         this.chooseButton = page.locator("//input[@type = 'file']");
         this.submitButton = page.locator("//button[@type = 'submit']");
         this.successPopup = page.locator(".modal-body");
         this.cancelButton = page.locator(".theme-button.bg-grey.mx-3.w-35");
         this.popupMessage = page.locator('div>ol');
-        this.assetTypeRequest = page.locator("#tab2-tab");
+        this.assetTypeRequest = page.locator("//button[text() = 'Asset Type Request']");
         this.bulkAssetHeader = page.locator(".has-asterisk")
         this.fileInputSelector = page.locator("//input[@type = 'file']")
         this.assetTypeRequestColumn = page.locator("thead>tr>th");
-        this.createAssetTypeButton = page.locator("(//button[@type= 'button'])[7]");
+        this.createAssetTypeButton = page.locator("//button[text()= 'Create Asset Type']");
         this.createAssetTypePopupHeader = page.locator("#staticBackdropLabel");
         this.createAssetTypePopupLabel = page.locator(".col-md-4.pt-1");
         this.popupAssetNameField = page.locator("//input[@type = 'text']");
@@ -98,8 +105,9 @@ export class AssetEnrollment extends AssetManagementTab {
         this.popupCancelButton = page.locator("(//button[@type= 'button'])[6]");
         this.popupCrossIcon = page.locator(".btn-close");
         this.assetTypeName = page.locator("tr>td:nth-child(2)");
-        this.approveAssetTypeRequest = page.locator("#tab3-tab");
-        this.viewButton = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
+        this.approveAssetTypeRequest = page.locator("//button[text() = 'Approve Asset Type Request']");
+        // this.viewButton = page.locator('//div[@id="tab3"]//tbody/tr[1]/td[6]/a');
+        this.viewButton = page.locator("//tbody/tr[1]/td[7]/a");
         this.actionDropdown = page.locator("#status");
         this.assetTypeRow = page.locator('tr>th:nth-child(2)')
         this.categoryRow = page.locator('tr>th:nth-child(3)')
@@ -143,14 +151,30 @@ export class AssetEnrollment extends AssetManagementTab {
         let selectedoption = await this.assetTypeLocator.textContent();
         expect(this.assetTypeLocator.isVisible()).toBeTruthy();
     }
-
-    async fillAllMandatoryField(assetType, modelnumber, superOwner, owner, Manufracture, serialNumber) {
+    async fillAllMandatoryField(assetType: string, modelnumber: string, superOwner: string, owner: string, Manufracture: string, serialNumber: string, processor?: string, ram?: string, ssd?: string, warranty?: string, warrantyYear?: string, purchaseCost?: string, formattedToday?: any, comment?: string) {
         await this.assetTypeLocator.selectOption({ label: assetType });
-        await this.model.fill(modelnumber);   // Try to enter only numbers
+        await this.model.fill(modelnumber);
         await this.superOwnerLocator.selectOption({ label: superOwner });
         await this.ownerLocator.selectOption({ label: owner });
         await this.manufacturer.fill(Manufracture);
         await this.serialNumber.fill(serialNumber);
+        if (processor) await this.processor.fill(processor);
+        if (ram) await this.ram.fill(ram);
+        if (ssd) await this.ssd.fill(ssd);
+        if (warranty) {
+            await this.warranty.fill(warranty);
+            if (warrantyYear) await this.warrantyYear.selectOption({ label: warrantyYear });
+        }
+        if (purchaseCost) {
+            await this.purchaseCost.fill(purchaseCost);
+        }
+
+        if (formattedToday) await this.calendar.fill(formattedToday);
+        if (comment) await this.comment.fill(comment);
+    }
+    async generateProcessorNumber() {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        return `Intel-${randomNum}`;
     }
     async fillModelNumber(modelnumber) {
         await this.model.fill(modelnumber)

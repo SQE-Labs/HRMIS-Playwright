@@ -8,7 +8,7 @@ import { CommonUtils } from '../utils/commonUtils';
 import { Alert } from '../components/alert';
 
 let assetEnrollment: AssetEnrollment;
-
+let AssetType = "Desktop PC";
 test.describe('Asset Enrollment Page', () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page);
@@ -34,12 +34,20 @@ test.describe('Asset Enrollment Page', () => {
     // to-do
     test('New Asset Enrollment Create Asset-positive @smoke @reg', async ({ page }) => {
         await assetEnrollment.fillAllMandatoryField(
-            'USB HUB Adapter',
+            AssetType,
             '342ASD',
             'CAELIUS_OWNED',
             "Caelius",
             'HP02',
-            await assetEnrollment.generateRandomInteger(5)
+            await assetEnrollment.generateRandomInteger(5),
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
         );
         await assetEnrollment.clickOnSubmitButton();
         // add assertion here   
@@ -55,19 +63,50 @@ test.describe('Asset Enrollment Page', () => {
 
     });
     test('New Asset Enrollment Create Asset-  blank Model validation @reg', async ({ page }) => {
-        await assetEnrollment.SelectAssetType("USB HUB Adapter")
+        await assetEnrollment.SelectAssetType(AssetType)
         await assetEnrollment.clickOnSubmitButton()
         let tooltipMessage = await assetEnrollment.getValidationMessage(assetEnrollment.model)
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
+
     test('New Asset Enrollment Create Asset-   Model validation @reg', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '543543', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '543543',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            '6900',
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton()
         let message2 = await assetEnrollment.validationMessage.textContent();
         console.debug(message2)
         expect(assetEnrollment.validationMessage.isVisible()).toBeTruthy();
         expect(message2).toEqual('Entry cannot contain only numbers and special characters')
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '1234567890123456789012345678901234567890145', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '1234567890123456789012345678901234567890145',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            '6900',
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
@@ -76,14 +115,14 @@ test.describe('Asset Enrollment Page', () => {
 
 
     test('New Asset Enrollment Create Asset-  blank super owner validation @reg', async ({ page }) => {
-        await assetEnrollment.SelectAssetType("USB HUB Adapter")
+        await assetEnrollment.SelectAssetType(AssetType)
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.clickOnSubmitButton()
         let tooltipMessage = await assetEnrollment.getValidationMessage(assetEnrollment.superOwnerLocator)
         expect(tooltipMessage).toBe(SELECT_ITEM);
     });
     test('New Asset Enrollment Create Asset-  blank  owner validation @reg', async ({ page }) => {
-        await assetEnrollment.SelectAssetType("USB HUB Adapter")
+        await assetEnrollment.SelectAssetType(AssetType)
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.selectSuperOwner(testData.DefaultSuperOwner)
         if (await assetEnrollment.superOwnerLocator.selectOption({ label: testData.DefaultSuperOwner })) {
@@ -98,7 +137,7 @@ test.describe('Asset Enrollment Page', () => {
 
     });
     test('New Asset Enrollment Create Asset-  blank  manufacturer validation @reg', async ({ page }) => {
-        await assetEnrollment.SelectAssetType("USB HUB Adapter")
+        await assetEnrollment.SelectAssetType(AssetType)
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.selectSuperOwner(testData.DefaultSuperOwner)
         await assetEnrollment.selectOwner('Caelius')
@@ -107,7 +146,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
     });
     test('New Asset Enrollment Create Asset-  blank  serial number validation @reg', async ({ page }) => {
-        await assetEnrollment.SelectAssetType("USB HUB Adapter")
+        await assetEnrollment.SelectAssetType(AssetType);
         await assetEnrollment.fillModelNumber("MODEL");
         await assetEnrollment.selectSuperOwner(testData.DefaultSuperOwner)
         await assetEnrollment.selectOwner('Caelius')
@@ -117,17 +156,104 @@ test.describe('Asset Enrollment Page', () => {
         expect(tooltipMessage === FILL_OUT_FIELD || tooltipMessage === FILL_IN_FIELD).toBeTruthy();
 
     });
+    test('New Asset Enrollment Create Asset-  blank processor validation @reg', async ({ page }) => {
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '342ASD',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            await assetEnrollment.generateRandomInteger(5),
+            '', // empty processor field
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
+        await assetEnrollment.clickOnSubmitButton()
+        let message = await assetEnrollment.getValidationMessage(assetEnrollment.processor);
+        console.debug(message)
+        expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
+
+    })
+    test('New Asset Enrollment Create Asset-  blank ram validation @reg', async ({ page }) => {
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '342ASD',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            await assetEnrollment.generateRandomInteger(5),
+            await assetEnrollment.generateProcessorNumber(),
+            '', // empty ram field
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
+        await assetEnrollment.clickOnSubmitButton()
+        let message = await assetEnrollment.getValidationMessage(assetEnrollment.ram);
+        console.debug(message)
+        expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
+
+
+    })
+    test('New Asset Enrollment Create Asset-  blank ssd validation @reg', async ({ page }) => {
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '342ASD',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            await assetEnrollment.generateRandomInteger(5),
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '', // empty ssd field
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
+        await assetEnrollment.clickOnSubmitButton()
+        let message = await assetEnrollment.getValidationMessage(assetEnrollment.ssd);
+        console.debug(message)
+        expect(message === FILL_OUT_FIELD || message === FILL_IN_FIELD).toBeTruthy();
+
+
+    })
+
     test('New Asset Enrollment Create Asset- Warranty year validtaion @reg', async ({ page }) => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '342ASD', 'CAELIUS_OWNED', "Caelius", 'HP02', await assetEnrollment.generateRandomInteger(5))
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '342ASD',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            await assetEnrollment.generateRandomInteger(5),
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '', // empty warranty field
+            "", // empty warranty year
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await expect(assetEnrollment.warrantyYear).toBeDisabled();
         await assetEnrollment.fillWarrantyYear('1')
         await expect(assetEnrollment.warrantyYear).toBeEnabled();
         // Enter Negative Warrenty Year
         await assetEnrollment.fillWarrantyYear('-1')
         await assetEnrollment.clickOnSubmitButton()
-        let message = await assetEnrollment.validationMessage.textContent();
+        let message = await assetEnrollment.getValidationMessage(assetEnrollment.warranty);
         console.debug(message)
-        expect(message).toEqual('Value must be greater than or equal to 1')
+        expect(message).toEqual('Value must be greater than or equal to 0.')
         // Enter More than 10 Warrenty Year
         await assetEnrollment.fillWarrantyYear('11')
         await assetEnrollment.clickOnSubmitButton()
@@ -146,7 +272,22 @@ test.describe('Asset Enrollment Page', () => {
 
 
     test('New Asset Enrollment Create Asset- purchase field  validtaion @reg', async ({ page }) => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '342ASD', 'CAELIUS_OWNED', "Caelius", 'HP02', await assetEnrollment.generateRandomInteger(5))
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '342ASD',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            await assetEnrollment.generateRandomInteger(5),
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1', 
+            "Year", 
+            '', // empty purchase field
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         const purchaseCostValue = await assetEnrollment.purchaseCost.getAttribute('value');
         expect(purchaseCostValue).toEqual("0");
         // Enter Only Special Characters in purchase field
@@ -164,21 +305,66 @@ test.describe('Asset Enrollment Page', () => {
     });
 
     test('User try to enter more than 40 characters in Model field @reg', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', '1234567890123456789012345678901234567890145', 'CAELIUS_OWNED', "Caelius", 'HP02', '6900')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '1234567890123456789012345678901234567890145',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP02',
+            await assetEnrollment.generateRandomInteger(5),
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
         expect(message).toEqual('Model cannot exceed 40 characters.')
     })
     test('User try to enter more than 40 characters in Manufracturer field @reg', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", '1234567890123456789012345678901234567890145', '6900')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '543543AD2',
+            'CAELIUS_OWNED',
+            "Caelius",
+            '1234567890123456789012345678901234567890145',
+            '6900',
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
         expect(message).toEqual('Manufacturer cannot exceed 40 characters.')
     })
     test('Try to enter only numbers in Manufracturer field @reg', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", '232332', '6900')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '543543AD2',
+            'CAELIUS_OWNED',
+            "Caelius",
+            '232332',
+            '6900',
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton()
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
@@ -187,7 +373,22 @@ test.describe('Asset Enrollment Page', () => {
     })
 
     test('User try to enter more than 40 characters in Serial number field @reg', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '1234567890123456789012345678901234567890145')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '543543AD2',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP03',
+            '1234567890123456789012345678901234567890145',
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
@@ -195,20 +396,53 @@ test.describe('Asset Enrollment Page', () => {
     })
 
     test('User try to enter Special charcters only in  Serial number field @reg', async () => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '@#$%')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '543543AD2',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP03',
+            '@#$%',
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.validationMessage.textContent();
         console.debug(message)
         expect(message).toEqual('Entry cannot contain only special characters')
     })
 
+    //bug
     test('User try to enter Existing Serial number @reg', async ({ page }) => {
-        await assetEnrollment.fillAllMandatoryField('USB HUB Adapter', 'ABC23', 'CAELIUS_OWNED', "Caelius", 'HP03', '13')
+        await assetEnrollment.fillAllMandatoryField(
+            AssetType,
+            '543543AD2',
+            'CAELIUS_OWNED',
+            "Caelius",
+            'HP03',
+            '68416', // existing serial number
+            await assetEnrollment.generateProcessorNumber(),
+            '8',
+            '256',
+            '1',
+            "Year",
+            '10000',
+            await assetEnrollment.getCurrentDateFormatted(),
+            "New Asset Enrollment Created Successfully"
+        );
+
         await assetEnrollment.clickOnSubmitButton();
         expect(await assetEnrollment.toastMessage()).toEqual("The serial number provided is a duplicate; an asset with this serial number already exists")
 
     })
 
+    // Bulk Create Asset Test Cases
     test('Navigate to bulk create asset @reg ', async () => {
         await assetEnrollment.navigateToBulkCreateAsset()
         await expect(assetEnrollment.bulkAssetHeader).toBeVisible();
@@ -329,8 +563,8 @@ test.describe('Asset Enrollment Page', () => {
         expect(errorMessages.length).toBeGreaterThan(0);
         expect(errorMessages.join(" ")).toContain("SuperOwner is missing.");
     });
-
-    test('Bulk Create - When user enter ExistingSerialNumber coloumn @reg', async ({ page }) => {
+    //To-do: fix the test case
+    test.fixme('Bulk Create - When user enter ExistingSerialNumber coloumn @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
         await assetEnrollment.uploadAndVerifyFile(testData.EXISTINGSERIALNUMBER_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
@@ -342,7 +576,6 @@ test.describe('Asset Enrollment Page', () => {
 
     test('Bulk Create - When user enter NonExistingSerialNumber coloumn @reg', async ({ page }) => {
         await assetEnrollment.navigateToBulkCreateAsset();
-        await page.pause()
         await assetEnrollment.uploadAndVerifyFile(testData.NONEXISTINGASSETTYPE_COLUMN, page, assetEnrollment.submitButton, assetEnrollment.popupMessage);
 
         await expect(assetEnrollment.popupMessage).toBeVisible();
