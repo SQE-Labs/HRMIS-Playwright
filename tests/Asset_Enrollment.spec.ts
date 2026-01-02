@@ -282,8 +282,8 @@ test.describe('Asset Enrollment Page', () => {
             await assetEnrollment.generateProcessorNumber(),
             '8',
             '256',
-            '1', 
-            "Year", 
+            '1',
+            "Year",
             '', // empty purchase field
             await assetEnrollment.getCurrentDateFormatted(),
             "New Asset Enrollment Created Successfully"
@@ -638,10 +638,8 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(42));
         await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(5));
         await assetEnrollment.clickOnSubmitButton();
-        const message = await assetEnrollment.validationMessage.textContent();
-        console.log(message);
-        await expect(assetEnrollment.validationMessage).toBeVisible();
-        expect(message).toEqual("Asset name must not exceed 40 characters");
+        const message = await assetEnrollment.toastMessage();
+        expect(message).toEqual("Asset Name must not exceed 40 characters.");
     });
 
 
@@ -652,8 +650,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.popupAssetNameField.fill("#@$#@#")
         await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(6));
         await assetEnrollment.clickOnSubmitButton();
-        const message = await assetEnrollment.validationMessage.textContent();
-        await expect(assetEnrollment.validationMessage).toBeVisible();
+        const message = await assetEnrollment.toastMessage();
         expect(message).toEqual("Entry cannot contain only numbers and special characters");
 
     });
@@ -664,8 +661,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.popupAssetNameField.fill("1111")
         await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(6));
         await assetEnrollment.clickOnSubmitButton();
-        const message = await assetEnrollment.validationMessage.textContent();
-        await expect(assetEnrollment.validationMessage).toBeVisible();
+        const message = await assetEnrollment.toastMessage();
         expect(message).toEqual("Entry cannot contain only numbers and special characters");
     });
 
@@ -739,7 +735,7 @@ test.describe('Asset Enrollment Page', () => {
         if (!approvedName) {
             throw new Error("Approved asset name is undefined");
         }
-        await assetEnrollment.verifyAssetTypeStatusByName(approvedName, "APPROVED");
+        await assetEnrollment.verifyAssetTypeStatusByName(approvedName, "Approved");
 
     });
 
@@ -756,7 +752,7 @@ test.describe('Asset Enrollment Page', () => {
         if (!rejectedName) {
             throw new Error("Approved asset name is undefined");
         }
-        await assetEnrollment.verifyAssetTypeStatusByName(rejectedName, "REJECTED");
+        await assetEnrollment.verifyAssetTypeStatusByName(rejectedName, "Rejected");
     });
 
     test('Asset Type Request Approve Date @reg', async ({ page }) => {
@@ -827,7 +823,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(message2 === FILL_OUT_FIELD || message2 === FILL_IN_FIELD).toBeTruthy();
 
     });
-
+   //Expected toast message has typo "Name" instead of Name
     test('Approve Asset Type Request Approve selected @reg ', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
@@ -839,7 +835,7 @@ test.describe('Asset Enrollment Page', () => {
         expect(message).toEqual(`Request for ${name} asset type approved successfully`)
 
     });
-
+    //Expected toast message has typo "Name" instead of Name
     test('Approve Asset Type Request Rejected @reg', async ({ page }) => {
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();

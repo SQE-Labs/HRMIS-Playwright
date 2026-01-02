@@ -102,7 +102,7 @@ export class AssetEnrollment extends AssetManagementTab {
         this.createAssetTypePopupLabel = page.locator(".col-md-4.pt-1");
         this.popupAssetNameField = page.locator("//input[@type = 'text']");
         this.popupAssetCategory = page.locator(":#assetCategory");
-        this.popupCancelButton = page.locator("(//button[@type= 'button'])[6]");
+        this.popupCancelButton = page.locator("(//button[text()= 'Cancel'])");
         this.popupCrossIcon = page.locator(".btn-close");
         this.assetTypeName = page.locator("tr>td:nth-child(2)");
         this.approveAssetTypeRequest = page.locator("//button[text() = 'Approve Asset Type Request']");
