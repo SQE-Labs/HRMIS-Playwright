@@ -1,6 +1,6 @@
 {
     "SuperUser": {
-        "UserEmail": "vishal.thakur1@caeliusconsulting.com",
+        "UserEmail": "vishal.thakur@caeliusconsulting.com",
         "UserPassword": "Test@123",
         "name": "Vishal Dev Thakur"
     },
@@ -32,7 +32,7 @@
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
     "DefaultAvailablity": "Available",
-    "assetsCardCount": 21,
+    "assetsCardCount": 14,
     "Projects": {
         "Project1": {
             "name": "AutomationProject",

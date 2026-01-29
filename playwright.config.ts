@@ -33,7 +33,7 @@ export default defineConfig({
   retries: process.env.CI ? 0 : 0,
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
-  reporter: [["html"], ['line'], ["allure-playwright"], ["./my-reporter.ts"], ['json', { outputFile: 'playwright-report/results.json' }]],
+  reporter: [["html", { open: 'never' }], ['line'], ["allure-playwright"], ["./my-reporter.ts"], ['json', { outputFile: 'playwright-report/results.json' }]],
   // reporter: [['list'], ['junit', { outputFile: 'results.xml' }]],
 
   // reporter: [

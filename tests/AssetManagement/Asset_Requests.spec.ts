@@ -1,0 +1,56 @@
+import { test, expect } from '@playwright/test'
+import { LoginPage } from '../../pages/LoginPage';
+import { BasePage } from '../../pages/Basepage';
+import { AssetRequests } from '../../pages/Asset_Request';
+import testData from '../../testData/testData.json';
+import { CommonUtils } from '../../utils/commonUtils';
+
+
+test.describe("Asset Rrequests page", () => {
+    let assetrequest: AssetRequests
+    test.beforeEach(async ({ page }) => {
+        const loginPage = new LoginPage(page)
+        const basepage = new BasePage(page)
+
+        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        assetrequest = new AssetRequests(page)
+        await page.waitForLoadState('domcontentloaded')
+        await assetrequest.expandAssetManagementTab()
+        await assetrequest.navigateToAssetRequestTab();
+        await assetrequest.waitforLoaderToDisappear()
+
+    })
+    test("Asset Request page No Record @reg ", async ({ page }) => {
+        await page.waitForLoadState('domcontentloaded')
+        let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
+        if (totalRequestCount === 0) {
+            expect(await assetrequest.noRecord.isVisible()).toBeTruthy();
+            const noRecordText = await assetrequest.noRecord.textContent();
+            console.log(noRecordText);
+            expect(noRecordText).toEqual("No Record Available");
+        } else {
+            expect(await assetrequest.column.isVisible()).toBeTruthy();
+        }
+
+    })
+    test("Create Asset Request - Successful Submission @reg", async ({ page }) => {
+        await assetrequest.clickOnAssetRequestButton()
+        await assetrequest.waitforLoaderToDisappear()
+        await expect(assetrequest.card).toBeVisible();
+        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.reason.fill(await assetrequest.generateRandomString(10));
+        await assetrequest.submitButton.click()
+        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+    })
+
+    test("HRMIS_23 Create Asset Request - Reset Button Clears Fields @smoke @reg", async ({ page }) => {
+        await assetrequest.clickOnAssetRequestButton()
+        await assetrequest.waitforLoaderToDisappear()
+        await expect(assetrequest.card).toBeVisible();
+        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.reason.fill(await assetrequest.generateRandomString(10));
+        await assetrequest.resetButton.click()
+        expect(await assetrequest.assetType.inputValue()).toBe("");
+        expect(await assetrequest.reason.inputValue()).toBe("");
+    })
+})
