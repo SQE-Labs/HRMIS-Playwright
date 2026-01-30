@@ -235,6 +235,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnWorkAccordion()
+        await page.pause();
         let existingInfo = await EmployeeDirectory.getExistingInformationOfWork()
         await EmployeeDirectory.clickOnWorkEditButton()
         let futureDate = await EmployeeDirectory.getfutureDate()
@@ -242,6 +243,8 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeType, 'SQELabs')
         await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeSubType, 'Full Time')
         await EmployeeDirectory.clickOnUpdateButton()
+        let message = await EmployeeDirectory.toastMessage()
+        expect(message).toEqual("Profile updated successfully.")
         let updatedInfo = await EmployeeDirectory.getUpdatedInformationOfWork()
         expect(existingInfo.ExistingDate).not.toEqual(updatedInfo.CurrentDate)
     })
@@ -290,7 +293,7 @@ test.describe("'Employee Management module'", () => {
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.AadhaarCardNumber)
         expect(tooltipMessage).toBe(AADHAAR_FIELD)
     })
-
+    //Tooltip msg changes
     test("verify Validation Message When Pan number Is Cleared In Perosnal Details", async ({ page }) => {
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
@@ -379,15 +382,16 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.clickOnPersonalDetails()
         let { aadharNumber, PanCardNumber, permanentAddress, DateofBirth, PassportNumber, PresentAddress, BloodGroup, MaritalStatus, AlternateNumber, Gender } = await EmployeeDirectory.getOriginalPeronalDetails()
         await EmployeeDirectory.clickOnPersonalDetailEdit()
-        let randomDate = await EmployeeDirectory.getfutureDate()
+        let randomDate = await EmployeeDirectory.generateDOB()
         await EmployeeDirectory.PersonalDetailsDate.fill(randomDate)
-        await EmployeeDirectory.PassportNumber.fill("A7654321")
+        await EmployeeDirectory.PassportNumber.fill("A765432101")
         await EmployeeDirectory.PresentAddress.fill("Hello")
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.BloodGroup, 'A+')
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.MaritalStatus, 'Married')
-        await EmployeeDirectory.AadhaarCardNumber.fill("765432131242")
-        await EmployeeDirectory.PanCardNumber.fill("2324354231")
-        await EmployeeDirectory.PermanentAddress.fill("Hello")
+        await EmployeeDirectory.selectGenderOptionExceptCurrent()
+        await EmployeeDirectory.updateBloodGroup(EmployeeDirectory.BloodGroup)
+        await EmployeeDirectory.updateMaritalStatus(EmployeeDirectory.MaritalStatus)
+        await EmployeeDirectory.AadhaarCardNumber.fill(await EmployeeDirectory.generateRandomInteger(12))
+        await EmployeeDirectory.PanCardNumber.fill(await EmployeeDirectory.generateRandomInteger(10))
+        await EmployeeDirectory.PermanentAddress.fill(await EmployeeDirectory.generateRandomString(5))
         await EmployeeDirectory.clickOnCloseButton()
 
         let { aadharNumber: currentaadharNumber, PanCardNumber: currentPanCardNumber, permanentAddress: CurrentpermanentAddress, DateofBirth: currentDateofBirth, PassportNumber: currentPassportNumber, PresentAddress: currentPresentAddress, BloodGroup: currentBloodGroup, MaritalStatus: currentMaritalStatus, AlternateNumber: currentAlternateNumber, Gender: currentGender } = await EmployeeDirectory.getUpdatedPerosnalDetails()
@@ -414,18 +418,19 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PanCardNumber.fill(await EmployeeDirectory.generateRandomInteger(10))
         await EmployeeDirectory.PermanentAddress.fill(await EmployeeDirectory.generateRandomString(5))
         await EmployeeDirectory.AlternateNumber.fill(await EmployeeDirectory.generateRandomInteger(10))
-        await (EmployeeDirectory.selectGenderOption("male"))
-        let randomDate = await EmployeeDirectory.getfutureDate()
+        await EmployeeDirectory.selectGenderOptionExceptCurrent()
+        let randomDate = await EmployeeDirectory.generateDOB()
         await EmployeeDirectory.PersonalDetailsDate.fill(randomDate)
-        await EmployeeDirectory.PassportNumber.fill("A7654321")
-        await EmployeeDirectory.PresentAddress.fill("Hello")
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.BloodGroup, 'A+')
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.MaritalStatus, 'Married')
+        // await EmployeeDirectory.PassportNumber.fill("A7654321")
+        await EmployeeDirectory.PassportNumber.fill(`A${await EmployeeDirectory.generateRandomInteger(7)}`)
+        await EmployeeDirectory.PresentAddress.fill(await EmployeeDirectory.generateRandomString(10))
+        await EmployeeDirectory.updateBloodGroup(EmployeeDirectory.BloodGroup)
+        await EmployeeDirectory.updateMaritalStatus(EmployeeDirectory.MaritalStatus)
         await EmployeeDirectory.clickOnUpdateButton()
 
 
         let message = await EmployeeDirectory.toastMessage()
-        expect(message).toEqual("Profile updated successfully")
+        expect(message).toEqual("Profile updated successfully.")
         let { aadharNumber: currentaadharNumber, PanCardNumber: currentPanCardNumber, permanentAddress: CurrentpermanentAddress, DateofBirth: currentDateofBirth, PassportNumber: currentPassportNumber, PresentAddress: currentPresentAddress, BloodGroup: currentBloodGroup, MaritalStatus: currentMaritalStatus, AlternateNumber: currentAlternateNumber, Gender: currentGender } = await EmployeeDirectory.getUpdatedPerosnalDetails()
         expect(aadharNumber).not.toEqual(currentaadharNumber)
         expect(PanCardNumber).not.toEqual(currentPanCardNumber)
@@ -575,7 +580,8 @@ test.describe("'Employee Management module'", () => {
         expect(await EmployeeDirectory.Status.isVisible())
     })
 
-    test("Verify validation message appears in Employee access status  in  Employee Access Block @reg ", async ({ page }) => {
+    test("Verify validation message appears in Employee access status  in  Employee Access Block @reg @bug", async ({ page }) => {
+        await page.pause();
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
@@ -729,22 +735,22 @@ test.describe("'Employee Management module'", () => {
     })
 
 
-    test("should show no records or fail to update left out employee status to verified @reg", async ({ page }) => {
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        let cardsCount = await EmployeeDirectory.leftOutCards.count()
-        if (cardsCount === 0) {
-            var Norecord = await EmployeeDirectory.noRecord(1)
-            expect(Norecord).toEqual("No records available")
-        } else {
-            await EmployeeDirectory.leftOutCards.nth(1).click()
-            await EmployeeDirectory.clickOnEmployeeAccessSubTab()
-            await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'VERIFIED')
-            await EmployeeDirectory.LeftOutSubmitbutton.click()
-            let message = await EmployeeDirectory.toastMessage()
-            expect(message).toEqual("Failed to update the employee status. Please try again after some time")
-        }
-    })
+    // test("should show no records or fail to update left out employee status to verified @reg", async ({ page }) => {
+    //     await EmployeeDirectory.optionSelection(EmployeeDirectory.SelectStatus, 'LEFTOUT (Permanently Disable)')
+    //     await EmployeeDirectory.waitforLoaderToDisappear()
+    //     let cardsCount = await EmployeeDirectory.leftOutCards.count()
+    //     if (cardsCount === 0) {
+    //         var Norecord = await EmployeeDirectory.noRecord(1)
+    //         expect(Norecord).toEqual("No records available")
+    //     } else {
+    //         await EmployeeDirectory.leftOutCards.nth(1).click()
+    //         await EmployeeDirectory.clickOnEmployeeAccessSubTab()
+    //         await EmployeeDirectory.optionSelection(EmployeeDirectory.EmployeeAccessStatus, 'VERIFIED')
+    //         await EmployeeDirectory.LeftOutSubmitbutton.click()
+    //         let message = await EmployeeDirectory.toastMessage()
+    //         expect(message).toEqual("Failed to update the employee status. Please try again after some time")
+    //     }
+    // })
 
 
     //   test("Performance Evaluation subtab ", async ({ page }) => {

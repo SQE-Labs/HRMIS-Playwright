@@ -271,6 +271,23 @@ export class CommonUtils {
         const formattedToday = yyyy + '-' + mm + '-' + dd;
         return formattedToday;
     }
+    async generateDOB(minAge = 18, maxAge = 60) {
+        const today = new Date();
+
+        // Random age between minAge and maxAge
+        const age =
+            Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+
+        // Random extra days within the year
+        const randomDays = Math.floor(Math.random() * 365);
+
+        const dob = new Date();
+        dob.setFullYear(today.getFullYear() - age);
+        dob.setDate(dob.getDate() - randomDays);
+
+        // Format: YYYY-MM-DD
+        return dob.toISOString().split('T')[0];
+    }
 
 }
 

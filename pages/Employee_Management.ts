@@ -555,7 +555,7 @@ export class Employee_Management extends BasePage {
 
     }
     async selectGenderOption(Gender: string) {
-        await this.page.locator(`.form-check.form-check-inline>input[value="${Gender}"]`).click()
+        return this.page.locator(`.form-check.form-check-inline>input[value="${Gender}"]`)
     }
     async getOriginalPeronalDetails() {
         var aadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
@@ -655,8 +655,11 @@ export class Employee_Management extends BasePage {
         }
         return Coloumncount
     }
-    async clickOnActionButton() {
-        await this.ManagerActionButton.click()
+    // async clickOnActionButton() {
+    //     await this.ManagerActionButton.click()
+    // }
+    async clickOnReassignActionButton() {
+        await this.page.getByText('Re-assign').click()
     }
     async clickOnCrossButton(Locator: Locator) {
         await Locator.click()
@@ -1011,4 +1014,69 @@ export class Employee_Management extends BasePage {
     async clickOnEditIcon(Name: string) {
         await this.page.locator(`//td[contains(text(), '${Name}' )]/../td[5]/a`).click()
     }
+
+    async updateBloodGroup(dropdown: Locator) {
+        const allOptions = ['A+ve', 'A-ve', 'AB+ve', 'AB-ve', 'B+ve', 'B-ve', 'O+ve', 'O-ve'];
+
+        // Get currently selected value
+        const currentValue = await dropdown.inputValue();
+
+        // Remove current value from options
+        const availableOptions = allOptions.filter(
+            option => option !== currentValue
+        );
+
+        // Pick a random option from remaining ones
+        const newValue =
+            availableOptions[Math.floor(Math.random() * availableOptions.length)];
+
+        // Select new value
+        await dropdown.selectOption({ label: newValue });
+    }
+
+    async updateMaritalStatus(dropdown: Locator) {
+        const allOptions = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
+
+        // Get currently selected value
+        const currentValue = await dropdown.inputValue();
+
+        // Remove current value from options
+        const availableOptions = allOptions.filter(
+            option => option !== currentValue
+        );
+
+        // Pick a random option from remaining ones
+        const newValue =
+            availableOptions[Math.floor(Math.random() * availableOptions.length)];
+
+        // Select new value
+        await dropdown.selectOption({ label: newValue });
+    }
+    async selectGenderOptionExceptCurrent() {
+        const allOptions = ['male', 'female', 'others'];
+
+        // Find currently checked radio button
+        const checkedRadio = this.page.locator(
+            '.form-check.form-check-inline input[type="radio"]:checked'
+        );
+
+        let currentValue: string | null = null;
+
+        if (await checkedRadio.count() > 0) {
+            currentValue = await checkedRadio.getAttribute('value');
+        }
+
+        // Exclude currently selected value
+        const availableOptions = currentValue
+            ? allOptions.filter(option => option !== currentValue)
+            : allOptions;
+
+        // Pick random new option
+        const newValue =
+            availableOptions[Math.floor(Math.random() * availableOptions.length)];
+
+        // Click the new radio button
+        await (await this.selectGenderOption(newValue)).check();
+    }
+
 }
