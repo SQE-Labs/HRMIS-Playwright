@@ -31,7 +31,6 @@ test.describe("'Employee Management module >  Promotion'", () => {
     test("select Promotion from dropdown and verify data table renders @reg", async ({ page }) => {
         await EmployeeDirectory.Dropdown.click()
         await EmployeeDirectory.DropdownOption.click()
-        await page.pause()
         await EmployeeDirectory.LeaveManagerData()
     })
 
@@ -72,10 +71,13 @@ test.describe("'Employee Management module >  Promotion'", () => {
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.DepartmentDropdown.selectOption({ value: '5' })
+        await EmployeeDirectory.DepartmentDropdown.click()
+        await page.getByText('Finance').click()
+        await EmployeeDirectory.DesignationDropdown.click()
+        await EmployeeDirectory.getDesignationoptionCount()
+        await page.getByText('Sr. Account Associate - US Finance').click()
         await EmployeeDirectory.PromotionCancelButton.click()
         await expect(EmployeeDirectory.PromotionPopUpHeader).toBeHidden()
-        await EmployeeDirectory.getDesignationoptionCount()
     })
 
     test("promote employee by selecting department and designation, then verify success message @smoke @reg", async ({ page }) => {
@@ -83,15 +85,15 @@ test.describe("'Employee Management module >  Promotion'", () => {
         await EmployeeDirectory.DropdownOption.click()
         await EmployeeDirectory.PromoteButton.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
-        await EmployeeDirectory.DepartmentDropdown.selectOption({ value: '5' })
+        await EmployeeDirectory.DepartmentDropdown.click()
+        await page.getByText('Finance').click()
+        await EmployeeDirectory.DesignationDropdown.click()
         await EmployeeDirectory.getDesignationoptionCount()
-        await EmployeeDirectory.optionSelection(EmployeeDirectory.DesignationDropdown, 'Sr. Solution Architect')
+        await page.getByText('Sr. Account Associate - US Finance').click()
         await EmployeeDirectory.PromoteEmployeePopUpSubmitButton.click()
         await EmployeeDirectory.waitforLoaderToDisappear()
         console.log(await page.locator(".Toastify__toast-body").textContent())
         expect(await page.locator(".Toastify__toast-body").isVisible())
-
-
     })
 
 })

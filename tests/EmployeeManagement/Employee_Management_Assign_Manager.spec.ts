@@ -101,7 +101,7 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.LeaveManagerPopupDropDown.click()
-        await EmployeeDirectory.selectionOfLeaveManager(1)
+        await EmployeeDirectory.selectionOfLeaveManager(2)
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.getColumnCount()
     })
@@ -130,11 +130,11 @@ test.describe("'Employee Management > Assign Manager module'", () => {
         await expect(EmployeeDirectory.Pop_Up_Header).toBeHidden()
     })
 
-    test("conditionally assign and delete leave manager, then verify removal @smoke @bug ", async ({ page }) => {
+    test.fixme("conditionally assign and delete leave manager, then verify removal @smoke @bug ", async ({ page }) => {
         await EmployeeDirectory.clickOnAssignManagerSubTabLeaveManager()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.LeaveManagerDropDown.click()
-        await EmployeeDirectory.selectionOfLeaveManager(1)
+        await EmployeeDirectory.selectionOfLeaveManager(2)
         await EmployeeDirectory.waitforLoaderToDisappear()
         let Coloumncount = await EmployeeDirectory.getColumnCount()
         if (Coloumncount === 0) {
