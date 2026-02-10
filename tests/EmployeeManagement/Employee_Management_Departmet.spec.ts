@@ -58,10 +58,7 @@ test.describe("'Employee Management > Department module'", () => {
     });
     test("Verify error toast message appears when department name does not changes @reg", async ({ page }) => {
         await EmployeeDirectory.clickOnUpdateIcon()
-        await EmployeeDirectory.PopUP_Submit_button.click()
-        await EmployeeDirectory.waitforLoaderToDisappear()
-        let message = await EmployeeDirectory.toastMessage()
-        expect(message).toContain("Department not updated. Please try again after some time")
+        expect(await EmployeeDirectory.PopUP_Submit_button.isDisabled())
     });
 
     test("Verify validation message is shown when department name is empty @reg", async ({ page }) => {

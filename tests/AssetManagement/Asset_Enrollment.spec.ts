@@ -438,7 +438,7 @@ test.describe('Asset Enrollment Page', () => {
         );
 
         await assetEnrollment.clickOnSubmitButton();
-        expect(await assetEnrollment.toastMessage()).toEqual("The serial number provided is a duplicate; an asset with this serial number already exists")
+        expect(await assetEnrollment.toastMessage()).toEqual("An asset with this serial number already exists.")
 
     })
 
@@ -638,7 +638,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.popupAssetNameField.fill(await AssetHelper.generateRandomString(42));
         await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(5));
         await assetEnrollment.clickOnSubmitButton();
-        const message = await assetEnrollment.toastMessage();
+        const message = await assetEnrollment.validationMessage.textContent();
         expect(message).toEqual("Asset Name must not exceed 40 characters.");
     });
 
@@ -650,7 +650,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.popupAssetNameField.fill("#@$#@#")
         await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(6));
         await assetEnrollment.clickOnSubmitButton();
-        const message = await assetEnrollment.toastMessage();
+        const message = await assetEnrollment.validationMessage.textContent();
         expect(message).toEqual("Entry cannot contain only numbers and special characters");
 
     });
@@ -661,7 +661,7 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.popupAssetNameField.fill("1111")
         await assetEnrollment.comment.fill(await AssetHelper.generateRandomString(6));
         await assetEnrollment.clickOnSubmitButton();
-        const message = await assetEnrollment.toastMessage();
+        const message = await assetEnrollment.validationMessage.textContent();
         expect(message).toEqual("Entry cannot contain only numbers and special characters");
     });
 
@@ -722,6 +722,7 @@ test.describe('Asset Enrollment Page', () => {
 
 
     test('HRMIS_38 should approve asset type request and verify status is updated to APPROVED @smoke @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
 
         const noRecordLocator = page.locator(".fs-4");
@@ -741,6 +742,7 @@ test.describe('Asset Enrollment Page', () => {
 
 
     test('HRMIS_39 should reject asset type request and verify status is updated to REJECTED @smoke @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -756,6 +758,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
     test('Asset Type Request Approve Date @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -770,6 +773,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
     test('Asset Type Request Reject Date @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         const noRecordLocator = page.locator(".fs-4");
         await assetEnrollment.approveAssetTypeRequestNoRecord()
@@ -807,6 +811,7 @@ test.describe('Asset Enrollment Page', () => {
     });
 
     test('Approve Asset Type Request status does not selected @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         await assetEnrollment.clickOnSubmitButton()
@@ -832,11 +837,12 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.comment.fill("ABCDFG");
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.toastMessage()
-        expect(message).toEqual(`Request for ${name} asset type approved successfully`)
+        expect(message).toEqual(`Request for "${name}" asset type approved successfully.`)
 
     });
     //Expected toast message has typo "Name" instead of Name
     test('Approve Asset Type Request Rejected @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         let name = await page.locator("(//table[@class='resume custom'])[1]/tbody/tr/td[2]").textContent();
@@ -844,10 +850,11 @@ test.describe('Asset Enrollment Page', () => {
         await assetEnrollment.comment.fill("ABCDFG");
         await assetEnrollment.clickOnSubmitButton();
         let message = await assetEnrollment.toastMessage()
-        expect(message).toEqual(`Request for ${name} asset type denied successfully`)
+        expect(message).toEqual(`Request for "${name}" asset type denied successfully.`)
     });
 
     test('Approve Asset Type Request Cross @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         await assetEnrollment.clickOnPopUpCrossIcon()
@@ -862,6 +869,7 @@ test.describe('Asset Enrollment Page', () => {
     });
     // to-do
     test('Reject Asset Type Request with Comment @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
         const { option, comment } = await assetEnrollment.AssetTypeRequestCommentApprove('REJECTED');
@@ -871,6 +879,7 @@ test.describe('Asset Enrollment Page', () => {
     });
     // to-do
     test('Approve Asset Type Request with Comment @reg', async ({ page }) => {
+        await assetEnrollment.createAssetType()
         await assetEnrollment.navigateToApproveAssetTypeRequest();
         await assetEnrollment.clickOnViewButton();
 

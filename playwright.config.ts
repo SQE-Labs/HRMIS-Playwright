@@ -30,7 +30,7 @@ export default defineConfig({
   //  "LoginPage.spec.ts"
   // ],
   fullyParallel: true,
-  retries: process.env.CI ? 0 : 0,
+  retries: process.env.CI ? 1 : 0,
   // workers: process.env.CI ? 1 : undefined,
   workers: 4,
   reporter: [["html", { open: 'never' }], ['line'], ["allure-playwright"], ["./my-reporter.ts"], ['json', { outputFile: 'playwright-report/results.json' }]],

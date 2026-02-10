@@ -782,6 +782,59 @@ export class Employee_Management extends BasePage {
             console.log(DesignationOptionText)
         }
     }
+
+    async printAndSelectRandomDesignation() {
+        const options = this.DesignationDropDownOptions;
+        const count = await options.count();
+
+        if (count === 0) {
+            throw new Error('No designation options found');
+        }
+
+        console.log('Available Designation Options:');
+
+        const optionTexts: string[] = [];
+
+        for (let i = 0; i < count; i++) {
+            const text = (await options.nth(i).textContent())?.trim();
+
+            if (text) {
+                console.log(`- ${text}`);
+                optionTexts.push(text);
+            }
+        }
+
+        // Random selection (skipping placeholder if needed)
+        const randomIndex = Math.floor(Math.random() * optionTexts.length);
+        const selectedDesignation = optionTexts[randomIndex];
+
+        console.log(`Randomly selected designation: ${selectedDesignation}`);
+
+        await options
+            .filter({ hasText: selectedDesignation })
+            .first()
+            .click();
+
+        return selectedDesignation; // useful for later validation
+    }
+
+    async selectRandomDesignation() {
+        const options = this.DesignationDropDownOptions;
+        const count = await options.count();
+
+        if (count === 0) {
+            throw new Error('No designation options found');
+        }
+
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomOption = options.nth(randomIndex);
+
+        const selectedText = (await randomOption.textContent())?.trim();
+        console.log(`Randomly selected designation: ${selectedText}`);
+
+        await randomOption.click();
+    }
+
     async LeaveManagerData() {
         const columnCount = await this.Coloumn.count();
         console.log("Total columns found:", columnCount);
