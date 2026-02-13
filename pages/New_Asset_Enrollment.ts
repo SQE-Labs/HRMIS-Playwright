@@ -2,6 +2,7 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { AssetManagementTab } from "./Asset_Management_Tab";
 import { asyncWrapProviders } from "async_hooks";
+import { AssetHelper } from "../utils/AssetHelpers";
 
 export class AssetEnrollment extends AssetManagementTab {
     public assetEnrollmentSubtab: Locator;
@@ -102,7 +103,7 @@ export class AssetEnrollment extends AssetManagementTab {
         this.createAssetTypePopupLabel = page.locator(".col-md-4.pt-1");
         this.popupAssetNameField = page.locator("//input[@type = 'text']");
         this.popupAssetCategory = page.locator(":#assetCategory");
-        this.popupCancelButton = page.locator("(//button[@type= 'button'])[6]");
+        this.popupCancelButton = page.locator("(//button[text()= 'Cancel'])");
         this.popupCrossIcon = page.locator(".btn-close");
         this.assetTypeName = page.locator("tr>td:nth-child(2)");
         this.approveAssetTypeRequest = page.locator("//button[text() = 'Approve Asset Type Request']");
@@ -473,10 +474,10 @@ export class AssetEnrollment extends AssetManagementTab {
         return { option, comment };
     }
 
-    async verifyAssetStatusByComment(expectedStatus, comment) {
+    async verifyAssetStatusByComment(expectedStatus: string, comment: string) {
         const rowCount = await this.assetTypeName.count();
         let found = false;
-        let actualStatus;
+        let actualStatus: string | null = null;
 
         for (let i = 0; i < rowCount; i++) {
             const commentText = await this.page
@@ -487,19 +488,25 @@ export class AssetEnrollment extends AssetManagementTab {
                 actualStatus = await this.page
                     .locator(`(//table[contains(@class, 'resume')])[1]//tr[${i + 1}]/td[7]`)
                     .textContent();
-                console.log(`Found comment: "${comment}" with status: "${actualStatus}"`);
+
+                // console.log(
+                //     `Found comment: "${comment}", Expected Status: "${expectedStatus}", Actual Status: "${actualStatus}"`
+                // );
+
                 found = true;
                 break;
             }
         }
 
-        if (found) {
-            expect(actualStatus?.trim()).toEqual(expectedStatus);
-        } else {
-            console.log(`No asset found with comment "${comment}"`);
-            throw new Error(`Comment "${comment}" not found in the table.`);
+        if (!found) {
+            throw new Error(`❌ Comment "${comment}" not found in the table.`);
         }
+
+        // ✅ Case-insensitive, trimmed comparison
+        expect(actualStatus?.trim().toUpperCase())
+            .toBe(expectedStatus.trim().toUpperCase());
     }
+
 
     // async getCurrentDate() {
     //     const currentDate = new Date().toLocaleDateString('en-US', {
@@ -572,5 +579,13 @@ export class AssetEnrollment extends AssetManagementTab {
         return assetCreateDate;
     }
 
+    async createAssetType() {
+        await this.navigateToAssetTypeRequest();
+        await this.clickOnCreateAssetTypeButton();
+        let name = await AssetHelper.generateRandomString(5)
+        await this.popupAssetNameField.fill(name);
+        await this.comment.fill(name);
+        await this.clickOnSubmitButton();
+    }
 
 }

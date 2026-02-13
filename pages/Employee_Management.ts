@@ -36,6 +36,7 @@ export class Employee_Management extends BasePage {
     public WorkAccordionBody: string[]
     public WorkDate: Locator
     public EmployeeType: Locator
+    public EmployeeSubType: Locator
     public WorkEditButton: Locator
     public PersonalDetails: Locator
     public PersonalDetailsKey: Locator
@@ -192,19 +193,20 @@ export class Employee_Management extends BasePage {
         this.AccordionBodyKey = page.locator("#collapse1 div.d-flex.flex-column.text-black-50>p")
         this.AccordionBodyValue = page.locator("h2[@id='heading1']/following-sibling::div/div/div[2]/div[4]/div/p")
         this.BasicInfoEditButton = page.locator("#heading1 + div i.fa-edit")
-        this.BasicInfoFirstname = page.locator("div:nth-child(2)>div>div:nth-child(1)>input")
-        this.BasicInfoLastName = page.locator("div:nth-child(2)>div>div:nth-child(2)>input")
+        this.BasicInfoFirstname = page.locator('input[name="firstName"]:nth-child(1)')
+        this.BasicInfoLastName = page.locator('input[name="lastName"]:nth-child(1)')
         this.BasicInfoMiddleName = page.locator('(//input[@name = "middleName"])[1]')
 
         this.UpdateButton = page.locator(".btn.btn-primary.btn-sm")
         this.CloseButton = page.locator(".btn.btn-secondary.btn-sm.ms-2")
         this.WorkAccordion = page.locator("#heading2")
         this.WorkAccordionkey = page.locator("#collapse2 div.d-flex.flex-column.text-black-50>p")
-        this.WorkDate = page.locator('//*[@id="collapse2"]/div/form/div[1]/div[4]/div/div/input')
+        this.WorkDate = page.locator('input[name="joiningDate"]:nth-child(1)')
         this.WorkEditButton = page.locator("#heading2 + div i.fa-edit")
         this.PersonalDetails = page.locator("#heading3")
         this.PersonalDetailsKey = page.locator('//*[@id="collapse3"]/div/div[2]/div/div/div/div/p')
-        this.EmployeeType = page.locator("//select[@name = 'employeeSubType']")
+        this.EmployeeType = page.locator("//select[@name = 'employeeType']")
+        this.EmployeeSubType = page.locator("//select[@name = 'employeeSubType']")
         this.PersonalDetailsEditButton = page.locator("#heading3 + div i.fa-edit")
         this.PersonalDetailsDate = page.locator('//input[@type="date"][not(@disabled)]')
         this.AadhaarCardNumber = page.locator('//input[@name="aadharNumber"][not(@disabled)]')
@@ -272,17 +274,18 @@ export class Employee_Management extends BasePage {
         this.PopupHeader = page.locator("(//div[@class = 'modal-header'])[1]")
         this.CrossButton = page.locator("(//button[@class = 'btn-close'])[1]")
         this.PopupDropDown = page.locator("#react-select-3-input")
-        this.LeaveManagerPopupDropDown = page.locator("(//div[@class=' css-1xc3v61-indicatorContainer'])[3]")
+        this.LeaveManagerPopupDropDown = page.locator("(//div[@class='css-1xc3v61-indicatorContainer'])[3]")
         this.PopupSubmitButton = page.locator("(//button[@class = 'theme-button'])[1]")
         this.AssignManagerubmitButton = page.locator("(//button[@class = 'theme-button'])[2]")
 
         this.CancelButton = page.locator("(//button[@type = 'button'])[4]")
         this.LeaveManagerDropDown = page.locator("#react-select-4-input")
-        this.LeaveManagerActionButton = page.locator(".btn.btn-danger")
+        // this.LeaveManagerActionButton = page.locator(".btn.btn-danger")
+        this.LeaveManagerActionButton = page.locator("//button[@class ='theme-button bg-brand p-2 fs-6']")
         this.Pop_Up_Header = page.locator("div>div>div>div>h5")
         this.NoButton = page.locator(".theme-button.bg-grey.mx-3.w-35.cancel-modal-Manager-delete")
         this.YesButton = page.locator("//button[@class = 'theme-button ']")
-        this.AssignButton = page.locator(".btn.btn-secondary.m-3")
+        this.AssignButton = page.locator("//button[text() = 'Assign']")
         this.AssignManagerPopupCrossicon = page.locator("(//button[@type = 'button'])[5]")
         this.AssignManagerPopupCancleButton = page.locator("(//button[@type = 'button'])[6]")
         this.AssignManagerPopUpDropdown = page.locator("#react-select-5-input")
@@ -302,13 +305,13 @@ export class Employee_Management extends BasePage {
         this.PromotionColoumn = page.locator("thead>tr>th")
         this.Dropdown = page.locator("#react-select-2-input")
         this.DropdownOption = page.locator("#react-select-2-option-5")
-        this.PromoteButton = page.locator(".btn.btn-secondary")
+        this.PromoteButton = page.locator("//button[text() = 'Promote']")
         this.PromotionPopUpHeader = page.locator("#staticBackdropLabel")
         this.PromotionPopUpLabel = page.locator("div>label")
-        this.PromotionCancelButton = page.locator("(//button[@type = 'button'])[2]")
-        this.DepartmentDropdown = page.locator("#department")
-        this.DesignationDropdown = page.locator("#designation")
-        this.DesignationDropDownOptions = page.locator("//select[@id = 'designation']//option")
+        this.PromotionCancelButton = page.locator("//button[text() = 'Cancel']")
+        this.DepartmentDropdown = page.locator("(//div[@class = 'css-1xc3v61-indicatorContainer'])[2]")
+        this.DesignationDropdown = page.locator("#react-select-4-input")
+        this.DesignationDropDownOptions = page.locator("#react-select-4-listbox > div >div")
         this.PromoteEmployeePopUpSubmitButton = page.locator("//button[@type = 'submit']")
         this.PromotionColoumntext = [
             'Employee Id',
@@ -475,7 +478,7 @@ export class Employee_Management extends BasePage {
         await this.BasicInfo.click()
     }
 
-    async getAccordionBodycountAndText(Locator: Locator, dropdownLocator : string[]) {
+    async getAccordionBodycountAndText(Locator: Locator, dropdownLocator: string[]) {
         const AccordionBodycount = await Locator.count();
         for (let i = 0; i < AccordionBodycount; i++) {
             const AccordionBodydata = Locator.nth(i);
@@ -492,9 +495,9 @@ export class Employee_Management extends BasePage {
         await this.UpdateButton.click()
     }
     async getOriginalBasicInfoName() {
-        var originalFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
-        var originalLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
-        var originalMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent();
+        var originalFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)').textContent();
+        var originalLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)').textContent();
+        var originalMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(4)').textContent();
         return { originalFirstName, originalLastName, originalMiddleName }
     }
     async clickOnCloseButton() {
@@ -502,9 +505,9 @@ export class Employee_Management extends BasePage {
     }
 
     async getUpdatedBasicInfoName() {
-        var updatedFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent();
-        var updatedLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent();
-        var updatedMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent();
+        var updatedFirstName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)').textContent();
+        var updatedLastName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)').textContent();
+        var updatedMiddleName = await this.page.locator('#collapse1 > div > div:nth-child(2) > div:nth-child(1) > div:nth-child(4)').textContent();
 
         return { updatedFirstName, updatedLastName, updatedMiddleName }
     }
@@ -518,13 +521,21 @@ export class Employee_Management extends BasePage {
 
     }
 
-    async getExistingDate() {
-        var ExistingDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
-        return ExistingDate
+    async getExistingInformationOfWork() {
+        var ExistingDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[2]/div[2]/p').textContent()
+        var employeeType = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div[2]/p').textContent()
+        var employeeSubType = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[6]/div[2]/p').textContent()
+        return { ExistingDate, employeeType, employeeSubType }
     }
-    async getCurrentDate() {
-        var CurrentDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div/p[1]').textContent()
-        return CurrentDate
+    async getUpdatedInformationOfWork() {
+        var CurrentDate = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[2]/div[2]/p').textContent()
+        var employeeType = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[4]/div[2]/p').textContent()
+        var employeeSubType = await this.page.locator('//*[@id="collapse2"]/div/div[2]/div[6]/div[2]/p').textContent()
+        return { CurrentDate, employeeType, employeeSubType }
+    }
+    async getEmployeeType() {
+        var EmployeeType = await this.EmployeeType.inputValue()
+        return EmployeeType
     }
 
     async getfutureDate() {
@@ -536,7 +547,6 @@ export class Employee_Management extends BasePage {
         const futureDates = futureDate.toISOString().split('T')[0];
         return futureDates
     }
-
     async clickOnPersonalDetails() {
         await this.PersonalDetails.click()
 
@@ -545,19 +555,36 @@ export class Employee_Management extends BasePage {
         await this.PersonalDetailsEditButton.click()
 
     }
-
+    async selectGenderOption(Gender: string) {
+        return this.page.locator(`.form-check.form-check-inline>input[value="${Gender}"]`)
+    }
     async getOriginalPeronalDetails() {
-        var OriginalaadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
-        var OriginalPanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
-        var OriginalpermanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
-        return { OriginalaadharNumber, OriginalPanCardNumber, OriginalpermanentAddress }
+        var aadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
+        var PanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
+        var DateofBirth = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent()
+        var PassportNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(3)').textContent()
+        var PresentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(5)').textContent()
+        var BloodGroup = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent()
+        var MaritalStatus = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(3)').textContent()
+        var AlternateNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(4)').textContent()
+        var Gender = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(2)').textContent()
+        var permanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
+
+        return { aadharNumber, PanCardNumber, permanentAddress, DateofBirth, PassportNumber, PresentAddress, BloodGroup, MaritalStatus, AlternateNumber, Gender }
     }
 
     async getUpdatedPerosnalDetails() {
-        var currentaadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
-        var currentPanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
-        var CurrentpermanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
-        return { currentaadharNumber, currentPanCardNumber, CurrentpermanentAddress }
+        var aadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
+        var PanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
+        var DateofBirth = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent()
+        var PassportNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(3)').textContent()
+        var PresentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(5)').textContent()
+        var BloodGroup = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent()
+        var MaritalStatus = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(3)').textContent()
+        var AlternateNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(4)').textContent()
+        var Gender = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(2)').textContent()
+        var permanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
+        return { aadharNumber, PanCardNumber, permanentAddress, DateofBirth, PassportNumber, PresentAddress, BloodGroup, MaritalStatus, AlternateNumber, Gender }
     }
 
     async clickOnWorkExperience() {
@@ -629,8 +656,11 @@ export class Employee_Management extends BasePage {
         }
         return Coloumncount
     }
-    async clickOnActionButton() {
-        await this.ManagerActionButton.click()
+    // async clickOnActionButton() {
+    //     await this.ManagerActionButton.click()
+    // }
+    async clickOnReassignActionButton() {
+        await this.page.getByText('Re-assign').click()
     }
     async clickOnCrossButton(Locator: Locator) {
         await Locator.click()
@@ -647,16 +677,16 @@ export class Employee_Management extends BasePage {
     async verifyCollapseIsVisible(value: number) {
         await expect(this.page.locator(`#collapse${value}`).last()).toBeVisible()
     }
-    async selectionofAssignManager(value : any) {
+    async selectionofAssignManager(value: any) {
         await this.page.locator(`#react-select-3-option-${value}`).click()
 
     }
-    async selectionOfLeaveManager(value : any) {
+    async selectionOfLeaveManager(value: any) {
         await this.page.locator(`#react-select-4-option-${value}`).click()
 
     }
 
-    async selectionOfAssignLeaveManager(value :  any) {
+    async selectionOfAssignLeaveManager(value: any) {
         await this.page.locator(`#react-select-5-option-${value}`).click()
 
     }
@@ -752,6 +782,59 @@ export class Employee_Management extends BasePage {
             console.log(DesignationOptionText)
         }
     }
+
+    async printAndSelectRandomDesignation() {
+        const options = this.DesignationDropDownOptions;
+        const count = await options.count();
+
+        if (count === 0) {
+            throw new Error('No designation options found');
+        }
+
+        console.log('Available Designation Options:');
+
+        const optionTexts: string[] = [];
+
+        for (let i = 0; i < count; i++) {
+            const text = (await options.nth(i).textContent())?.trim();
+
+            if (text) {
+                console.log(`- ${text}`);
+                optionTexts.push(text);
+            }
+        }
+
+        // Random selection (skipping placeholder if needed)
+        const randomIndex = Math.floor(Math.random() * optionTexts.length);
+        const selectedDesignation = optionTexts[randomIndex];
+
+        console.log(`Randomly selected designation: ${selectedDesignation}`);
+
+        await options
+            .filter({ hasText: selectedDesignation })
+            .first()
+            .click();
+
+        return selectedDesignation; // useful for later validation
+    }
+
+    async selectRandomDesignation() {
+        const options = this.DesignationDropDownOptions;
+        const count = await options.count();
+
+        if (count === 0) {
+            throw new Error('No designation options found');
+        }
+
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomOption = options.nth(randomIndex);
+
+        const selectedText = (await randomOption.textContent())?.trim();
+        console.log(`Randomly selected designation: ${selectedText}`);
+
+        await randomOption.click();
+    }
+
     async LeaveManagerData() {
         const columnCount = await this.Coloumn.count();
         console.log("Total columns found:", columnCount);
@@ -985,4 +1068,69 @@ export class Employee_Management extends BasePage {
     async clickOnEditIcon(Name: string) {
         await this.page.locator(`//td[contains(text(), '${Name}' )]/../td[5]/a`).click()
     }
+
+    async updateBloodGroup(dropdown: Locator) {
+        const allOptions = ['A+ve', 'A-ve', 'AB+ve', 'AB-ve', 'B+ve', 'B-ve', 'O+ve', 'O-ve'];
+
+        // Get currently selected value
+        const currentValue = await dropdown.inputValue();
+
+        // Remove current value from options
+        const availableOptions = allOptions.filter(
+            option => option !== currentValue
+        );
+
+        // Pick a random option from remaining ones
+        const newValue =
+            availableOptions[Math.floor(Math.random() * availableOptions.length)];
+
+        // Select new value
+        await dropdown.selectOption({ label: newValue });
+    }
+
+    async updateMaritalStatus(dropdown: Locator) {
+        const allOptions = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
+
+        // Get currently selected value
+        const currentValue = await dropdown.inputValue();
+
+        // Remove current value from options
+        const availableOptions = allOptions.filter(
+            option => option !== currentValue
+        );
+
+        // Pick a random option from remaining ones
+        const newValue =
+            availableOptions[Math.floor(Math.random() * availableOptions.length)];
+
+        // Select new value
+        await dropdown.selectOption({ label: newValue });
+    }
+    async selectGenderOptionExceptCurrent() {
+        const allOptions = ['male', 'female', 'others'];
+
+        // Find currently checked radio button
+        const checkedRadio = this.page.locator(
+            '.form-check.form-check-inline input[type="radio"]:checked'
+        );
+
+        let currentValue: string | null = null;
+
+        if (await checkedRadio.count() > 0) {
+            currentValue = await checkedRadio.getAttribute('value');
+        }
+
+        // Exclude currently selected value
+        const availableOptions = currentValue
+            ? allOptions.filter(option => option !== currentValue)
+            : allOptions;
+
+        // Pick random new option
+        const newValue =
+            availableOptions[Math.floor(Math.random() * availableOptions.length)];
+
+        // Click the new radio button
+        await (await this.selectGenderOption(newValue)).check();
+    }
+
 }

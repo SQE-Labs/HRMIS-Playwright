@@ -1,9 +1,10 @@
 import { Page, Locator, expect } from '@playwright/test'
 import { BasePage } from './Basepage'
 import { AssetHelper } from '../utils/AssetHelpers'
+import { CommonUtils } from '../utils/commonUtils';
+let utils = new CommonUtils();
 
 export class ProjectManagement extends BasePage {
-
     // Locators
     public projectListTab: Locator;
     public createProjectBtn: Locator;
