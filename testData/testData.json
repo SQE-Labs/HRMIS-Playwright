@@ -48,14 +48,14 @@
             "actualEnd": "09/30/2025"
         },
         "AddNewMember": {
-            "employeeName": "Ishita Test Sharma",
-            "designation": "Senior Developer",
+            "employeeName": "Vishal Dev Thakur",
+            "designation": "Salesforce Lead",
             "joiningDate": "11/01/2025",
             "endDate": "11/30/2025"
         },
         "AddShadowMember": {
             "shadowName": "Surinder Testing Singh",
-            "mainEmployeeName": "Ishita Test Sharma",
+            "mainEmployeeName": "Vishal Dev Thakur",
             "designation": "QA",
             "joiningDate": "12/01/2025",
             "endDate": "12/31/2025"

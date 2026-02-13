@@ -59,10 +59,11 @@ test.describe.serial("Project TeamFlow Project List", () => {
         await expect(ProjectManagementObj.projectHeader).toBeVisible();
     })
     test("HRMIS_PTF_11 Create a new project successfully @smoke @reg", async ({ page }) => {
+        let randomInt = await utils.generateRandomInteger(3);
         await ProjectManagementObj.clickCreateProject()
         // Read data from JSON file ...
         const rawData = projectData.Projects.Project1;
-        projectName = rawData.name + await utils.generateRandomInteger(2);
+        projectName = rawData.name+"_"+randomInt;
         console.log(projectName);
 
         const projectPayload = {
@@ -114,7 +115,7 @@ test.describe.serial("Project TeamFlow Project List", () => {
         const rawData = projectData.Projects.AddNewMember;
         const projectPayload = {
             ...rawData
-        }    
+        }
         await ProjectManagementObj.addNewMember(projectPayload)
 
         const addMemberToast = await ProjectManagementObj.toastMessage()

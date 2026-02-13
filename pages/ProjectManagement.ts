@@ -107,7 +107,7 @@ export class ProjectManagement extends BasePage {
         actualEnd: string
     }): Promise<void> {
         // Fill Project Name
-        await this.projectNameInput.fill(projectData.name + utils.generateRandomInteger(2)); // Append random string to ensure uniqueness
+        await this.projectNameInput.fill(projectData.name);
         // Select Project Type
         await this.projectTypeDropdown.click()
         await this.projectTypeDropdown.fill(projectData.projectType);
