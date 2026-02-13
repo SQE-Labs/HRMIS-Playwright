@@ -1,9 +1,10 @@
 import { Page, Locator, expect } from '@playwright/test'
 import { BasePage } from './Basepage'
 import { AssetHelper } from '../utils/AssetHelpers'
+import { CommonUtils } from '../utils/commonUtils';
+let utils = new CommonUtils();
 
 export class ProjectManagement extends BasePage {
-
     // Locators
     public projectListTab: Locator;
     public createProjectBtn: Locator;
@@ -106,7 +107,7 @@ export class ProjectManagement extends BasePage {
         actualEnd: string
     }): Promise<void> {
         // Fill Project Name
-        await this.projectNameInput.fill(projectData.name);
+        await this.projectNameInput.fill(projectData.name + utils.generateRandomInteger(2)); // Append random string to ensure uniqueness
         // Select Project Type
         await this.projectTypeDropdown.click()
         await this.projectTypeDropdown.fill(projectData.projectType);

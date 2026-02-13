@@ -32,15 +32,15 @@
     "DefaultOwner": "Consultant",
     "DefaultSuperOwner": "CAELIUS_OWNED",
     "DefaultAvailablity": "Available",
-    "assetsCardCount": 14,
+    "assetsCardCount": 16,
     "Projects": {
         "Project1": {
             "name": "AutomationProject",
             "projectType": "MuleSoft Integration",
             "deliveryLead": "Manik Tester",
-            "projectManager": "Vishal Thakur",
+            "projectManager": "Piyush Dogra",
             "principalSponsor": "Simran Kaur",
-            "leadBusinessAnalyst": "Ishita Sharma",
+            "leadBusinessAnalyst": "Elon Mask",
             "description": "Test project created via Playwright automation.",
             "sowStart": "09/01/2025",
             "sowEnd": "09/25/2025",

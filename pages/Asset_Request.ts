@@ -45,9 +45,9 @@ export class AssetRequests extends AssetManagementTab {
         this.noRecord = page.locator("//div[@class = 'fs-4 text-secondary text-center']");
         this.totalAssetRequest = page.locator(".total");
         this.column = page.locator("(//thead//tr)[1]");
-        this.assetRequestButton = page.locator('//a[@class="export theme-button"][text() = "Asset Request"]');
+        this.assetRequestButton = page.locator('//a[text() = "Create Request"]');
         this.card = page.locator('.card');
-        this.assetType = page.locator('#asset_list');
+        this.assetType = page.locator('.css-8mmkcg');
         this.reason = page.locator('div>textarea');
         this.submitButton = page.locator('//button[@type = "submit"]');
         this.resetButton = page.locator('button.btn.btn-secondary');
@@ -76,7 +76,7 @@ export class AssetRequests extends AssetManagementTab {
     }
 
     async navigateToAssetRequestTab() {
-        await this.assetRequestTab.click();
+        await this.page.getByText("IT Resource Requests").first().click();
     }
     async navigateToAssetl1ApprovalTab() {
         await this.assetL1Tab.click();

@@ -34,7 +34,6 @@ test.describe("Asset Overview page", () => {
 
         test("All cards display on Asset Overview Page", async ({ page }) => {
                 console.debug('All cards display on Asset Overview Page');
-                await page.pause();
                 expect(await assetOverview.getCardsCount()).toBe(testData.assetsCardCount);
                 expect(await assetOverview.getTotalAssetCount()).toBe(testData.assetsCardCount);
                 let options = await assetOverview.getFilterDropdownOption();

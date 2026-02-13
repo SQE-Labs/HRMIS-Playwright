@@ -11,14 +11,18 @@ test.describe('Asset Management tests', () => {
     const subTabsTitles: string[] = [
         'Asset Overview',
         'Asset Allocation',
-        'Asset De-allocation',
-        'Asset Request',
+        'IT Asset Return and Access Withdrawal',
+        'IT Resource Requests\n',
         'New Asset Enrollment',
         'Approve Asset Request (L1)',
         'Approve Asset Request (L2)',
         'Approve Asset Request (IT)',
         'Asset Delivery (Store)',
-        'RTO Management'
+        'RTO Management',
+        'Approve Access Request (DL)',
+        'Approve Access Request (IT)',
+        'Software Access Report',
+        'New Software Enrollment'
     ];
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page);

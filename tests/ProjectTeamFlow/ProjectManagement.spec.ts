@@ -68,10 +68,11 @@ test.describe.serial("Project TeamFlow Project List", () => {
         const projectPayload = {
             ...rawData, name: projectName, // make unique
         }
-
         await ProjectManagementObj.fillAndSubmitProjectForm(projectPayload)
         const successToast = await ProjectManagementObj.toastMessage()
         expect(successToast).toEqual(constants.PROJECT_CREATED_SUCCESSMESSAGE)
+        await ProjectManagementObj.waitforLoaderToDisappear()
+        // Verify the project appears in the list
         //HRMIS_PTF_3
         await ProjectManagementObj.searchProject(projectName);
         await expect(page.locator(`button:has-text("${projectName}"):has-text("Active")`)).toBeVisible();
