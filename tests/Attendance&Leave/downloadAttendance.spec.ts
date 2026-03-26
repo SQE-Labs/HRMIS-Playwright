@@ -11,7 +11,7 @@ let attendanceLeaveTab: AttendanceLeaveTab;
 
 let loginObj: LoginPage;
 
-test.describe.skip("Download Attendance page", () => {
+test.describe("Download Attendance page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);

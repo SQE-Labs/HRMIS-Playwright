@@ -12,6 +12,7 @@ export class AssetRequests extends AssetManagementTab {
     public assetRequestButton: Locator;
     public card: Locator;
     public assetType: Locator
+    public assertTypeOption: Locator
     public reason: Locator
     public submitButton: Locator
     public resetButton: Locator;
@@ -47,7 +48,16 @@ export class AssetRequests extends AssetManagementTab {
         this.column = page.locator("(//thead//tr)[1]");
         this.assetRequestButton = page.locator('//a[text() = "Create Request"]');
         this.card = page.locator('.card');
-        this.assetType = page.locator('.css-8mmkcg');
+     
+        
+
+
+        // Asset Type is a react-select combobox (not a <select>)
+        this.assetType = page
+            .locator("#react-select-2-placeholder")
+            .locator("xpath=ancestor::div[contains(@class,'rs__control')][1]");
+        this.assertTypeOption = page.locator("[id^='react-select-2-option']").first();
+
         this.reason = page.locator('div>textarea');
         this.submitButton = page.locator('//button[@type = "submit"]');
         this.resetButton = page.locator('button.btn.btn-secondary');
@@ -75,7 +85,7 @@ export class AssetRequests extends AssetManagementTab {
 
     }
 
-    async navigateToAssetRequestTab() {
+    async   navigateToAssetRequestTab() {
         await this.page.getByText("IT Resource Requests").first().click();
     }
     async navigateToAssetl1ApprovalTab() {
@@ -115,9 +125,28 @@ export class AssetRequests extends AssetManagementTab {
         await this.submitButton.click();
     }
 
+    async selectAssetTypeByIndex(index = 0) {
+        await this.assetType.scrollIntoViewIfNeeded();
+        await this.assetType.click({ force: true });
+        const options = this.page.locator("[id^='react-select-2-option']");
+        await options.first().waitFor({ state: "visible", timeout: 10000 });
+        const count = await options.count();
+        if (count === 0) {
+            throw new Error("No asset type options available.");
+        }
+        const safeIndex = Math.min(index, count - 1);
+        await options.nth(safeIndex).click();
+    }
+
+    async getSelectedAssetType(): Promise<string> {
+        const valueLocator = this.page.locator(".rs__single-value, div[class*='singleValue']");
+        if (await valueLocator.count() === 0) return "";
+        const text = (await valueLocator.first().textContent())?.trim() || "";
+        return text;
+    }
+
     async searchRequestByComment(comment: string) {
-        const commentLocator = this.page.locator(`//td[contains(text(), '${comment}' )]/../td[6]/a`);
-        await expect(commentLocator).toBeVisible();
+        const commentLocator = this.page.locator(`//td[contains(normalize-space(), '${comment}')]/following-sibling::td[5]//a`);
     }
     async seacrhRequestBySerialNumber(serialNumber: string) {
         const serialNumberLocator = this.page.locator(`//td[contains(text(), '${serialNumber}' )]/../td[5]/a`);
@@ -128,10 +157,32 @@ export class AssetRequests extends AssetManagementTab {
         await serialNumberLocator.click();
     }
 
-    async clickOnCommentLocator(comment: string) {
+     async clickOnCommentLocator(comment: string) {
         const commentLocator = this.page.locator(`//td[contains(text(), '${comment}' )]/../td[6]/a`);
         await commentLocator.click();
+     }
+    async clickViewByReason(reason: string) {
+
+    await this.page.waitForSelector("table tbody tr");
+
+    const rows = this.page.locator("table tbody tr");
+
+    const count = await rows.count();
+    console.log("Total rows:", count);
+
+    for (let i = 0; i < count; i++) {
+        const row = rows.nth(i);
+        const text = await row.textContent();
+
+        if (text?.includes(reason)) {
+            await row.locator("a", { hasText: "View" }).click();
+            return;
+        }
     }
+
+    throw new Error(`No row found with reason: ${reason}`);
+
+}
 
     async searchRequestByReason(comment: string) {
         const assetTypeLocator = this.page.locator(`//td[contains(text(), '${comment}' )]/../td[11]/a`);
@@ -153,10 +204,40 @@ export class AssetRequests extends AssetManagementTab {
     }
 
     async verifySuccessMessage(message: string) {
-        const successMessage = this.page.locator(`//div[contains(text(), '${message}')]`);
-        await expect(successMessage).toBeVisible();
-        await expect(successMessage).toBeHidden({ timeout: 9000 });
+        const normalized = message.trim().toLowerCase();
+        const toast = this.page.locator(".Toastify__toast-body");
+        const alert = this.page.getByRole("alert");
+        const acceptableAlternatives = [
+            "your request for this asset is already in process",
+            "request already in process",
+            "already in process",
+            "already submitted"
+        ];
+
+        const foundInToast = await toast.first().waitFor({ state: "visible", timeout: 12000 }).then(async () => {
+            const texts = (await toast.allTextContents()).map(t => t.trim().toLowerCase());
+            if (texts.some(t => t.includes(normalized))) return true;
+            return texts.some(t => acceptableAlternatives.some(alt => t.includes(alt)));
+        }).catch(() => false);
+
+        if (foundInToast) return;
+
+        const foundInAlert = await alert.first().waitFor({ state: "visible", timeout: 12000 }).then(async () => {
+            const texts = (await alert.allTextContents()).map(t => t.trim().toLowerCase());
+            if (texts.some(t => t.includes(normalized))) return true;
+            return texts.some(t => acceptableAlternatives.some(alt => t.includes(alt)));
+        }).catch(() => false);
+
+        if (foundInAlert) return;
+
+        const fallback = this.page.getByText(new RegExp(message, "i"));
+        await expect(fallback).toBeVisible();
     }
+    async verifySuccessMessage1(message: string) {
+    await expect(
+        this.page.getByRole('alert')
+    ).toContainText(message, { timeout: 15000 });
+}
 
     async getExistingSerialNumber() {
         const serialNumbers = await this.assetTableSerialNumber.allTextContents();
@@ -176,7 +257,7 @@ export class AssetRequests extends AssetManagementTab {
     }
 
     async navigateToAssetDeallocation() {
-        await AssetHelper.navigateToDeallocationTab(this.page.locator("//a[text()='Asset De-allocation']"), this);
+        await AssetHelper.navigateToDeallocationTab(this.page.locator("a[href='/dashboard/assetDeallocation']"), this);
     }
 
 

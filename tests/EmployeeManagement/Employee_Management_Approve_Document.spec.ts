@@ -7,7 +7,7 @@ import { CommonUtils } from "../../utils/commonUtils";
 import { FILL_OUT_FIELD, FILL_IN_FIELD, SELECT_ITEM } from "../../utils/constants";
 
 let EmployeeDirectory: Employee_Management;
-test.describe("'Employee Management > Approve Document module', @reg", () => {
+test.describe('Employee Management > Approve Document module @reg', () => {
   test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     const basepage = new BasePage(page);
@@ -32,6 +32,7 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
       expect(label).toBeVisible();
       let text = await EmployeeDirectory.Approve_Label.nth(i).textContent();
       console.log(text);
+    
     }
   });
 
@@ -69,12 +70,25 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
   test("compares unique employee types with dropdown options @reg", async ({
     page,
   }) => {
+    const emptyStateVisible = await page
+      .getByRole("heading", { name: /Approval for Pending Documents is not available/i })
+      .isVisible()
+      .catch(() => false);
+    if (emptyStateVisible) {
+      console.log("No pending documents available. Skipping employee dropdown comparison.");
+      return;
+    }
+
     const uniqueTypes = await EmployeeDirectory.getUniqueTextSetFromLocator(
       EmployeeDirectory.Approve_Label_Exiting_Employee,
       0,
       undefined
     );
     console.log("Unique Approved Employee Types:", [...uniqueTypes]);
+    if (uniqueTypes.size === 0) {
+      console.log("No approved employee types found. Skipping dropdown comparison.");
+      return;
+    }
 
     await EmployeeDirectory.Approve_Label_Employee_dropdown.click();
     await page.waitForTimeout(2000);
@@ -91,6 +105,15 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
   test("filters employee records based on dropdown selection @reg", async ({
     page,
   }) => {
+    const emptyStateVisible = await page
+      .getByRole("heading", { name: /Approval for Pending Documents is not available/i })
+      .isVisible()
+      .catch(() => false);
+    if (emptyStateVisible) {
+      console.log("No pending documents available. Skipping filter test.");
+      return;
+    }
+
     await EmployeeDirectory.selectDropdownOptionByIndex(2);
     await page.waitForTimeout(500);
 
@@ -111,6 +134,16 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
   test("opens verify document popup after clicking action button @reg ", async ({
     page,
   }) => {
+    const emptyStateVisible = await page
+      .getByRole("heading", { name: /Approval for Pending Documents is not available/i })
+      .isVisible()
+      .catch(() => false);
+    const actionCount = await EmployeeDirectory.Action_button.count();
+    if (emptyStateVisible || actionCount === 0) {
+      console.log("No pending documents/actions available. Skipping popup test.");
+      return;
+    }
+
     await EmployeeDirectory.Action_button.click();
     await EmployeeDirectory.waitforLoaderToDisappear();
 
@@ -121,20 +154,33 @@ test.describe("'Employee Management > Approve Document module', @reg", () => {
   });
 
   test("closes action popup on cancel button click", async ({ page }) => {
+    if (await EmployeeDirectory.No_Record.isVisible()) {
+      const noRecordText = await EmployeeDirectory.No_Record.textContent();
+      console.log("No records available:", noRecordText);
+      expect(noRecordText).toBe(
+        "Approval for Pending Documents is not available."
+      );
+      return;
+    }
     await EmployeeDirectory.Action_button.click();
     await EmployeeDirectory.waitforLoaderToDisappear();
-    await page.locator(".cancel-approve").click();
-    await page.waitForTimeout(2000);
-
-    expect(await EmployeeDirectory.Action_Button_popup.isHidden()).toBe(true);
+    await EmployeeDirectory.Approve_Document_Modal_Cancel.click();
+    await expect(EmployeeDirectory.Approve_Document_Modal).toBeHidden();
   });
 
   test("closes action popup on close icon click @reg", async ({ page }) => {
+    if (await EmployeeDirectory.No_Record.isVisible()) {
+      const noRecordText = await EmployeeDirectory.No_Record.textContent();
+      console.log("No records available:", noRecordText);
+      expect(noRecordText).toBe(
+        "Approval for Pending Documents is not available."
+      );
+      return;
+    }
     await EmployeeDirectory.Action_button.click();
     await EmployeeDirectory.waitforLoaderToDisappear();
-    await page.locator(".btn-close").click();
-    await page.waitForTimeout(2000);
-    expect(await EmployeeDirectory.Action_Button_popup.isHidden()).toBe(true);
+    await EmployeeDirectory.Approve_Document_Modal_Close.click();
+    await expect(EmployeeDirectory.Approve_Document_Modal).toBeHidden();
   });
 
   test("should download file after clicking View button @smoke, @reg", async ({

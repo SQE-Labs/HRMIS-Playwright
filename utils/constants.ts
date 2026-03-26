@@ -25,7 +25,7 @@ export const permanentAddress = "DEF Testing Centre, USA"
 export const domain = "@caeliusconsulting.com"
 export const expectedSuccessMessageITApproval = "User Email has been successfully updated."
 
-export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created "
+export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created."
 export const actualSuccessMessage = "Success";
 
 export const WITHDRAW_LEAVE_SUCCESSMESSAGE = "Leave Withdrawn Successfully"

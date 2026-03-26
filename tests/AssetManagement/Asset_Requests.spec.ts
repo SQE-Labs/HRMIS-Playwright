@@ -36,7 +36,6 @@ test.describe("Asset Rrequests page", () => {
     test("Create Asset Request - Successful Submission @reg", async ({ page }) => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
-        await page.pause();
         await expect(assetrequest.card).toBeVisible();
         await assetrequest.assetType.click();
         await page.locator('#react-select-2-option-1').click();
@@ -49,10 +48,10 @@ test.describe("Asset Rrequests page", () => {
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.selectAssetTypeByIndex(1);
         await assetrequest.reason.fill(await assetrequest.generateRandomString(10));
         await assetrequest.resetButton.click()
-        expect(await assetrequest.assetType.inputValue()).toBe("");
+        expect(await assetrequest.getSelectedAssetType()).toBe("");
         expect(await assetrequest.reason.inputValue()).toBe("");
     })
 })

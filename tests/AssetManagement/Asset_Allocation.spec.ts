@@ -17,6 +17,7 @@ test.describe("Asset Allocation page", () => {
         expect(await allocation.allocationPageHeader.isVisible()).toBeTruthy();
         expect(await allocation.allocationAssignAsset.isVisible()).toBeTruthy();
 
+                  
         expect(await allocation.searchBar.isVisible()).toBeTruthy();
         await allocation.getTotalAssetCount()
         await allocation.getColumnHeader()

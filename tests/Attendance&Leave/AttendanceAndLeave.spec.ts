@@ -5,7 +5,7 @@ import { AttendanceLeaveTab } from '../../pages/Attendance&Leaves';
 
 let attendanceLeaveTab: AttendanceLeaveTab
 
-test.describe.skip('Attendance and Leave tests', () => {
+test.describe('Attendance and Leave tests', () => {
     // Define subTabsTitles as a constant if only used locally in this file
     const subTabsTitles: string[] = [
         'Apply Leaves',

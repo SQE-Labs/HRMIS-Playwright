@@ -87,9 +87,14 @@ test.describe("Analytics & Insights module", () => {
 
     test("HRMIS_AI_14 User Attendance Report functionality @smoke @reg", async ({ page }) => {
         await analyticsInsights.navigateToUserAttendanceReport();
+    
+        
         await analyticsInsights.monthDropdown.waitFor({ state: 'visible', timeout: 30000 });
-        await analyticsInsights.monthDropdown.selectOption("April");
+        await analyticsInsights.monthDropdown.click();
+        await page.locator("div.rs__option", { hasText: "April" }).click();
+        //await analyticsInsights.monthDropdown.selectOption("April");
         await analyticsInsights.waitForDotsLoaderToDisappear();
+        
         await analyticsInsights.selectEmployeeDropdown.click();
         await page.getByText("Vishal Dev Thakur").waitFor({ state: 'visible', timeout: 60000 });
         await page.getByText("Vishal Dev Thakur").click();

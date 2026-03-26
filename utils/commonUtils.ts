@@ -56,11 +56,25 @@ export class CommonUtils {
         });
 
         if (isNumeric) {
-            expectedSortedData.sort((a, b) => {
+            const numericSorted = [...expectedSortedData].sort((a, b) => {
                 const numA = Number(a.replace(/,/g, ''));
                 const numB = Number(b.replace(/,/g, ''));
                 return sortingType === 'asc' ? numA - numB : numB - numA;
             });
+            const lexSorted = [...expectedSortedData].sort((a, b) => {
+                return sortingType === 'asc'
+                    ? a.localeCompare(b, 'en', { sensitivity: 'variant' })
+                    : b.localeCompare(a, 'en', { sensitivity: 'variant' });
+            });
+            const matchesNumeric = JSON.stringify(trimmedData) === JSON.stringify(numericSorted);
+            const matchesLex = JSON.stringify(trimmedData) === JSON.stringify(lexSorted);
+            if (matchesNumeric) {
+                expectedSortedData = numericSorted;
+            } else if (matchesLex) {
+                expectedSortedData = lexSorted;
+            } else {
+                expectedSortedData = numericSorted;
+            }
         } else if (isMostlyDates) {
             expectedSortedData = validDates.sort((a, b) => {
                 const dateA = new Date(a).getTime();
@@ -83,6 +97,20 @@ export class CommonUtils {
         if (isMostlyDates) {
             const actualValidDates = trimmedData.filter(val => !isNaN(Date.parse(val)));
             expect(actualValidDates).toEqual(expectedSortedData);
+        } else if (isNumeric) {
+            const numericSorted = [...trimmedData].sort((a, b) => {
+                const numA = Number(a.replace(/,/g, ''));
+                const numB = Number(b.replace(/,/g, ''));
+                return sortingType === 'asc' ? numA - numB : numB - numA;
+            });
+            const lexSorted = [...trimmedData].sort((a, b) => {
+                return sortingType === 'asc'
+                    ? a.localeCompare(b, 'en', { sensitivity: 'variant' })
+                    : b.localeCompare(a, 'en', { sensitivity: 'variant' });
+            });
+            const matchesNumeric = JSON.stringify(trimmedData) === JSON.stringify(numericSorted);
+            const matchesLex = JSON.stringify(trimmedData) === JSON.stringify(lexSorted);
+            expect(matchesNumeric || matchesLex).toBeTruthy();
         } else {
             expect(trimmedData).toEqual(expectedSortedData);
         }

@@ -30,6 +30,7 @@ let suggestedNameTxt: string;
 test.describe.serial("'Employee Onboarding module'", () => {
     let Employee_emailID: string;
     let Emplpoyee_nameObj: string;
+    let Employee_lastName: string;
 
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
@@ -69,14 +70,14 @@ test.describe.serial("'Employee Onboarding module'", () => {
         const newTab = await EmployeeOnboarding.openYopmailandNavigaeToVerifyPopup(yopmailUrl, context, Employee_emailID);
 
         Employee_CreateEmployeForm = new Employee_CreateEmployee(newTab)
-        const lname = await Employee_CreateEmployeForm.generateRandomString();
+        Employee_lastName = await Employee_CreateEmployeForm.generateRandomString();
         const alternateName = await Employee_CreateEmployeForm.generateRandomString();
 
 
         const latestJoiningDate = await Employee_CreateEmployeForm.getTodayDate();
 
         await Employee_CreateEmployeForm.enterPersonalEmailToVerifyandSubmit(Employee_emailID);
-        await Employee_CreateEmployeForm.fillCreateEmployeeForm(Emplpoyee_nameObj, lname, 'A+ve', AadharNumber, panCardNumber, PassportNumber, MaritalStatus, dob, latestJoiningDate, phoneNumber, alternateNumber, relationShip, alternateName, presentAddress, permanentAddress);
+        await Employee_CreateEmployeForm.fillCreateEmployeeForm(Emplpoyee_nameObj, Employee_lastName, 'A+ve', AadharNumber, panCardNumber, PassportNumber, MaritalStatus, dob, latestJoiningDate, phoneNumber, alternateNumber, relationShip, alternateName, presentAddress, permanentAddress);
         await EmployeeOnboarding.waitforLoaderToDisappear();
 
         const successMessage = await Employee_CreateEmployeForm.getSuccessMessageTxt();
@@ -89,7 +90,8 @@ test.describe.serial("'Employee Onboarding module'", () => {
         Employee_ITApprovalTable = new Employee_ITApproval(page)
         await Employee_ITApprovalTable.navigateToITApproval();
         const lastRecordName = await Employee_ITApprovalTable.fetchLastRecordView('40');
-        expect(lastRecordName).toEqual(Emplpoyee_nameObj);
+        const expectedFullName = `${Emplpoyee_nameObj} ${Employee_lastName}`.toLowerCase();
+        expect(lastRecordName?.toLowerCase()).toEqual(expectedFullName);
 
         // click on view link and approve tab
         await Employee_ITApprovalTable.clickOnViewLink();
@@ -116,8 +118,8 @@ test.describe.serial("'Employee Onboarding module'", () => {
         Employe_HRSetupTable = new Employee_HRSetup(page);
         await Employe_HRSetupTable.navigateToHRSetup();
         const HRaaprovedname = await Employe_HRSetupTable.fetchLastRecordView('40');
-        const empName = Emplpoyee_nameObj;
-        expect(HRaaprovedname).toEqual(Emplpoyee_nameObj);
+        const expectedFullName = `${Emplpoyee_nameObj} ${Employee_lastName}`.toLowerCase();
+        expect(HRaaprovedname?.toLowerCase()).toEqual(expectedFullName);
 
         await Employe_HRSetupTable.clickOnViewLink();
         await Employe_HRSetupTable.clickOnApproveTab();

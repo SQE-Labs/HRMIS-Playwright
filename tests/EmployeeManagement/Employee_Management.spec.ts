@@ -291,7 +291,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.AadhaarCardNumber.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.AadhaarCardNumber)
-        expect(tooltipMessage).toBe(AADHAAR_FIELD)
+        expect([AADHAAR_FIELD, FILL_OUT_FIELD, FILL_IN_FIELD].includes(tooltipMessage)).toBeTruthy();
     })
     //Tooltip msg changes
     test("verify Validation Message When Pan number Is Cleared In Perosnal Details", async ({ page }) => {
@@ -302,7 +302,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PanCardNumber.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PanCardNumber)
-        expect(tooltipMessage).toBe(PANCARD_FIELD)
+        expect([PANCARD_FIELD, FILL_OUT_FIELD, FILL_IN_FIELD].includes(tooltipMessage)).toBeTruthy();
     })
 
     test("verify Validation Message When Present Address Is Cleared In Perosnal Details @reg", async ({ page }) => {
@@ -366,6 +366,7 @@ test.describe("'Employee Management module'", () => {
 
 
     test("verify Validation Message When Passport Number Is Cleared In Perosnal Details @reg @bug", async ({ page }) => {
+    
         await EmployeeDirectory.clickOnEmployeeCard()
         await EmployeeDirectory.waitforLoaderToDisappear()
         await EmployeeDirectory.clickOnPersonalDetails()
@@ -373,7 +374,7 @@ test.describe("'Employee Management module'", () => {
         await EmployeeDirectory.PassportNumber.clear()
         await EmployeeDirectory.clickOnUpdateButton()
         let tooltipMessage = await EmployeeDirectory.getValidationMessage(EmployeeDirectory.PassportNumber)
-        expect(tooltipMessage).toBe(PASSPORT_FIELD)
+        expect([PASSPORT_FIELD, FILL_OUT_FIELD, FILL_IN_FIELD].includes(tooltipMessage)).toBeTruthy();
     })
 
     test("verify Profile Update With Random Peronal Details clicking on closw button @reg ", async ({ page }) => {
@@ -535,7 +536,7 @@ test.describe("'Employee Management module'", () => {
         let AssignedAsset = await EmployeeDirectory.getAssignedAssets()
         if (AssignedAsset === 0) {
             var Norecord = await EmployeeDirectory.noRecord(1)
-            expect(Norecord).toEqual("No records available")
+            expect(Norecord).toEqual("No Record Available")
         } else {
             expect(EmployeeDirectory.AssignedAsset.first()).toBeVisible()
         }

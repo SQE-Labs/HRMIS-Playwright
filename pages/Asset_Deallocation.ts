@@ -24,9 +24,9 @@ export class AssetDeallocation extends BasePage {
 
     constructor(page: Page) {
         super(page);
-        this.deallocationSubtab = page.locator("//a[text()='Asset De-allocation']");
-        this.deallocationHeader = page.locator(".d-flex");
-        this.deallocationDropdown = page.locator(".col-md-6");
+        this.deallocationSubtab = page.locator("a[href='/dashboard/assetDeallocation']");
+        this.deallocationHeader = page.getByText("Return Asset", { exact: true });
+        this.deallocationDropdown = page.locator("div").filter({ hasText: /^Select employee$/ }).first();
         this.SelectedOption = page.locator('//*[@id="react-select-2-option-2"]');
         this.deallocationDropdownList = page.locator(" .css-1nmdiq5-menu");
         this.deallocationOption = page.locator(" .css-10wo9uf-option");
@@ -44,6 +44,7 @@ export class AssetDeallocation extends BasePage {
         const assetManagementTab = new AssetManagementTab(this.page);
         await AssetHelper.navigateToDeallocationTab(this.deallocationSubtab, assetManagementTab);
 
+        await this.waitforLoaderToDisappear();
         expect(await this.deallocationHeader.isVisible()).toBeTruthy();
         expect(await this.deallocationDropdown.isVisible()).toBeTruthy();
 

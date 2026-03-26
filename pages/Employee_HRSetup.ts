@@ -109,12 +109,14 @@ export class Employee_HRSetup extends BasePage {
     }) {
 
         // Helper function to handle React-Select style dropdowns
+        const escapeRegExp = (input: string) =>
+            input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
         const selectReactDropdown = async (placeholder: string, value: string) => {
             await this.page.locator(`//div[text()='${placeholder}']/ancestor::div[contains(@class,'control')]`).click();
             await this.page.waitForTimeout(1000)
-            const form = page.locator('form');
-
-            await form.getByText(value, { exact: true }).click();
+            const optionText = new RegExp(`^\\s*${escapeRegExp(value)}\\s*$`, 'i');
+            await this.page.getByText(optionText).first().click();
 
 
         };

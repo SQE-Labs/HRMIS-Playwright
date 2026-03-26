@@ -9,7 +9,7 @@ import { ApplyLeaves } from "../../pages/ApplyLeaves";
 let myTeamLeave: MyTeamLeavePage;
 let loginObj: LoginPage;
 
-test.describe.skip("My Team Leave Page", () => {
+test.describe("My Team Leave Page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
 
 

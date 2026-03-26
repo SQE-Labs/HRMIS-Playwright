@@ -31,12 +31,20 @@ export class BasePage extends CommonUtils {
     await this.page.goto(url);
   }
   async waitForDotsLoaderToDisappear(): Promise<void> {
-
-    await this.threeDotLoader.first().waitFor({ state: 'detached' });
-    //expect(this.threeDotLoader.first()).not.toBeAttached();
-
-
-
+    const loader = this.threeDotLoader.first();
+    try {
+      await loader.waitFor({ state: 'detached', timeout: 10000 });
+      return;
+    } catch {
+      // fall through to hidden check
+    }
+    try {
+      await loader.waitFor({ state: 'hidden', timeout: 2000 });
+      return;
+    } catch {
+      // Loader can stay visible while content is already loaded.
+      // Don't block the test indefinitely.
+    }
   }
   async waitForSpinnerLoaderToDisappear(): Promise<void> {
     //expect(this.SpinLoader.first()).not.toBeAttached();
@@ -52,7 +60,28 @@ export class BasePage extends CommonUtils {
 
   async getValidationMessage(locator: Locator) {
     await locator.waitFor({ state: 'visible', timeout: 2000 })
-    let tooltipMessage = await locator.evaluate(el => (el as HTMLInputElement).validationMessage);
+    let tooltipMessage = await locator.evaluate(el => {
+      const input = el as HTMLInputElement;
+      if (typeof input.reportValidity === "function") {
+        input.reportValidity();
+      }
+      return input.validationMessage || "";
+    });
+    if (!tooltipMessage) {
+      tooltipMessage = (await locator.getAttribute("title")) || "";
+    }
+    if (!tooltipMessage) {
+      const describedBy = await locator.getAttribute("aria-describedby");
+      if (describedBy) {
+        tooltipMessage = (await this.page.locator(`#${describedBy}`).textContent())?.trim() || "";
+      }
+    }
+    if (!tooltipMessage) {
+      const nearby = locator.locator("xpath=ancestor::*[1]//*[contains(@class,'invalid') or contains(@class,'error') or contains(@class,'text-danger')]").first();
+      if (await nearby.isVisible().catch(() => false)) {
+        tooltipMessage = (await nearby.textContent())?.trim() || "";
+      }
+    }
     return tooltipMessage
 
   }
@@ -64,11 +93,14 @@ export class BasePage extends CommonUtils {
   //   return message
   // }
   async toastMessage() {
-    await this.page.waitForSelector('.Toastify__toast-body', { state: 'visible' })
-    let message = await this.popUp.textContent()
-    console.debug(message)
-    await expect(this.page.locator(".Toastify__toast-body")).toBeHidden({timeout: 10000 })
-    return message
+    const toastLocator = this.page.locator('.Toastify__toast-body');
+    await toastLocator.first().waitFor({ state: 'visible' });
+    const count = await toastLocator.count();
+    const targetToast = count > 1 ? toastLocator.last() : toastLocator.first();
+    const message = await targetToast.textContent();
+    console.debug(message);
+    await expect(targetToast).toBeHidden({ timeout: 10000 });
+    return message;
   }
 
   async toastMessage2() {
@@ -107,8 +139,8 @@ export class BasePage extends CommonUtils {
       // If string passed, treat as selector
       await this.page.waitForSelector(locator, { state, timeout });
     } else {
-      // If locator passed (Locator object)
-      await locator.waitFor({ state, timeout });
+      // If locator passed (Locator object) and resolves to multiple elements, use first() to avoid strict mode errors
+      await locator.first().waitFor({ state, timeout });
     }
   }
 

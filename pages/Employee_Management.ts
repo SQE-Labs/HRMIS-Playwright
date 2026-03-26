@@ -84,6 +84,12 @@ export class Employee_Management extends BasePage {
     public PopupDropDown: Locator
     public PopupSubmitButton: Locator
     public CancelButton: Locator
+    public AssignManagerModal: Locator
+    public AssignManagerModalCross: Locator
+    public AssignManagerModalCancel: Locator
+    public ActiveModal: Locator
+    public ActiveModalClose: Locator
+    public ActiveModalCancel: Locator
     public LeaveManagerPopupDropDown: Locator
     public LeaveManagerDropDown: Locator
     public LeaveManagerActionButton: Locator
@@ -93,7 +99,8 @@ export class Employee_Management extends BasePage {
     public YesButton: Locator
     public AssignButton: Locator
     public AssignManagerPopUpDropdown: Locator
-    public AssignManagerPopupHeader: Locator
+    public AssignManagerPopupHeader
+    : Locator
     public AssignManagerPopupDropdownOption: Locator
     public AssignManagerPopupCrossicon: Locator
     public AssignManagerPopupCancleButton: Locator
@@ -138,6 +145,9 @@ export class Employee_Management extends BasePage {
     public Approve_Label_Exiting_Employee: Locator
     public Action_button: Locator
     public Action_Button_popup: Locator
+    public Approve_Document_Modal: Locator
+    public Approve_Document_Modal_Cancel: Locator
+    public Approve_Document_Modal_Close: Locator
     public View_button: Locator
     public Select_action_dropdown: Locator
     public Reason_Section: Locator
@@ -181,13 +191,13 @@ export class Employee_Management extends BasePage {
         this.Employee_Directory_tab_Header = page.locator("//h1[text()='Employee Directory']")
         this.Employee_Directory_Cards = page.locator(".col-md-4.col-lg-3")
         this.TotalEmployeecount = page.locator(".total")
-        this.Employee_Directory_Searchbar = page.locator("//input[@name = 'search']")
-        this.Employee_Directory_cards_title = page.locator(".card-title.text-primary")
-        this.Record_notfound = page.locator(".fs-4")
-        this.SelectDepartment = page.locator("#department")
+        this.Employee_Directory_Searchbar = page.locator("input[id^='react-select-'][id$='-input']").nth(0)
+        this.Employee_Directory_cards_title = this.Employee_Directory_Cards.locator("h3, h4, .card-title")
+        this.Record_notfound = page.locator(".fs-4, .fs-4.text-secondary.text-center")
+        this.SelectDepartment = page.locator("input[id^='react-select-'][id$='-input']").nth(1)
         this.cardTextDepartment = page.locator("//small[@class = 'card-text']")
-        this.SelectStatus = page.locator("#selectedStatus")
-        this.Card = page.locator(`.card-title.text-primary`)
+        this.SelectStatus = page.locator("input[id^='react-select-'][id$='-input']").nth(2)
+        this.Card = this.Employee_Directory_cards_title
         this.EmployeeProfile = page.locator(".employee-profile")
         this.BasicInfo = page.locator('#heading1')
         this.AccordionBodyKey = page.locator("#collapse1 div.d-flex.flex-column.text-black-50>p")
@@ -279,6 +289,9 @@ export class Employee_Management extends BasePage {
         this.AssignManagerubmitButton = page.locator("(//button[@class = 'theme-button'])[2]")
 
         this.CancelButton = page.locator("(//button[@type = 'button'])[4]")
+        this.ActiveModal = page.locator(".modal.show")
+        this.ActiveModalClose = this.ActiveModal.locator("button.btn-close, button[aria-label='Close']")
+        this.ActiveModalCancel = this.ActiveModal.getByRole("button", { name: /cancel/i })
         this.LeaveManagerDropDown = page.locator("#react-select-4-input")
         // this.LeaveManagerActionButton = page.locator(".btn.btn-danger")
         this.LeaveManagerActionButton = page.locator("//button[@class ='theme-button bg-brand p-2 fs-6']")
@@ -290,6 +303,9 @@ export class Employee_Management extends BasePage {
         this.AssignManagerPopupCancleButton = page.locator("(//button[@type = 'button'])[6]")
         this.AssignManagerPopUpDropdown = page.locator("#react-select-5-input")
         this.AssignManagerPopupHeader = page.locator("(//h5[@id = 'staticBackdropLabel'])[2]")
+        this.AssignManagerModal = this.AssignManagerPopupHeader.locator("xpath=ancestor::div[contains(@class,'modal')][1]")
+        this.AssignManagerModalCross = this.AssignManagerModal.locator("button.btn-close, button[aria-label='Close']")
+        this.AssignManagerModalCancel = this.AssignManagerModal.getByRole("button", { name: /cancel/i })
         this.AssignManagerPopupDropdownOption = page.locator("#react-select-5-option-1")
         this.AssignManagerPopupSubmitbutton = page.locator("(//button[@class = 'theme-button'])[2]")
         this.ColoumnBody = [
@@ -352,12 +368,16 @@ export class Employee_Management extends BasePage {
         this.Approve_Header = page.locator("div>h1")
         this.Approve_Label = page.locator("//label[@class = 'label']")
 
-        this.Approve_Label_Document_type_dropdown = page.locator("#react-select-2-input")
-        this.Approve_Label_Employee_dropdown = page.locator("#react-select-3-input")
+        // Approve Document filters now render as custom dropdowns (no visible input)
+        this.Approve_Label_Document_type_dropdown = page.getByText("All Documents").first()
+        this.Approve_Label_Employee_dropdown = page.getByText("All Employees").first()
         this.Approve_Label_Exiting_Document_type = page.locator("tr > td:nth-child(3):visible")
         this.Approve_Label_Exiting_Employee = page.locator("tr>td:nth-child(2)")
         this.Action_button = page.locator("(//button[@class = 'btn btn-secondary'])[1]")
         this.Action_Button_popup = page.locator("#staticBackdropLabel")
+        this.Approve_Document_Modal = page.locator("[aria-labelledby='staticBackdropLabel']")
+        this.Approve_Document_Modal_Cancel = this.Approve_Document_Modal.getByRole("button", { name: /cancel/i })
+        this.Approve_Document_Modal_Close = this.Approve_Document_Modal.locator("button.btn-close, button[aria-label='Close']")
         this.View_button = page.locator("//a[text()='View']")
         this.Select_action_dropdown = page.locator("#documentAction")
         this.Reason_Section = page.locator("//textarea[@class = 'border']")
@@ -413,9 +433,11 @@ export class Employee_Management extends BasePage {
     }
     async naviagteToEmployeeDirectoryTab() {
         await this.Employee_Directory_tab.click()
+        await this.waitForEmployeeDirectoryReady()
     }
 
     async totalCardsCount() {
+        await this.waitForEmployeeDirectoryReady()
         var TotalCards = await this.Employee_Directory_Cards.count()
         console.debug(TotalCards)
         var TotalEmployeeText = await this.TotalEmployeecount.textContent() || ""
@@ -445,33 +467,80 @@ export class Employee_Management extends BasePage {
     }
 
     async searchByEmployeeDirectorySearchBar(EmployeeName: string) {
-        await this.Employee_Directory_Searchbar.pressSequentially(EmployeeName)
+        await this.waitForEmployeeDirectoryReady()
+        await this.Employee_Directory_Searchbar.click()
+        await this.Employee_Directory_Searchbar.fill("")
+        await this.Employee_Directory_Searchbar.fill(EmployeeName)
+        await this.Employee_Directory_Searchbar.press("Enter")
+        await this.waitforLoaderToDisappear()
     }
 
     async optionSelection(locator: Locator, Option: string) {
-        await locator.selectOption({ label: Option });
+        await this.waitFor(locator, 'visible', 15000)
+        const tagName = await locator.evaluate(el => el.tagName.toLowerCase())
+        if (tagName === "select") {
+            await locator.selectOption({ label: Option })
+        } else {
+            await locator.fill("")
+            await locator.fill(Option)
+            await locator.press("Enter")
+        }
+        await this.waitforLoaderToDisappear()
     }
 
     async noRecord(value = 0) {
-        var Norecord = await this.Record_notfound.nth(value).textContent()
-        console.debug(Norecord)
-        return Norecord
+        const emptyText = this.Record_notfound.nth(value)
+        try {
+            await emptyText.waitFor({ state: 'visible', timeout: 3000 })
+            const text = (await emptyText.textContent())?.trim() || ""
+            console.debug(text)
+            return text
+        } catch {
+            const noOptions = this.page.getByText("No options").first()
+            if (await noOptions.isVisible().catch(() => false)) {
+                console.debug("No Record Available")
+                return "No Record Available"
+            }
+            // Fallback: empty state might be represented by zero cards
+            const count = await this.Employee_Directory_Cards.count()
+            if (count === 0) {
+                console.debug("No Record Available")
+                return "No Record Available"
+            }
+            throw new Error("Expected no records, but employee cards are still visible.")
+        }
     }
 
     async fechingEmployeeName() {
-        let employee = this.Card.nth(14)
+        await this.waitForEmployeeDirectoryReady()
+        const employee = await this.getFirstEmployeeCardTitle()
         let employeeName = await employee.textContent()
         console.debug(employeeName)
         return employeeName
     }
 
     async clickOnEmployeeCard() {
-        let card = this.Card.nth(14)
+        await this.waitForEmployeeDirectoryReady()
+        const card = await this.getFirstEmployeeCardTitle()
         let Name = await card.innerText()
-
         await card.click()
         return Name
 
+    }
+
+    private async waitForEmployeeDirectoryReady() {
+        await this.waitFor(this.Employee_Directory_tab_Header, 'visible', 15000)
+        await this.waitFor(this.Employee_Directory_Searchbar, 'visible', 15000)
+    }
+
+    private async getFirstEmployeeCardTitle(): Promise<Locator> {
+        const firstTitle = this.Employee_Directory_cards_title.first()
+        await firstTitle.waitFor({ state: 'visible', timeout: 15000 })
+        const count = await this.Employee_Directory_cards_title.count()
+        if (count === 0) {
+            throw new Error("No employee cards available to select.")
+        }
+        return firstTitle
     }
 
     async clickOnBasicInfo() {
@@ -558,32 +627,40 @@ export class Employee_Management extends BasePage {
     async selectGenderOption(Gender: string) {
         return this.page.locator(`.form-check.form-check-inline>input[value="${Gender}"]`)
     }
+
+    private async getPersonalDetailValue(label: string): Promise<string> {
+        const labelLocator = this.page.getByText(label, { exact: true }).first()
+        await labelLocator.waitFor({ state: 'visible', timeout: 10000 })
+        const valueLocator = labelLocator.locator("xpath=following-sibling::*[1]")
+        return (await valueLocator.textContent())?.trim() || ""
+    }
+
     async getOriginalPeronalDetails() {
-        var aadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
-        var PanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
-        var DateofBirth = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent()
-        var PassportNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(3)').textContent()
-        var PresentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(5)').textContent()
-        var BloodGroup = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent()
-        var MaritalStatus = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(3)').textContent()
-        var AlternateNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(4)').textContent()
-        var Gender = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(2)').textContent()
-        var permanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
+        var aadharNumber = await this.getPersonalDetailValue('Aadhar Card Number')
+        var PanCardNumber = await this.getPersonalDetailValue('PAN Number')
+        var DateofBirth = await this.getPersonalDetailValue('Date of Birth')
+        var PassportNumber = await this.getPersonalDetailValue('Passport Number')
+        var PresentAddress = await this.getPersonalDetailValue('Present Address')
+        var BloodGroup = await this.getPersonalDetailValue('Blood Group')
+        var MaritalStatus = await this.getPersonalDetailValue('Marital Status')
+        var AlternateNumber = await this.getPersonalDetailValue('Alternate Number')
+        var Gender = await this.getPersonalDetailValue('Gender')
+        var permanentAddress = await this.getPersonalDetailValue('Permanent Address')
 
         return { aadharNumber, PanCardNumber, permanentAddress, DateofBirth, PassportNumber, PresentAddress, BloodGroup, MaritalStatus, AlternateNumber, Gender }
     }
 
     async getUpdatedPerosnalDetails() {
-        var aadharNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(2)').textContent()
-        var PanCardNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(4)').textContent()
-        var DateofBirth = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(1)').textContent()
-        var PassportNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(3)').textContent()
-        var PresentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(2) > div > p:nth-child(5)').textContent()
-        var BloodGroup = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(1)').textContent()
-        var MaritalStatus = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(3)').textContent()
-        var AlternateNumber = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(4)').textContent()
-        var Gender = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(2)').textContent()
-        var permanentAddress = await this.page.locator('#collapse3 > div > div:nth-child(2) > div:nth-child(4) > div > p:nth-child(5)').textContent()
+        var aadharNumber = await this.getPersonalDetailValue('Aadhar Card Number')
+        var PanCardNumber = await this.getPersonalDetailValue('PAN Number')
+        var DateofBirth = await this.getPersonalDetailValue('Date of Birth')
+        var PassportNumber = await this.getPersonalDetailValue('Passport Number')
+        var PresentAddress = await this.getPersonalDetailValue('Present Address')
+        var BloodGroup = await this.getPersonalDetailValue('Blood Group')
+        var MaritalStatus = await this.getPersonalDetailValue('Marital Status')
+        var AlternateNumber = await this.getPersonalDetailValue('Alternate Number')
+        var Gender = await this.getPersonalDetailValue('Gender')
+        var permanentAddress = await this.getPersonalDetailValue('Permanent Address')
         return { aadharNumber, PanCardNumber, permanentAddress, DateofBirth, PassportNumber, PresentAddress, BloodGroup, MaritalStatus, AlternateNumber, Gender }
     }
 
@@ -678,7 +755,14 @@ export class Employee_Management extends BasePage {
         await expect(this.page.locator(`#collapse${value}`).last()).toBeVisible()
     }
     async selectionofAssignManager(value: any) {
-        await this.page.locator(`#react-select-3-option-${value}`).click()
+        const options = this.page.locator("#react-select-3-listbox [id^='react-select-3-option']");
+        await options.first().waitFor({ state: "visible", timeout: 10000 });
+        const count = await options.count();
+        if (count === 0) {
+            throw new Error("No assign-manager options available in dropdown.");
+        }
+        const safeIndex = Math.min(Number(value) || 0, count - 1);
+        await options.nth(safeIndex).click();
 
     }
     async selectionOfLeaveManager(value: any) {
@@ -923,7 +1007,14 @@ export class Employee_Management extends BasePage {
 
     async selectDropdownOptionByIndex(index: number) {
         await this.Approve_Label_Employee_dropdown.click();
-        await this.page.locator(`#react-select-3-option-${index}`).click();
+        const options = this.page.locator("#react-select-3-listbox [id^='react-select-3-option']");
+        await options.first().waitFor({ state: "visible", timeout: 10000 });
+        const count = await options.count();
+        if (count === 0) {
+            throw new Error("No employee options available in dropdown.");
+        }
+        const safeIndex = Math.min(index, count - 1);
+        await options.nth(safeIndex).click();
     }
 
 
@@ -1008,24 +1099,26 @@ export class Employee_Management extends BasePage {
         await this.page.waitForTimeout(500);
         const newBox = await image.boundingBox();
         expect(newBox).not.toBeNull();
-        // Assert that the image has increased in size
-        expect(newBox!.width).toBeGreaterThan(originalBox!.width);
-        expect(newBox!.height).toBeGreaterThan(originalBox!.height);
+        const originalArea = originalBox!.width * originalBox!.height;
+        const newArea = newBox!.width * newBox!.height;
+        // Assert that the image area has increased
+        expect(newArea).toBeGreaterThan(originalArea);
     }
 
     async checkuploademinimizeButton() {
         const image = this.page.locator('img[src^="blob:"]');
         await expect(image).toBeVisible();
-        const originalBox = await image.boundingBox();
-        expect(originalBox).not.toBeNull();
+        const maximizedBox = await image.boundingBox();
+        expect(maximizedBox).not.toBeNull();
 
         await this.clickOnMaximizePopup();
         await this.page.waitForTimeout(500);
         const newBox = await image.boundingBox();
         expect(newBox).not.toBeNull();
-        // Assert that the image has increased in size
-        expect(newBox!.width).toBeLessThan(originalBox!.width);
-        expect(newBox!.height).toBeLessThan(originalBox!.height);
+        const maximizedArea = maximizedBox!.width * maximizedBox!.height;
+        const newArea = newBox!.width * newBox!.height;
+        // Assert that the image area has decreased after minimizing
+        expect(newArea).toBeLessThan(maximizedArea);
     }
 
 

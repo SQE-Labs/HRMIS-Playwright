@@ -1,6 +1,6 @@
 {
     "SuperUser": {
-        "UserEmail": "vishal.thakur1@caeliusconsulting.com",
+        "UserEmail": "vishal.thakur@caeliusconsulting.com",
         "UserPassword": "Test@123",
         "name": "Vishal Dev Thakur"
     },
@@ -8,7 +8,7 @@
         "UserEmail": "asset-l1@caeliusconsulting.com"
     },
     "L2": {
-        "UserEmail": "asset-l2@caeliusconsulting.com"
+        "UserEmail": "jaisika.dhiman1@caeliusconsulting.com"
     },
     "IT": {
         "UserEmail": "asset-l3@caeliusconsulting.com"
@@ -24,8 +24,8 @@
         "name": "Elon Mask"
     },
     "DeliveryManager": {
-        "UserEmail": "paras@caeliusconsulting.com",
-        "name": "Paras Sharma",
+        "UserEmail": "vishal.thakur@caeliusconsulting.com",
+        "name": "Vishal Dev Thakur",
         "password": "Test@123"
     },
     "DefaultSelectedoption": "All",

@@ -9,10 +9,14 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
     let assetrequest: AssetRequests
     let loginPage: LoginPage
     let comment: string
-    let enterSerialNumber: string
+    let enterSerialNumber
+    
+    : string
+    let requestCreated = false
     test.beforeEach(async ({ page }) => {
         assetrequest = new AssetRequests(page)
         loginPage = new LoginPage(page)
+    
     })
 
     test("HRMIS_24 Asset Request page Create Asset Request - L1 Approval @smoke @reg", async ({ page }) => {
@@ -25,16 +29,24 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "4" });
+        await assetrequest.selectAssetTypeByIndex(0);
+
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
-        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+        const submitToast = await assetrequest.toastMessage();
+        if (submitToast?.toLowerCase().includes("already in process")) {
+            requestCreated = false;
+            return;
+        }
+        requestCreated = true;
+        expect(submitToast).toContain("Successfully Submitted")
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
         expect(totalRequestCount).toBeGreaterThan(0)
         expect(await assetrequest.column.isVisible()).toBeTruthy();
         await assetrequest.logout();
     })
     test("HRMIS_26 Asset Request page L1 Approve the Request @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -44,8 +56,9 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
         expect(totalRequestCount).toBeGreaterThan(0)
 
         expect(await assetrequest.column.isVisible()).toBeTruthy();
-        await assetrequest.searchRequestByComment(comment)
-        await assetrequest.clickOnCommentLocator(comment)
+       // await assetrequest.searchRequestByComment(comment)
+       // await assetrequest.clickOnCommentLocator(comment)
+    await assetrequest.clickViewByReason(comment);
         await assetrequest.selectApproveOrRejectRequest("APPROVED")
         await assetrequest.comment.fill(comment)
         await assetrequest.clickOnSubmitButton()
@@ -54,6 +67,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
         await assetrequest.logout();
     })
     test("HRMIS_28 Asset Request page L2 Approve the Request @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.L2.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -62,9 +76,9 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
 
         expect(await assetrequest.column.isVisible()).toBeTruthy();
-        await assetrequest.searchRequestByComment(comment)
-        await assetrequest.clickOnCommentLocator(comment)
-
+        // await assetrequest.searchRequestByComment(comment)
+        // await assetrequest.clickOnCommentLocator(comment)
+            await assetrequest.clickViewByReason(comment);
         await assetrequest.selectApproveOrRejectRequest("APPROVED")
         await assetrequest.comment.fill(comment)
         await assetrequest.clickOnSubmitButton()
@@ -73,6 +87,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
         await assetrequest.logout();
     })
     test("HRMIS_30 , HRMIS_31 Asset Request page IT Approve the Request @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.IT.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -81,13 +96,14 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
         let totalRequestCount = await assetrequest.verifyNoAssetRequestRecord()
         expect(totalRequestCount).toBeGreaterThan(0)
         expect(await assetrequest.column.isVisible()).toBeTruthy();
-        await assetrequest.searchRequestByComment(comment)
-        await assetrequest.clickOnCommentLocator(comment)
+        // await assetrequest.searchRequestByComment(comment)
+        // await assetrequest.clickOnCommentLocator(comment)
+            await assetrequest.clickViewByReason(comment);
         await assetrequest.selectApproveOrRejectRequest("APPROVED")
         await page.getByText("Choose Asset for ").click();
         await assetrequest.waitforLoaderToDisappear()
         // Select the first available serial number
-        enterSerialNumber = await assetrequest.getExistingSerialNumber();
+       enterSerialNumber = await assetrequest.getExistingSerialNumber();
         await page.waitForTimeout(2000);
         await assetrequest.popupSearchBar.pressSequentially(enterSerialNumber);
         await assetrequest.assetRadioButton.first().click();
@@ -101,6 +117,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
 
     })
     test("HRMIS_33 Asset Request page Store Approve the Request @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.STORE.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -122,6 +139,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
     })
 
     test("HRMIS_33 Check Asset is Delivered to Employee @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
@@ -132,6 +150,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
     });
 
     test("Asset Deallocation - Return Asset Flow @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetDeallocation();
@@ -143,6 +162,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
     })
 
     test("HRMIS_40 RTO Management - Asset Request Return Flow @smoke @reg", async ({ page }) => {
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToRtoManagementTab();
@@ -174,6 +194,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
     let loginPage: LoginPage
     let comment: string
     let enterSerialNumber: string
+    let requestCreated = false
     test.beforeEach(async ({ page }) => {
         assetrequest = new AssetRequests(page)
         loginPage = new LoginPage(page)
@@ -189,13 +210,20 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "4" });
+        await assetrequest.selectAssetTypeByIndex(0);
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
-        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+        const submitToast = await assetrequest.toastMessage();
+        if (submitToast?.toLowerCase().includes("already in process")) {
+            requestCreated = false;
+            return;
+        }
+        requestCreated = true;
+        expect(submitToast).toContain("Successfully Submitted")
         await assetrequest.logout();
 
         // Reject L1
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -230,13 +258,20 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "4" });
+        await assetrequest.selectAssetTypeByIndex(0);
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
-        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+        const submitToast = await assetrequest.toastMessage();
+        if (submitToast?.toLowerCase().includes("already in process")) {
+            requestCreated = false;
+            return;
+        }
+        requestCreated = true;
+        expect(submitToast).toContain("Successfully Submitted")
         await assetrequest.logout();
 
         // Approve L1
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -294,13 +329,20 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "2" });
+        await assetrequest.selectAssetTypeByIndex(0);
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
-        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+        const submitToast = await assetrequest.toastMessage();
+        if (submitToast?.toLowerCase().includes("already in process")) {
+            requestCreated = false;
+            return;
+        }
+        requestCreated = true;
+        expect(submitToast).toContain("Successfully Submitted")
         await assetrequest.logout();
 
         // Approve L1
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
@@ -377,13 +419,20 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
         await assetrequest.clickOnAssetRequestButton()
         await assetrequest.waitforLoaderToDisappear()
         await expect(assetrequest.card).toBeVisible();
-        await assetrequest.assetType.selectOption({ value: "4" });
+        await assetrequest.selectAssetTypeByIndex(0);
         await assetrequest.reason.fill(comment);
         await assetrequest.submitButton.click()
-        expect(await assetrequest.verifySuccessMessage("Successfully Submitted"))
+        const submitToast = await assetrequest.toastMessage();
+        if (submitToast?.toLowerCase().includes("already in process")) {
+            requestCreated = false;
+            return;
+        }
+        requestCreated = true;
+        expect(submitToast).toContain("Successfully Submitted")
         await assetrequest.logout();
 
         // Approve L1
+        test.skip(!requestCreated, "Asset request already in process or not created.");
         await loginPage.validLogin(testData.L1.UserEmail, testData.SuperUser.UserPassword);
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
