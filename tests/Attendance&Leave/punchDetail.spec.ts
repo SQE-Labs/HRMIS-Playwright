@@ -10,7 +10,7 @@ import { setTimeout } from "node:timers/promises";
 let punchDetail: PunchDetails;
 let attendanceLeaveTab: AttendanceLeaveTab;
 
-test.describe.skip("Apply leaves page", () => {
+test.describe("Apply leaves page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     const loginObj = new LoginPage(page);
     await loginObj.validLogin(

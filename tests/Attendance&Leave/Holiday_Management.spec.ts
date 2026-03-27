@@ -12,7 +12,7 @@ let holidayManagement: holiday_Management
 let attendanceLeaveTab: AttendanceLeaveTab
 
 
-test.describe.skip("Holiday Management page new", () => {
+test.describe("Holiday Management page new", () => {
     test.beforeEach(async ({ page }, testInfo) => {
         loginObj = new LoginPage(page);
         attendanceLeaveTab = new AttendanceLeaveTab(page);

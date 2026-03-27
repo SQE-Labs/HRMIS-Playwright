@@ -30,7 +30,7 @@ export class Helper {
 
 
 
-    async fetchLastRecordView(record) {
+    async fetchLastRecordView(record : string) {
 
         await this.itemsPerPageDropDown.selectOption(record);
 

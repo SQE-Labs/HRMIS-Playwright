@@ -42,7 +42,7 @@ export class ApplyLeaves extends BasePage {
     this.DateRange = page.getByPlaceholder("mm/dd/yyyy - mm/dd/yyyy");
     this.ReasonOfLeaveBox = page.getByRole("textbox", { name: "Reason of Leave *", });
     this.SuccessMessage = page.getByText("Leave Applied Successfully! Wait for Approval.");
-    this.WithdrawLink = this.page.getByText("Withdraw");
+    this.WithdrawLink = this.page.locator("table").locator("a", { hasText: "Withdraw" });
     this.WithdrawPopupTitle = page.getByText("Withdraw Leave Request");
     this.WithdrawReasonField = page.getByRole("textbox");
     this.WithdrawSuccessMessage = page.getByText("Leave Withdrawn Successfully");
@@ -81,7 +81,9 @@ export class ApplyLeaves extends BasePage {
   }
 
   async selectLeaveType(type: string) {
-    await this.LeaveTypeTextBox.selectOption(type);
+    const label =
+      type.includes(" ") ? type : type.replace(/([a-z])([A-Z])/g, "$1 $2");
+    await this.LeaveTypeTextBox.selectOption({ label });
   }
 
   async enterReasonOfLeave(reason: string) {
@@ -111,7 +113,11 @@ export class ApplyLeaves extends BasePage {
     const privilegeCount = await this.privilegeLeaveOption.count();
 
     await this.ApplyLeaveButton.click();
-    await this.LeaveTypeTextBox.selectOption(leaveType);
+    await this.page
+      .getByRole("dialog", { name: "Apply Leave" })
+      .waitFor({ state: "visible", timeout: 10000 });
+    await this.LeaveTypeTextBox.waitFor({ state: "visible", timeout: 10000 });
+    await this.selectLeaveType(leaveType);
 
     if (
       privilegeCount === 0 &&
@@ -140,14 +146,35 @@ export class ApplyLeaves extends BasePage {
         .then(() => true)
         .catch(() => false);
 
-      if (successAppeared) {
-        // Wait for success toast to disappear before exiting
-        await this.SuccessMessage.waitFor({ state: "hidden", timeout: 10000 });
+      const toastVisible = await this.page
+        .locator(".Toastify__toast-body")
+        .last()
+        .waitFor({ state: "visible", timeout: 3000 })
+        .then(() => true)
+        .catch(() => false);
+      const toastText = toastVisible
+        ? (await this.page.locator(".Toastify__toast-body").last().textContent())?.trim()
+        : "";
+
+      if (successAppeared || toastText?.includes("Leave Applied Successfully")) {
+        if (successAppeared) {
+          await this.SuccessMessage.waitFor({ state: "hidden", timeout: 10000 });
+        }
         console.log(" Leave applied successfully!");
+        // Close the apply leave dialog so it doesn't block logout/navigation
+        if (await this.cancelBtn.isVisible().catch(() => false)) {
+          await this.cancelBtn.click();
+        } else if (await this.applyCrossIcon.isVisible().catch(() => false)) {
+          await this.applyCrossIcon.click();
+        }
         break;
       }
 
-      if (duplicateAppeared) {
+      if (
+        duplicateAppeared ||
+        toastText?.includes("Duplicate leave request") ||
+        toastText?.toLowerCase().includes("already")
+      ) {
         console.log(
           ` Attempt ${attempt}: Duplicate leave found, waiting for toast to disappear and retrying...`
         );
@@ -159,13 +186,47 @@ export class ApplyLeaves extends BasePage {
         continue;
       }
 
-      throw new Error(
-        "Neither success nor duplicate message detected, unknown UI state."
-      );
+      const reasonRowVisible = await this.page
+        .locator(`//table//td[contains(normalize-space(), '${reason}')]`)
+        .first()
+        .isVisible()
+        .catch(() => false);
+      if (reasonRowVisible) {
+        console.log(" Leave appears in the list; treating as success.");
+        // Same as above: close the dialog if it's still open
+        if (await this.cancelBtn.isVisible().catch(() => false)) {
+          await this.cancelBtn.click();
+        } else if (await this.applyCrossIcon.isVisible().catch(() => false)) {
+          await this.applyCrossIcon.click();
+        }
+        break;
+      }
+
+      if (attempt === maxRetries) {
+        throw new Error(
+          `Neither success nor duplicate message detected. Last toast: "${toastText || "none"}".`
+        );
+      }
+      // Retry with a new date range
+      await this.clearDateRange();
     }
   }
   async getWithDrawLink() {
-    await this.WithdrawLink.first().click();
+    const link = this.WithdrawLink.first();
+    await link.waitFor({ state: "visible", timeout: 10000 });
+    await link.scrollIntoViewIfNeeded();
+    await link.click({ force: true });
+  }
+
+  async waitForWithdrawSuccessMessage(): Promise<string> {
+    const toast = this.page.locator(".Toastify__toast-body").filter({ hasText: /Leave Withdrawn Successfully/i });
+    const alert = this.page.getByRole("alert").filter({ hasText: /Leave Withdrawn Successfully/i });
+    await Promise.race([
+      toast.first().waitFor({ state: "visible", timeout: 12000 }),
+      alert.first().waitFor({ state: "visible", timeout: 12000 })
+    ]);
+    const message = (await toast.first().textContent()) || (await alert.first().textContent()) || "";
+    return message.trim();
   }
 
   async fillWithDrawReason(reason: string) {

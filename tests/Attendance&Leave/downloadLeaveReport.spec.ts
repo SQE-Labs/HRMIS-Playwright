@@ -11,7 +11,7 @@ let attendanceLeaveTab: AttendanceLeaveTab;
 let downloadLeaveReport: DownloadLeaveReport;
 
 
-test.describe.skip("Download Leave Report", () => {
+test.describe("Download Leave Report", () => {
 
     test.beforeEach(async ({ page }, testInfo) => {
         let loginObj: LoginPage;

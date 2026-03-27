@@ -11,7 +11,7 @@ let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
 let myTeamLeave: MyTeamLeavePage;
 
-test.describe.skip("Apply leaves page", () => {
+test.describe("Apply leaves page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     applyLeave = new ApplyLeaves(page);
     attendanceLeaveTab = new AttendanceLeaveTab(page);
@@ -64,7 +64,7 @@ test.describe.skip("Apply leaves page", () => {
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
-    const message = await applyLeave.toastMessage();
+    const message = await applyLeave.waitForWithdrawSuccessMessage();
     console.log("Withdraw message: " + message);
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
@@ -97,7 +97,7 @@ test.describe.skip("Apply leaves page", () => {
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
-    const message = await applyLeave.toastMessage();
+    const message = await applyLeave.waitForWithdrawSuccessMessage();
     console.log("Withdraw message: " + message);
     expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });

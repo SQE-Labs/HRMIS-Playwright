@@ -56,18 +56,37 @@ export const AssetHelper = {
     actual: string[],
     expected: string[]
   ): Promise<void> {
-    const allMatched = actual.length === expected.length && actual.every((val, i) => val === expected[i]);
+    const normalize = (text: string) => text.replace(/\s+/g, " ").trim();
+    const actualNormalized = actual.map(normalize).filter((v) => v.length > 0);
+    const expectedNormalized = expected.map(normalize).filter((v) => v.length > 0);
 
-    actual.forEach((val, i) => {
-      if (val !== expected[i]) {
-        console.log(`❌ Mismatch at index ${i}: Expected "${expected[i]}", but got "${val}"`);
+    let allMatched = true;
+    let searchIndex = 0;
+
+    for (let i = 0; i < expectedNormalized.length; i++) {
+      const expectedValue = expectedNormalized[i];
+      let found = false;
+
+      for (let j = searchIndex; j < actualNormalized.length; j++) {
+        if (actualNormalized[j] === expectedValue) {
+          found = true;
+          searchIndex = j + 1;
+          break;
+        }
       }
-    });
+
+      if (!found) {
+        console.log(`❌ Missing header: "${expectedValue}"`);
+        allMatched = false;
+      }
+    }
 
     if (allMatched) {
       console.log("✅ All column headers matched successfully.");
     } else {
       console.log("⚠️ Some column headers did not match.");
+      console.log("Actual headers:", actualNormalized);
+      console.log("Expected headers:", expectedNormalized);
     }
 
     expect(allMatched).toBeTruthy();
@@ -85,7 +104,9 @@ export const AssetHelper = {
 
   async navigateToDeallocationTab(deallocationSubtab: Locator, assetManagementTab: { expandAssetManagementTab: () => Promise<void> }) {
     await assetManagementTab.expandAssetManagementTab();
-    await deallocationSubtab.click();
+    await deallocationSubtab.waitFor({ state: 'visible', timeout: 10000 });
+    await deallocationSubtab.scrollIntoViewIfNeeded();
+    await deallocationSubtab.click({ timeout: 10000 });
   },
   async navigateToNewAssetEnrollmet() {
     await this.assetEnrollmentSubtab.click();

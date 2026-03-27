@@ -22,9 +22,9 @@ export class Analytics_Insights extends BasePage {
         this.ownerDropdown = page.locator('#filterOwner');
         this.resetButton = page.locator('//button[text() = "Reset"]');
         this.downloadButton = page.locator('//button[text() = "Download"]');
-        this.selectEmployeeDropdown = page.locator(".css-19bb58m");
-        this.monthDropdown = page.locator("//select[@id='month']");
-        this.compileAndDownloadButton = page.locator('//button[text() = "Compile & Download"]');
+        this.selectEmployeeDropdown = page.locator("//input[@id='react-select-5-input']");
+        this.monthDropdown = page.locator("#month");
+        this.compileAndDownloadButton = page.locator('//button[@type="submit"]');
     }
 
 

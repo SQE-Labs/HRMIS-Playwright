@@ -15,7 +15,7 @@ let officalDuty: OnOfficalDuty;
 let holidayManagement: holiday_Management
 let myTeamLeave: MyTeamLeavePage
 
-test.describe.skip("On Offical Duty Page", () => {
+test.describe("On Offical Duty Page", () => {
 
 
 

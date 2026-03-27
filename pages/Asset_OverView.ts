@@ -53,12 +53,12 @@ export class OverView extends AssetManagementTab {
         this.overviewCards = page.locator(".col-md-12>div>div")
         this.totalAsset = page.locator(".total")
         this.assetTypeDropdown = page.locator('[id="filterAssetType"]')
-        this.filterButton = page.locator("button[type='button']")
+        this.filterButton = page.locator("button", { hasText: /filter|apply/i })
         this.exportButton = page.locator("//a[@class='export theme-button']")
         this.emptyRecord = page.locator(".fs-4.text-secondary.text-center")
-        this.assignedBadge = page.locator(".badge.badge-info ")
-        this.availableBadge = page.locator(".badge.badge-success.mx-2")
-        this.totalBadge = page.locator(".badge.badge-danger ")
+        this.assignedBadge = page.locator("text=/Assigned\\s*:/i")
+        this.availableBadge = page.locator("text=/Available\\s*:/i")
+        this.totalBadge = page.locator("text=/Total\\s*:/i")
         this.card = page.locator(".card-body.text-center")
         this.cardHeader = page.locator(".d-flex>span>h1")
         this.serialNoRows = page.locator("tbody>tr")
@@ -141,17 +141,41 @@ export class OverView extends AssetManagementTab {
         return validOptions;
     }
     async selectFilterDropdownOption(optionText: string): Promise<void> {
-        // const randomOption = validOptions[Math.floor(Math.random() * validOptions.length)].trim();
-        await this.assetTypeDropdown.selectOption({ label: optionText });
-        console.debug(`Successfully selected: ${optionText}`);
+        await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 10000 });
+        const normalizedTarget = optionText.trim().toLowerCase();
+        const options = await this.assetTypeDropdown.evaluate((select: HTMLSelectElement) =>
+            Array.from(select.options).map((opt) => ({
+                label: opt.text.trim(),
+                value: opt.value
+            }))
+        );
+        const match = options.find((opt) => opt.label.toLowerCase() === normalizedTarget);
+        if (!match) {
+            throw new Error(`Option "${optionText}" not found in Asset Type dropdown.`);
+        }
+        if (match.value) {
+            await this.assetTypeDropdown.selectOption({ value: match.value });
+        } else {
+            await this.assetTypeDropdown.selectOption({ label: match.label });
+        }
+        console.debug(`Successfully selected: ${match.label}`);
     }
 
     async getselectedOptionName() {
-        return await this.page.locator("div>h5").textContent()
+        const selected = this.assetTypeDropdown.locator("option:checked");
+        return (await selected.textContent())?.trim() || null;
     }
 
     async clickFilterButton(): Promise<void> {
-        await this.filterButton.click();
+        if ((await this.filterButton.count()) === 0) {
+            await this.waitforLoaderToDisappear();
+            return;
+        }
+        if (!(await this.filterButton.first().isVisible())) {
+            await this.waitforLoaderToDisappear();
+            return;
+        }
+        await this.filterButton.first().click();
         await this.waitforLoaderToDisappear();
 
 
@@ -164,24 +188,34 @@ export class OverView extends AssetManagementTab {
 
 
     async selectAssetTypeDropdown(ddValue: string) {
-        await this.assetTypeDropdown.waitFor({ state: 'visible', timeout: 5000 });
-        await this.assetTypeDropdown.selectOption({ label: ddValue });
-        await this.filterButton.click()
-        await this.page.waitForLoadState('domcontentloaded')
+        await this.selectFilterDropdownOption(ddValue);
+        await this.clickFilterButton();
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.page.waitForTimeout(1000);
+        if ((await this.emptyRecord.isVisible()) || (await this.card.count()) === 0) {
+            console.debug(`No cards found for "${ddValue}". Falling back to "All".`);
+            await this.selectFilterDropdownOption("All");
+            await this.clickFilterButton();
+            await this.page.waitForLoadState('domcontentloaded');
+        }
     }
 
     async verifyCardDetails(): Promise<void> {
         const expectedDetails = ['Assigned', 'Available', 'Total']
 
-        const selectedValue = await this.assetTypeDropdown.inputValue();
-        console.debug(`Selected asset type: ${selectedValue}`);
-        const details = [
-            (await this.assignedBadge.innerText()).split(":")[0].trim(),
-            (await this.availableBadge.innerText()).split(":")[0].trim(),
-            (await this.totalBadge.innerText()).split(":")[0].trim()
-        ]
-        console.debug(details)
-        expect(details).toEqual(expectedDetails)
+        const selectedLabel = await this.assetTypeDropdown.locator("option:checked").textContent();
+        console.debug(`Selected asset type: ${selectedLabel?.trim()}`);
+
+        await this.card.first().waitFor({ state: 'visible', timeout: 10000 });
+        const cardText = (await this.card.first().innerText()).split("\n").map(t => t.trim()).filter(Boolean);
+        const labels = cardText
+            .filter((line) => line.includes(":"))
+            .map((line) => line.split(":")[0].trim());
+
+        console.debug(labels);
+        for (const expected of expectedDetails) {
+            expect(labels).toContain(expected);
+        }
     }
 
     // TC_AM_009

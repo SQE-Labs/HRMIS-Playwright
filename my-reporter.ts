@@ -1,3 +1,4 @@
+
 import { Reporter, TestCase, TestResult, Suite } from '@playwright/test/reporter';
 
 class MyReporter implements Reporter {

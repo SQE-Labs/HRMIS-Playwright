@@ -18,12 +18,21 @@ export class LoginPage extends BasePage {
     }
 
     async validLogin(userEmail: string, userPassword: string) {
-        await this.open('url');
+        // Use baseURL from Playwright config.
+        await this.open('/');
+        const onLoginPage = await this.email.isVisible({ timeout: 5000 }).catch(() => false);
+        if (!onLoginPage) {
+            // Already logged in
+            if (await this.logoutButton.isVisible().catch(() => false)) {
+                return;
+            }
+            await this.email.waitFor({ state: 'visible', timeout: 10000 });
+        }
         await this.email.fill(userEmail);
         await this.password.fill(userPassword);
         await this.submitButton.click();
         await this.waitForDotsLoaderToDisappear()
         await this.waitForSpinnerLoaderToDisappear()
-        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForLoadState('domcontentloaded');
     }
 }

@@ -15,7 +15,7 @@ let applyLeave: ApplyLeaves;
 let myTeamLeave: MyTeamLeavePage;
 let approveLeaveHR: ApproveLeaveHR;
 
-test.describe.skip("Approve Leave HR module ", () => {
+test.describe("Approve Leave HR module ", () => {
   test.beforeEach(async ({ page }, testInfo) => {
 
     // creating object for Approve Leave HR page
@@ -113,19 +113,17 @@ test.describe.skip("Approve Leave HR module ", () => {
   });
 
   // Pagination does not appear while 
-  test.skip(' HRMIS_A&L_35, HRMIS_A&L_36 Verify Next & Previous pagination', async ({ page }) => {
+  test(' HRMIS_A&L_35, HRMIS_A&L_36 Verify Next & Previous pagination', async ({ page }) => {
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
       testData.SuperUser.UserEmail,
       testData.SuperUser.UserPassword
     );
-
-    await page.pause()
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
     await approveLeaveHR.waitforLoaderToDisappear();
 
-    await myTeamLeave.statusDropdown.selectOption(constants.APPROVED_STATUS)
+    await myTeamLeave.selectLeaveStatus(constants.APPROVED_STATUS)
     await myTeamLeave.waitForDotsLoaderToDisappear()
 
     await page.waitForSelector('table tbody tr');

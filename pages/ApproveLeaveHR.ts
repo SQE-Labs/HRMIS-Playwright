@@ -12,9 +12,13 @@ export class ApproveLeaveHR extends BasePage {
     private leaveActionField: Locator =this.page.locator("#leaveAction");
 
   public paginationContainer: Locator = this.page.locator('.pagination');
-  public activePage: Locator = this.page.locator('.pagination .active');
-  public nextBtn: Locator = this.page.locator('.pagination .next:not(.disabled)');
-  public prevBtn: Locator = this.page.locator('.pagination .previous:not(.disabled)');
+  // UI shows "Page X of Y" instead of an active page button
+  public activePage: Locator = this.page
+    .locator('.pagination a, .pagination .page-link')
+    .filter({ hasText: /Page/i })
+    .first();
+  public nextBtn: Locator = this.page.getByRole('link', { name: /Next/i });
+  public prevBtn: Locator = this.page.getByRole('link', { name: /Previous/i });
 
 
 
@@ -75,7 +79,10 @@ async appoveLeaveActionHR(
   }
 
   async getActivePageNumber(): Promise<number> {
-    return Number(await this.activePage.innerText());
+    const text = (await this.activePage.innerText()).trim();
+    // Extract "Page 1 of 2" => 1
+    const match = text.match(/Page\s+(\d+)/i);
+    return match ? Number(match[1]) : 1;
   }
 }
 
