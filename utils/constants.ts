@@ -25,6 +25,17 @@ export const permanentAddress = "DEF Testing Centre, USA"
 export const domain = "@caeliusconsulting.com"
 export const expectedSuccessMessageITApproval = "User Email has been successfully updated."
 
+export const MY_PROFILE_USER_EMAIL = "vishal.thakur@caeliusconsulting.com";
+export const MY_PROFILE_USER_PASSWORD = "Test@123";
+export const MY_PROFILE_TEMP_PASSWORD = "Temp@1234";
+export const WORK_EXPERIENCE_TEST_DATA = {
+  title: 'Automation QA',
+  company: 'TestCompany',
+  from: '2026-03-30',
+  to: '2026-03-30',
+  description: 'Automation verification',
+};
+
 export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created."
 export const actualSuccessMessage = "Success";
 

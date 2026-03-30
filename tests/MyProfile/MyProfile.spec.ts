@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
 import { MyProfilePage } from '../../pages/MyProfile';
-import testData from '../../testData/testData.json';
+import { MY_PROFILE_USER_EMAIL, MY_PROFILE_USER_PASSWORD, MY_PROFILE_TEMP_PASSWORD, WORK_EXPERIENCE_TEST_DATA } from '../../utils/constants';
 
 test('Login and verify My Profile page opens', async ({ page }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+  await loginPage.validLogin(MY_PROFILE_USER_EMAIL, MY_PROFILE_USER_PASSWORD);
 
   const myProfilePage = new MyProfilePage(page);
   await myProfilePage.openMyProfile();
@@ -16,7 +16,7 @@ test('Login and verify My Profile page opens', async ({ page }) => {
 
 test('HRMIS_EM_2 Verify Change Password popup opens on My Profile', async ({ page }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+  await loginPage.validLogin(MY_PROFILE_USER_EMAIL, MY_PROFILE_USER_PASSWORD);
 
   const myProfilePage = new MyProfilePage(page);
   await myProfilePage.openMyProfile();
@@ -24,13 +24,15 @@ test('HRMIS_EM_2 Verify Change Password popup opens on My Profile', async ({ pag
   await myProfilePage.verifyChangePasswordPopupVisible();
 });
 
+
+
 test('HRMIS_EM_3 Verify Change Password functionality and restore original password', async ({ page }) => {
   const loginPage = new LoginPage(page);
   const myProfilePage = new MyProfilePage(page);
 
-  const email = testData.SuperUser.UserEmail;
-  const originalPassword = testData.SuperUser.UserPassword;
-  const temporaryPassword = 'Temp@1234';
+  const email = MY_PROFILE_USER_EMAIL;
+  const originalPassword = MY_PROFILE_USER_PASSWORD;
+  const temporaryPassword = MY_PROFILE_TEMP_PASSWORD;
 
   await loginPage.validLogin(email, originalPassword);
   await myProfilePage.openMyProfile();
@@ -55,3 +57,32 @@ test('HRMIS_EM_3 Verify Change Password functionality and restore original passw
   await expect(page.locator('img[alt="Caelius Consulting Logo"]')).toBeVisible({ timeout: 10000 });
 });
 
+test('HRMIS_EM_4 Verify General Information accordions are visible', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.validLogin(MY_PROFILE_USER_EMAIL, MY_PROFILE_USER_PASSWORD);
+
+  const myProfilePage = new MyProfilePage(page);
+  await myProfilePage.openMyProfile();
+  await myProfilePage.verifyGeneralAccordionsPresent();
+
+  await myProfilePage.expandAccordion(myProfilePage.basicInfoAccordion);
+  await myProfilePage.expandAccordion(myProfilePage.workAccordion);
+  await myProfilePage.expandAccordion(myProfilePage.personalDetailsAccordion);
+  await myProfilePage.expandAccordion(myProfilePage.workExperienceAccordion);
+});
+
+test('HRMIS_EM_5 Verify Add and Delete Work Experience on My Profile', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.validLogin(MY_PROFILE_USER_EMAIL, MY_PROFILE_USER_PASSWORD);
+
+  const myProfilePage = new MyProfilePage(page);
+  await myProfilePage.openMyProfile();
+  await myProfilePage.openWorkExperienceSection();
+
+  await myProfilePage.clickAddWorkExperience();
+  await myProfilePage.fillWorkExperienceForm(WORK_EXPERIENCE_TEST_DATA);
+  await myProfilePage.submitWorkExperienceForm();
+  await myProfilePage.verifyWorkExperienceRowExists(WORK_EXPERIENCE_TEST_DATA.title);
+  await myProfilePage.deleteWorkExperienceRow(WORK_EXPERIENCE_TEST_DATA.title);
+  await myProfilePage.verifyWorkExperienceRowNotExists(WORK_EXPERIENCE_TEST_DATA.title);
+});
