@@ -35,6 +35,19 @@ export const WORK_EXPERIENCE_TEST_DATA = {
   to: '2026-03-30',
   description: 'Automation verification',
 };
+export const EDUCATION_TEST_DATA = {
+  degree: 'B.Tech Computer Science',
+  college: 'Automation College',
+  from: '2018-05-01',
+  to: '2020-05-01',
+};
+export const DEPENDENT_TEST_DATA = {
+  name: 'Automation Dependent',
+  gender: 'Male',
+  relationship: 'Father',
+  mobile: '9876543210',
+  dob: '2018-01-01',
+};
 
 export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created."
 export const actualSuccessMessage = "Success";
