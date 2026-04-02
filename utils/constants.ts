@@ -49,6 +49,9 @@ export const DEPENDENT_TEST_DATA = {
   dob: '2018-01-01',
 };
 
+export const CSAT_PROJECT_NAME = 'Automation Testing Nav';
+export const CSAT_TEAM_MEMBER_NAME = 'Vishal Dev Thakur';
+
 export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created."
 export const actualSuccessMessage = "Success";
 
