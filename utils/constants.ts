@@ -25,30 +25,6 @@ export const permanentAddress = "DEF Testing Centre, USA"
 export const domain = "@caeliusconsulting.com"
 export const expectedSuccessMessageITApproval = "User Email has been successfully updated."
 
-export const MY_PROFILE_USER_EMAIL = "vishal.thakur@caeliusconsulting.com";
-export const MY_PROFILE_USER_PASSWORD = "Test@123";
-export const MY_PROFILE_TEMP_PASSWORD = "Temp@1234";
-export const WORK_EXPERIENCE_TEST_DATA = {
-  title: 'Automation QA',
-  company: 'TestCompany',
-  from: '2026-03-30',
-  to: '2026-03-30',
-  description: 'Automation verification',
-};
-export const EDUCATION_TEST_DATA = {
-  degree: 'B.Tech Computer Science',
-  college: 'Automation College',
-  from: '2018-05-01',
-  to: '2020-05-01',
-};
-export const DEPENDENT_TEST_DATA = {
-  name: 'Automation Dependent',
-  gender: 'Male',
-  relationship: 'Father',
-  mobile: '9876543210',
-  dob: '2018-01-01',
-};
-
 export const CSAT_PROJECT_NAME = 'Automation Testing Nav';
 export const CSAT_TEAM_MEMBER_NAME = 'Vishal Dev Thakur';
 
