@@ -118,6 +118,7 @@ export class CSATRatingPage extends BasePage {
     await this.addCSATProjectFilterOption.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.click();
     const option = this.addCSATProjectOption.filter({ hasText: projectName }).first();
+
     await option.click();
     await this.addCSATEmployeeCheckBox.check();
     await this.addCSATNextButton.click();
