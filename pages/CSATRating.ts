@@ -59,7 +59,7 @@ export class CSATRatingPage extends BasePage {
 
     this.addCSATProjectFilterOption = page.locator('#react-select-4-option-0');
 
-    this.addCSATProjectOption = page.locator('#react-select-5-option-227');
+    this.addCSATProjectOption = page.locator('#react-select-5-option-228');
     // this.addCSATEmployeeOption = page.locator('#react-select-4-option-1');
 
     this.addCSATEmployeeCheckBox = page.locator('tr', { hasText: 'Vishal Dev Thakur' }).nth(0).getByRole('checkbox');
