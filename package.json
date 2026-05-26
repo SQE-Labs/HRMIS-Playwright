@@ -10,7 +10,8 @@
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open -p 8080 allure-report",
     "report": "npm run allure:generate && npm run allure:open",
-    "smoke": "npx playwright test --grep @smoke"
+    "smoke": "npx playwright test --grep @smoke",
+    "test:ci": "npx playwright test --grep @ci"
   },
   "keywords": [],
   "author": "",
