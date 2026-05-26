@@ -22,6 +22,10 @@ export class CSATRatingPage extends BasePage {
   readonly addCSATProjectAndEmployeeNamePlaceholder: Locator;
 
   readonly addCSATProjectFilterOption: Locator;
+  readonly addCSATEmployeeFilterOption: Locator;
+  readonly addCSATProjectAccordionButton: Locator;
+  readonly addCSATExpandedAccordion: Locator;
+  readonly addCSATCancelButton: Locator;
 
   readonly addCSATProjectOption: Locator;
   // readonly addCSATEmployeeOption: Locator;
@@ -34,17 +38,17 @@ export class CSATRatingPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.projectTeamFlow = page.getByText("Project TeamFlow");
-    this.csatRatingHeader = page.locator('//a[normalize-space()="CSAT Rating"]');
+    this.projectTeamFlow = page.getByRole('button', { name: 'Project TeamFlow' });
+    this.csatRatingHeader = page.getByRole('navigation').getByRole('link', { name: 'CSAT Rating' });
 
-    this.manageFilterByPlaceholder = page.locator('#react-select-2-input');
-    this.manageProjectFilterOption = page.locator('#react-select-2-option-0');
-    this.manageEmployeeFilterOption = page.locator('#react-select-2-option-1');
+    this.manageFilterByPlaceholder = page.locator('div.csat-rating-filters-card').getByRole('combobox').first();
+    this.manageProjectFilterOption = page.getByText('Project Name', { exact: true });
+    this.manageEmployeeFilterOption = page.getByText('Employee Name', { exact: true });
 
-    this.manageProjectAndEmployeeNamePlaceholder = page.locator('#react-select-3-input');
-    this.manageProjectOption = page.locator('#react-select-3-option-23');
+    this.manageProjectAndEmployeeNamePlaceholder = page.locator('div.csat-rating-filters-card').getByRole('combobox').nth(1);
+    this.manageProjectOption = page.getByText('', { exact: false });
 
-    this.manageEmployeeOption = page.locator('#react-select-3-option-2');
+    this.manageEmployeeOption = page.getByText('', { exact: false });
 
     this.manageEditIcon = page.locator('tr', { hasText: 'Vishal Dev Thakur' }).first().getByText('Edit');
 
@@ -54,12 +58,16 @@ export class CSATRatingPage extends BasePage {
     this.manageToastMsg = page.getByRole('alert');
 
     this.addCSATButton = page.getByRole('tab', { name: 'Add CSAT Ratings' });
-    this.addCSATFilterByPlaceholder = page.locator('#react-select-4-input');
-    this.addCSATProjectAndEmployeeNamePlaceholder = page.locator('#react-select-5-input');
+    this.addCSATFilterByPlaceholder = page.locator('div.csat-rating-filters-card').getByRole('combobox').first();
+    this.addCSATProjectAndEmployeeNamePlaceholder = page.locator('div.csat-rating-filters-card').getByRole('combobox').nth(1);
 
-    this.addCSATProjectFilterOption = page.locator('#react-select-4-option-0');
+    this.addCSATProjectFilterOption = page.getByText('Project Name', { exact: true });
+    this.addCSATEmployeeFilterOption = page.locator('#react-select-4-option-1');
+    this.addCSATProjectAccordionButton = page.locator('div.accordion-item.project-accordion-item h2.accordion-header button.accordion-button').first();
+    this.addCSATExpandedAccordion = page.locator('div.accordion-collapse.show');
+    this.addCSATCancelButton = page.getByRole('button', { name: 'Cancel' });
 
-    this.addCSATProjectOption = page.locator('#react-select-5-option-228');
+    this.addCSATProjectOption = page.getByText('', { exact: false });
     // this.addCSATEmployeeOption = page.locator('#react-select-4-option-1');
 
     this.addCSATEmployeeCheckBox = page.locator('tr', { hasText: 'Vishal Dev Thakur' }).nth(0).getByRole('checkbox');
@@ -79,7 +87,7 @@ export class CSATRatingPage extends BasePage {
     await this.manageFilterByPlaceholder.click();
     await this.manageProjectFilterOption.click();
     await this.manageProjectAndEmployeeNamePlaceholder.click();
-    const option = this.manageProjectOption.filter({ hasText: projectName }).first();
+    const option = this.page.getByText(projectName, { exact: true }).last();
     await option.click();
     await this.waitforLoaderToDisappear();
   }
@@ -93,7 +101,7 @@ export class CSATRatingPage extends BasePage {
     await this.manageFilterByPlaceholder.click();
     await this.manageEmployeeFilterOption.click();
     await this.manageProjectAndEmployeeNamePlaceholder.click();
-    const employeeOption = this.manageEmployeeOption.filter({ hasText: employeeName }).first();
+    const employeeOption = this.page.getByText(employeeName, { exact: true }).last();
     await employeeOption.click();
     await this.waitforLoaderToDisappear();
   }
@@ -117,10 +125,9 @@ export class CSATRatingPage extends BasePage {
     await this.addCSATFilterByPlaceholder.click();
     await this.addCSATProjectFilterOption.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.click();
-    await this.addCSATProjectAndEmployeeNamePlaceholder.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.fill(projectName);
     await this.page.waitForTimeout(500);
-    const option = this.page.getByText(projectName, { exact: false }).last();
+    const option = this.page.getByText(projectName, { exact: true }).last();
     await expect(option).toBeVisible({ timeout: 5000 });
     await option.click();
     await this.addCSATEmployeeCheckBox.check();
@@ -128,5 +135,50 @@ export class CSATRatingPage extends BasePage {
     await this.addCSATRatingInput.fill(inputRating.toString());
     await this.addCSATAddRatingButton.click();
     await expect(this.addCSATToastMsg).toHaveText('CSAT created successfully.', { timeout: 5000 });
+  }
+
+  async addCSATSelectEmployee(employeeName: string, inputRating: number): Promise<void> {
+    await this.addCSATButton.click();
+    await this.addCSATFilterByPlaceholder.click();
+    await this.addCSATEmployeeFilterOption.click();
+    await this.addCSATProjectAndEmployeeNamePlaceholder.click();
+    await this.addCSATProjectAndEmployeeNamePlaceholder.fill(employeeName);
+    await this.page.waitForTimeout(500);
+    const option = this.page.getByText(employeeName, { exact: true }).last();
+    await expect(option).toBeVisible({ timeout: 5000 });
+    await option.click();
+    await this.waitforLoaderToDisappear();
+    await this.addCSATProjectAccordionButton.click();
+    const employeeCheckBox = this.addCSATExpandedAccordion.getByText(employeeName, { exact: true }).locator('xpath=ancestor::tr[1]/td[1]/input');
+    await employeeCheckBox.check();
+    await this.addCSATNextButton.click();
+    await this.addCSATRatingInput.fill(inputRating.toString());
+    await this.addCSATAddRatingButton.click();
+    await expect(this.addCSATToastMsg).toHaveText('CSAT created successfully.', { timeout: 5000 });
+  }
+
+  async verifyAddCSATCancelClearsSelections(employeeName: string): Promise<void> {
+    await this.addCSATButton.click();
+    await this.addCSATFilterByPlaceholder.click();
+    await this.addCSATEmployeeFilterOption.click();
+    await this.addCSATProjectAndEmployeeNamePlaceholder.click();
+    await this.addCSATProjectAndEmployeeNamePlaceholder.fill(employeeName);
+    await this.page.waitForTimeout(500);
+    const option = this.page.getByText(employeeName, { exact: true }).last();
+    await expect(option).toBeVisible({ timeout: 5000 });
+    await option.click();
+    await this.waitforLoaderToDisappear();
+    await this.addCSATProjectAccordionButton.click();
+
+    const employeeCheckBox = this.addCSATExpandedAccordion.locator('tbody tr input[type="checkbox"]').first();
+
+    await employeeCheckBox.check();
+    await expect(employeeCheckBox).toBeChecked();
+
+    await this.addCSATCancelButton.click();
+    await this.waitforLoaderToDisappear();
+
+    const selectedCheckBoxes = this.page.locator('div.accordion-collapse.show tbody input[type="checkbox"]:checked');
+    await expect(selectedCheckBoxes).toHaveCount(0);
   }
 }

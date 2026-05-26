@@ -14,7 +14,7 @@ export class LoginPage extends BasePage {
         this.page = page;
         this.email = page.locator("[type='email']");
         this.password = page.locator("[type='password']");
-        this.submitButton = page.locator("#submitButton");
+        this.submitButton = page.locator("[type='submit']");
     }
 
     async validLogin(userEmail: string, userPassword: string) {
