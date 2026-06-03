@@ -22,7 +22,6 @@ let utils: CommonUtils
 let helper: Helper
 
 let projectName: string;
-let projectButton: any;
 let teamMemberName: string;
 let csatRatingPage: CSATRatingPage;
 
@@ -38,11 +37,13 @@ test.describe.serial("Project TeamFlow Project List", () => {
         await ProjectManagementObj.expandTab()
         await ProjectManagementObj.navigateToProjectListTab()
     })
+
     test("HRMIS_PTF_1 HRMIS_PTF_2 Verify project management page elements are visible @smoke @reg @ci", async ({ page }) => {
         await expect(ProjectManagementObj.searchInput).toBeVisible();
         await expect(ProjectManagementObj.createProjectBtn).toBeVisible();
         await expect(ProjectManagementObj.projectHeader).toBeVisible();
     })
+
     test("HRMIS_PTF_2 HRMIS_PTF_10 Verify project creation form fields are visible and cancel closes form @smoke @reg @ci", async ({ page }) => {
         await ProjectManagementObj.clickCreateProject()
         await expect(ProjectManagementObj.projectNameInput).toBeVisible();
@@ -62,43 +63,39 @@ test.describe.serial("Project TeamFlow Project List", () => {
         await ProjectManagementObj.cancelBtn.click();
         await expect(ProjectManagementObj.projectHeader).toBeVisible();
     })
+
     test("HRMIS_PTF_9 HRMIS_PTF_11 Create a new project successfully @smoke @reg @ci", async ({ page }) => {
-        // Use timestamp to make project name unique
         const timestamp = Date.now();
         await ProjectManagementObj.clickCreateProject()
-        // Read data from JSON file ...
         const rawData = projectData.Projects.Project1;
         projectName = `${rawData.name}_${timestamp}`;
         console.log(projectName);
 
         const projectPayload = {
-            ...rawData, name: projectName, // make unique
+            ...rawData, name: projectName,
         }
         await ProjectManagementObj.fillAndSubmitProjectForm(projectPayload)
         const successToast = await ProjectManagementObj.toastMessage()
         expect(successToast).toEqual(constants.PROJECT_CREATED_SUCCESSMESSAGE)
         await ProjectManagementObj.waitforLoaderToDisappear()
-        // Verify the project appears in the list
-        //HRMIS_PTF_3
+
         await ProjectManagementObj.searchProject(projectName);
-        await expect(page.locator(`button:has-text("${projectName}"):has-text("Active")`)).toBeVisible();
+        await expect(ProjectManagementObj.getProjectButton(projectName)).toBeVisible();
     })
 
     test("HRMIS_PTF_3 HRMIS_PTF_4 Toggle project accordion expands and collapses @smoke @reg @ci", async ({ page }) => {
         await ProjectManagementObj.searchProject(projectName);
-        const projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
-        await expect(projectButton).toBeVisible();
+        await expect(ProjectManagementObj.getProjectButton(projectName)).toBeVisible();
         await expect(ProjectManagementObj.accordion).toBeHidden();
-        await projectButton.click();
+        await ProjectManagementObj.getProjectButton(projectName).click();
         await expect(ProjectManagementObj.accordion).toBeVisible();
-        await projectButton.click();
+        await ProjectManagementObj.getProjectButton(projectName).click();
         await expect(ProjectManagementObj.accordion).toBeHidden();
     })
 
     test("HRMIS_PTF_5 Verify push notification flow for project creation @smoke @reg @ci", async ({ page }) => {
         await ProjectManagementObj.searchProject(projectName);
-        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
-        await projectButton.click();
+        await ProjectManagementObj.getProjectButton(projectName).click();
         await ProjectManagementObj.clickOnPushNotificationBtn();
         await expect(page.getByText("Send Notification")).toBeVisible();
         await expect(page.getByText("Select Reason")).toBeVisible();
@@ -113,8 +110,7 @@ test.describe.serial("Project TeamFlow Project List", () => {
 
     test("HRMIS_PTF_6 HRMIS_PTF_7 HRMIS_PTF_8 Verify add project team member flow @smoke @reg @ci", async ({ page }) => {
         await ProjectManagementObj.searchProject(projectName);
-        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
-        await projectButton.click();
+        await ProjectManagementObj.getProjectButton(projectName).click();
         await ProjectManagementObj.clickOnAddMembersBtn();
 
         const rawData = projectData.Projects.AddNewMember;
@@ -151,9 +147,9 @@ test.describe.serial("Project TeamFlow Project List", () => {
 
         teamMemberName = projectData.Projects.AddNewMember.employeeName;
         await ShadowResourcesPage.searchResource(projectName)
-        projectButton = page.locator(`button:has-text("${projectName}"):has-text("Active")`);
-        await projectButton.click();
+        await ProjectManagementObj.getProjectButton(projectName).click();
         await expect(page.getByText("Shadow Members")).toBeVisible();
+
         const rawData = projectData.Projects.AddShadowMember;
         const projectPayload = {
             ...rawData,
@@ -168,40 +164,36 @@ test.describe.serial("Project TeamFlow Project List", () => {
     })
 
     test("HRMIS_PTF_16 HRMIS_PTF_17 HRMIS_PTF_18 Verify project appears in My Projects page @smoke @reg @ci", async ({ page }) => {
-        // Click Projects, then search the created project and verify team members and shadow members
-        // Click Project TeamFlow then Projects, then search the created project and verify team and shadow members
-            await ProjectManagementObj.expandTab();
-            await ProjectManagementObj.projectsTab.click();
-            await ProjectManagementObj.waitforLoaderToDisappear();
+        await ProjectManagementObj.expandTab();
+        await ProjectManagementObj.projectsTab.click();
+        await ProjectManagementObj.waitforLoaderToDisappear();
+
         myProjectsPage = new MyProjects(page)
         await ProjectManagementObj.searchProject(projectName);
-            const projectCard = page.locator(`//h2//span[normalize-space()="${projectName}"]/../../..`);
-            await expect(projectCard).toBeVisible();
-        await projectCard.locator('button.accordion-button').click({ force: true });
 
-        // Verify team member inside the opened project card
+        await expect(myProjectsPage.getProjectCard(projectName)).toBeVisible();     // ✅ using page object method
+        await myProjectsPage.expandProjectCard(projectName);                        // ✅ using page object method
+
         const teamMemberNameLocal = projectData.Projects.AddNewMember.employeeName;
-        await expect(projectCard.locator(`text=${teamMemberNameLocal}`).first()).toBeVisible();
+        await myProjectsPage.verifyMemberVisibleInCard(projectName, teamMemberNameLocal); // ✅ using page object method
 
-        // Switch to the Shadow Team Members tab and verify the shadow member
         await myProjectsPage.navigateToShadowTeammembers(projectName);
 
         const shadowNameLocal = projectData.Projects.AddShadowMember.shadowName;
-        await expect(projectCard.locator(`text=${shadowNameLocal}`).first()).toBeVisible();
+        await myProjectsPage.verifyMemberVisibleInCard(projectName, shadowNameLocal);     // ✅ using page object method
     })
 
     test("HRMIS_PTF_10 Edit team member designation to QA @smoke @reg @ci", async ({ page }) => {
         myProjectsPage = new MyProjects(page)
 
         await ProjectManagementObj.searchProject(projectName)
-        const projectCard = page.locator(`//h2//span[normalize-space()="${projectName}"]/../../..`)
-        await expect(projectCard).toBeVisible()
-        await projectCard.locator('button.accordion-button').click({ force: true })
+        await expect(myProjectsPage.getProjectCard(projectName)).toBeVisible();    // ✅ using page object method
+        await myProjectsPage.expandProjectCard(projectName);                       // ✅ using page object method
 
         const teamMemberNameLocal = projectData.Projects.AddNewMember.employeeName
         await myProjectsPage.editTeamMemberDesignation(projectName, teamMemberNameLocal, 'QA')
 
-        const updatedRow = projectCard.locator('tbody tr').filter({ hasText: teamMemberNameLocal })
+        const updatedRow = myProjectsPage.getMemberRowInCard(projectName, teamMemberNameLocal); // ✅ using page object method
         await expect(updatedRow.getByText('QA', { exact: true })).toBeVisible()
     })
 
@@ -209,14 +201,13 @@ test.describe.serial("Project TeamFlow Project List", () => {
         myProjectsPage = new MyProjects(page)
 
         await ProjectManagementObj.searchProject(projectName)
-        const projectCard = page.locator(`//h2//span[normalize-space()="${projectName}"]/../../..`)
-        await expect(projectCard).toBeVisible()
-        await projectCard.locator('button.accordion-button').click({ force: true })
+        await expect(myProjectsPage.getProjectCard(projectName)).toBeVisible();    // ✅ using page object method
+        await myProjectsPage.expandProjectCard(projectName);                       // ✅ using page object method
 
         const teamMemberNameLocal = projectData.Projects.AddNewMember.employeeName
         await myProjectsPage.deleteTeamMember(projectName, teamMemberNameLocal)
 
-        await expect(projectCard.locator('tbody tr').filter({ hasText: teamMemberNameLocal })).toHaveCount(0)
+        await expect(myProjectsPage.getMemberRowInCard(projectName, teamMemberNameLocal)).toHaveCount(0); // ✅ using page object method
     })
 });
 
@@ -229,37 +220,31 @@ test.describe('CSAT Rating', () => {
         await csatRatingPage.openCSATRatingPage();
     });
 
-     test('HRMIS_PTF_25 HRMIS_PTF_26 HRMIS_PTF_27 Verify Employee Name and the associated project is visible @smoke @reg @ci', async () => {
+    test('HRMIS_PTF_25 HRMIS_PTF_26 HRMIS_PTF_27 Verify Employee Name and the associated project is visible @smoke @reg @ci', async () => {
         await csatRatingPage.manageSelectEmployee(CSAT_TEAM_MEMBER_NAME);
         await csatRatingPage.verifyManageProjectVisible(CSAT_PROJECT_NAME);
     });
 
-    test('HRMIS_PTF_28  Verify Project Name and the associated employee is visible @smoke @reg @ci', async () => {
+    test('HRMIS_PTF_28 Verify Project Name and the associated employee is visible @smoke @reg @ci', async () => {
         await csatRatingPage.manageSelectProject(CSAT_PROJECT_NAME);
         await csatRatingPage.verifyManageTeamMemberVisible(CSAT_TEAM_MEMBER_NAME);
     });
-
-    
-
 
     test('Verify updating project rating for an employee is successful @smoke @reg @ci', async ({ page }) => {
         await csatRatingPage.manageSelectProject(CSAT_PROJECT_NAME);
         await csatRatingPage.verifyManageTeamMemberVisible(CSAT_TEAM_MEMBER_NAME);
         await csatRatingPage.manageUpdateRating(4);
-        await page.waitForTimeout(4000);
     });
 
     test('HRMIS_PTF_29 HRMIS_PTF_32 HRMIS_PTF_33 HRMIS_PTF_34 HRMIS_PTF_35 Verify adding CSAT rating for an employee is successful @smoke @reg @ci', async () => {
         await csatRatingPage.addCSATSelectProject(CSAT_PROJECT_NAME, 5);
     });
 
-    test('HRMIS_PTF_30  HRMIS_PTF_31 Verify Employee Name and the associated project is visible @smoke @reg @ci', async () => {
+    test('HRMIS_PTF_30 HRMIS_PTF_31 Verify Employee Name and the associated project is visible @smoke @reg @ci', async () => {
         await csatRatingPage.addCSATSelectEmployee(CSAT_TEAM_MEMBER_NAME, 5);
     });
 
     test('HRMIS_PTF_36 Verify Cancel button clears selections on Add CSAT Ratings page @smoke @reg @ci', async () => {
         await csatRatingPage.verifyAddCSATCancelClearsSelections(CSAT_TEAM_MEMBER_NAME);
     });
-
-
 });

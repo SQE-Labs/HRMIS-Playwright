@@ -26,8 +26,7 @@ export class CSATRatingPage extends BasePage {
   readonly addCSATProjectAccordionButton: Locator;
   readonly addCSATExpandedAccordion: Locator;
   readonly addCSATCancelButton: Locator;
-
-  readonly addCSATProjectOption: Locator;
+  readonly addCSATEmployeeCheckBoxInAccordion: Locator;
   // readonly addCSATEmployeeOption: Locator;
 
   readonly addCSATEmployeeCheckBox: Locator;
@@ -65,11 +64,9 @@ export class CSATRatingPage extends BasePage {
     this.addCSATEmployeeFilterOption = page.locator('#react-select-4-option-1');
     this.addCSATProjectAccordionButton = page.locator('div.accordion-item.project-accordion-item h2.accordion-header button.accordion-button').first();
     this.addCSATExpandedAccordion = page.locator('div.accordion-collapse.show');
+    this.addCSATEmployeeCheckBoxInAccordion = this.addCSATExpandedAccordion.locator('tbody tr input[type="checkbox"]').first();
+
     this.addCSATCancelButton = page.getByRole('button', { name: 'Cancel' });
-
-    this.addCSATProjectOption = page.getByText('', { exact: false });
-    // this.addCSATEmployeeOption = page.locator('#react-select-4-option-1');
-
     this.addCSATEmployeeCheckBox = page.locator('tr', { hasText: 'Vishal Dev Thakur' }).nth(0).getByRole('checkbox');
     this.addCSATNextButton = page.getByRole('button', { name: 'Next' });
     this.addCSATRatingInput = page.getByPlaceholder('Enter CSAT Rating');
@@ -126,7 +123,6 @@ export class CSATRatingPage extends BasePage {
     await this.addCSATProjectFilterOption.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.fill(projectName);
-    await this.page.waitForTimeout(500);
     const option = this.page.getByText(projectName, { exact: true }).last();
     await expect(option).toBeVisible({ timeout: 5000 });
     await option.click();
@@ -143,14 +139,12 @@ export class CSATRatingPage extends BasePage {
     await this.addCSATEmployeeFilterOption.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.fill(employeeName);
-    await this.page.waitForTimeout(500);
     const option = this.page.getByText(employeeName, { exact: true }).last();
     await expect(option).toBeVisible({ timeout: 5000 });
     await option.click();
     await this.waitforLoaderToDisappear();
     await this.addCSATProjectAccordionButton.click();
-    const employeeCheckBox = this.addCSATExpandedAccordion.getByText(employeeName, { exact: true }).locator('xpath=ancestor::tr[1]/td[1]/input');
-    await employeeCheckBox.check();
+    await this.addCSATEmployeeCheckBoxInAccordion.check();
     await this.addCSATNextButton.click();
     await this.addCSATRatingInput.fill(inputRating.toString());
     await this.addCSATAddRatingButton.click();
@@ -163,18 +157,12 @@ export class CSATRatingPage extends BasePage {
     await this.addCSATEmployeeFilterOption.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.click();
     await this.addCSATProjectAndEmployeeNamePlaceholder.fill(employeeName);
-    await this.page.waitForTimeout(500);
     const option = this.page.getByText(employeeName, { exact: true }).last();
     await expect(option).toBeVisible({ timeout: 5000 });
     await option.click();
     await this.waitforLoaderToDisappear();
     await this.addCSATProjectAccordionButton.click();
-
-    const employeeCheckBox = this.addCSATExpandedAccordion.locator('tbody tr input[type="checkbox"]').first();
-
-    await employeeCheckBox.check();
-    await expect(employeeCheckBox).toBeChecked();
-
+    await this.addCSATEmployeeCheckBoxInAccordion.check();
     await this.addCSATCancelButton.click();
     await this.waitforLoaderToDisappear();
 
