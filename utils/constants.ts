@@ -34,7 +34,7 @@ export const CSAT_TEAM_MEMBER_NAME = 'Vishal Dev Thakur';
 export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created."
 export const actualSuccessMessage = "Success";
 
-export const WITHDRAW_LEAVE_SUCCESSMESSAGE = "Leave Withdrawn Successfully"
+export const WITHDRAW_LEAVE_SUCCESSMESSAGE = "Leave withdrawn and balance reversed successfully."
 export const APPLY_LEAVE_SUCCESSMESSAGE = "Leave Applied Successfully! Wait for Approval."
 
 export const PENDING_STATUS = "PENDING";
@@ -53,10 +53,10 @@ export const DESIGNATION_UPDATE_SUCESSMESSSAGE = "Designation updated successful
 export const HOLIDAY_ADDED_TOAST = "Holiday added"
 export const HOLIDAY_REMOVE_TOAST = "Holiday removed successfully"
 
-export const OFFICAL_DUTY_APPLY_TOAST ="On Official Duty request sent for approval"
-export const OFFICAL_DUTY_SUCCESS_TOAST ="On Official Duty request Approved"
-export const OFFICAL_DUTY_REJECT_TOAST ="On Official Duty request Rejected"
-export const DUPLICATE_TOAST ="Duplicate leave request !";
+export const OFFICAL_DUTY_APPLY_TOAST = "On Official Duty request sent for approval"
+export const OFFICAL_DUTY_SUCCESS_TOAST = "On Official Duty request Approved"
+export const OFFICAL_DUTY_REJECT_TOAST = "On Official Duty request Rejected"
+export const DUPLICATE_TOAST = "Duplicate leave request !";
 
 
 export const ROLE_ADD_SUCCESSMESSAGE = "Successfully created."
@@ -70,8 +70,8 @@ export const PROJECT_CREATED_SUCCESSMESSAGE = "Project created successfully."
 export const MEMBER_ASSIGNED_SUCCESSMESSAGE = "Member assigned successfully."
 export const NOTIFICATION_SENT_SUCCESSMESSAGE = "Mail sent successfully."
 export const SHADOW_MEMBER_ASSIGNED_SUCCESSMESSAGE = "Shadow member created successfully."
-export const SELECT_FILE_TOOLTIP ="Please select a file."
-export const PLEASE_FILL_IN_TOOLTOP ="Please fill"
-export const DATE_VALUE_CHECK ="value must be 31/12/2030 or earlier."
-export const REASON_LENGTH_VALIDATION ="Reason must be at least 3 characters long."
+export const SELECT_FILE_TOOLTIP = "Please select a file."
+export const PLEASE_FILL_IN_TOOLTOP = "Please fill"
+export const DATE_VALUE_CHECK = "value must be 31/12/2030 or earlier."
+export const REASON_LENGTH_VALIDATION = "Reason must be at least 5 characters long."
 

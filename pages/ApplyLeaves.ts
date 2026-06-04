@@ -7,6 +7,7 @@ export class ApplyLeaves extends BasePage {
   private ApplyLeaveButton: Locator;
   public ApplyLeavePopupTitle: Locator;
   private SubmitButton: Locator;
+  public LeaveTypeSelectElement: Locator;
   public LeaveTypeTextBox: Locator;
   public DateRange: Locator;
   public ReasonOfLeaveBox: Locator;
@@ -28,6 +29,9 @@ export class ApplyLeaves extends BasePage {
   public applyCrossIcon: Locator;
   public withDrawCancelBtn: Locator;
   public reasonLengthValdiation: Locator
+  public SelectOption: Function;
+  public zeroLeaveConfirmationPopup: Locator;
+  public DateRangeTooltipElement: Locator;
 
   leaveCounter = 0;
 
@@ -35,33 +39,41 @@ export class ApplyLeaves extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    this.ApplyLeaveButton = page.locator("//a[text()='Apply Leave']");
+    this.ApplyLeaveButton = page.locator("//button[text()='Apply Leave']");
     this.ApplyLeavePopupTitle = page.locator("//a[text()='Apply Leave']");
     this.SubmitButton = page.getByRole("button", { name: "Submit" });
-    this.LeaveTypeTextBox = page.getByLabel("Type of leave");
+    this.LeaveTypeSelectElement = page.locator("//option[contains(text(),'Select leave type')]/parent::select");
+    this.LeaveTypeTextBox = page.getByRole("button", { name: "Type of leave" });
+    this.DateRangeTooltipElement = page.locator("//button[contains(@placeholder, 'mm/dd/yyyy')]//ancestor::div[2]//parent::div//parent::div//preceding-sibling::input");
     this.DateRange = page.getByPlaceholder("mm/dd/yyyy - mm/dd/yyyy");
     this.ReasonOfLeaveBox = page.getByRole("textbox", { name: "Reason of Leave *", });
     this.SuccessMessage = page.getByText("Leave Applied Successfully! Wait for Approval.");
-    this.WithdrawLink = this.page.locator("table").locator("a", { hasText: "Withdraw" });
+    this.WithdrawLink = this.page.locator("table").locator("button", { hasText: "Withdraw" });
     this.WithdrawPopupTitle = page.getByText("Withdraw Leave Request");
     this.WithdrawReasonField = page.getByRole("textbox");
     this.WithdrawSuccessMessage = page.getByText("Leave Withdrawn Successfully");
     this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes']");
-    this.privilegeLeaveOption = page.getByLabel("PrivilegeLeave");
+    this.privilegeLeaveOption = page.locator("//span[@title ='Privilege Leave']//following-sibling::div");
     this.duplicateLeaveToastMessage = page.locator("//div[text()='Duplicate leave request !']");
     this.toastCloseButton = page.locator('button.Toastify__close-button[aria-label="close"]');
     this.closeIconButton = page.locator('button.react-datepicker__close-icon[aria-label="Close"]');
-    this.allWithdrawLink = this.page.locator("//tr//a[text()='Withdraw']");
+    this.allWithdrawLink = this.page.locator("//tr//button[text()='Withdraw']");
     this.closeButton = this.page.locator("button.close");
     this.fromDate = page.locator("//table[@class='resume custom']//tr/td[2]");
     this.ToDate = page.locator("//table[@class='resume custom']//tr/td[3]");
-    this.cancelBtn = page.locator("(//button[contains(text(), 'Cancel')])[1]");
-    this.applyCrossIcon = page.locator("//h5[text()='Apply Leave']/../button");
-    this.withDrawCancelBtn = page.locator("(//button[contains(text(), 'Cancel')])[2]");
-    this.reasonLengthValdiation = page.getByText('Reason must be at least 3 characters long.')
-
+    this.cancelBtn = page.getByRole("button", { name: 'Cancel' });
+    this.applyCrossIcon = page.getByRole("button", { name: "Close" });
+    this.withDrawCancelBtn = page.locator("//button[contains(text(), 'Cancel')]");
+    this.reasonLengthValdiation = page.getByText('Reason must be at least 5 characters long.')
+    this.SelectOption = (optionTitle: string) => page.getByRole("option", {name: optionTitle});
+    this.zeroLeaveConfirmationPopup = page.getByText("Are you sure you want to continue with the selected leave type since your leave balance is zero?");
   }
 
+  async handleZeroLeaveBalancePopupIfPresent() {
+    if (await this.zeroLeaveConfirmationPopup.isVisible()) {
+      this.page.getByRole('button', { name: "Yes" }).click();
+    }
+  }
   async pickCurrentDate() {
     const currentDate = new Date();
     return `${(currentDate.getMonth() + 1)
@@ -83,7 +95,8 @@ export class ApplyLeaves extends BasePage {
   async selectLeaveType(type: string) {
     const label =
       type.includes(" ") ? type : type.replace(/([a-z])([A-Z])/g, "$1 $2");
-    await this.LeaveTypeTextBox.selectOption({ label });
+    await this.LeaveTypeTextBox.click();
+    await this.SelectOption(label).click();
   }
 
   async enterReasonOfLeave(reason: string) {
@@ -110,7 +123,7 @@ export class ApplyLeaves extends BasePage {
 
   // Apply leave with retry, waiting for duplicate toast to disappear automatically
   async applyLeave(leaveType: string, reason: string, maxRetries: number = 3) {
-    const privilegeCount = await this.privilegeLeaveOption.count();
+    const privilegeCount = parseInt(await this.privilegeLeaveOption.innerText());
 
     await this.ApplyLeaveButton.click();
     await this.page
@@ -129,12 +142,12 @@ export class ApplyLeaves extends BasePage {
       await this.YesButtonOfApplyLeave.click();
     }
 
-
-    await this.selectDateRange(1);
-    await this.ReasonOfLeaveBox.fill(reason);
-    await this.SubmitButton.click();
-    await this.page.waitForLoadState("networkidle");
-
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      await this.selectDateRange(1);
+      await this.ReasonOfLeaveBox.fill(reason);
+      await this.SubmitButton.click();
+      await this.page.waitForLoadState("networkidle");
+    }
     //   // Wait for either success or duplicate toast to appear
     //   const successAppeared = await this.SuccessMessage.waitFor({
     //     state: "visible",
@@ -220,8 +233,8 @@ export class ApplyLeaves extends BasePage {
   }
 
   async waitForWithdrawSuccessMessage(): Promise<string> {
-    const toast = this.page.locator(".Toastify__toast-body").filter({ hasText: /Leave Withdrawn Successfully/i });
-    const alert = this.page.getByRole("alert").filter({ hasText: /Leave Withdrawn Successfully/i });
+    const toast = this.page.locator(".Toastify__toast-body").filter({ hasText: /Leave withdrawn and balance reversed successfully./i });
+    const alert = this.page.getByRole("alert").filter({ hasText: /Leave withdrawn and balance reversed successfully./i });
     await Promise.race([
       toast.first().waitFor({ state: "visible", timeout: 12000 }),
       alert.first().waitFor({ state: "visible", timeout: 12000 })
