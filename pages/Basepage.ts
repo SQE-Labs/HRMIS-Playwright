@@ -140,7 +140,7 @@ export class BasePage extends CommonUtils {
     expect(message?.trim()).toBe(expectedMessage);
     console.log(`Success message verified: ${expectedMessage}`);
   }
-  
+
 
   async logout() {
     await this.page.evaluate(() => window.scrollTo(0, 0));
@@ -158,6 +158,16 @@ export class BasePage extends CommonUtils {
       // If locator passed (Locator object) and resolves to multiple elements, use first() to avoid strict mode errors
       await locator.first().waitFor({ state, timeout });
     }
+  }
+
+  async verifyBrowserNativeTooltipMessage(element: Locator, expectedText: string) {
+    let tooltipText = await element.evaluate(
+      (el) => (el as HTMLInputElement).validationMessage || ""
+    );
+    const normalize = (text: string) =>
+      text.toLowerCase().replace(/[^a-z0-9]/gi, ""); // removes /, -, spaces, etc.
+
+    expect(normalize(tooltipText)).toContain(normalize(expectedText));
   }
 
   async verifyTooltipMessage(element: Locator, expectedText: string) {
@@ -193,6 +203,6 @@ export class BasePage extends CommonUtils {
 
     expect(normalize(tooltipText)).toContain(normalize(expectedText));
 
-}
+  }
 }
 
