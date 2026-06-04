@@ -133,21 +133,21 @@ export class ApplyLeaves extends BasePage {
     await this.selectLeaveType(leaveType);
     await this.handleZeroLeaveBalancePopupIfPresent();
 
-    if (
-      privilegeCount === 0 &&
-      (await this.YesButtonOfApplyLeave.isVisible({ timeout: 3000 }).catch(
-        () => false
-      ))
-    ) {
-      await this.YesButtonOfApplyLeave.click();
-    }
+    // if (
+    //   privilegeCount === 0 &&
+    //   (await this.YesButtonOfApplyLeave.isVisible({ timeout: 3000 }).catch(
+    //     () => false
+    //   ))
+    // ) {
+    //   await this.YesButtonOfApplyLeave.click();
+    // }
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    //for (let attempt = 1; attempt <= maxRetries; attempt++) {
       await this.selectDateRange(1);
       await this.ReasonOfLeaveBox.fill(reason);
       await this.SubmitButton.click();
       await this.page.waitForLoadState("networkidle");
-    }
+    //}
     //   // Wait for either success or duplicate toast to appear
     //   const successAppeared = await this.SuccessMessage.waitFor({
     //     state: "visible",
