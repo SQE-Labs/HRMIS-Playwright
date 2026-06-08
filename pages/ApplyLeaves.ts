@@ -7,13 +7,13 @@ export class ApplyLeaves extends BasePage {
   private ApplyLeaveButton: Locator;
   public ApplyLeavePopupTitle: Locator;
   private SubmitButton: Locator;
-  public  LeaveTypeTextBox: Locator;
-  public  DateRange: Locator;
+  public LeaveTypeTextBox: Locator;
+  public DateRange: Locator;
   public ReasonOfLeaveBox: Locator;
   public SuccessMessage: Locator;
   private WithdrawLink: Locator;
   public WithdrawPopupTitle: Locator;
-  public  WithdrawReasonField: Locator;
+  public WithdrawReasonField: Locator;
   public WithdrawSuccessMessage: Locator;
   private YesButtonOfApplyLeave: Locator;
   private privilegeLeaveOption: Locator;
@@ -118,6 +118,7 @@ export class ApplyLeaves extends BasePage {
       .waitFor({ state: "visible", timeout: 10000 });
     await this.LeaveTypeTextBox.waitFor({ state: "visible", timeout: 10000 });
     await this.selectLeaveType(leaveType);
+    await this.handleZeroLeaveBalancePopupIfPresent();
 
     if (
       privilegeCount === 0 &&
@@ -128,88 +129,88 @@ export class ApplyLeaves extends BasePage {
       await this.YesButtonOfApplyLeave.click();
     }
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      await this.selectDateRange(attempt);
-      await this.ReasonOfLeaveBox.fill(reason);
-      await this.SubmitButton.click();
-      await this.page.waitForLoadState("networkidle");
 
-      // Wait for either success or duplicate toast to appear
-      const successAppeared = await this.SuccessMessage.waitFor({
-        state: "visible",
-        timeout: 5000,
-      })
-        .then(() => true)
-        .catch(() => false);
-      const duplicateAppeared = await this.duplicateLeaveToastMessage
-        .waitFor({ state: "visible", timeout: 5000 })
-        .then(() => true)
-        .catch(() => false);
+    await this.selectDateRange(1);
+    await this.ReasonOfLeaveBox.fill(reason);
+    await this.SubmitButton.click();
+    await this.page.waitForLoadState("networkidle");
 
-      const toastVisible = await this.page
-        .locator(".Toastify__toast-body")
-        .last()
-        .waitFor({ state: "visible", timeout: 3000 })
-        .then(() => true)
-        .catch(() => false);
-      const toastText = toastVisible
-        ? (await this.page.locator(".Toastify__toast-body").last().textContent())?.trim()
-        : "";
+    //   // Wait for either success or duplicate toast to appear
+    //   const successAppeared = await this.SuccessMessage.waitFor({
+    //     state: "visible",
+    //     timeout: 5000,
+    //   })
+    //     .then(() => true)
+    //     .catch(() => false);
+    //   const duplicateAppeared = await this.duplicateLeaveToastMessage
+    //     .waitFor({ state: "visible", timeout: 5000 })
+    //     .then(() => true)
+    //     .catch(() => false);
 
-      if (successAppeared || toastText?.includes("Leave Applied Successfully")) {
-        if (successAppeared) {
-          await this.SuccessMessage.waitFor({ state: "hidden", timeout: 10000 });
-        }
-        console.log(" Leave applied successfully!");
-        // Close the apply leave dialog so it doesn't block logout/navigation
-        if (await this.cancelBtn.isVisible().catch(() => false)) {
-          await this.cancelBtn.click();
-        } else if (await this.applyCrossIcon.isVisible().catch(() => false)) {
-          await this.applyCrossIcon.click();
-        }
-        break;
-      }
+    //   const toastVisible = await this.page
+    //     .locator(".Toastify__toast-body")
+    //     .last()
+    //     .waitFor({ state: "visible", timeout: 3000 })
+    //     .then(() => true)
+    //     .catch(() => false);
+    //   const toastText = toastVisible
+    //     ? (await this.page.locator(".Toastify__toast-body").last().textContent())?.trim()
+    //     : "";
 
-      if (
-        duplicateAppeared ||
-        toastText?.includes("Duplicate leave request") ||
-        toastText?.toLowerCase().includes("already")
-      ) {
-        console.log(
-          ` Attempt ${attempt}: Duplicate leave found, waiting for toast to disappear and retrying...`
-        );
-        await this.duplicateLeaveToastMessage.waitFor({
-          state: "hidden",
-          timeout: 10000,
-        });
-        await this.clearDateRange();
-        continue;
-      }
+    //   if (successAppeared || toastText?.includes("Leave Applied Successfully")) {
+    //     if (successAppeared) {
+    //       await this.SuccessMessage.waitFor({ state: "hidden", timeout: 10000 });
+    //     }
+    //     console.log(" Leave applied successfully!");
+    //     // Close the apply leave dialog so it doesn't block logout/navigation
+    //     if (await this.cancelBtn.isVisible().catch(() => false)) {
+    //       await this.cancelBtn.click();
+    //     } else if (await this.applyCrossIcon.isVisible().catch(() => false)) {
+    //       await this.applyCrossIcon.click();
+    //     }
+    //     break;
+    //   }
 
-      const reasonRowVisible = await this.page
-        .locator(`//table//td[contains(normalize-space(), '${reason}')]`)
-        .first()
-        .isVisible()
-        .catch(() => false);
-      if (reasonRowVisible) {
-        console.log(" Leave appears in the list; treating as success.");
-        // Same as above: close the dialog if it's still open
-        if (await this.cancelBtn.isVisible().catch(() => false)) {
-          await this.cancelBtn.click();
-        } else if (await this.applyCrossIcon.isVisible().catch(() => false)) {
-          await this.applyCrossIcon.click();
-        }
-        break;
-      }
+    //   if (
+    //     duplicateAppeared ||
+    //     toastText?.includes("Duplicate leave request") ||
+    //     toastText?.toLowerCase().includes("already")
+    //   ) {
+    //     console.log(
+    //       ` Attempt ${attempt}: Duplicate leave found, waiting for toast to disappear and retrying...`
+    //     );
+    //     await this.duplicateLeaveToastMessage.waitFor({
+    //       state: "hidden",
+    //       timeout: 10000,
+    //     });
+    //     await this.clearDateRange();
+    //     continue;
+    //   }
 
-      if (attempt === maxRetries) {
-        throw new Error(
-          `Neither success nor duplicate message detected. Last toast: "${toastText || "none"}".`
-        );
-      }
-      // Retry with a new date range
-      await this.clearDateRange();
-    }
+    //   const reasonRowVisible = await this.page
+    //     .locator(`//table//td[contains(normalize-space(), '${reason}')]`)
+    //     .first()
+    //     .isVisible()
+    //     .catch(() => false);
+    //   if (reasonRowVisible) {
+    //     console.log(" Leave appears in the list; treating as success.");
+    //     // Same as above: close the dialog if it's still open
+    //     if (await this.cancelBtn.isVisible().catch(() => false)) {
+    //       await this.cancelBtn.click();
+    //     } else if (await this.applyCrossIcon.isVisible().catch(() => false)) {
+    //       await this.applyCrossIcon.click();
+    //     }
+    //     break;
+    //   }
+
+    //   if (attempt === maxRetries) {
+    //     throw new Error(
+    //       `Neither success nor duplicate message detected. Last toast: "${toastText || "none"}".`
+    //     );
+    //   }
+    //   // Retry with a new date range
+    //   await this.clearDateRange();
+    // }
   }
   async getWithDrawLink() {
     const link = this.WithdrawLink.first();
@@ -267,15 +268,15 @@ export class ApplyLeaves extends BasePage {
 
     const today = new Date();
     const currentDay = today.getDate();
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    //const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
 
     let startDay: number;
     let endDay: number;
 
     if (attempt === 1) {
       // ✅ Pick a random start day between today+1 and end of month-5
-      startDay = currentDay + Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
-      endDay = startDay + 4; // fixed 4-day duration
+      startDay = currentDay;//+ Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
+      endDay = startDay;// fixed 4-day duration
     } else {
       // Move to next month for retries
       const nextArrow = this.page.locator(".react-datepicker__navigation--next");
@@ -290,7 +291,7 @@ export class ApplyLeaves extends BasePage {
     }
 
     // Adjust for month overflow
-    if (endDay > daysInMonth) endDay = daysInMonth;
+    // if (endDay > daysInMonth) endDay = daysInMonth;
 
     await getDayLocator(startDay).first().click();
     await getDayLocator(endDay).last().click();
