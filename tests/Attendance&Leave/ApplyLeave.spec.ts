@@ -64,9 +64,7 @@ test.describe("Leave Requests page", () => {
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
-    // const message = await applyLeave.waitForWithdrawSuccessMessage();
-    // console.log("Withdraw message: " + message);
-    // expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
+    await expect(applyLeave.WithdrawSuccessMessage).toBeVisible();
   });
 
   test("A&L_12, A&L_13, A&L_14 A&L_15, Verify that user is able to apply leave with 0 privilege balance @smoke @eti @reg", async ({
@@ -89,7 +87,7 @@ test.describe("Leave Requests page", () => {
     // Apply Leave
     await applyLeave.applyLeave("PrivilegeLeave", "Family function");
 
-    await applyLeave.SuccessMessage.waitFor({ state: "hidden", timeout: 5000 });
+    await expect(applyLeave.SuccessMessage).toBeVisible();
 
     await applyLeave.getWithDrawLink();
 
@@ -97,9 +95,7 @@ test.describe("Leave Requests page", () => {
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
-    // const message = await applyLeave.waitForWithdrawSuccessMessage();
-    // console.log("Withdraw message: " + message);
-    // expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
+    await expect(applyLeave.WithdrawSuccessMessage).toBeVisible();
   });
 
   test('HRMIS_ A&L_4, A&L_5, A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Leave Requests page @eti, @reg', async ({ page }) => {
