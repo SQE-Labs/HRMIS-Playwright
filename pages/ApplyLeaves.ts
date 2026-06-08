@@ -47,11 +47,11 @@ export class ApplyLeaves extends BasePage {
     this.DateRangeTooltipElement = page.locator("//button[contains(@placeholder, 'mm/dd/yyyy')]//ancestor::div[2]//parent::div//parent::div//preceding-sibling::input");
     this.DateRange = page.getByPlaceholder("mm/dd/yyyy - mm/dd/yyyy");
     this.ReasonOfLeaveBox = page.getByRole("textbox", { name: "Reason of Leave *", });
-    this.SuccessMessage = page.getByText("Leave Applied Successfully! Wait for Approval.");
+    this.SuccessMessage = page.getByText("Leave Applied Successfully.");
     this.WithdrawLink = this.page.locator("table").locator("button", { hasText: "Withdraw" });
     this.WithdrawPopupTitle = page.getByText("Withdraw Leave Request");
     this.WithdrawReasonField = page.getByRole("textbox");
-    this.WithdrawSuccessMessage = page.getByText("Leave Withdrawn Successfully");
+    this.WithdrawSuccessMessage = page.getByText(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
     this.YesButtonOfApplyLeave = page.locator("//div[contains(@class,'modal-full-height')]/div//button[text()='Yes']");
     this.privilegeLeaveOption = page.locator("//span[@title ='Privilege Leave']//following-sibling::div");
     this.duplicateLeaveToastMessage = page.locator("//div[text()='Duplicate leave request !']");
@@ -65,7 +65,7 @@ export class ApplyLeaves extends BasePage {
     this.applyCrossIcon = page.getByRole("button", { name: "Close" });
     this.withDrawCancelBtn = page.locator("//button[contains(text(), 'Cancel')]");
     this.reasonLengthValdiation = page.getByText('Reason must be at least 5 characters long.')
-    this.SelectOption = (optionTitle: string) => page.getByRole("option", {name: optionTitle});
+    this.SelectOption = (optionTitle: string) => page.getByRole("option", { name: optionTitle });
     this.zeroLeaveConfirmationPopup = page.getByText("Are you sure you want to continue with the selected leave type since your leave balance is zero?");
   }
 
@@ -133,12 +133,12 @@ export class ApplyLeaves extends BasePage {
     await this.selectLeaveType(leaveType);
     await this.handleZeroLeaveBalancePopupIfPresent();
 
-    
-      await this.selectDateRange(1);
-      await this.ReasonOfLeaveBox.fill(reason);
-      await this.SubmitButton.click();
-      await this.page.waitForLoadState("networkidle");
-    
+
+    await this.selectDateRange(1);
+    await this.ReasonOfLeaveBox.fill(reason);
+    await this.SubmitButton.click();
+    await this.page.waitForLoadState("networkidle");
+
     //   // Wait for either success or duplicate toast to appear
     //   const successAppeared = await this.SuccessMessage.waitFor({
     //     state: "visible",
@@ -279,7 +279,7 @@ export class ApplyLeaves extends BasePage {
 
     if (attempt === 1) {
       // ✅ Pick a random start day between today+1 and end of month-5
-      startDay = currentDay ;//+ Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
+      startDay = currentDay;//+ Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
       endDay = startDay;// fixed 4-day duration
     } else {
       // Move to next month for retries
@@ -295,7 +295,7 @@ export class ApplyLeaves extends BasePage {
     }
 
     // Adjust for month overflow
-   // if (endDay > daysInMonth) endDay = daysInMonth;
+    // if (endDay > daysInMonth) endDay = daysInMonth;
 
     await getDayLocator(startDay).first().click();
     await getDayLocator(endDay).last().click();
