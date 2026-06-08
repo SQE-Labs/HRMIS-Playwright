@@ -97,9 +97,9 @@ test.describe("Leave Requests page", () => {
     await applyLeave.fillWithDrawReason("Cancel the Plan");
     await applyLeave.getSubmitButton();
 
-    // const message = await applyLeave.waitForWithdrawSuccessMessage();
-    // console.log("Withdraw message: " + message);
-    // expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
+    const message = await applyLeave.waitForWithdrawSuccessMessage();
+    console.log("Withdraw message: " + message);
+    expect(message).toContain(constants.WITHDRAW_LEAVE_SUCCESSMESSAGE);
   });
 
   test('HRMIS_ A&L_4, A&L_5, A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Leave Requests page @eti, @reg', async ({ page }) => {

@@ -131,22 +131,14 @@ export class ApplyLeaves extends BasePage {
       .waitFor({ state: "visible", timeout: 10000 });
     await this.LeaveTypeTextBox.waitFor({ state: "visible", timeout: 10000 });
     await this.selectLeaveType(leaveType);
+    await this.handleZeroLeaveBalancePopupIfPresent();
 
-    if (
-      privilegeCount === 0 &&
-      (await this.YesButtonOfApplyLeave.isVisible({ timeout: 3000 }).catch(
-        () => false
-      ))
-    ) {
-      await this.YesButtonOfApplyLeave.click();
-    }
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    
       await this.selectDateRange(1);
       await this.ReasonOfLeaveBox.fill(reason);
       await this.SubmitButton.click();
       await this.page.waitForLoadState("networkidle");
-    }
+    
     //   // Wait for either success or duplicate toast to appear
     //   const successAppeared = await this.SuccessMessage.waitFor({
     //     state: "visible",
@@ -280,15 +272,15 @@ export class ApplyLeaves extends BasePage {
 
     const today = new Date();
     const currentDay = today.getDate();
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    //const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
 
     let startDay: number;
     let endDay: number;
 
     if (attempt === 1) {
       // ✅ Pick a random start day between today+1 and end of month-5
-      startDay = currentDay + Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
-      endDay = startDay + 4; // fixed 4-day duration
+      startDay = currentDay ;//+ Math.floor(Math.random() * Math.max(1, daysInMonth - currentDay - 5)) + 1;
+      endDay = startDay;// fixed 4-day duration
     } else {
       // Move to next month for retries
       const nextArrow = this.page.locator(".react-datepicker__navigation--next");
@@ -303,7 +295,7 @@ export class ApplyLeaves extends BasePage {
     }
 
     // Adjust for month overflow
-    if (endDay > daysInMonth) endDay = daysInMonth;
+   // if (endDay > daysInMonth) endDay = daysInMonth;
 
     await getDayLocator(startDay).first().click();
     await getDayLocator(endDay).last().click();
