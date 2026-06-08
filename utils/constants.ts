@@ -28,7 +28,7 @@ export const expectedSuccessMessageITApproval = "User Email has been successfull
 export const MY_PROFILE_USER_EMAIL = "vishal.thakur@caeliusconsulting.com";
 export const MY_PROFILE_USER_PASSWORD = "Test@123";
 
-export const CSAT_PROJECT_NAME = 'Automation Testing Nav';
+export const CSAT_PROJECT_NAME = 'Dummy Project 1';
 export const CSAT_TEAM_MEMBER_NAME = 'Vishal Dev Thakur';
 
 export const expectedSuccessMessageHRMISAccountCreated = "Employee's HRMIS account created."

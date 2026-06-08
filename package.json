@@ -10,7 +10,8 @@
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open -p 8080 allure-report",
     "report": "npm run allure:generate && npm run allure:open",
-    "smoke": "npx playwright test --grep @smoke"
+    "smoke": "npx playwright test --grep @smoke",
+    "test:ci": "npx playwright test --grep @ci"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,7 @@
     "allure-playwright": "^3.4.2",
     "playwright": "^1.54.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@applitools/eyes-playwright": "^1.36.3",
