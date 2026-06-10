@@ -17,11 +17,11 @@
         "UserEmail": "asset-store@caeliusconsulting.com"
     },
     "Employee": {
-        "UserEmail": "ishita.singh1@caeliusconsulting.com"
+        "UserEmail": "yash.aggarwal@sqelabs.com"
     },
     "HR": {
-        "UserEmail": "emp2@caeliusconsulting.com",
-        "name": "Elon Mask"
+        "UserEmail": "yogesh@sqelabs.com",
+        "name": "Different Name"
     },
     "DeliveryManager": {
         "UserEmail": "vishal.thakur@caeliusconsulting.com",

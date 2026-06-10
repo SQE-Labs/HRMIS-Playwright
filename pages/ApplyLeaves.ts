@@ -137,7 +137,7 @@ export class ApplyLeaves extends BasePage {
     await this.selectDateRange(1);
     await this.ReasonOfLeaveBox.fill(reason);
     await this.SubmitButton.click();
-    await this.page.waitForLoadState("networkidle");
+    await this.waitforLoaderToDisappear();
 
     //   // Wait for either success or duplicate toast to appear
     //   const successAppeared = await this.SuccessMessage.waitFor({
@@ -271,7 +271,7 @@ export class ApplyLeaves extends BasePage {
       );
 
     const today = new Date();
-    const currentDay = today.getDate();
+    const currentDay = today.getDate() + 1;
     //const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
 
     let startDay: number;

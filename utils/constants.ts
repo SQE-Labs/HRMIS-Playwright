@@ -71,7 +71,7 @@ export const MEMBER_ASSIGNED_SUCCESSMESSAGE = "Member assigned successfully."
 export const NOTIFICATION_SENT_SUCCESSMESSAGE = "Mail sent successfully."
 export const SHADOW_MEMBER_ASSIGNED_SUCCESSMESSAGE = "Shadow member created successfully."
 export const SELECT_FILE_TOOLTIP = "Please select a file."
-export const PLEASE_FILL_IN_TOOLTOP = "Please fill"
+export const PLEASE_FILL_IN_TOOLTOP = "Please fill out this field."
 export const DATE_VALUE_CHECK = "value must be 31/12/2030 or earlier."
 export const REASON_LENGTH_VALIDATION = "Reason must be at least 5 characters long."
 

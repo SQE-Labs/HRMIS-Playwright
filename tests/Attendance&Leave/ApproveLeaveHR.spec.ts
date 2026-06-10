@@ -34,7 +34,7 @@ test.describe("Approve Leave HR module ", () => {
       testData.Employee.UserEmail,
       testData.SuperUser.UserPassword
     );
-    await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
+    await attendanceLeaveTab.navigateToAttendanceTab("Leave Requests");
     await applyLeave.waitForDotsLoaderToDisappear();
 
     await applyLeave.withdrawExistingLeave();
@@ -47,7 +47,7 @@ test.describe("Approve Leave HR module ", () => {
 
     // Logging in as Delivery Manager
     await loginObj.validLogin(
-      testData["DeliveryManager"].UserEmail,
+      testData.HR.UserEmail,
       testData.DeliveryManager.password
     );
     if (await myTeamLeave.CrossIcon.isVisible()) {

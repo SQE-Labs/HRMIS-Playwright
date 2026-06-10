@@ -108,7 +108,7 @@ test.describe("My Team Leave Page", () => {
     await myTeamLeave.submitButton.click();
 
     await myTeamLeave.leaveActionField.waitFor({ state: 'visible', timeout: 5000 });
-    await myTeamLeave.verifyTooltipMessage(
+    await myTeamLeave.verifyBrowserNativeTooltipMessage(
       myTeamLeave.leaveActionField,
       constants.SELECT_ITEM
     );
@@ -120,7 +120,7 @@ test.describe("My Team Leave Page", () => {
     await myTeamLeave.submitButton.click();
 
     await myTeamLeave.reasonField.waitFor({ state: 'visible', timeout: 5000 });
-    await myTeamLeave.verifyTooltipMessage(
+    await myTeamLeave.verifyBrowserNativeTooltipMessage(
       myTeamLeave.reasonField,
       constants.PLEASE_FILL_IN_TOOLTOP
     );
