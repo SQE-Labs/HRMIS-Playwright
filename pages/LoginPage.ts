@@ -14,25 +14,29 @@ export class LoginPage extends BasePage {
         this.page = page;
         this.email = page.locator("[type='email']");
         this.password = page.locator("[type='password']");
-        this.submitButton = page.locator("#submitButton");
+        this.submitButton = page.getByRole('button', { name: 'Sign in' });
     }
 
     async validLogin(userEmail: string, userPassword: string) {
         // Use baseURL from Playwright config.
         await this.open('/');
-        const onLoginPage = await this.email.isVisible({ timeout: 5000 }).catch(() => false);
+        const onLoginPage = await this.email.isVisible({ timeout: 2000 }).catch(() => false);
         if (!onLoginPage) {
             // Already logged in
             if (await this.logoutButton.isVisible().catch(() => false)) {
                 return;
             }
-            await this.email.waitFor({ state: 'visible', timeout: 10000 });
+            await this.email.waitFor({ state: 'visible', timeout: 5000 });
         }
         await this.email.fill(userEmail);
         await this.password.fill(userPassword);
         await this.submitButton.click();
-        await this.waitForDotsLoaderToDisappear()
-        await this.waitForSpinnerLoaderToDisappear()
-        await this.page.waitForLoadState('domcontentloaded');
+        
+        // Use Promise.race to exit faster when loaders disappear
+        await Promise.race([
+            this.waitForDotsLoaderToDisappear().catch(() => {}),
+            this.waitForSpinnerLoaderToDisappear().catch(() => {}),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Fallback 2sec timeout
+        ]);
     }
 }

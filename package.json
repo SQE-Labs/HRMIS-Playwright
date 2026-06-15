@@ -17,16 +17,15 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
-    "@types/node": "^22.18.0",
+    "@types/node": "^22.19.20",
     "allure-commandline": "^2.34.1",
     "allure-playwright": "^3.4.2",
-    "playwright": "^1.54.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "dependencies": {
     "@applitools/eyes-playwright": "^1.36.3",
+    "@playwright/test": "^1.60.0",
     "allure": "^0.0.0",
     "dotenv": "^16.6.1",
     "extent": "^0.4.0",
