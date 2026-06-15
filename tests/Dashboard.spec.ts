@@ -51,6 +51,7 @@ test.describe("Dashboard Tests", () => {
       await verifyNavigation(page, () =>
         dashboard.clickAssetRequestHardware()
       );
+      await expect(page).toHaveURL(/assetRequest/);
     });
   });
 
@@ -65,6 +66,7 @@ test.describe("Dashboard Tests", () => {
       await verifyNavigation(page, () =>
         dashboard.clickReimbursementsExpenseClaims()
       );
+      await expect(page).toHaveURL(/reimbursementRequest/);
     });
   });
 
@@ -77,6 +79,7 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open Raise Concern", async () => {
       await verifyNavigation(page, () => dashboard.clickRaiseConcern());
+      await expect(page).toHaveURL(/myConcern/);
     });
   });
 
@@ -91,6 +94,7 @@ test.describe("Dashboard Tests", () => {
       await verifyNavigation(page, () =>
         dashboard.clickRequestLeavePlanTimeOff()
       );
+      await expect(page).toHaveURL(/leaveApply/);
     });
   });
 
@@ -103,6 +107,7 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open Submit Timesheets", async () => {
       await verifyNavigation(page, () => dashboard.clickSubmitTimesheets());
+      await expect(page).toHaveURL(/timesheets/);
     });
   });
 
@@ -115,6 +120,7 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open View All Projects", async () => {
       await verifyNavigation(page, () => dashboard.clickViewAllProjects());
+      await expect(page).toHaveURL(/myProject/);
     });
   });
 });
