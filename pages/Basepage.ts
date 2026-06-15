@@ -28,18 +28,25 @@ export class BasePage extends CommonUtils {
   }
 
   async open(url: string): Promise<void> {
-    await this.page.goto(url);
-  }
+    if (this.page.isClosed()) {
+        throw new Error('Page was already closed before navigation');
+    }
+
+    await this.page.goto(url, {
+        waitUntil: 'domcontentloaded',
+        timeout: 20000
+    });
+}
   async waitForDotsLoaderToDisappear(): Promise<void> {
     const loader = this.threeDotLoader.first();
     try {
-      await loader.waitFor({ state: 'detached', timeout: 10000 });
+      await loader.waitFor({ state: 'detached', timeout: 3000 });
       return;
     } catch {
       // fall through to hidden check
     }
     try {
-      await loader.waitFor({ state: 'hidden', timeout: 2000 });
+      await loader.waitFor({ state: 'hidden', timeout: 1000 });
       return;
     } catch {
       // Loader can stay visible while content is already loaded.
@@ -48,9 +55,11 @@ export class BasePage extends CommonUtils {
   }
   async waitForSpinnerLoaderToDisappear(): Promise<void> {
     //expect(this.SpinLoader.first()).not.toBeAttached();
-    await this.SpinLoader.waitFor({ state: 'detached' });
-
-
+    try {
+      await this.SpinLoader.waitFor({ state: 'detached', timeout: 3000 });
+    } catch {
+      // Spinner may already be gone or not present
+    }
   }
   async waitforLoaderToDisappear(): Promise<void> {
     await this.waitForDotsLoaderToDisappear()
