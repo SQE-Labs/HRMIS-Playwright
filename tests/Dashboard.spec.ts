@@ -27,20 +27,22 @@ test.describe("Dashboard Tests", () => {
     dashboard = new Dashboard(page);
   });
 
-  test("User should be able to view and click on View Attendance Weekly logs link @smoke", async ({
+  test("HRIMS_DASH_1, HRIMS_DASH_2, HRIMS_DASH_3, HRIMS_DASH_4, HRIMS_DASH_5 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
       await dashboard.waitForDashboardToLoad();
     });
+    await expect(
+    page.locator('h2.heading-lg')).toContainText(/Vishal Dev Thakur/);
 
     await test.step("Open Attendance Weekly Logs", async () => {
       await dashboard.clickViewAttendanceWeeklyLogs();
-      await expect(page).toHaveURL(/myAttendance/);
+      await expect(page.locator('h2.heading-lg')).toHaveText('Work Calender');
     });
   });
 
-  test("User should be able to view and click on Asset Request Hardware link @smoke", async ({
+  test("HRIMS_DASH_7 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -51,11 +53,11 @@ test.describe("Dashboard Tests", () => {
       await verifyNavigation(page, () =>
         dashboard.clickAssetRequestHardware()
       );
-      await expect(page).toHaveURL(/assetRequest/);
+      await expect(page.getByRole('heading', { name: 'Asset Requests', level: 1 })).toBeVisible();
     });
   });
 
-  test("User should be able to view and click on Reimbursements Expense claims link @smoke", async ({
+  test("HRIMS_DASH_8 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -66,11 +68,11 @@ test.describe("Dashboard Tests", () => {
       await verifyNavigation(page, () =>
         dashboard.clickReimbursementsExpenseClaims()
       );
-      await expect(page).toHaveURL(/reimbursementRequest/);
+      await expect(page.locator('h2.heading-lg')).toHaveText('Reimbursements');
     });
   });
 
-  test("User should be able to view and click on Raise Concern link @smoke", async ({
+  test("HRIMS_DASH_9 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -79,11 +81,11 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open Raise Concern", async () => {
       await verifyNavigation(page, () => dashboard.clickRaiseConcern());
-      await expect(page).toHaveURL(/myConcern/);
+      await expect(page.locator('h2.heading-lg')).toHaveText('Attendance Corrections');
     });
   });
 
-  test("User should be able to view and click on Request Leave Plan time off link @smoke", async ({
+  test("HRIMS_DASH_6 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -94,11 +96,11 @@ test.describe("Dashboard Tests", () => {
       await verifyNavigation(page, () =>
         dashboard.clickRequestLeavePlanTimeOff()
       );
-      await expect(page).toHaveURL(/leaveApply/);
+      await expect(page.locator('h2.heading-lg')).toHaveText('Leave Requests');
     });
   });
 
-  test("User should be able to view and click on Submit Timesheets link @smoke", async ({
+  test("HRIMS_DASH_10 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -107,11 +109,11 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open Submit Timesheets", async () => {
       await verifyNavigation(page, () => dashboard.clickSubmitTimesheets());
-      await expect(page).toHaveURL(/timesheets/);
+      await expect(page.locator('h2.heading-lg')).toHaveText('My Timesheets');
     });
   });
 
-  test("User should be able to view and click on View all projects link @smoke", async ({
+  test("HRIMS_DASH_11, HRIMS_DASH_12 @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -120,7 +122,34 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open View All Projects", async () => {
       await verifyNavigation(page, () => dashboard.clickViewAllProjects());
-      await expect(page).toHaveURL(/myProject/);
+      await expect(page.locator('h2.heading-lg')).toHaveText('Projects');
     });
   });
+
+  test("HRIMS_DASH_13 @smoke", async ({
+    page,
+  }) => {
+    await test.step("Navigate to Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+    });
+
+    await test.step("Open View All Sessions", async () => {
+      await verifyNavigation(page, () => dashboard.clickViewAllSessions());
+      await expect(page.locator('h2.heading-lg')).toHaveText('Events');
+    });
+  });
+
+  test("HRIMS_DASH_14 @smoke", async ({
+    page,
+  }) => {
+    await test.step("Navigate to Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+    });
+
+    await test.step("Open View Full Team Calendar", async () => {
+      await verifyNavigation(page, () => dashboard.clickViewFullTeamCalendar());
+      await expect(page.locator('h1.heading-lg', {hasText: 'Team Availability'})).toBeVisible();
+    });
+  });
+
 });

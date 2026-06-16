@@ -10,6 +10,9 @@ export class Dashboard extends BasePage {
   private readonly viewAllProjectsLink: Locator;
   private readonly raiseConcernLink: Locator;
   private readonly requestLeavePlanTimeOffLink: Locator;
+  private readonly viewAllSessionsLink: Locator;
+  private readonly viewFullTeamCalender: Locator;
+  
 
   constructor(page: Page) {
     super(page);
@@ -38,11 +41,19 @@ export class Dashboard extends BasePage {
       name: "Raise Concern",
     });
 
-    this.requestLeavePlanTimeOffLink = page.getByRole("link", {
-      name: "Request Leave Plan time off",
+    this.requestLeavePlanTimeOffLink = page.getByRole("link",{
+       name: "Request Leave Plan time off",
+    });
+
+    this.viewAllSessionsLink = page.getByRole("button", {
+      name: "View all sessions",
+    });
+
+    this.viewFullTeamCalender = page.getByRole("button", {
+      name: "View Full Team Calendar",
     });
   }
-
+  
   async waitForDashboardToLoad(): Promise<void> {
     await this.page.waitForLoadState("domcontentloaded");
     await this.waitforLoaderToDisappear();
@@ -84,5 +95,13 @@ export class Dashboard extends BasePage {
 
   async clickRequestLeavePlanTimeOff(): Promise<void> {
     await this.clickAndWait(this.requestLeavePlanTimeOffLink);
+  }
+
+  async clickViewAllSessions(): Promise<void> {
+    await this.clickAndWait(this.viewAllSessionsLink);
+  }
+
+  async clickViewFullTeamCalendar(): Promise<void> {
+    await this.clickAndWait(this.viewFullTeamCalender);
   }
 }
