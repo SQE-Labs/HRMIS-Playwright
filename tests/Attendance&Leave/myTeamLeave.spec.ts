@@ -21,7 +21,7 @@ test.describe("My Team Leave Page", () => {
 
     loginObj = new LoginPage(page);
     await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
+      testData["Leave Manager"].UserEmail,
       testData.SuperUser.UserPassword
     );
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
@@ -37,7 +37,7 @@ test.describe("My Team Leave Page", () => {
     // for Approve status
     await myTeamLeave.verifyTheEmployeeNamesInTheList(
       constants.APPROVED_STATUS,
-      testData.HR.name
+      testData.Employee.name
     );
 
     await myTeamLeave.waitforLoaderToDisappear();
@@ -90,7 +90,7 @@ test.describe("My Team Leave Page", () => {
 
     // Step 1: Login
     await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
+      testData["Leave Manager"].UserEmail,
       testData.SuperUser.UserPassword
     );
 
