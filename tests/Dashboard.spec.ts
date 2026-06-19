@@ -27,7 +27,7 @@ test.describe("Dashboard Tests", () => {
     dashboard = new Dashboard(page);
   });
 
-  test("HRIMS_DASH_1, HRIMS_DASH_2, HRIMS_DASH_3, HRIMS_DASH_4, HRIMS_DASH_5 @smoke", async ({
+  test("HRIMS_DASH_1, HRIMS_DASH_2, HRIMS_DASH_3, HRIMS_DASH_4, HRIMS_DASH_5, verifying view calender and redirection if view attendence  @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -42,7 +42,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_7 @smoke", async ({
+  test("HRIMS_DASH_7 @smoke, Verifying asset request hardware functionality", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -57,7 +57,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_8 @smoke", async ({
+  test("HRIMS_DASH_8 verifying reimbursement functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -72,7 +72,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_9 @smoke", async ({
+  test("HRIMS_DASH_9 verifying raise concern functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -85,7 +85,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_6 @smoke", async ({
+  test("HRIMS_DASH_6 verifying request leave functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -100,7 +100,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_10 @smoke", async ({
+  test("HRIMS_DASH_10 verifying submit timesheets functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -113,7 +113,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_11, HRIMS_DASH_12 @smoke", async ({
+  test("HRIMS_DASH_11, HRIMS_DASH_12 verifying view all projects functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -126,7 +126,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_13 @smoke", async ({
+  test("HRIMS_DASH_13 verifying view all sessions functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
@@ -139,7 +139,7 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
-  test("HRIMS_DASH_14 @smoke", async ({
+  test("HRIMS_DASH_14 verifying view full team calendar functionality @smoke", async ({
     page,
   }) => {
     await test.step("Navigate to Dashboard", async () => {
