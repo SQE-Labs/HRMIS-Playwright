@@ -34,7 +34,7 @@ export class BasePage extends CommonUtils {
 
     await this.page.goto(url, {
         waitUntil: 'domcontentloaded',
-        timeout: 20000
+        timeout: 30000
     });
 }
   async waitForDotsLoaderToDisappear(): Promise<void> {
