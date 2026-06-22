@@ -62,4 +62,39 @@ test.describe("My Timesheets page", () => {
     await expect.poll(() => myTimesheets.getDailyTimeEntryText()).toBe(currentDayText);
     await myTimesheets.verifyDailyTimeEntryDate();
   });
+
+  test("HRIMS_MTS_7, HRIMS_MTS_11, HRIMS_MTS_20, HRIMS_MTS_21, HRIMS_MTS_22, HRIMS_MTS_24, Verify user can fill Daily Time Entry form fields @smoke @reg", async () => {
+    await test.step("Verify Select Project dropdown shows available projects", async () => {
+      await myTimesheets.verifyProjectDropdownHasAvailableProjects();
+    });
+
+    await test.step("Select first available project", async () => {
+      await myTimesheets.selectFirstAvailableProject();
+    });
+
+    await test.step("Select Meeting category", async () => {
+      await myTimesheets.selectCategory("Meeting");
+      await myTimesheets.verifyDropdownSelectedValue("category", "Meeting");
+    });
+
+    await test.step("Enter task description", async () => {
+      await myTimesheets.fillTaskDescription("testing");
+      await myTimesheets.verifyTaskDescription("testing");
+    });
+
+    await test.step("Enter hours worked", async () => {
+      await myTimesheets.fillHours("8");
+      await myTimesheets.verifyHours("8");
+    });
+
+    await test.step("Select minutes", async () => {
+      await myTimesheets.selectMinutes("30");
+      await myTimesheets.verifyDropdownSelectedValue("minutes", "30");
+    });
+
+    await test.step("Select In Progress status", async () => {
+      await myTimesheets.selectStatus("In Progress");
+      await myTimesheets.verifyDropdownSelectedValue("status", "In Progress");
+    });
+  });
 });
