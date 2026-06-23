@@ -63,7 +63,9 @@ test.describe("My Timesheets page", () => {
     await myTimesheets.verifyDailyTimeEntryDate();
   });
 
-  test("HRIMS_MTS_7, HRIMS_MTS_11, HRIMS_MTS_20, HRIMS_MTS_21, HRIMS_MTS_22, HRIMS_MTS_24, Verify user can fill Daily Time Entry form fields @smoke @reg", async () => {
+  test("HRMIS_MTS_07, HRIMS_MTS_7, HRIMS_MTS_11, HRIMS_MTS_20, HRIMS_MTS_21, HRIMS_MTS_22, HRIMS_MTS_24, HRMIS_MTS_25, Verify user can fill Daily Time Entry form fields and add entry @smoke @reg", async () => {
+    const taskDescription = "testing";
+
     await test.step("Verify Select Project dropdown shows available projects", async () => {
       await myTimesheets.verifyProjectDropdownHasAvailableProjects();
     });
@@ -78,8 +80,8 @@ test.describe("My Timesheets page", () => {
     });
 
     await test.step("Enter task description", async () => {
-      await myTimesheets.fillTaskDescription("testing");
-      await myTimesheets.verifyTaskDescription("testing");
+      await myTimesheets.fillTaskDescription(taskDescription);
+      await myTimesheets.verifyTaskDescription(taskDescription);
     });
 
     await test.step("Enter hours worked", async () => {
@@ -96,5 +98,17 @@ test.describe("My Timesheets page", () => {
       await myTimesheets.selectStatus("In Progress");
       await myTimesheets.verifyDropdownSelectedValue("status", "In Progress");
     });
+
+    await test.step("Click Add Entry button", async () => {
+      await myTimesheets.clickAddEntry();
+    });
+
+    await test.step("Verify timesheet entry was added", async () => {
+      await myTimesheets.verifyTimesheetEntryAdded(taskDescription);
+    });
+
+    // await test.step("Submit timesheet for approval", async () => {
+    //   await myTimesheets.clickSubmitTimesheetForApproval();
+    // });
   });
 });

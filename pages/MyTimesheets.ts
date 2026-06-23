@@ -14,6 +14,9 @@ export class MyTimesheets extends BasePage {
   private readonly hoursInput: Locator;
   private readonly minutesDropdown: Locator;
   private readonly statusDropdown: Locator;
+  private readonly addEntryButton: Locator;
+  private readonly submitTimesheetButton: Locator;
+  private readonly timesheetEntriesTable: Locator;
   private readonly visibleDropdownOptions: Locator;
 
   constructor(page: Page) {
@@ -47,6 +50,15 @@ export class MyTimesheets extends BasePage {
     this.statusDropdown = page.locator(
       "#timesheet-add-entry-form-status-trigger"
     );
+    this.addEntryButton = page.locator(
+      'button[class*="add-new-entry-card_button"]'
+    );
+    this.submitTimesheetButton = page.locator(
+      'button[class*="button_accent"]'
+    ).filter({ hasText: "Submit Timesheet for Approval" });
+    this.timesheetEntriesTable = page.getByRole("table", {
+      name: "Timesheet entries",
+    });
     this.visibleDropdownOptions = page.locator(
       [
         "[role='option']:visible",
@@ -138,6 +150,27 @@ export class MyTimesheets extends BasePage {
 
   async selectStatus(status: string): Promise<void> {
     await this.selectDropdownOption("status", status);
+  }
+
+  async clickAddEntry(): Promise<void> {
+    await expect(this.addEntryButton).toBeVisible();
+    await this.addEntryButton.click();
+    await this.waitforLoaderToDisappear();
+  }
+
+  async verifyTimesheetEntryAdded(taskDescription: string): Promise<void> {
+    const entryRow = this.timesheetEntriesTable
+      .getByRole("row")
+      .filter({ hasText: taskDescription });
+
+    await expect(entryRow).toBeVisible({ timeout: 4000 });
+  }
+
+  async clickSubmitTimesheetForApproval(): Promise<void> {
+    await expect(this.submitTimesheetButton).toBeVisible();
+    await this.submitTimesheetButton.click();
+    await this.waitforLoaderToDisappear();
+    await this.page.waitForTimeout(5000);
   }
 
   async verifyDropdownSelectedValue(
