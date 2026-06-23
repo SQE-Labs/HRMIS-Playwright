@@ -24,6 +24,8 @@ export class PolicyEditor extends BasePage {
     public policyDocumentInput: Locator;
     public policyValidFromButton: Locator;
     public policyDescriptionInput: Locator;
+    public policyModal: Locator;
+    public policyStatusSwitch: Locator;
     public submitButton: Locator;
 
     constructor(page: Page) {
@@ -39,13 +41,13 @@ export class PolicyEditor extends BasePage {
         this.paginationPrev = page.getByRole('button', { name: 'Previous' })
         this.rowsPerPageSelect = page.getByLabel('Rows per page');
         this.totalPolicies = page.locator(
-        'span:has-text("Total Policies") strong'
+            'span:has-text("Total Policies") strong'
         );
 
         this.openDocumentViewerButton = page.locator('#open-document-view');
 
         this.addPolicyButton = page.getByRole('button', {
-        name: /add policy/i
+            name: /add policy/i
         });
 
         this.policyTitleInput = page.locator("input[name='policyTitle']")
@@ -53,14 +55,12 @@ export class PolicyEditor extends BasePage {
         this.policyDocumentInput = page.locator("input[name='policyDocument']")
         this.policyValidFromButton = page.getByRole('button', { name: 'Policy Valid From' })
         this.policyDescriptionInput = page.locator("textarea[name='description']")
+        this.policyModal = page.getByRole('dialog', { name: /update policy/i })
+        this.policyStatusSwitch = this.policyModal.getByRole('switch', { name: /policy status/i })
         this.submitButton = page.getByRole('button', { name: 'Submit' })
     }
 
     async expandTab(): Promise<void> {
-        await AssetHelper.expandIfCollapsed(this.policyModuleButton)
-    }
-
-    async xpandTab(): Promise<void> {
         await AssetHelper.expandIfCollapsed(this.policyModuleButton)
     }
 
@@ -108,6 +108,17 @@ export class PolicyEditor extends BasePage {
         await this.policyDescriptionInput.fill(description)
     }
 
+    async selectPolicyStatus(status: 'Active' | 'Inactive'): Promise<void> {
+        const isActive = await this.policyStatusSwitch.isChecked()
+        if (status === 'Active' && !isActive) {
+            await this.policyStatusSwitch.click({ force: true });
+        }
+
+        if (status === 'Inactive' && isActive) {
+            await this.policyStatusSwitch.click({ force: true });
+        }
+    }
+
     async submitPolicy(): Promise<void> {
         await this.submitButton.click()
         await this.waitforLoaderToDisappear()
@@ -128,6 +139,14 @@ export class PolicyEditor extends BasePage {
 
     async clickEditByIndex(index: number): Promise<void> {
         await this.rowByIndex(index).locator('button:has-text("Edit")').click()
+    }
+
+    rowByTitle(title: string): Locator {
+        return this.rows.filter({ hasText: title }).first()
+    }
+
+    async clickEditByTitle(title: string): Promise<void> {
+        await this.rowByTitle(title).locator('button:has-text("Edit")').click()
     }
 
     async openDocumentViewer(): Promise<void> {
