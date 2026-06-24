@@ -9,6 +9,14 @@ export const PASSPORT_FIELD = "Please enter a 12-digit Passport number"
 
 
 export const DummyResume = "DummyResume.pdf"
+export const POLICY_TITLE_PREFIX = "Nav Test1-"
+export const POLICY_UPDATED_TITLE_PREFIX = "Nav Test1-Update-"
+export const POLICY_REGION = "India"
+export const POLICY_UPDATED_REGION = "US"
+export const POLICY_VALID_FROM_DAY = 4
+export const POLICY_UPDATED_VALID_FROM_DAY = 5
+export const POLICY_DESCRIPTION = "Test"
+export const POLICY_UPDATED_DESCRIPTION = "Updated test description"
 export const AadharNumber = "662223509284"
 export const panCardNumber = "BAJPC4350M"
 export const PassportNumber = "A20964573432"
