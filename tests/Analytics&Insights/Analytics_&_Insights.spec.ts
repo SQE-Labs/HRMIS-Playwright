@@ -85,7 +85,7 @@ test.describe("Analytics & Insights module", () => {
     })
 
 
-    test("HRMIS_AI_14 User Attendance Report functionality @smoke @reg", async ({ page }) => {
+    test("HRMIS_AI_13.3 User Attendance Report functionality @smoke @reg", async ({ page }) => {
         await analyticsInsights.navigateToUserAttendanceReport();
     
         
@@ -102,6 +102,23 @@ test.describe("Analytics & Insights module", () => {
         await analyticsInsights.verifyXLSXDownload(page, async () => {
             await analyticsInsights.compileAndDownloadButton.click();
         });
+    });
+
+    test("HRMIS_AI_14 Verify user is redirected to Download Reimbursement page and can download reimbursement report @smoke @reg", async ({ page }) => {
+        await analyticsInsights.navigateToUserReimbursementReport();
+        await analyticsInsights.verifyDownloadReimbursementPage();
+
+        await analyticsInsights.fillReimbursementReportFilters(
+            "Internet Claim",
+            "2026-05-01",
+            "ALL"
+        );
+
+        const downloadPath = await analyticsInsights.verifyXLSXDownload(page, async () => {
+            await analyticsInsights.downloadReimbursementReport();
+        });
+
+        expect(downloadPath).toBeTruthy();
     });
 
 
