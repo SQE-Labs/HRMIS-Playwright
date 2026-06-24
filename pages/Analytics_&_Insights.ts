@@ -12,6 +12,11 @@ export class Analytics_Insights extends BasePage {
     public selectEmployeeDropdown: Locator;
     public monthDropdown: Locator;
     public compileAndDownloadButton: Locator;
+    public reimbursementTypeDropdown: Locator;
+    public reimbursementFromDatePicker: Locator;
+    public reimbursementFromDateInput: Locator;
+    public reimbursementStatusDropdown: Locator;
+    public reimbursementDownloadButton: Locator;
 
 
 
@@ -25,6 +30,13 @@ export class Analytics_Insights extends BasePage {
         this.selectEmployeeDropdown = page.locator("//input[@id='react-select-5-input']");
         this.monthDropdown = page.locator("#month");
         this.compileAndDownloadButton = page.locator('//button[@type="submit"]');
+        this.reimbursementTypeDropdown = page.getByLabel("Reimbursement Type");
+        this.reimbursementFromDatePicker = page.locator("div:nth-child(3) > .col-md-3");
+        this.reimbursementFromDateInput = page.locator('input[name="from"]');
+        this.reimbursementStatusDropdown = page.getByLabel("Status");
+        this.reimbursementDownloadButton = page.getByRole("button", {
+            name: "Download",
+        });
     }
 
 
@@ -47,9 +59,30 @@ export class Analytics_Insights extends BasePage {
     }
 
     async navigateToUserReimbursementReport() {
-        await this.page.getByText('Analytics & Insights').click();
-        await this.page.getByText('Reimbursement Report').click();
+        await this.page.getByRole("button", { name: "Analytics & Insights" }).click();
+        await this.page.getByRole("link", { name: "Reimbursement Report" }).click();
         await this.waitforLoaderToDisappear();
+    }
+
+    async verifyDownloadReimbursementPage(): Promise<void> {
+        await expect(this.page.locator("h2.heading-lg")).toContainText(
+            "Download Reimbursement"
+        );
+    }
+
+    async fillReimbursementReportFilters(
+        reimbursementType: string,
+        fromDate: string,
+        status: string
+    ): Promise<void> {
+        await this.reimbursementTypeDropdown.selectOption(reimbursementType);
+        await this.reimbursementFromDatePicker.click();
+        await this.reimbursementFromDateInput.fill(fromDate);
+        await this.reimbursementStatusDropdown.selectOption(status);
+    }
+
+    async downloadReimbursementReport(): Promise<void> {
+        await this.reimbursementDownloadButton.click();
     }
 
 }
