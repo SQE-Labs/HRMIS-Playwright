@@ -3,21 +3,14 @@ import path from 'path'
 import { LoginPage } from '../../pages/LoginPage'
 import { PolicyEditor } from '../../pages/PolicyEditor'
 import testData from '../../testData/testData.json'
-import {
-    DummyResume,
-    POLICY_DESCRIPTION,
-    POLICY_REGION,
-    POLICY_TITLE_PREFIX,
-    POLICY_UPDATED_DESCRIPTION,
-    POLICY_UPDATED_REGION,
-    POLICY_UPDATED_TITLE_PREFIX,
-    POLICY_UPDATED_VALID_FROM_DAY,
-    POLICY_VALID_FROM_DAY,
-} from '../../utils/constants'
+import * as constant from '../../utils/constants'
 
 let policyEditor: PolicyEditor
 
-test.describe.serial('Policy Editor Add and Update Policy', () => {
+test.describe.configure({ mode: 'parallel' });
+
+
+test.describe('Policy Editor Add and Update Policy', () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
 
@@ -26,11 +19,14 @@ test.describe.serial('Policy Editor Add and Update Policy', () => {
         policyEditor = new PolicyEditor(page)
         await policyEditor.expandTab()
         await policyEditor.navigateToPolicyEditorPage()
+        await expect(
+            page.getByRole('heading', { name: 'Policy Editor' })
+        ).toBeVisible()
     })
 
     test('HRMIS_CP_1 HRMIS_CP_2 HRMIS_CP_6 HRMIS_CP_19 HRMIS_CP_20 HRMIS_CP_21 Add a new policy @smoke @reg @ci', async ({ page }) => {
-        const policyTitle = `${POLICY_TITLE_PREFIX}${Date.now()}`
-        const policyDocumentPath = path.resolve(process.cwd(), 'files', DummyResume)
+        const policyTitle = `${constant.POLICY_TITLE_PREFIX}${Date.now()}`
+        const policyDocumentPath = path.resolve(process.cwd(), 'files', constant.DummyResume)
 
         await policyEditor.clickAddPolicy()
         await expect(policyEditor.policyTitleInput).toBeVisible()
@@ -48,20 +44,20 @@ test.describe.serial('Policy Editor Add and Update Policy', () => {
 
     test('HRMIS_CP_11 HRMIS_CP_12 HRMIS_CP_13 Update, Inactivate and Activate Policy @smoke @reg @ci', async ({ page }) => {
         const createdPolicy = {
-            title: `${POLICY_TITLE_PREFIX}${Date.now()}`,
-            region: POLICY_REGION,
-            validFromDay: POLICY_VALID_FROM_DAY,
-            description: POLICY_DESCRIPTION,
+            title: `${constant.POLICY_TITLE_PREFIX}${Date.now()}`,
+            region: constant.POLICY_REGION,
+            validFromDay: constant.POLICY_VALID_FROM_DAY,
+            description: constant.POLICY_DESCRIPTION,
         }
 
         const updatedPolicy = {
-            title: `${POLICY_UPDATED_TITLE_PREFIX}${Date.now()}`,
-            region: POLICY_UPDATED_REGION,
-            validFromDay: POLICY_UPDATED_VALID_FROM_DAY,
-            description: POLICY_UPDATED_DESCRIPTION,
+            title: `${constant.POLICY_UPDATED_TITLE_PREFIX}${Date.now()}`,
+            region: constant.POLICY_UPDATED_REGION,
+            validFromDay: constant.POLICY_UPDATED_VALID_FROM_DAY,
+            description: constant.POLICY_UPDATED_DESCRIPTION,
         }
 
-        const createdPolicyDocumentPath = path.resolve(process.cwd(), 'files', DummyResume)
+        const createdPolicyDocumentPath = path.resolve(process.cwd(), 'files', constant.DummyResume)
 
         const formatDateForGrid = (day: number) =>
             new Intl.DateTimeFormat('en-US', {
