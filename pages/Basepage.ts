@@ -11,6 +11,7 @@ export class BasePage extends CommonUtils {
   readonly toast: Locator
   readonly popUp: Locator
   readonly logoutButton: Locator
+  private button: Function;
 
   // Adjust the selector based on your 
 
@@ -25,6 +26,18 @@ export class BasePage extends CommonUtils {
     this.toast = page.getByRole('alert')
     this.popUp = page.locator('.Toastify__toast-body')
     this.logoutButton = page.locator(".log-out")
+    this.button = (accessibleName: string) => page.getByRole("button", {name : accessibleName});
+  }
+
+  async clickButton(accessibleName: string){
+    await this.button(accessibleName).click();
+  }
+
+   async navigateToTab(tabName: string, subTabName?: string): Promise<void> {
+    await this.clickButton(tabName);
+    if(subTabName){
+       await this.page.getByRole('link', { name: subTabName }).click();
+    }
   }
 
   async open(url: string): Promise<void> {

@@ -83,3 +83,5 @@ export const PLEASE_FILL_IN_TOOLTOP = "Please fill"
 export const DATE_VALUE_CHECK = "value must be 31/12/2030 or earlier."
 export const REASON_LENGTH_VALIDATION = "Reason must be at least 5 characters long."
 
+export const TIMESHEET_RESUBMISSION_DIALOGBOX_HEADING = "Allow Employee to Resubmit?"
+
