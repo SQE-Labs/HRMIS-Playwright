@@ -1,9 +1,15 @@
 import { expect, Page, test } from "@playwright/test";
-import { Dashboard } from "../pages/Dashboard";
+import { Dashboard, AttendanceAnalyticsData, EmployeeProjectsData, LeaveBalanceData, PendingRequestData, TodayPunchData, WeeklyTimesheetData } from "../pages/Dashboard";
 import { LoginPage } from "../pages/LoginPage";
 import testData from "../testData/testData.json";
 
 let dashboard: Dashboard;
+let weeklyTimesheetApiData: WeeklyTimesheetData | undefined;
+let pendingRequestsApiData: PendingRequestData[] | undefined;
+let attendanceAnalyticsApiData: AttendanceAnalyticsData | undefined;
+let todayPunchApiData: TodayPunchData[] | undefined;
+let employeeProjectsApiData: EmployeeProjectsData | undefined;
+let leaveBalanceApiData: LeaveBalanceData | undefined;
 
 async function verifyNavigation(
   page: Page,
@@ -17,14 +23,74 @@ async function verifyNavigation(
 }
 
 test.describe("Dashboard Tests", () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page);
+    dashboard = new Dashboard(page);
+    const isWeeklyTimesheetTest = testInfo.title.includes("HRIMS_DASH_15");
+    const isPendingRequestsTest = testInfo.title.includes("HRIMS_DASH_16");
+    const isAttendanceAnalyticsTest = testInfo.title.includes("HRIMS_DASH_17");
+    const isTodayPunchTest = testInfo.title.includes("HRIMS_DASH_18");
+    const isEmployeeProjectsTest = testInfo.title.includes("HRIMS_DASH_19");
+    const isLeaveBalanceTest = testInfo.title.includes("HRIMS_DASH_20");
+
+    const weeklyTimesheetPromise = isWeeklyTimesheetTest
+      ? dashboard.captureWeeklyTimesheetResponse()
+      : undefined;
+    const pendingRequestsPromise = isPendingRequestsTest
+      ? dashboard.capturePendingRequestsResponse()
+      : undefined;
+    const attendanceAnalyticsPromise = isAttendanceAnalyticsTest
+      ? dashboard.captureAttendanceAnalyticsResponse()
+      : undefined;
+    const todayPunchPromise = isTodayPunchTest
+      ? dashboard.captureTodayPunchResponse()
+      : undefined;
+    const employeeProjectsPromise = isEmployeeProjectsTest
+      ? dashboard.captureEmployeeProjectsResponse()
+      : undefined;
+    const leaveBalancePromise = isLeaveBalanceTest
+      ? dashboard.captureLeaveBalanceResponse()
+      : undefined;
+
     await loginPage.validLogin(
       testData.SuperUser.UserEmail,
       testData.SuperUser.UserPassword
     );
 
-    dashboard = new Dashboard(page);
+    if (
+      isWeeklyTimesheetTest ||
+      isPendingRequestsTest ||
+      isAttendanceAnalyticsTest ||
+      isTodayPunchTest ||
+      isEmployeeProjectsTest ||
+      isLeaveBalanceTest
+    ) {
+      await dashboard.waitForDashboardToLoad();
+    }
+
+    if (weeklyTimesheetPromise) {
+      weeklyTimesheetApiData = await weeklyTimesheetPromise;
+    }
+
+    if (pendingRequestsPromise) {
+      pendingRequestsApiData = await pendingRequestsPromise;
+    }
+
+    if (attendanceAnalyticsPromise) {
+      attendanceAnalyticsApiData = await attendanceAnalyticsPromise;
+    }
+
+    if (todayPunchPromise) {
+      todayPunchApiData = await todayPunchPromise;
+    }
+
+    if (employeeProjectsPromise) {
+      employeeProjectsApiData = await employeeProjectsPromise;
+    }
+
+    if (leaveBalancePromise) {
+      leaveBalanceApiData = await leaveBalancePromise;
+    }
   });
 
   test("HRIMS_DASH_1, HRIMS_DASH_2, HRIMS_DASH_3, HRIMS_DASH_4, HRIMS_DASH_5, verifying view calender and redirection if view attendence  @smoke", async ({
@@ -149,6 +215,64 @@ test.describe("Dashboard Tests", () => {
     await test.step("Open View Full Team Calendar", async () => {
       await verifyNavigation(page, () => dashboard.clickViewFullTeamCalendar());
       await expect(page.locator('h1.heading-lg', {hasText: 'Team Availability'})).toBeVisible();
+    });
+  });
+
+  test("HRIMS_DASH_15 verifying weekly timesheet API data matches Dashboard UI @smoke", async () => {
+    const weeklyTimesheet = weeklyTimesheetApiData!;
+
+    await test.step("Verify Dashboard UI matches API response", async () => {
+      await dashboard.verifyWeeklyTimesheetWeekRange(
+        Dashboard.formatWeekRangeForUi(
+          weeklyTimesheet.weekStart,
+          weeklyTimesheet.weekEnd,
+        )
+      );
+      await dashboard.verifyWeeklyTimesheetTotalHours(
+        Dashboard.formatTotalHoursForUi(weeklyTimesheet.totalHours)
+      );
+    });
+  });
+
+  test("HRIMS_DASH_16 verifying pending requests API data matches Action Centre UI @smoke", async () => {
+    const pendingRequests = pendingRequestsApiData!;
+
+    await test.step("Verify Action Centre UI matches API response", async () => {
+      await dashboard.verifyPendingRequestsMatchApi(pendingRequests);
+    });
+  });
+
+  test("HRIMS_DASH_17 verifying attendance analytics API data matches Dashboard UI @smoke", async () => {
+    const attendanceAnalytics = attendanceAnalyticsApiData!;
+
+    await test.step("Verify current month percentage matches API response", async () => {
+      await dashboard.verifyAttendanceAnalyticsCurrentMonthPercentage(
+        attendanceAnalytics
+      );
+    });
+  });
+
+  test("HRIMS_DASH_18 verifying today punch API data matches Dashboard UI @smoke", async () => {
+    const todayPunch = todayPunchApiData!;
+
+    await test.step("Verify office in and office out match API response", async () => {
+      await dashboard.verifyTodayPunchOfficeInOut(todayPunch);
+    });
+  });
+
+  test("HRIMS_DASH_19 verifying employee projects API data matches My Projects UI @smoke", async () => {
+    const employeeProjects = employeeProjectsApiData!;
+
+    await test.step("Verify My Projects UI matches API response", async () => {
+      await dashboard.verifyEmployeeProjectsMatchApi(employeeProjects);
+    });
+  });
+
+  test("HRIMS_DASH_20 verifying leave balance API data matches Dashboard UI @smoke", async () => {
+    const leaveBalance = leaveBalanceApiData!;
+
+    await test.step("Verify leave balance cards match API response", async () => {
+      await dashboard.verifyLeaveBalanceMatchApi(leaveBalance);
     });
   });
 

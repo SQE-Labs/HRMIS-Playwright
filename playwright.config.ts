@@ -32,7 +32,24 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   // Override from CLI when needed, for example: --workers=4
   workers: 1,
-  reporter: [["html", { open: 'never' }], ['line'], ["allure-playwright"], ["./my-reporter.ts"], ['json', { outputFile: 'playwright-report/results.json' }]],
+  reporter: [
+    ["html", { open: "never" }],
+    ["line"], ["allure-playwright"],
+    [
+      "allure-playwright",
+      {
+        resultsDir: "allure-results",
+        detail: true,
+        suiteTitle: true,
+        environmentInfo: {
+          framework: "playwright",
+          node_version: process.version,
+        },
+      },
+    ],
+    ["./my-reporter.ts"],
+    ["json", { outputFile: "playwright-report/results.json" }],
+  ],
   // reporter: [['list'], ['junit', { outputFile: 'results.xml' }]],
 
   // reporter: [

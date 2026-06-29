@@ -1,7 +1,6 @@
-
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect, Page, Download, Locator, Response, BrowserContext } from '@playwright/test';
+import { expect, Page, Locator, BrowserContext } from '@playwright/test';
 
 
 export class CommonUtils {
@@ -318,5 +317,3 @@ export class CommonUtils {
     }
 
 }
-
-
