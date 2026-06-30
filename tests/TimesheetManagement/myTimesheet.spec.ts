@@ -63,20 +63,34 @@ test.describe("My Timesheets page", () => {
     await myTimesheets.verifyDailyTimeEntryDate();
   });
 
-  test("HRMIS_MTS_07, HRIMS_MTS_7, HRIMS_MTS_11, HRIMS_MTS_20, HRIMS_MTS_21, HRIMS_MTS_22, HRIMS_MTS_24, HRMIS_MTS_25, Verify user can fill Daily Time Entry form fields and add entry @smoke @reg", async () => {
+  test("HRMIS_MTS_08, Verify Required validation is shown for mandatory Daily Time Entry fields when Add Entry is clicked @smoke @reg", async () => {
+    await test.step("Click Add Entry without filling any fields", async () => {
+      await myTimesheets.clickAddEntry();
+    });
+
+    await test.step("Verify Required errors for Project, Category, Task Description, and Hrs", async () => {
+      await myTimesheets.verifyRequiredErrorsForEmptyAddEntryForm();
+    });
+  });
+
+  test(" HRIMS_MTS_7, HRIMS_MTS_11, HRIMS_MTS_20, HRIMS_MTS_21, HRIMS_MTS_22, HRIMS_MTS_24, HRMIS_MTS_25, Verify user can fill Daily Time Entry form fields and add entry @smoke @reg", async () => {
     const taskDescription = "testing";
+    const category = "Meeting";
+    const hours = "8";
+    const minutes = "30";
+    let selectedProject = "";
 
     await test.step("Verify Select Project dropdown shows available projects", async () => {
       await myTimesheets.verifyProjectDropdownHasAvailableProjects();
     });
 
     await test.step("Select first available project", async () => {
-      await myTimesheets.selectFirstAvailableProject();
+      selectedProject = await myTimesheets.selectFirstAvailableProject();
     });
 
     await test.step("Select Meeting category", async () => {
-      await myTimesheets.selectCategory("Meeting");
-      await myTimesheets.verifyDropdownSelectedValue("category", "Meeting");
+      await myTimesheets.selectCategory(category);
+      await myTimesheets.verifyDropdownSelectedValue("category", category);
     });
 
     await test.step("Enter task description", async () => {
@@ -85,13 +99,13 @@ test.describe("My Timesheets page", () => {
     });
 
     await test.step("Enter hours worked", async () => {
-      await myTimesheets.fillHours("8");
-      await myTimesheets.verifyHours("8");
+      await myTimesheets.fillHours(hours);
+      await myTimesheets.verifyHours(hours);
     });
 
     await test.step("Select minutes", async () => {
-      await myTimesheets.selectMinutes("30");
-      await myTimesheets.verifyDropdownSelectedValue("minutes", "30");
+      await myTimesheets.selectMinutes(minutes);
+      await myTimesheets.verifyDropdownSelectedValue("minutes", minutes);
     });
 
     await test.step("Select In Progress status", async () => {
@@ -103,8 +117,40 @@ test.describe("My Timesheets page", () => {
       await myTimesheets.clickAddEntry();
     });
 
-    await test.step("Verify timesheet entry was added", async () => {
-      await myTimesheets.verifyTimesheetEntryAdded(taskDescription);
+    await test.step("Verify timesheet entries table is displayed with the new row", async () => {
+      await myTimesheets.verifyTimesheetEntryInTable({
+        project: selectedProject,
+        category,
+        taskDescription,
+        hours,
+        minutes,
+      });
+    });
+
+    const updatedTaskDescription = "Test";
+
+    await test.step("Click Edit entry button on the added row", async () => {
+      await myTimesheets.clickEditEntry(taskDescription);
+    });
+
+    await test.step("Update task description in edit form and save", async () => {
+      await myTimesheets.fillEditTaskDescription(updatedTaskDescription);
+      await myTimesheets.clickSaveChanges();
+    });
+
+    await test.step("Verify timesheet entry reflects updated task description", async () => {
+      await myTimesheets.verifyTimesheetEntryInTable({
+        project: selectedProject,
+        category,
+        taskDescription: updatedTaskDescription,
+        hours,
+        minutes,
+      });
+    });
+
+    await test.step("Click Remove entry button and remove the entry", async () => {
+      await myTimesheets.clickRemoveEntry(updatedTaskDescription);
+      await myTimesheets.verifyTimesheetEntryRemoved(updatedTaskDescription);
     });
 
     // await test.step("Submit timesheet for approval", async () => {
