@@ -2,6 +2,17 @@ import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./Basepage";
 
 type DailyEntryDropdown = "category" | "minutes" | "status";
+type RequiredAddEntryField = "project" | "category" | "taskDescription" | "hours";
+
+export interface TimesheetEntryExpectation {
+  project: string;
+  category: string;
+  taskDescription: string;
+  hours: string;
+  minutes: string;
+  workStream?: string;
+  status?: string;
+}
 
 export class MyTimesheets extends BasePage {
   private readonly header: Locator;
@@ -17,6 +28,12 @@ export class MyTimesheets extends BasePage {
   private readonly addEntryButton: Locator;
   private readonly submitTimesheetButton: Locator;
   private readonly timesheetEntriesTable: Locator;
+  private readonly editEntryButton: Locator;
+  private readonly editEntryModal: Locator;
+  private readonly editTaskDescriptionTextArea: Locator;
+  private readonly saveChangesButton: Locator;
+  private readonly removeEntryButton: Locator;
+  private readonly requiredFieldError: Locator;
   private readonly visibleDropdownOptions: Locator;
 
   constructor(page: Page) {
@@ -56,9 +73,21 @@ export class MyTimesheets extends BasePage {
     this.submitTimesheetButton = page.locator(
       'button[class*="button_accent"]'
     ).filter({ hasText: "Submit Timesheet for Approval" });
-    this.timesheetEntriesTable = page.getByRole("table", {
-      name: "Timesheet entries",
+    this.timesheetEntriesTable = page.locator(
+      'table[class*="responsive-table_table"][aria-label="Timesheet entries"]'
+    );
+    this.editEntryButton = page.getByRole("button", { name: "Edit entry" });
+    this.editEntryModal = page.locator('div[role="dialog"]').filter({
+      has: page.locator("#timesheet-edit-entry-form"),
     });
+    this.editTaskDescriptionTextArea = page.locator(
+      "#timesheet-edit-entry-form-description"
+    );
+    this.saveChangesButton = page.getByRole("button", { name: "Save Changes" });
+    this.removeEntryButton = page.getByRole("button", { name: "Remove entry" });
+    this.requiredFieldError = page.locator(
+      '[class*="timesheet-entry-form_error"]'
+    ).filter({ hasText: "Required" });
     this.visibleDropdownOptions = page.locator(
       [
         "[role='option']:visible",
@@ -113,13 +142,14 @@ export class MyTimesheets extends BasePage {
     expect(await this.visibleDropdownOptions.count()).toBeGreaterThan(0);
   }
 
-  async selectFirstAvailableProject(): Promise<void> {
+  async selectFirstAvailableProject(): Promise<string> {
     await this.openDropdownIfClosed(this.projectDropdown);
     const firstProject = this.visibleDropdownOptions.first();
     const projectName = (await firstProject.innerText()).trim();
 
     await firstProject.click();
     await expect(this.projectDropdown).toContainText(projectName);
+    return projectName;
   }
 
   async selectCategory(categoryName: string): Promise<void> {
@@ -158,12 +188,105 @@ export class MyTimesheets extends BasePage {
     await this.waitforLoaderToDisappear();
   }
 
-  async verifyTimesheetEntryAdded(taskDescription: string): Promise<void> {
-    const entryRow = this.timesheetEntriesTable
-      .getByRole("row")
-      .filter({ hasText: taskDescription });
+  //checks the error inside that field’s container
+  async verifyRequiredErrorForField(field: RequiredAddEntryField): Promise<void> {
+    await expect(
+      this.getAddEntryFieldContainer(field).locator(this.requiredFieldError)
+    ).toBeVisible();
+  }
 
-    await expect(entryRow).toBeVisible({ timeout: 4000 });
+  //Runs the check for all four fields, confirms the message is tied to the right field
+  async verifyRequiredErrorsForEmptyAddEntryForm(): Promise<void> {
+    const requiredFields: RequiredAddEntryField[] = [
+      "project",
+      "category",
+      "taskDescription",
+      "hours",
+    ];
+
+    for (const field of requiredFields) {
+      await this.verifyRequiredErrorForField(field);
+    }
+  }
+
+  async verifyTimesheetEntriesTableVisible(): Promise<void> {
+    await expect(this.timesheetEntriesTable).toBeVisible();
+  }
+
+  async verifyTimesheetEntryInTable(
+    expected: TimesheetEntryExpectation
+  ): Promise<void> {
+    const workStream = expected.workStream ?? "—";
+    const status = expected.status ?? "In-progress";
+    const paddedMinutes = expected.minutes.padStart(2, "0");
+
+    await this.verifyTimesheetEntriesTableVisible();
+
+    const entryRow = this.getTimesheetEntryRow(expected.taskDescription);
+
+    await expect(entryRow).toBeVisible();
+
+    await expect(
+      entryRow.locator('[class*="timesheet-data-table_projectName"]')
+    ).toHaveText(expected.project);
+
+    await expect(entryRow.locator("td").nth(1)).toHaveText(workStream);
+
+    await expect(
+      entryRow.locator('[class*="task-category-label_categoryLabel"]')
+    ).toHaveText(expected.category);
+
+    await expect(
+      entryRow.locator('[class*="timesheet-data-table_descriptionCell"]')
+    ).toHaveText(expected.taskDescription);
+
+    const timeValue = entryRow.locator(
+      '[class*="timesheet-data-table_timeValue"]'
+    );
+    await expect(timeValue.locator("strong").nth(0)).toHaveText(expected.hours);
+    await expect(timeValue.locator("strong").nth(1)).toHaveText(paddedMinutes);
+
+    await expect(
+      entryRow.locator(
+        '[class*="timesheet-data-table_statusWrapper"] [class*="badge"]'
+      )
+    ).toHaveText(status);
+  }
+
+  async clickEditEntry(taskDescription: string): Promise<void> {
+    const entryRow = this.getTimesheetEntryRow(taskDescription);
+    await entryRow.locator(this.editEntryButton).click();
+    await this.waitForEditEntryModal();
+  }
+
+  async waitForEditEntryModal(): Promise<void> {
+    await expect(this.editEntryModal).toBeVisible();
+    await expect(
+      this.editEntryModal.getByRole("heading", { name: "Edit Timesheet Entry" })
+    ).toBeVisible();
+  }
+
+  async fillEditTaskDescription(description: string): Promise<void> {
+    await this.editTaskDescriptionTextArea.click();
+    await this.editTaskDescriptionTextArea.fill(description);
+    await expect(this.editTaskDescriptionTextArea).toHaveValue(description);
+  }
+
+  async clickSaveChanges(): Promise<void> {
+    await expect(this.saveChangesButton).toBeEnabled();
+    await this.saveChangesButton.click();
+    await this.waitforLoaderToDisappear();
+    await expect(this.editEntryModal).toBeHidden();
+  }
+
+  async clickRemoveEntry(taskDescription: string): Promise<void> {
+    const entryRow = this.getTimesheetEntryRow(taskDescription);
+    await entryRow.locator(this.removeEntryButton).click();
+    await this.waitforLoaderToDisappear();
+  }
+
+  async verifyTimesheetEntryRemoved(taskDescription: string): Promise<void> {
+    await expect(this.getTimesheetEntryRow(taskDescription)).toBeHidden();
   }
 
   async clickSubmitTimesheetForApproval(): Promise<void> {
@@ -218,6 +341,33 @@ export class MyTimesheets extends BasePage {
     };
 
     return dropdowns[dropdown];
+  }
+
+  private getAddEntryFieldContainer(field: RequiredAddEntryField): Locator {
+    const fieldLocators: Record<RequiredAddEntryField, Locator> = {
+      project: this.projectDropdown,
+      category: this.categoryDropdown,
+      taskDescription: this.taskDescriptionTextArea,
+      hours: this.hoursInput,
+    };
+
+    return this.page
+      .locator(
+        [
+          '[class*="timesheet-entry-form_field"]',
+          '[class*="timesheet-entry-form_fieldLarge"]',
+          '[class*="timesheet-entry-form_fieldSmall"]',
+        ].join(", ")
+      )
+      .filter({ has: fieldLocators[field] })
+      .first();
+  }
+
+  private getTimesheetEntryRow(taskDescription: string): Locator {
+    return this.timesheetEntriesTable
+      .locator("tbody tr")
+      .filter({ hasText: taskDescription })
+      .first();
   }
 
   private formatDailyTimeEntryDate(date: Date): string {
