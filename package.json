@@ -7,6 +7,8 @@
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
+    "test:allure": "npx playwright test && npm run allure:generate",
+    "test:allure:open": "npx playwright test && npm run report",
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open -p 8080 allure-report",
     "report": "npm run allure:generate && npm run allure:open",
@@ -19,7 +21,7 @@
   "devDependencies": {
     "@types/node": "^22.19.20",
     "allure-commandline": "^2.34.1",
-    "allure-playwright": "^3.4.2",
+    "allure-playwright": "^3.10.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },

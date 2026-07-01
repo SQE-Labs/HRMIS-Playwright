@@ -3,7 +3,6 @@
     "target": "ES2022",
     "module": "commonjs",
     "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
     "lib": ["ES2022", "DOM"],
     "types": ["node", "@playwright/test"],
     "esModuleInterop": true,
@@ -16,7 +15,10 @@
     "tests/**/*.ts",
     "pages/**/*.ts",
     "utils/**/*.ts",
+    "api/**/*.ts",
     "components/**/*.ts",
+    "Builders/**/*.ts",
+    "models/**/*.ts",
     "my-reporter.ts",
     "playwright.config.ts"
   ]
