@@ -1,6 +1,6 @@
 {
     "SuperUser": {
-        "UserEmail": "vishal.thakur@caeliusconsulting.com",
+        "UserEmail": "vishal.thakur1@caeliusconsulting.com",
         "UserPassword": "Test@123",
         "name": "Vishal Dev Thakur"
     },
@@ -29,7 +29,7 @@
         "name": "Elon Mask"
     },
     "DeliveryManager": {
-        "UserEmail": "vishal.thakur@caeliusconsulting.com",
+        "UserEmail": "vishal.thakur1@caeliusconsulting.com",
         "name": "Vishal Dev Thakur",
         "password": "Test@123"
     },

@@ -15,6 +15,7 @@ async function verifyNavigation(
   page: Page,
   clickAction: () => Promise<void>
 ): Promise<void> {
+  
   const initialUrl = page.url();
   await clickAction();
 
@@ -52,10 +53,7 @@ test.describe("Dashboard Tests", () => {
       ? dashboard.captureLeaveBalanceResponse()
       : undefined;
 
-    await loginPage.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginPage.loginAsRole();
 
     if (
       isWeeklyTimesheetTest ||
