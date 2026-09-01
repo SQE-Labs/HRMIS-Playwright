@@ -82,6 +82,8 @@ export class Dashboard extends BasePage {
   private readonly timesheetSummaryCard: Locator;
   private readonly weeklyTimesheetWeekRange: Locator;
   private readonly weeklyTimesheetTotalHours: Locator;
+  private readonly upcomingBirthdayCard: Locator;
+  private readonly upcomingWorkAnniversaryCard: Locator;
   private readonly viewAttendanceWeeklyLogsLink: Locator;
   private readonly assetRequestHardwareLink: Locator;
   private readonly reimbursementsExpenseClaimsLink: Locator;
@@ -125,6 +127,14 @@ export class Dashboard extends BasePage {
     this.weeklyTimesheetTotalHours = this.timesheetSummaryCard.locator(
       '[class*="timesheet-summary-card_totalValue"]'
     );
+    this.upcomingBirthdayCard = page
+      .locator("article")
+      .filter({ hasText: "Upcoming Birthday" })
+      .first();
+    this.upcomingWorkAnniversaryCard = page
+      .locator("article")
+      .filter({ hasText: "Upcoming Work Anniversary" })
+      .first();
 
     this.viewAttendanceWeeklyLogsLink = page.getByRole("link", {
       name: "View Attendance Weekly logs",
@@ -333,6 +343,52 @@ export class Dashboard extends BasePage {
   async verifyWeeklyTimesheetTotalHours(expectedTotalHours: string): Promise<void> {
     await expect(this.timesheetSummaryCard).toBeVisible();
     await expect(this.weeklyTimesheetTotalHours).toHaveText(expectedTotalHours);
+  }
+
+  async verifyUpcomingBirthdayCard(): Promise<void> {
+    await expect(this.upcomingBirthdayCard).toBeVisible();
+    await expect(this.upcomingBirthdayCard).toContainText("Upcoming Birthday");
+  }
+
+  async verifyMyProfileRedirect(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const profileMenuItem = this.page.getByRole('link', {
+      name: /my profile/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(profileMenuItem).toBeVisible();
+    await profileMenuItem.click();
+
+    await expect(this.page).toHaveURL(/\/dashboard\/myProfile(?:\/)?(?:\?.*)?$/);
+    await expect(this.page.getByRole('heading', { name: /my profile/i })).toBeVisible();
+  }
+
+  async verifyLogoutRedirectToLogin(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const logoutMenuItem = this.page.getByRole('button', {
+      name: /log out|logout/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(logoutMenuItem).toBeVisible();
+    await logoutMenuItem.click();
+
+    await expect(this.page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(this.page).toHaveURL(/https:\/\/topuptalent\.com\/?$/);
+  }
+
+  async verifyUpcomingWorkAnniversaryCard(): Promise<void> {
+    await expect(this.upcomingWorkAnniversaryCard).toBeVisible();
+    await expect(this.upcomingWorkAnniversaryCard).toContainText(
+      "Upcoming Work Anniversary"
+    );
   }
 
   async verifyPendingRequestsMatchApi(
