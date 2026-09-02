@@ -82,6 +82,8 @@ export class Dashboard extends BasePage {
   private readonly timesheetSummaryCard: Locator;
   private readonly weeklyTimesheetWeekRange: Locator;
   private readonly weeklyTimesheetTotalHours: Locator;
+  private readonly upcomingBirthdayCard: Locator;
+  private readonly upcomingWorkAnniversaryCard: Locator;
   private readonly viewAttendanceWeeklyLogsLink: Locator;
   private readonly assetRequestHardwareLink: Locator;
   private readonly reimbursementsExpenseClaimsLink: Locator;
@@ -125,6 +127,14 @@ export class Dashboard extends BasePage {
     this.weeklyTimesheetTotalHours = this.timesheetSummaryCard.locator(
       '[class*="timesheet-summary-card_totalValue"]'
     );
+    this.upcomingBirthdayCard = page
+      .locator("article")
+      .filter({ hasText: "Upcoming Birthday" })
+      .first();
+    this.upcomingWorkAnniversaryCard = page
+      .locator("article")
+      .filter({ hasText: "Upcoming Work Anniversary" })
+      .first();
 
     this.viewAttendanceWeeklyLogsLink = page.getByRole("link", {
       name: "View Attendance Weekly logs",
@@ -333,6 +343,121 @@ export class Dashboard extends BasePage {
   async verifyWeeklyTimesheetTotalHours(expectedTotalHours: string): Promise<void> {
     await expect(this.timesheetSummaryCard).toBeVisible();
     await expect(this.weeklyTimesheetTotalHours).toHaveText(expectedTotalHours);
+  }
+
+  async verifyUpcomingBirthdayCard(): Promise<void> {
+    await expect(this.upcomingBirthdayCard).toBeVisible();
+    await expect(this.upcomingBirthdayCard).toContainText("Upcoming Birthday");
+  }
+
+  async verifyEmployeeImageMenuOptions(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const profileMenuItem = this.page.getByRole('link', {
+      name: /my profile/i,
+    });
+    const logoutMenuItem = this.page.getByRole('button', {
+      name: /log out|logout/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(profileMenuItem).toBeVisible();
+    await expect(logoutMenuItem).toBeVisible();
+    await expect(profileMenuItem).toContainText(/my profile/i);
+    await expect(logoutMenuItem).toContainText(/log out|logout/i);
+  }
+
+  async verifyMyProfileRedirect(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const profileMenuItem = this.page.getByRole('link', {
+      name: /my profile/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(profileMenuItem).toBeVisible();
+    await profileMenuItem.click();
+    await expect(this.page).toHaveURL(/\/dashboard\/myProfile(?:\/)?(?:\?.*)?$/);
+    await expect(this.page.getByRole('heading', { name: /my profile/i })).toBeVisible();
+  }
+
+  async verifyLogoutRedirectToLogin(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const logoutMenuItem = this.page.getByRole('button', {
+      name: /log out|logout/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(logoutMenuItem).toBeVisible();
+    await logoutMenuItem.click();
+    await expect(this.page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(this.page).toHaveURL(/https:\/\/topuptalent\.com\/?$/);
+  }
+
+  async verifyCsatRatingBelowEmployeeName(): Promise<void> {
+    const employeeNameHeading = this.page
+      .locator("h2.heading-lg")
+      .filter({ hasText: /Good Morning|Vishal Dev Thakur/i })
+      .first();
+    const dashboardBanner = this.page
+      .locator("header, [role='banner'], [class*='banner']")
+      .filter({ has: employeeNameHeading })
+      .first();
+    const csatText = dashboardBanner
+      .getByText(/CSAT Stars:/i)
+      .first();
+
+    await expect(employeeNameHeading).toBeVisible();
+    await expect(dashboardBanner).toBeVisible();
+    await expect(csatText).toBeVisible();
+    await expect(dashboardBanner).toContainText(/CSAT Stars:/i);
+    await expect(dashboardBanner).toContainText(/\d+/);
+
+    const employeeBox = await employeeNameHeading.boundingBox();
+    const csatBox = await csatText.boundingBox();
+
+    expect(employeeBox).not.toBeNull();
+    expect(csatBox).not.toBeNull();
+
+    if (employeeBox && csatBox) {
+      const minimumAllowedY = employeeBox.y + employeeBox.height - 5;
+      expect(csatBox.y).toBeGreaterThanOrEqual(minimumAllowedY);
+    }
+  }
+
+  async verifyCountryFlagWithEmployeeImage(): Promise<void> {
+    const accountMenuButton = this.page.getByRole("button", {
+      name: /account menu/i,
+    });
+    const employeeFlag = this.page.getByRole("img", { name: /india flag/i }).first();
+
+    await expect(accountMenuButton).toBeVisible();
+    await expect(employeeFlag).toBeVisible();
+
+    const accountBox = await accountMenuButton.boundingBox();
+    const flagBox = await employeeFlag.boundingBox();
+
+    expect(accountBox).not.toBeNull();
+    expect(flagBox).not.toBeNull();
+
+    if (accountBox && flagBox) {
+      expect(flagBox.x).toBeLessThan(accountBox.x);
+      expect(Math.abs(flagBox.y - accountBox.y)).toBeLessThanOrEqual(30);
+    }
+  }
+
+  async verifyUpcomingWorkAnniversaryCard(): Promise<void> {
+    await expect(this.upcomingWorkAnniversaryCard).toBeVisible();
+    await expect(this.upcomingWorkAnniversaryCard).toContainText(
+      "Upcoming Work Anniversary"
+    );
   }
 
   async verifyPendingRequestsMatchApi(

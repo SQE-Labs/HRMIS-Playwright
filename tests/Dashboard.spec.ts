@@ -32,6 +32,7 @@ test.describe("Dashboard Tests", () => {
     const isTodayPunchTest = testInfo.title.includes("HRIMS_DASH_18");
     const isEmployeeProjectsTest = testInfo.title.includes("HRIMS_DASH_19");
     const isLeaveBalanceTest = testInfo.title.includes("HRIMS_DASH_20");
+    const isEmployeeMenuOptionsTest = testInfo.title.includes("HRIMS_DASH_30");
 
     const weeklyTimesheetPromise = isWeeklyTimesheetTest
       ? dashboard.captureWeeklyTimesheetResponse()
@@ -52,10 +53,7 @@ test.describe("Dashboard Tests", () => {
       ? dashboard.captureLeaveBalanceResponse()
       : undefined;
 
-    await loginPage.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginPage.loginAsRole();
 
     if (
       isWeeklyTimesheetTest ||
@@ -63,7 +61,8 @@ test.describe("Dashboard Tests", () => {
       isAttendanceAnalyticsTest ||
       isTodayPunchTest ||
       isEmployeeProjectsTest ||
-      isLeaveBalanceTest
+      isLeaveBalanceTest ||
+      isEmployeeMenuOptionsTest
     ) {
       await dashboard.waitForDashboardToLoad();
     }
@@ -276,4 +275,52 @@ test.describe("Dashboard Tests", () => {
     });
   });
 
+  test("HRIMS_DASH_21 verifying CSAT rating appears below employee name on Dashboard @smoke", async () => {
+    await test.step("Verify the CSAT rating is visible below the employee name on the dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyCsatRatingBelowEmployeeName();
+    });
+  });
+
+  test("HRIMS_DASH_22 verifying country flag appears with employee image on Dashboard @smoke", async () => {
+    await test.step("Verify the country flag is visible beside the employee image on the dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyCountryFlagWithEmployeeImage();
+    });
+  });
+
+  test("HRIMS_DASH_23 verifying multiple options appear after clicking employee image on Dashboard @smoke", async () => {
+    await test.step("Open the employee image menu and verify multiple account options are shown", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyEmployeeImageMenuOptions();
+    });
+  });
+
+  test("HRIMS_DASH_24 verifying my profile redirects to profile page @smoke", async () => {
+    await test.step("Click My Profile from the dashboard account menu and verify the profile page opens", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyMyProfileRedirect();
+    });
+  });
+
+  test("HRIMS_DASH_25 verifying logout redirects to login page @smoke", async () => {
+    await test.step("Click Logout from the dashboard account menu and verify the login page opens", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyLogoutRedirectToLogin();
+    });
+  });
+
+  test("HRIMS_DASH_26 verifying upcoming birthday card is visible @smoke", async () => {
+    await test.step("Verify the upcoming birthday card is visible on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyUpcomingBirthdayCard();
+    });
+  });
+
+  test("HRIMS_DASH_27 verifying upcoming work anniversary card is visible @smoke", async () => {
+    await test.step("Verify the upcoming work anniversary card is visible on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyUpcomingWorkAnniversaryCard();
+    });
+  });
 });
