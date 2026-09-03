@@ -15,7 +15,6 @@ export class PolicyEditor extends BasePage {
     public paginationPrev: Locator;
     public rowsPerPageSelect: Locator;
     public totalPolicies: Locator;
-    public openDocumentViewerButton: Locator;
 
     // Add Policy form
     public addPolicyButton: Locator;
@@ -28,6 +27,11 @@ export class PolicyEditor extends BasePage {
     public policyStatusSwitch: Locator;
     public submitButton: Locator;
 
+    public documentViewerModal: Locator;
+
+    //Validation Messages
+    public policyTitleValidationMessage: Locator;
+
     constructor(page: Page) {
         super(page)
 
@@ -39,12 +43,10 @@ export class PolicyEditor extends BasePage {
         this.rows = this.table.locator('tbody tr')
         this.paginationNext = page.getByRole('button', { name: 'Next' })
         this.paginationPrev = page.getByRole('button', { name: 'Previous' })
-        this.rowsPerPageSelect = page.getByLabel('Rows per page');
+        this.rowsPerPageSelect = page.getByRole('combobox', { name: 'Rows per page' })
         this.totalPolicies = page.locator(
             'span:has-text("Total Policies") strong'
         );
-
-        this.openDocumentViewerButton = page.locator('#open-document-view');
 
         this.addPolicyButton = page.getByRole('button', {
             name: /add policy/i
@@ -58,6 +60,9 @@ export class PolicyEditor extends BasePage {
         this.policyModal = page.getByRole('dialog', { name: /update policy/i })
         this.policyStatusSwitch = this.policyModal.getByRole('switch', { name: /policy status/i })
         this.submitButton = page.getByRole('button', { name: 'Submit' })
+        this.documentViewerModal = page.locator('#staticBackdropDocumentViewer');
+        this.policyTitleValidationMessage = page.getByText('Policy Title is required');
+
     }
 
     async expandTab(): Promise<void> {
@@ -124,6 +129,11 @@ export class PolicyEditor extends BasePage {
         await this.waitforLoaderToDisappear()
     }
 
+    async selectRowsPerPage(value: string): Promise<void> {
+        await this.rowsPerPageSelect.selectOption(value)
+        await this.waitforLoaderToDisappear()
+    }
+
     // rows are 1-based externally
     rowByIndex(index: number): Locator {
         return this.rows.nth(index - 1)
@@ -131,10 +141,6 @@ export class PolicyEditor extends BasePage {
 
     async getRowText(index: number): Promise<string> {
         return this.rowByIndex(index).innerText()
-    }
-
-    async clickViewByIndex(index: number): Promise<void> {
-        await this.rowByIndex(index).locator('button:has-text("View")').click()
     }
 
     async clickEditByIndex(index: number): Promise<void> {
@@ -149,10 +155,6 @@ export class PolicyEditor extends BasePage {
         await this.rowByTitle(title).locator('button:has-text("Edit")').click()
     }
 
-    async openDocumentViewer(): Promise<void> {
-        await this.openDocumentViewerButton.click()
-    }
-
     async nextPage(): Promise<void> {
         await this.paginationNext.click()
     }
@@ -161,15 +163,16 @@ export class PolicyEditor extends BasePage {
         await this.paginationPrev.click()
     }
 
-    async setRowsPerPage(value: string): Promise<void> {
-        await this.rowsPerPageSelect.selectOption(value)
-    }
-
     async getTotalPoliciesCount(): Promise<number> {
         const txt = await this.totalPolicies.textContent()
         if (!txt) return 0
         const num = Number(txt.trim())
         return Number.isNaN(num) ? 0 : num
     }
+    async clickViewByIndex(index: number): Promise<void> {
+    await this.rowByIndex(index)
+        .getByRole('button', { name: 'View' })
+        .click();
+}
 }
 

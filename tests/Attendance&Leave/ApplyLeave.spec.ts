@@ -23,10 +23,7 @@ test.describe("Leave Requests page", () => {
     page,
   }) => {
     const loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.Employee.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('Employee');
     await attendanceLeaveTab.navigateToAttendanceTab("Leave Requests");
     await applyLeave.waitForDotsLoaderToDisappear();
 
@@ -73,10 +70,7 @@ test.describe("Leave Requests page", () => {
     const loginObj = new LoginPage(page);
     myTeamLeave = new MyTeamLeavePage(page);
 
-    await loginObj.validLogin(
-      testData.Employee.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('Employee');
 
     await page.waitForLoadState("networkidle");
 
@@ -100,10 +94,7 @@ test.describe("Leave Requests page", () => {
 
   test('HRMIS_ A&L_4, A&L_5, A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Leave Requests page @eti, @reg', async ({ page }) => {
     const loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.Employee.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('Employee');
     await attendanceLeaveTab.navigateToAttendanceTab("Leave Requests");
     await applyLeave.waitForDotsLoaderToDisappear();
 

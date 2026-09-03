@@ -13,10 +13,7 @@ let attendanceLeaveTab: AttendanceLeaveTab;
 test.describe("Apply leaves page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     const loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole();
     punchDetail = new PunchDetails(page);
 
     attendanceLeaveTab = new AttendanceLeaveTab(page);

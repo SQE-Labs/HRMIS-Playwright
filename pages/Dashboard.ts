@@ -82,6 +82,8 @@ export class Dashboard extends BasePage {
   private readonly timesheetSummaryCard: Locator;
   private readonly weeklyTimesheetWeekRange: Locator;
   private readonly weeklyTimesheetTotalHours: Locator;
+  private readonly upcomingBirthdayCard: Locator;
+  private readonly upcomingWorkAnniversaryCard: Locator;
   private readonly viewAttendanceWeeklyLogsLink: Locator;
   private readonly assetRequestHardwareLink: Locator;
   private readonly reimbursementsExpenseClaimsLink: Locator;
@@ -125,6 +127,14 @@ export class Dashboard extends BasePage {
     this.weeklyTimesheetTotalHours = this.timesheetSummaryCard.locator(
       '[class*="timesheet-summary-card_totalValue"]'
     );
+    this.upcomingBirthdayCard = page
+      .locator("article")
+      .filter({ hasText: "Upcoming Birthday" })
+      .first();
+    this.upcomingWorkAnniversaryCard = page
+      .locator("article")
+      .filter({ hasText: "Upcoming Work Anniversary" })
+      .first();
 
     this.viewAttendanceWeeklyLogsLink = page.getByRole("link", {
       name: "View Attendance Weekly logs",
@@ -313,6 +323,28 @@ export class Dashboard extends BasePage {
     return `${displayValue}%`;
   }
 
+  /** API punch times are HH:mm:ss; Dashboard attendance card shows h:mm AM/PM. */
+  static formatPunchTimeForUi(time: string | null): string {
+    if (!time) {
+      return "--:--";
+    }
+
+    const match = time.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+    if (!match) {
+      return time;
+    }
+
+    let hours = Number(match[1]);
+    const minutes = match[2];
+    const period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) {
+      hours = 12;
+    }
+
+    return `${hours}:${minutes} ${period}`;
+  }
+
   static getTodayPunchRecord(todayPunchData: TodayPunchData[]): TodayPunchData {
     const today = new Date();
     const todayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -333,6 +365,52 @@ export class Dashboard extends BasePage {
   async verifyWeeklyTimesheetTotalHours(expectedTotalHours: string): Promise<void> {
     await expect(this.timesheetSummaryCard).toBeVisible();
     await expect(this.weeklyTimesheetTotalHours).toHaveText(expectedTotalHours);
+  }
+
+  async verifyUpcomingBirthdayCard(): Promise<void> {
+    await expect(this.upcomingBirthdayCard).toBeVisible();
+    await expect(this.upcomingBirthdayCard).toContainText("Upcoming Birthday");
+  }
+
+  async verifyMyProfileRedirect(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const profileMenuItem = this.page.getByRole('link', {
+      name: /my profile/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(profileMenuItem).toBeVisible();
+    await profileMenuItem.click();
+
+    await expect(this.page).toHaveURL(/\/dashboard\/myProfile(?:\/)?(?:\?.*)?$/);
+    await expect(this.page.getByRole('heading', { name: /my profile/i })).toBeVisible();
+  }
+
+  async verifyLogoutRedirectToLogin(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const logoutMenuItem = this.page.getByRole('button', {
+      name: /log out|logout/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(logoutMenuItem).toBeVisible();
+    await logoutMenuItem.click();
+
+    await expect(this.page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(this.page).toHaveURL(/https:\/\/topuptalent\.com\/?$/);
+  }
+
+  async verifyUpcomingWorkAnniversaryCard(): Promise<void> {
+    await expect(this.upcomingWorkAnniversaryCard).toBeVisible();
+    await expect(this.upcomingWorkAnniversaryCard).toContainText(
+      "Upcoming Work Anniversary"
+    );
   }
 
   async verifyPendingRequestsMatchApi(
@@ -368,8 +446,8 @@ export class Dashboard extends BasePage {
 
   async verifyTodayPunchOfficeInOut(todayPunchData: TodayPunchData[]) {
     const todayPunch = Dashboard.getTodayPunchRecord(todayPunchData);
-    const expectedOfficeIn = todayPunch.inTime ?? "--:--";
-    const expectedOfficeOut = todayPunch.outTime ?? "--:--";
+    const expectedOfficeIn = Dashboard.formatPunchTimeForUi(todayPunch.inTime);
+    const expectedOfficeOut = Dashboard.formatPunchTimeForUi(todayPunch.outTime);
 
     await expect(this.officeInTime).toBeVisible();
     await expect(this.officeOutTime).toBeVisible();

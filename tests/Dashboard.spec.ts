@@ -15,6 +15,7 @@ async function verifyNavigation(
   page: Page,
   clickAction: () => Promise<void>
 ): Promise<void> {
+  
   const initialUrl = page.url();
   await clickAction();
 
@@ -52,10 +53,8 @@ test.describe("Dashboard Tests", () => {
       ? dashboard.captureLeaveBalanceResponse()
       : undefined;
 
-    await loginPage.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    // Login after API listeners so DASH_15–20 can capture dashboard responses.
+    await loginPage.loginAsRole();
 
     if (
       isWeeklyTimesheetTest ||
@@ -188,7 +187,7 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open View All Projects", async () => {
       await verifyNavigation(page, () => dashboard.clickViewAllProjects());
-      await expect(page.locator('h2.heading-lg')).toHaveText('Projects');
+      await expect(page.locator('h2.heading-lg')).toHaveText('My Projects');
     });
   });
 
@@ -267,7 +266,7 @@ test.describe("Dashboard Tests", () => {
       await dashboard.verifyEmployeeProjectsMatchApi(employeeProjects);
     });
   });
-
+   
   test("HRIMS_DASH_20 verifying leave balance API data matches Dashboard UI @smoke", async () => {
     const leaveBalance = leaveBalanceApiData!;
 
@@ -275,5 +274,31 @@ test.describe("Dashboard Tests", () => {
       await dashboard.verifyLeaveBalanceMatchApi(leaveBalance);
     });
   });
+  test("HRIMS_DASH_24 verifying my profile redirects to profile page @smoke", async () => {
+    await test.step("Click My Profile from the dashboard account menu and verify the profile page opens", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyMyProfileRedirect();
+    });
+  });
 
+  test("HRIMS_DASH_25 verifying logout redirects to login page @smoke", async () => {
+    await test.step("Click Logout from the dashboard account menu and verify the login page opens", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyLogoutRedirectToLogin();
+    });
+  });
+
+  test("HRIMS_DASH_26 verifying upcoming birthday card is visible @smoke", async () => {
+    await test.step("Verify the upcoming birthday card is visible on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyUpcomingBirthdayCard();
+    });
+  });
+
+  test("HRIMS_DASH_27 verifying upcoming work anniversary card is visible @smoke", async () => {
+    await test.step("Verify the upcoming work anniversary card is visible on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyUpcomingWorkAnniversaryCard();
+    });
+  });
 });

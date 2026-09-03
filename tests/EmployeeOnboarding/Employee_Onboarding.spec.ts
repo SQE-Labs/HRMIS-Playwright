@@ -36,7 +36,7 @@ test.describe.serial("'Employee Onboarding module'", () => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
 
         EmployeeOnboarding = new Employee_Onboarding(page)
         await EmployeeOnboarding.expandEmployeeOnboardingTab();
