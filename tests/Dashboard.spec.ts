@@ -26,11 +26,6 @@ async function verifyNavigation(
 test.describe("Dashboard Tests", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page);
-<<<<<<< HEAD
-=======
-    await loginPage.loginAsRole();
-
->>>>>>> d74c6a6 (Migrate remaining test suites to role login)
     dashboard = new Dashboard(page);
     const isWeeklyTimesheetTest = testInfo.title.includes("HRIMS_DASH_15");
     const isPendingRequestsTest = testInfo.title.includes("HRIMS_DASH_16");
@@ -58,6 +53,7 @@ test.describe("Dashboard Tests", () => {
       ? dashboard.captureLeaveBalanceResponse()
       : undefined;
 
+    // Login after API listeners so DASH_15–20 can capture dashboard responses.
     await loginPage.loginAsRole();
 
     if (
@@ -191,7 +187,7 @@ test.describe("Dashboard Tests", () => {
 
     await test.step("Open View All Projects", async () => {
       await verifyNavigation(page, () => dashboard.clickViewAllProjects());
-      await expect(page.locator('h2.heading-lg')).toHaveText('Projects');
+      await expect(page.locator('h2.heading-lg')).toHaveText('My Projects');
     });
   });
 

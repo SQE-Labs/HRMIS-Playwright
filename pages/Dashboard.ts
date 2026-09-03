@@ -323,6 +323,28 @@ export class Dashboard extends BasePage {
     return `${displayValue}%`;
   }
 
+  /** API punch times are HH:mm:ss; Dashboard attendance card shows h:mm AM/PM. */
+  static formatPunchTimeForUi(time: string | null): string {
+    if (!time) {
+      return "--:--";
+    }
+
+    const match = time.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+    if (!match) {
+      return time;
+    }
+
+    let hours = Number(match[1]);
+    const minutes = match[2];
+    const period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) {
+      hours = 12;
+    }
+
+    return `${hours}:${minutes} ${period}`;
+  }
+
   static getTodayPunchRecord(todayPunchData: TodayPunchData[]): TodayPunchData {
     const today = new Date();
     const todayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -424,8 +446,8 @@ export class Dashboard extends BasePage {
 
   async verifyTodayPunchOfficeInOut(todayPunchData: TodayPunchData[]) {
     const todayPunch = Dashboard.getTodayPunchRecord(todayPunchData);
-    const expectedOfficeIn = todayPunch.inTime ?? "--:--";
-    const expectedOfficeOut = todayPunch.outTime ?? "--:--";
+    const expectedOfficeIn = Dashboard.formatPunchTimeForUi(todayPunch.inTime);
+    const expectedOfficeOut = Dashboard.formatPunchTimeForUi(todayPunch.outTime);
 
     await expect(this.officeInTime).toBeVisible();
     await expect(this.officeOutTime).toBeVisible();
