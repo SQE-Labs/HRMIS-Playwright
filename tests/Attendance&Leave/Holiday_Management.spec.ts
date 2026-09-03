@@ -16,10 +16,7 @@ test.describe("Holiday Management page new", () => {
     test.beforeEach(async ({ page }, testInfo) => {
         loginObj = new LoginPage(page);
         attendanceLeaveTab = new AttendanceLeaveTab(page);
-        await loginObj.validLogin(
-            testData.SuperUser.UserEmail,
-            testData.SuperUser.UserPassword
-        );
+        await loginObj.loginAsRole();
 
         holidayManagement = new holiday_Management(page);
         console.log(">> Starting test case : " + testInfo.title);

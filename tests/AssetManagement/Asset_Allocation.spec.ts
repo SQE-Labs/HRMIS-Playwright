@@ -7,7 +7,7 @@ let allocation: AssetAllocation
 test.describe("Asset Allocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page)
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole();
 
         allocation = new AssetAllocation(page)
         await AssetHelper.navigateToAllocationAsset(page, allocation.allocationAsset);

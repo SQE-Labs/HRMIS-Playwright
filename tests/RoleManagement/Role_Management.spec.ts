@@ -16,10 +16,7 @@ test.describe("Role Management Tests", () => {
     // testcase failed due to 
     test('RM_1, Verify that Role Management UI elements are present @smoke @eti @reg @knowBug#510', async ({ page }) => {
        
-        await loginObj.validLogin(
-            testData.SuperUser.UserEmail,
-            testData.SuperUser.UserPassword
-        );
+        await loginObj.loginAsRole();
 
         const roleName = "Automation Test Role";
         const roleDescription = "This is a role created by automation test.";
@@ -143,10 +140,7 @@ test.describe("Role Management Tests", () => {
         await loginObj.logout();
 
         // Login as the employee to verify the assigned role
-        await loginObj.validLogin(
-            testData.Employee.UserEmail,
-            testData.SuperUser.UserPassword
-        );
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
 
 
@@ -171,10 +165,7 @@ test.describe("Role Management Tests", () => {
         await loginObj.logout();
 
         // Login back as SuperUser to delete the created role
-        await loginObj.validLogin(
-            testData.SuperUser.UserEmail,
-            testData.SuperUser.UserPassword
-        );
+        await loginObj.loginAsRole();
 
         //waiting for page to load
         await page.waitForLoadState();

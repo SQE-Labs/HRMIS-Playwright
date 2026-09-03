@@ -26,6 +26,11 @@ async function verifyNavigation(
 test.describe("Dashboard Tests", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page);
+<<<<<<< HEAD
+=======
+    await loginPage.loginAsRole();
+
+>>>>>>> d74c6a6 (Migrate remaining test suites to role login)
     dashboard = new Dashboard(page);
     const isWeeklyTimesheetTest = testInfo.title.includes("HRIMS_DASH_15");
     const isPendingRequestsTest = testInfo.title.includes("HRIMS_DASH_16");

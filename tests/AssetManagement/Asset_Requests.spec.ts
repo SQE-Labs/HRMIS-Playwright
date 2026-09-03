@@ -12,7 +12,7 @@ test.describe("Asset Rrequests page", () => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         assetrequest = new AssetRequests(page)
         await page.waitForLoadState('domcontentloaded')
         await assetrequest.expandAssetManagementTab()
