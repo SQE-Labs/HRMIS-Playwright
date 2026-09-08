@@ -372,6 +372,25 @@ export class Dashboard extends BasePage {
     await expect(this.upcomingBirthdayCard).toContainText("Upcoming Birthday");
   }
 
+  async verifyEmployeeImageMenuOptions(): Promise<void> {
+    const accountMenuButton = this.page.locator(
+      'button[aria-label*="Account menu"]'
+    );
+    const profileMenuItem = this.page.getByRole('link', {
+      name: /my profile/i,
+    });
+    const logoutMenuItem = this.page.getByRole('button', {
+      name: /log out|logout/i,
+    });
+
+    await expect(accountMenuButton).toBeVisible();
+    await accountMenuButton.click();
+    await expect(profileMenuItem).toBeVisible();
+    await expect(logoutMenuItem).toBeVisible();
+    await expect(profileMenuItem).toContainText(/my profile/i);
+    await expect(logoutMenuItem).toContainText(/log out|logout/i);
+  }
+
   async verifyMyProfileRedirect(): Promise<void> {
     const accountMenuButton = this.page.locator(
       'button[aria-label*="Account menu"]'
@@ -384,7 +403,6 @@ export class Dashboard extends BasePage {
     await accountMenuButton.click();
     await expect(profileMenuItem).toBeVisible();
     await profileMenuItem.click();
-
     await expect(this.page).toHaveURL(/\/dashboard\/myProfile(?:\/)?(?:\?.*)?$/);
     await expect(this.page.getByRole('heading', { name: /my profile/i })).toBeVisible();
   }
@@ -401,7 +419,6 @@ export class Dashboard extends BasePage {
     await accountMenuButton.click();
     await expect(logoutMenuItem).toBeVisible();
     await logoutMenuItem.click();
-
     await expect(this.page.getByRole('button', { name: 'Sign in' })).toBeVisible();
     await expect(this.page).toHaveURL(/https:\/\/topuptalent\.com\/?$/);
   }
