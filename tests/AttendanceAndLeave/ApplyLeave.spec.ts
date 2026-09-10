@@ -5,7 +5,7 @@ import testData from "../../testData/testData.json";
 import { ApplyLeaves } from "../../pages/ApplyLeaves";
 import { AttendanceLeaveTab } from "../../pages/Attendance&Leaves";
 import * as constants from "../../utils/constants";
-import { MyTeamLeavePage } from "../../pages/MyTeamLeave";
+import { MyTeamLeavePage } from "../../pages/myTeamLeave";
 
 let applyLeave: ApplyLeaves;
 let attendanceLeaveTab: AttendanceLeaveTab;
@@ -23,7 +23,7 @@ test.describe("Leave Requests page", () => {
     page,
   }) => {
     const loginObj = new LoginPage(page);
-    await loginObj.loginAsRole('Employee');
+    await loginObj.loginAsRole('SuperAdmin');
     await attendanceLeaveTab.navigateToAttendanceTab("Leave Requests");
     await applyLeave.waitForDotsLoaderToDisappear();
 
@@ -70,7 +70,7 @@ test.describe("Leave Requests page", () => {
     const loginObj = new LoginPage(page);
     myTeamLeave = new MyTeamLeavePage(page);
 
-    await loginObj.loginAsRole('Employee');
+    await loginObj.loginAsRole('SuperAdmin');
 
     await page.waitForLoadState("networkidle");
 
@@ -94,7 +94,7 @@ test.describe("Leave Requests page", () => {
 
   test('HRMIS_ A&L_4, A&L_5, A&L_6, _A&L_7, A&L_8, A&L_9, A&L_10, Verify the validation tooltip on Leave Requests page @eti, @reg', async ({ page }) => {
     const loginObj = new LoginPage(page);
-    await loginObj.loginAsRole('Employee');
+    await loginObj.loginAsRole('SuperAdmin');
     await attendanceLeaveTab.navigateToAttendanceTab("Leave Requests");
     await applyLeave.waitForDotsLoaderToDisappear();
 
