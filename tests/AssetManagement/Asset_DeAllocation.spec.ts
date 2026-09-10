@@ -8,7 +8,7 @@ let DeAllocation: AssetDeallocation
 test.describe("Asset DeAllocation page", () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page)
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole();
         DeAllocation = new AssetDeallocation(page)
         console.log(">> Starting test case : " + test.info().title);
     })

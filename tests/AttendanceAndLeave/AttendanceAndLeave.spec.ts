@@ -17,7 +17,7 @@ test.describe('Attendance and Leave tests', () => {
 
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page);
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
 
         attendanceLeaveTab = new AttendanceLeaveTab(page);
 

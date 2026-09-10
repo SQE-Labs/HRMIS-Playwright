@@ -14,7 +14,7 @@ let loginObj: LoginPage;
 test.describe("Download Attendance page", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     loginObj = new LoginPage(page);
-    await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+    await loginObj.loginAsRole();
     downloadAttendance = new DownloadAttendance(page);
     attendanceLeaveTab = new AttendanceLeaveTab(page);
     console.log(">> Starting test case : " + testInfo.title);

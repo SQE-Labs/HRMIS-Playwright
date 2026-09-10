@@ -14,7 +14,7 @@ test.describe('Policy Editor Add and Update Policy', () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword)
+        await loginPage.loginAsRole()
 
         policyEditor = new PolicyEditor(page)
         await policyEditor.expandTab()
@@ -32,10 +32,10 @@ test.describe('Policy Editor Add and Update Policy', () => {
         await expect(policyEditor.policyTitleInput).toBeVisible()
 
         await policyEditor.fillPolicyTitle(policyTitle)
-        await policyEditor.selectRegion('India')
+        await policyEditor.selectRegion(constant.POLICY_REGION)
         await policyEditor.uploadPolicyDocument(policyDocumentPath)
-        await policyEditor.selectValidFromDate(4)
-        await policyEditor.fillPolicyDescription('Test')
+        await policyEditor.selectValidFromDate(constant.POLICY_VALID_FROM_DAY)
+        await policyEditor.fillPolicyDescription(constant.POLICY_DESCRIPTION)
         await policyEditor.submitPolicy()
 
         await policyEditor.searchPolicy(policyTitle)
@@ -117,5 +117,22 @@ test.describe('Policy Editor Add and Update Policy', () => {
         await policyEditor.clickEditByTitle(updatedPolicy.title)
         await expect(policyEditor.policyModal).toBeVisible()
         await expect(policyEditor.policyStatusSwitch).toBeChecked()
+
+
     })
+
+    test('Verify Policy Document Viewer and Download and pagination @smoke @reg @ci', async ({ page }) => {
+
+        await policyEditor.selectRowsPerPage(constant.ROWS_PER_PAGE_20);
+        await expect(policyEditor.rowsPerPageSelect).toHaveValue(constant.ROWS_PER_PAGE_20);
+        expect(await policyEditor.rows.count()).toBeLessThanOrEqual(Number(constant.ROWS_PER_PAGE_20))
+        await policyEditor.selectRowsPerPage(constant.ROWS_PER_PAGE_5);
+        await policyEditor.nextPage();
+        await policyEditor.previousPage();
+        await policyEditor.clickViewByIndex(constant.FIRST_ROW);
+        await page.pause()
+        await expect(policyEditor.documentViewerModal).toBeVisible();
+    })
+
+
 })

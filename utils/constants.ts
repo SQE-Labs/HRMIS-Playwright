@@ -85,3 +85,8 @@ export const REASON_LENGTH_VALIDATION = "Reason must be at least 5 characters lo
 
 export const TIMESHEET_RESUBMISSION_DIALOGBOX_HEADING = "Allow Employee to Resubmit?"
 
+export const ROWS_PER_PAGE_20 = '20';
+export const ROWS_PER_PAGE_5 = '5';
+
+
+export const FIRST_ROW = 1;

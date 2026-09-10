@@ -9,10 +9,7 @@ let announcement: Announcement1;
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page);
 
-        await loginObj.validLogin(
-            testData.SuperUser.UserEmail,
-            testData.SuperUser.UserPassword
-        );
+        await loginObj.loginAsRole();
 
         announcement = new Announcement1(page);
         await announcement.Announcementclick();

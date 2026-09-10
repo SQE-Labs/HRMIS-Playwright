@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { getBaseUrl } from './utils/baseUrl';
+import { getRuntimeTestContext } from './utils/auth';
 
 /**
  * Read environment variables from file.
@@ -12,6 +13,8 @@ import { getBaseUrl } from './utils/baseUrl';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+getRuntimeTestContext();
+
 export default defineConfig({
   expect: {
     timeout: 12_000, // Default timeout for expect assertions
@@ -118,4 +121,3 @@ export default defineConfig({
   //   reuseExistingServer: !process.env.CI,
   // },
 });
-

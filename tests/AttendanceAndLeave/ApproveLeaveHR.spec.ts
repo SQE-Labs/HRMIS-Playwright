@@ -30,10 +30,7 @@ test.describe("Approve Leave HR module ", () => {
   // Covered MyTeam Leave Approve flow in this test case.
   test("HRMIS_A&L_31,A&L_37,  A&L_39, A&L_40, A&L_43 Approve Leave HR @smoke @reg @eti", async ({ page, }) => {
     loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.Employee.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('Employee');
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
     await applyLeave.waitForDotsLoaderToDisappear();
 
@@ -46,10 +43,7 @@ test.describe("Approve Leave HR module ", () => {
     await attendanceLeaveTab.logout();
 
     // Logging in as Delivery Manager
-    await loginObj.validLogin(
-      testData["DeliveryManager"].UserEmail,
-      testData.DeliveryManager.password
-    );
+    await loginObj.loginAsRole('ReportingManager');
     if (await myTeamLeave.CrossIcon.isVisible()) {
       await myTeamLeave.clickOnCrossIcon();
     }
@@ -67,10 +61,7 @@ test.describe("Approve Leave HR module ", () => {
     await attendanceLeaveTab.logout();
 
     // Logging in as HR User
-    await loginObj.validLogin(
-      testData.HR.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('HR');
 
     // Navigate to Approve Leave HR tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
@@ -86,10 +77,7 @@ test.describe("Approve Leave HR module ", () => {
   // failed while searching with firstname with last name #known bug
   test("HRMIS_A&L_32,HRMIS_A&L_33  HRMIS_A&L_34, Verify that relevant records appear, when user enters partial or full employee name in the Search By Employee Name field, on approve Leave (HR) page. @smoke @bug @eti @reg", async ({ page }) => {
     loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole();
 
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("Approve Leave (HR)");
@@ -115,10 +103,7 @@ test.describe("Approve Leave HR module ", () => {
   // Pagination does not appear while 
   test(' HRMIS_A&L_35, HRMIS_A&L_36 Verify Next & Previous pagination', async ({ page }) => {
     loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole();
     // Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
     await approveLeaveHR.waitforLoaderToDisappear();

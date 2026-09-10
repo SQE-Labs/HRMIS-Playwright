@@ -36,7 +36,7 @@ test.describe("On Offical Duty Page", () => {
 
         // Login As Employee
         loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
 
@@ -129,7 +129,7 @@ test.describe("On Offical Duty Page", () => {
         //  await officalDuty.logout();
 
         // Login As Employee
-        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
         await officalDuty.waitforLoaderToDisappear()
@@ -159,7 +159,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login as Delivery Lead
-        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.DeliveryManager.password);
+        await loginObj.loginAsRole('ReportingManager');
         await page.waitForLoadState();
 
         if (await myTeamLeave.CrossIcon.isVisible()) {
@@ -188,7 +188,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login As HR to Approve the request
-        await loginObj.validLogin(testData.HR.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('HR');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (HR)");
         await officalDuty.waitForDotsLoaderToDisappear()
@@ -215,7 +215,7 @@ test.describe("On Offical Duty Page", () => {
 
         // Login As Employee
         loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
         await officalDuty.waitforLoaderToDisappear()
@@ -272,7 +272,7 @@ test.describe("On Offical Duty Page", () => {
 
         //Login As Super Admin
         loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole();
         await page.waitForLoadState();
 
         // navigates to holiday management sub tab
@@ -286,7 +286,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login as Employee
-        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
 
         // Navigate to on offical duty page
@@ -304,7 +304,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login as Delivery Lead
-        await loginObj.validLogin(testData.DeliveryManager.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('ReportingManager');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (DL)");
         await officalDuty.waitForDotsLoaderToDisappear()
@@ -329,7 +329,7 @@ test.describe("On Offical Duty Page", () => {
         await officalDuty.logout();
 
         // Login As HR to Approve the request
-        await loginObj.validLogin(testData.HR.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('HR');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty (HR)");
         await officalDuty.waitForDotsLoaderToDisappear()
@@ -357,7 +357,7 @@ test.describe("On Offical Duty Page", () => {
     test('Verify the validation tooltip on the offical duty page @reg, @eti', async ({ page }) => {
         // Login As Employee
         loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
 
@@ -392,7 +392,7 @@ test.describe("On Offical Duty Page", () => {
     test('Verify the hours and mins gets reset after clicking on the reset icon @reg', async ({ page }) => {
         // Login As Employee
         loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.Employee.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole('Employee');
         await page.waitForLoadState();
         await attendanceLeaveTab.navigateToAttendanceTab("On Official Duty");
 

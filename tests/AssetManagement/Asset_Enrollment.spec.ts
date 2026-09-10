@@ -12,7 +12,7 @@ let AssetType = "Desktop PC";
 test.describe('Asset Enrollment Page', () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page);
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole();
         assetEnrollment = new AssetEnrollment(page);
         await page.waitForLoadState('domcontentloaded')
         await assetEnrollment.expandAssetManagementTab()

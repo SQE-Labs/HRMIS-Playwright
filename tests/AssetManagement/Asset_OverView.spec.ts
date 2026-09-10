@@ -11,7 +11,7 @@ test.describe("Asset Overview page", () => {
         test.beforeEach(async ({ page }) => {
                 const basePage = new BasePage(page);
                 let loginObj = new LoginPage(page);
-                await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+                await loginObj.loginAsRole();
                 assetOverview = new OverView(page);
                 await page.waitForLoadState('domcontentloaded')
                 await assetOverview.expandAssetManagementTab()

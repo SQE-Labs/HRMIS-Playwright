@@ -13,7 +13,7 @@ test.describe("My Reimbursement page", () => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
 
         reimbursement = new Reimbursement(page)
         await reimbursement.expandReimburmentTab()
