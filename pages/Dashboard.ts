@@ -323,6 +323,28 @@ export class Dashboard extends BasePage {
     return `${displayValue}%`;
   }
 
+  /** API punch times are HH:mm:ss; Dashboard attendance card shows h:mm AM/PM. */
+  static formatPunchTimeForUi(time: string | null): string {
+    if (!time) {
+      return "--:--";
+    }
+
+    const match = time.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+    if (!match) {
+      return time;
+    }
+
+    let hours = Number(match[1]);
+    const minutes = match[2];
+    const period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) {
+      hours = 12;
+    }
+
+    return `${hours}:${minutes} ${period}`;
+  }
+
   static getTodayPunchRecord(todayPunchData: TodayPunchData[]): TodayPunchData {
     const today = new Date();
     const todayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -401,58 +423,6 @@ export class Dashboard extends BasePage {
     await expect(this.page).toHaveURL(/https:\/\/topuptalent\.com\/?$/);
   }
 
-  async verifyCsatRatingBelowEmployeeName(): Promise<void> {
-    const employeeNameHeading = this.page
-      .locator("h2.heading-lg")
-      .filter({ hasText: /Good Morning|Vishal Dev Thakur/i })
-      .first();
-    const dashboardBanner = this.page
-      .locator("header, [role='banner'], [class*='banner']")
-      .filter({ has: employeeNameHeading })
-      .first();
-    const csatText = dashboardBanner
-      .getByText(/CSAT Stars:/i)
-      .first();
-
-    await expect(employeeNameHeading).toBeVisible();
-    await expect(dashboardBanner).toBeVisible();
-    await expect(csatText).toBeVisible();
-    await expect(dashboardBanner).toContainText(/CSAT Stars:/i);
-    await expect(dashboardBanner).toContainText(/\d+/);
-
-    const employeeBox = await employeeNameHeading.boundingBox();
-    const csatBox = await csatText.boundingBox();
-
-    expect(employeeBox).not.toBeNull();
-    expect(csatBox).not.toBeNull();
-
-    if (employeeBox && csatBox) {
-      const minimumAllowedY = employeeBox.y + employeeBox.height - 5;
-      expect(csatBox.y).toBeGreaterThanOrEqual(minimumAllowedY);
-    }
-  }
-
-  async verifyCountryFlagWithEmployeeImage(): Promise<void> {
-    const accountMenuButton = this.page.getByRole("button", {
-      name: /account menu/i,
-    });
-    const employeeFlag = this.page.getByRole("img", { name: /india flag/i }).first();
-
-    await expect(accountMenuButton).toBeVisible();
-    await expect(employeeFlag).toBeVisible();
-
-    const accountBox = await accountMenuButton.boundingBox();
-    const flagBox = await employeeFlag.boundingBox();
-
-    expect(accountBox).not.toBeNull();
-    expect(flagBox).not.toBeNull();
-
-    if (accountBox && flagBox) {
-      expect(flagBox.x).toBeLessThan(accountBox.x);
-      expect(Math.abs(flagBox.y - accountBox.y)).toBeLessThanOrEqual(30);
-    }
-  }
-
   async verifyUpcomingWorkAnniversaryCard(): Promise<void> {
     await expect(this.upcomingWorkAnniversaryCard).toBeVisible();
     await expect(this.upcomingWorkAnniversaryCard).toContainText(
@@ -493,8 +463,8 @@ export class Dashboard extends BasePage {
 
   async verifyTodayPunchOfficeInOut(todayPunchData: TodayPunchData[]) {
     const todayPunch = Dashboard.getTodayPunchRecord(todayPunchData);
-    const expectedOfficeIn = todayPunch.inTime ?? "--:--";
-    const expectedOfficeOut = todayPunch.outTime ?? "--:--";
+    const expectedOfficeIn = Dashboard.formatPunchTimeForUi(todayPunch.inTime);
+    const expectedOfficeOut = Dashboard.formatPunchTimeForUi(todayPunch.outTime);
 
     await expect(this.officeInTime).toBeVisible();
     await expect(this.officeOutTime).toBeVisible();

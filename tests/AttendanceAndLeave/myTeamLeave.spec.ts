@@ -20,10 +20,7 @@ test.describe("My Team Leave Page", () => {
   test("HRMIS_A&L_22,A&L_23,   Validate My Team Leave Page UI Elements and Filter the records @smoke @eti @reg", async ({ page, }) => {
 
     loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole();
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");
 
@@ -55,10 +52,7 @@ test.describe("My Team Leave Page", () => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
     const applyLeave = new ApplyLeaves(page);
     loginObj = new LoginPage(page);
-    await loginObj.validLogin(
-      testData.Employee.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('Employee');
     await attendanceLeaveTab.navigateToAttendanceTab("Apply Leaves");
 
     await applyLeave.withdrawExistingLeave();
@@ -70,10 +64,7 @@ test.describe("My Team Leave Page", () => {
     await attendanceLeaveTab.logout();
 
     // Logging in as Delivery Manager
-    await loginObj.validLogin(
-      testData["DeliveryManager"].UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole('ReportingManager');
 
     // await myTeamLeave.clickOnCrossIcon();
 
@@ -89,10 +80,7 @@ test.describe("My Team Leave Page", () => {
     const attendanceLeaveTab = new AttendanceLeaveTab(page);
 
     // Step 1: Login
-    await loginObj.validLogin(
-      testData.SuperUser.UserEmail,
-      testData.SuperUser.UserPassword
-    );
+    await loginObj.loginAsRole();
 
     // Step 2: Navigate to My Team Leave tab
     await attendanceLeaveTab.navigateToAttendanceTab("My Team Leave");

@@ -28,7 +28,7 @@ test.describe('Asset Management tests', () => {
         const loginPage = new LoginPage(page);
         const basePage = new BasePage(page);
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
 
         assetManagementTab = new AssetManagementTab(page);
 

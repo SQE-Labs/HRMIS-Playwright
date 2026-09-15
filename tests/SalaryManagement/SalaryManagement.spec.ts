@@ -18,7 +18,7 @@ test.describe.serial("Salary Management", () => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
 
         utils = new CommonUtils;
         helper = new Helper(page);

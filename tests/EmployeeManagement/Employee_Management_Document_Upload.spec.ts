@@ -14,7 +14,7 @@ test.describe("'Employee Management > Document Upload module '", () => {
         const loginPage = new LoginPage(page)
         const basepage = new BasePage(page)
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
 
         EmployeeDirectory = new Employee_Management(page)
         await EmployeeDirectory.expandEmployeeManagementTab()

@@ -20,7 +20,7 @@ test.describe("Download Leave Report", () => {
         attendanceLeaveTab = new AttendanceLeaveTab(page);
         downloadLeaveReport = new DownloadLeaveReport(page)
 
-        await loginObj.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginObj.loginAsRole();
         console.log(">> Starting test case : " + testInfo.title);
     })
 

@@ -1,6 +1,8 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { Loader } from '../components/loaders';
 import { BasePage } from './Basepage';
+import { MyProfilePage } from './MyProfile';
+import { getExpectedCompanyName, getRuntimeCountry, getRuntimeRole, resolveCountryRoleCredentials, type SupportedCountry, type SupportedRole } from '../utils/auth';
 
 export class LoginPage extends BasePage {
     private email: Locator;
@@ -38,5 +40,24 @@ export class LoginPage extends BasePage {
             this.waitForSpinnerLoaderToDisappear().catch(() => {}),
             new Promise(resolve => setTimeout(resolve, 2000)) // Fallback 2sec timeout
         ]);
+    }
+
+    async loginAsRole(
+        role: SupportedRole = getRuntimeRole(),
+        country: SupportedCountry = getRuntimeCountry(),
+    ) {
+        const credentials = resolveCountryRoleCredentials(country, role);
+        await this.validLogin(credentials.email, credentials.password);
+
+        const expectedCompanyName = getExpectedCompanyName(country);
+        const profilePage = new MyProfilePage(this.page);
+        await profilePage.validateCompanyName(
+          expectedCompanyName,
+          country,
+          role,
+          `${country} ${role}`
+        );
+
+        await this.open('/dashboard/');
     }
 }

@@ -10,10 +10,7 @@ let analyticsInsights: Analytics_Insights;
 test.describe("Analytics & Insights module", () => {
     test.beforeEach(async ({ page }) => {
         const loginObj = new LoginPage(page);
-        await loginObj.validLogin(
-            testData.SuperUser.UserEmail,
-            testData.SuperUser.UserPassword
-        );
+        await loginObj.loginAsRole();
 
         analyticsInsights = new Analytics_Insights(page);
         console.log(">> Starting test case : " + test.info().title);

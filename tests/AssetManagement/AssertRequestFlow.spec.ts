@@ -22,7 +22,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
     test("HRMIS_24 Asset Request page Create Asset Request - L1 Approval @smoke @reg", async ({ page }) => {
         comment = await assetrequest.generateRandomString(10);
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab()
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear()
@@ -140,7 +140,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
 
     test("HRMIS_33 Check Asset is Delivered to Employee @smoke @reg", async ({ page }) => {
         test.skip(!requestCreated, "Asset request already in process or not created.");
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear();
@@ -151,7 +151,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
 
     test("Asset Deallocation - Return Asset Flow @smoke @reg", async ({ page }) => {
         test.skip(!requestCreated, "Asset request already in process or not created.");
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetDeallocation();
         await assetrequest.waitforLoaderToDisappear();
@@ -163,7 +163,7 @@ test.describe.serial("Asset flow l1 , l2 ,  IT , store @smoke @reg", async () =>
 
     test("HRMIS_40 RTO Management - Asset Request Return Flow @smoke @reg", async ({ page }) => {
         test.skip(!requestCreated, "Asset request already in process or not created.");
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToRtoManagementTab();
         await assetrequest.waitforLoaderToDisappear();
@@ -203,7 +203,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
     test("Asset Request page L1 Reject the Request @smoke @reg", async ({ page }) => {
         // Create asset
         comment = await assetrequest.generateRandomString(10);
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab()
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear()
@@ -239,7 +239,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
         expect(await assetrequest.verifySuccessMessage("Successfully Rejected"))
 
         await assetrequest.logout();
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear();
@@ -251,7 +251,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
     test("Asset Request page L2 Reject the Request @smoke @reg", async ({ page }) => {
         // Create asset
         comment = await assetrequest.generateRandomString(10);
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab()
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear()
@@ -310,7 +310,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
 
         await assetrequest.logout();
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear();
@@ -322,7 +322,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
     test("Asset Request page IT Reject the Request @smoke @reg", async ({ page }) => {
         // Create asset
         comment = await assetrequest.generateRandomString(10);
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab()
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear()
@@ -399,7 +399,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
 
         await assetrequest.logout();
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear();
@@ -412,7 +412,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
     test("Asset Request page Store Reject the Request @smoke @reg", async ({ page }) => {
         // Create asset
         comment = await assetrequest.generateRandomString(10);
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab()
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear()
@@ -518,7 +518,7 @@ test.describe("Asset flow l1 , l2 ,  IT , store Reject flow @smoke @reg", async 
 
         await assetrequest.logout();
 
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword);
+        await loginPage.loginAsRole();
         await assetrequest.expandAssetManagementTab();
         await assetrequest.navigateToAssetRequestTab();
         await assetrequest.waitforLoaderToDisappear();

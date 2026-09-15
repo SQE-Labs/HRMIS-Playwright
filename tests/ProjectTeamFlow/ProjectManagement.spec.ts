@@ -25,7 +25,7 @@ let projectButton: any;
 test.describe.serial("Project TeamFlow Project List", () => {
     test.beforeEach(async ({ page }) => {
         const loginPage = new LoginPage(page)
-        await loginPage.validLogin(testData.SuperUser.UserEmail, testData.SuperUser.UserPassword)
+        await loginPage.loginAsRole()
 
         utils = new CommonUtils()
         helper = new Helper(page)
