@@ -28,7 +28,8 @@ test.describe("Dashboard Tests", () => {
     dashboard = new Dashboard(page);
     const isWeeklyTimesheetTest = testInfo.title.includes("HRIMS_DASH_15");
     const isPendingRequestsTest = testInfo.title.includes("HRIMS_DASH_16");
-    const isAttendanceAnalyticsTest = testInfo.title.includes("HRIMS_DASH_17");
+    const isAttendanceAnalyticsTest = testInfo.title.includes("HRIMS_DASH_17") ||
+      testInfo.title.includes("HRIMS_DASH_30");
     const isTodayPunchTest = testInfo.title.includes("HRIMS_DASH_18");
     const isEmployeeProjectsTest = testInfo.title.includes("HRIMS_DASH_19");
     const isLeaveBalanceTest = testInfo.title.includes("HRIMS_DASH_20");
@@ -321,6 +322,38 @@ test.describe("Dashboard Tests", () => {
     await test.step("Verify the upcoming work anniversary card is visible on the Dashboard", async () => {
       await dashboard.waitForDashboardToLoad();
       await dashboard.verifyUpcomingWorkAnniversaryCard();
+    });
+  });
+
+  test("HRIMS_DASH_28 verifying Timesheet Summary widget appears on Dashboard @smoke", async () => {
+    await test.step("Verify Timesheet Summary widget appears on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyTimesheetSummary();
+    });
+  });
+
+  test("HRIMS_DASH_29 verifying Timesheet Summary widget components appear sequentially @smoke", async () => {
+    await test.step("Verify Timesheet Summary widget components appear sequentially", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyTimesheetSummaryComponentsSequentially();
+    });
+  });
+
+  test("HRIMS_DASH_30 verifying Attendance Analytics widget appears on Dashboard @smoke", async () => {
+    const attendanceAnalytics = attendanceAnalyticsApiData!;
+
+    await test.step("Verify Attendance Analytics widget appears on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyAttendanceAnalyticsCurrentMonthPercentage(
+        attendanceAnalytics
+      );
+    });
+  });
+
+  test("HRIMS_DASH_31 verifying multiple components appear in Attendance Analytics widget on Dashboard @smoke", async () => {
+    await test.step("Verify the Attendance Analytics widget contains its expected UI components", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyAttendanceAnalyticsWidgetComponents();
     });
   });
 });

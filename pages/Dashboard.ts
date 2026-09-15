@@ -178,6 +178,29 @@ export class Dashboard extends BasePage {
     await this.waitforLoaderToDisappear();
   }
 
+  async verifyTimesheetSummary(): Promise<void> {
+    await expect(this.timesheetSummaryCard).toBeVisible();
+  }
+
+  async verifyTimesheetSummaryComponentsSequentially(): Promise<void> {
+    const summaryHeading = this.timesheetSummaryCard.getByRole("heading", {
+      name: "Timesheet Summary",
+    });
+    const pendingCount = this.timesheetSummaryCard.getByText(/^\d+\s+Pending$/);
+    const totalHoursLabel = this.timesheetSummaryCard.getByText(
+      "Total Hours This Week"
+    );
+
+    await expect(summaryHeading).toBeVisible();
+    await expect(pendingCount).toBeVisible();
+    await expect(this.weeklyTimesheetWeekRange).toBeVisible();
+    await expect(totalHoursLabel).toBeVisible();
+    await expect(this.weeklyTimesheetTotalHours).toBeVisible();
+    await expect(this.weeklyTimesheetTotalHours).toContainText(
+      /^\d+(\.\d+)?\s*hrs?$/i
+    );
+  }
+
   captureWeeklyTimesheetResponse(): Promise<WeeklyTimesheetData> {
     return ApiResponseCapture.capture<WeeklyTimesheetData>(
       this.page,
@@ -489,6 +512,19 @@ export class Dashboard extends BasePage {
     await expect(this.attendanceAnalyticsCurrentMonthPercentage).toHaveText(
       Dashboard.formatPercentageForUi(currentMonth.percentage)
     );
+  }
+
+  async verifyAttendanceAnalyticsWidgetComponents(): Promise<void> {
+    const widgetHeading = this.page.getByText(/Attendance Analytics/i).first();
+    const currentMonthStat = this.page
+      .locator('[class*="attendance-analytics-card_statItem"]')
+      .filter({ hasText: "Current Month" })
+      .first();
+
+    await expect(widgetHeading).toBeVisible();
+    await expect(currentMonthStat).toBeVisible();
+    await expect(this.attendanceAnalyticsCurrentMonthPercentage).toBeVisible();
+    await expect(this.viewAttendanceWeeklyLogsLink).toBeVisible();
   }
 
   async verifyTodayPunchOfficeInOut(todayPunchData: TodayPunchData[]) {
