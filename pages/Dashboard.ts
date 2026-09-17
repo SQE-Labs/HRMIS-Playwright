@@ -70,6 +70,7 @@ export interface LeaveBalanceData {
 }
 
 export class Dashboard extends BasePage {
+  
 
   private readonly actionCentreList: Locator;
   private readonly actionCentreCards: Locator;
@@ -79,6 +80,7 @@ export class Dashboard extends BasePage {
   private readonly myProjectsList: Locator;
   private readonly myProjectItems: Locator;
   private readonly leaveBalanceGrid: Locator;
+  private readonly leaveBalanceOverviewCard: Locator;
   private readonly timesheetSummaryCard: Locator;
   private readonly weeklyTimesheetWeekRange: Locator;
   private readonly weeklyTimesheetTotalHours: Locator;
@@ -93,6 +95,8 @@ export class Dashboard extends BasePage {
   private readonly requestLeavePlanTimeOffLink: Locator;
   private readonly viewAllSessionsLink: Locator;
   private readonly viewFullTeamCalender: Locator;
+  private readonly trainingDevelopmentCard: Locator;
+  private readonly teamAvailabilityCard: Locator;
   
 
   constructor(page: Page) {
@@ -118,6 +122,20 @@ export class Dashboard extends BasePage {
     this.leaveBalanceGrid = page.locator(
       '[class*="leave-balance-overview-card_grid"]'
     );
+    this.leaveBalanceOverviewCard = page
+      .locator('[class*="leave-balance-overview-card"]')
+      .filter({ hasText: "Leave Balance Overview" })
+      .first();
+
+    this.trainingDevelopmentCard = page
+      .locator('[class*="training-development-card"]')
+      .filter({ hasText: /Training & Development/i })
+      .first();
+
+    this.teamAvailabilityCard = page
+      .locator('[class*="team-availability-card"]')
+      .filter({ hasText: /Team Availability/i })
+      .first();
 
     this.timesheetSummaryCard = page.locator(
       '[class*="timesheet-summary-card_cardContainer"]'
@@ -483,6 +501,22 @@ export class Dashboard extends BasePage {
     );
   }
 
+  async verifyActionCentreWidget(): Promise<void> {
+    const actionCentreWidget = this.page
+      .locator('[class*="action-center-card"], article, section')
+      .filter({ hasText: /Action Centre/i })
+      .first();
+
+    const actionCentreHeading = this.page.getByText(/Action Centre/i).first();
+    const actionCentreCardCount = await this.actionCentreCards.count();
+
+    await expect(this.actionCentreList).toBeVisible();
+    expect(actionCentreCardCount).toBeGreaterThan(0);
+
+    await expect(actionCentreWidget.or(actionCentreHeading)).toBeVisible();
+    await expect(this.actionCentreCards.first()).toBeVisible();
+  }
+
   async verifyPendingRequestsMatchApi(
     pendingRequests: PendingRequestData[]
   ): Promise<void> {
@@ -604,6 +638,54 @@ export class Dashboard extends BasePage {
         `Total: ${Dashboard.formatLeaveBalanceValueForUi(entry.total)}`
       );
     }
+  }
+
+  async verifyLeaveBalanceOverviewWidget(): Promise<void> {
+    await expect(this.leaveBalanceOverviewCard).toBeVisible();
+    await expect(this.leaveBalanceOverviewCard).toContainText(
+      "Leave Balance Overview"
+    );
+  }
+
+  async verifyLeaveBalanceOverviewWidgetComponents(): Promise<void> {
+    const widgetHeading = this.leaveBalanceOverviewCard.getByText(
+      /Leave Balance Overview/i
+    );
+    const tiles = this.leaveBalanceGrid.locator(
+      'article[class*="leave-balance-overview-card_tile"]'
+    );
+
+    await expect(this.leaveBalanceOverviewCard).toBeVisible();
+    await expect(widgetHeading).toBeVisible();
+    await expect(this.leaveBalanceGrid).toBeVisible();
+    await expect(tiles.first()).toBeVisible();
+    await expect(tiles).toHaveCount(3);
+  }
+
+  async verifyTrainingDevelopmentWidget(): Promise<void> {
+    await expect(this.trainingDevelopmentCard).toBeVisible();
+    await expect(this.trainingDevelopmentCard).toContainText(
+      /Training & Development/i
+    );
+  }
+
+  async verifyTeamAvailabilityWidget(): Promise<void> {
+    await expect(this.teamAvailabilityCard).toBeVisible();
+    await expect(this.teamAvailabilityCard).toContainText(
+      /Team Availability/i
+    );
+  }
+
+  async verifyTeamMembersOffOffice(): Promise<void> {
+    const offOfficeItems = this.teamAvailabilityCard.locator(
+      '[class*="team-availability-card_officeStatus"]'
+    ).filter({ hasText: /Off Office/i });
+
+    await expect(this.teamAvailabilityCard).toBeVisible();
+    await expect(this.teamAvailabilityCard).toContainText(/Team Availability/i);
+    await expect(offOfficeItems.first()).toBeVisible();
+    const offOfficeCount = await offOfficeItems.count();
+    expect(offOfficeCount).toBeGreaterThan(0);
   }
 
   private static formatApiDateForUi(isoDate: string): string {

@@ -356,4 +356,46 @@ test.describe("Dashboard Tests", () => {
       await dashboard.verifyAttendanceAnalyticsWidgetComponents();
     });
   });
+
+  test("HRMIS_DASH_32 verifying that Action Centre widget appears on Dashboard @smoke", async () => {
+    await test.step("Verify Action Centre widget appears on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyActionCentreWidget();
+    });
+  });
+
+  test("HRIMS_DASH_33 verifying Leave Balance Overview widget appears on Dashboard @smoke", async () => {
+    await test.step("Verify Leave Balance Overview widget appears on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyLeaveBalanceOverviewWidget();
+    });
+  });
+
+  test("HRIMS_DASH_34 verifying multiple components appear in Leave Balance Overview widget on Dashboard @smoke", async () => {
+    await test.step("Verify the Leave Balance Overview widget contains its expected UI components", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyLeaveBalanceOverviewWidgetComponents();
+    });
+  });
+
+  test("HRIMS_DASH_35 verifying Training & Development widget appears on Dashboard @smoke", async () => {
+    await test.step("Verify Training & Development widget appears on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyTrainingDevelopmentWidget();
+    });
+  });
+
+  test("HRIMS_DASH_36 verifying Team Availability widget appears on Dashboard @smoke", async () => {
+    await test.step("Verify Team Availability widget appears on the Dashboard", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyTeamAvailabilityWidget();
+    });
+  });
+
+  test("HRIMS_DASH_37 verifying team members status Off Office appears in Team Availability widget on Dashboard @smoke", async () => {
+    await test.step("Verify team members Off Office status appears in the Team Availability widget", async () => {
+      await dashboard.waitForDashboardToLoad();
+      await dashboard.verifyTeamMembersOffOffice();
+    });
+  });
 });
